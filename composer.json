@@ -1,0 +1,24 @@
+{
+    "name": "io-developer/php-whois",
+    "description": "Library implements requests to real WHOIS service (via port 43) and provides parsed responses",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.1.0",
+    "homepage": "https://github.com/io-developer/php-whois",
+    "authors": [
+        {
+            "name": "Sergey Sedyshev",
+            "email": "i.o.developer@gmail.com",
+            "homepage": "https://github.com/io-developer"
+        }
+    ],
+    "require" : {
+        "php" : ">=5.6",
+        "ext-intl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Iodev\\": "src/Iodev/"
+        }
+    }
+}
