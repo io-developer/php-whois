@@ -1,34 +1,25 @@
 <?php
 
-namespace iodev\whois;
+namespace Iodev\Whois;
 
-use Exception;
+use RuntimeException;
 
-/**
- * @author Sergey Sedyshev
- */
-class WhoisLoader
+class Loader
 {
     public function __construct()
     {
-        $this->_reponseParser = new WhoisResponseParser();
-        $this->_cached = [];
+        $this->cache = [];
     }
-    
-    
-    /** @var WhoisResponseParser */
-    private $_reponseParser;
-    
+
     /** @var string[] */
-    private $_cached;
-    
-        
+    private $cache;
+
     /**
      * @param WhoisServer $server
      * @param string $domain
-     * @return WhoisInfo
+     * @return Info
      */
-    public function loadInfo( WhoisServer $server, $domain )
+    public function loadInfo(WhoisServer $server, $domain)
     {
         $p = $server->infoParser;
         $r = $this->loadResponse($server->host, $domain);
@@ -37,7 +28,6 @@ class WhoisLoader
             $r = $this->loadResponse($server->host, $domain, true);
             $info = $p->fromResponse($r);
         }
-        
         if ($info && $info->whoisServer && !$server->isCentralized) {
             try {
                 $r = $this->loadResponse($info->whoisServer, $domain);
@@ -47,49 +37,47 @@ class WhoisLoader
                 
             }
         }
-        
         return $info;
     }
     
     /**
      * @param string $whoisHost
      * @param string $domain
-     * @return WhoisResponse
+     * @param bool $strict
+     * @return Response
      */
-    public function loadResponse( $whoisHost, $domain, $strict=false )
+    public function loadResponse($whoisHost, $domain, $strict = false)
     {
-        $s = $this->loadString($whoisHost, $domain, $strict);
-        return $this->_reponseParser->fromString($domain, $s);
+        return Response::fromString($domain, $this->loadString($whoisHost, $domain, $strict));
     }
     
     /**
      * @param string $whoisHost
      * @param string $domain
+     * @param bool $strict
      * @return string
+	 * @throws RuntimeException
      */
-    public function loadString( $whoisHost, $domain, $strict=false )
+    public function loadString($whoisHost, $domain, $strict = false)
     {
-        $cachekey = $whoisHost . ":" . $domain . ":" . (int)$strict;
-        if ($this->_cached[$cachekey]) {
-            return $this->_cached[$cachekey];
+        $key = $whoisHost . ":" . $domain . ":" . (int)$strict;
+        if (isset($this->cache[$key])) {
+            return $this->cache[$key];
         }
         
         $handle = fsockopen($whoisHost, 43);
         if (!$handle) {
-            throw new Exception("Connection error");
+            throw new RuntimeException("Could not open socket (port 43)");
         }
         
         fputs($handle, $strict ? "={$domain}\n" : "{$domain}\n");
-        
-        $s = "";
+        $content = "";
         while (!feof($handle)) {
-            $s .= fgets($handle, 128);
+            $content .= fgets($handle, 128);
         }
-        
         fclose($handle);
+        $this->cache[$key] = $content;
         
-        $this->_cached[$cachekey] = $s;
-        
-        return $s;
+        return $content;
     }
 }

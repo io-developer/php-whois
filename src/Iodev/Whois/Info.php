@@ -1,13 +1,10 @@
 <?php
 
-namespace iodev\whois;
+namespace Iodev\Whois;
 
-/**
- * @author Sergey Sedyshev
- */
-class WhoisInfo
+class Info
 {
-    /** @var WhoisResponse */
+    /** @var Response */
     public $response;
     
     /** @var string */

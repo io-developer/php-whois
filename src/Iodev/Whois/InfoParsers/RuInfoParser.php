@@ -1,53 +1,49 @@
 <?php
 
-namespace iodev\whois\parsers;
+namespace Iodev\Whois\InfoParsers;
 
-use iodev\whois\helpers\DateHelper;
-use iodev\whois\helpers\DomainHelper;
-use iodev\whois\WhoisInfo;
-use iodev\whois\IWhoisInfoParser;
-use iodev\whois\WhoisResponse;
-use iodev\whois\WhoisResponseGroup;
+use Iodev\Whois\Info;
+use Iodev\Whois\Helpers\DateHelper;
+use Iodev\Whois\Helpers\DomainHelper;
+use Iodev\Whois\Response;
+use Iodev\Whois\ResponseGroup;
 
-/**
- * @author Sergey Sedyshev
- */
-class RuInfoParser implements IWhoisInfoParser
+class RuInfoParser implements IInfoParser
 {
     /**
-     * @param WhoisResponse $response
-     * @return WhoisInfo
+     * @param Response $response
+     * @return Info
      */
-    public function fromResponse( WhoisResponse $response )
+    public function fromResponse(Response $response)
     {
-        $group = $this->_findGroup($response);
+        $group = $this->findGroup($response);
         if (!$group) {
             return null;
         }
         
-        $info = new WhoisInfo();
+        $info = new Info();
         $info->response = $response;
-        $info->domainName = $this->_parseDomainName($group);
+        $info->domainName = $this->parseDomainName($group);
         $info->domainNameUnicode = DomainHelper::toUnicode($info->domainName);
-        $info->whoisServer = $this->_parseWhoisServer($group);
-        $info->nameServers = $this->_parseNameServers($group);
-        $info->creationDate = $this->_parseCreationDate($group);
+        $info->whoisServer = $this->parseWhoisServer($group);
+        $info->nameServers = $this->parseNameServers($group);
+        $info->creationDate = $this->parseCreationDate($group);
         $info->expirationDate = $this->_parseExpirationDate($group);
-        $info->states = $this->_parseStates($group);
-        $info->owner = $this->_parseOwner($group);
-        $info->registrar = $this->_parseRegistrar($group);
+        $info->states = $this->parseStates($group);
+        $info->owner = $this->parseOwner($group);
+        $info->registrar = $this->parseRegistrar($group);
         
         return $info;
     }
     
     /**
-     * @param WhoisResponse $response
-     * @return WhoisResponseGroup
+     * @param Response $response
+     * @return ResponseGroup
      */
-    private function _findGroup( WhoisResponse $response )
+    private function findGroup(Response $response)
     {
         foreach ($response->groups as $group) {
-            $foundDomain = $this->_parseDomainName($group);
+            $foundDomain = $this->parseDomainName($group);
             if ($foundDomain && DomainHelper::compareNames($foundDomain, $response->requestedDomain)) {
                 return $group;
             }
@@ -56,10 +52,10 @@ class RuInfoParser implements IWhoisInfoParser
     }
     
     /**
-     * @param WhoisResponseGroup $group
+     * @param ResponseGroup $group
      * @return string
      */
-    private function _parseDomainName( WhoisResponseGroup $group )
+    private function parseDomainName(ResponseGroup $group)
     {
         return DomainHelper::toAscii(
             $group->getByKeyDict([
@@ -71,19 +67,19 @@ class RuInfoParser implements IWhoisInfoParser
     }
     
     /**
-     * @param WhoisResponseGroup $group
+     * @param ResponseGroup $group
      * @return string
      */
-    private function _parseWhoisServer( WhoisResponseGroup $group )
+    private function parseWhoisServer(ResponseGroup $group)
     {
         return "";
     }
     
     /**
-     * @param WhoisResponseGroup $group
+     * @param ResponseGroup $group
      * @return string[]
      */
-    private function _parseNameServers( WhoisResponseGroup $group )
+    private function parseNameServers(ResponseGroup $group)
     {
         $nservers = [];
         $arr = $group->getByKeyDict([
@@ -97,10 +93,10 @@ class RuInfoParser implements IWhoisInfoParser
     }
     
     /**
-     * @param WhoisResponseGroup $group
+     * @param ResponseGroup $group
      * @return int
      */
-    private function _parseCreationDate( WhoisResponseGroup $group )
+    private function parseCreationDate(ResponseGroup $group)
     {
         return DateHelper::parseDate(
             $group->getByKeyDict([
@@ -110,10 +106,10 @@ class RuInfoParser implements IWhoisInfoParser
     }
     
     /**
-     * @param WhoisResponseGroup $group
+     * @param ResponseGroup $group
      * @return int
      */
-    private function _parseExpirationDate( WhoisResponseGroup $group )
+    private function _parseExpirationDate(ResponseGroup $group)
     {
         return DateHelper::parseDate(
             $group->getByKeyDict([
@@ -123,10 +119,10 @@ class RuInfoParser implements IWhoisInfoParser
     }
     
     /**
-     * @param WhoisResponseGroup $group
+     * @param ResponseGroup $group
      * @return string[]
      */
-    private function _parseStates( WhoisResponseGroup $group )
+    private function parseStates(ResponseGroup $group)
     {
         $stateStr = $group->getByKeyDict([
             "state" => 1
@@ -140,10 +136,10 @@ class RuInfoParser implements IWhoisInfoParser
     }
     
     /**
-     * @param WhoisResponseGroup $group
+     * @param ResponseGroup $group
      * @return string
      */
-    private function _parseOwner( WhoisResponseGroup $group )
+    private function parseOwner(ResponseGroup $group)
     {
         return $group->getByKeyDict([
             "org" => 1
@@ -151,10 +147,10 @@ class RuInfoParser implements IWhoisInfoParser
     }
     
     /**
-     * @param WhoisResponseGroup $group
+     * @param ResponseGroup $group
      * @return string
      */
-    private function _parseRegistrar( WhoisResponseGroup $group )
+    private function parseRegistrar(ResponseGroup $group)
     {
         return $group->getByKeyDict([
             "registrar" => 1

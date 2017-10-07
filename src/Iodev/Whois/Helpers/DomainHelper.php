@@ -1,10 +1,7 @@
 <?php
 
-namespace iodev\whois\helpers;
+namespace Iodev\Whois\Helpers;
 
-/**
- * @author Sergey Sedyshev
- */
 class DomainHelper
 {
     /**
@@ -12,7 +9,7 @@ class DomainHelper
      * @param string $b
      * @return string
      */
-    public static function compareNames( $a, $b )
+    public static function compareNames($a, $b)
     {
         $a = self::toAscii($a);
         $b = self::toAscii($b);
@@ -23,7 +20,7 @@ class DomainHelper
      * @param string $domain
      * @return string
      */
-    public static function toAscii( $domain )
+    public static function toAscii($domain)
     {
         $cor = self::correct($domain);
         if (function_exists("idn_to_ascii")) {
@@ -36,7 +33,7 @@ class DomainHelper
      * @param string $domain
      * @return string
      */
-    public static function toUnicode( $domain )
+    public static function toUnicode($domain)
     {
         $cor = self::correct($domain);
         if (function_exists("idn_to_utf8")) {
@@ -49,9 +46,8 @@ class DomainHelper
      * @param string $domain
      * @return string
      */
-    public static function correct( $domain )
+    public static function correct($domain)
     {
         return mb_strtolower(rtrim(trim($domain), '.'));
     }
-    
 }

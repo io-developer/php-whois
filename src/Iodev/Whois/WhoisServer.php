@@ -1,19 +1,18 @@
 <?php
 
-namespace iodev\whois;
+namespace Iodev\Whois;
 
-/**
- * @author Sergey Sedyshev
- */
+use Iodev\Whois\InfoParsers\IInfoParser;
+
 class WhoisServer
 {
     /**
      * @param string $topLevelDomain
      * @param string $host
-     * @param IWhoisInfoParser $infoParser
+     * @param IInfoParser $infoParser
      * @return WhoisServer
      */
-    public static function createCentralized( $topLevelDomain, $host, IWhoisInfoParser $infoParser )
+    public static function createCentralized($topLevelDomain, $host, IInfoParser $infoParser)
     {
         $s = new WhoisServer();
         $s->isCentralized = true;
@@ -26,10 +25,10 @@ class WhoisServer
     /**
      * @param string $topLevelDomain
      * @param string $host
-     * @param IWhoisInfoParser $infoParser
+     * @param IInfoParser $infoParser
      * @return WhoisServer
      */
-    public static function createDistributed( $topLevelDomain, $host, IWhoisInfoParser $infoParser )
+    public static function createDistributed($topLevelDomain, $host, IInfoParser $infoParser)
     {
         $s = new WhoisServer();
         $s->isCentralized = false;
@@ -38,7 +37,6 @@ class WhoisServer
         $s->infoParser = $infoParser;
         return $s;
     }
-
     
     /** @var bool */
     public $isCentralized;
@@ -49,6 +47,6 @@ class WhoisServer
     /** @var string */
     public $topLevelDomain;
     
-    /** @var IWhoisInfoParser */
+    /** @var IInfoParser */
     public $infoParser;
 }

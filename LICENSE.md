@@ -3,7 +3,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2016 Sergey Sedyshev and other contributors
+Copyright (c) 2017 Sergey Sedyshev (i.o.developer@gmail.com) and other contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -1,30 +1,25 @@
 <?php
 
-namespace iodev\whois;
+namespace Iodev\Whois;
 
-/**
- * @author Sergey Sedyshev
- */
-class WhoisResponseGroup
+class ResponseGroup
 {
-    public function __construct( $data=null )
+    public function __construct($data = null)
     {
         $this->data = $data ? $data : [];
     }
-    
-    
+
     /** @var array */
     public $data;
-    
     
     /**
      * @param array $lowerKeyDict
      * @return bool
      */
-    public function getByKeyDict( $lowerKeyDict )
+    public function getByKeyDict($lowerKeyDict)
     {
         foreach ($this->data as $k => $v) {
-            if ($lowerKeyDict[strtolower($k)]) {
+            if (isset($lowerKeyDict[strtolower($k)])) {
                 return $v;
             }
         }
