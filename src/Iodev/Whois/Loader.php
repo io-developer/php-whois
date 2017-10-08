@@ -15,11 +15,11 @@ class Loader
     private $cache;
 
     /**
-     * @param WhoisServer $server
+     * @param Server $server
      * @param string $domain
      * @return Info
      */
-    public function loadInfo(WhoisServer $server, $domain)
+    public function loadInfo(Server $server, $domain)
     {
         $p = $server->infoParser;
         $r = $this->loadResponse($server->host, $domain);

@@ -4,17 +4,17 @@ namespace Iodev\Whois;
 
 use Iodev\Whois\InfoParsers\IInfoParser;
 
-class WhoisServer
+class Server
 {
     /**
      * @param string $topLevelDomain
      * @param string $host
      * @param IInfoParser $infoParser
-     * @return WhoisServer
+     * @return Server
      */
     public static function createCentralized($topLevelDomain, $host, IInfoParser $infoParser)
     {
-        $s = new WhoisServer();
+        $s = new Server();
         $s->isCentralized = true;
         $s->topLevelDomain = $topLevelDomain;
         $s->host = $host;
@@ -26,11 +26,11 @@ class WhoisServer
      * @param string $topLevelDomain
      * @param string $host
      * @param IInfoParser $infoParser
-     * @return WhoisServer
+     * @return Server
      */
     public static function createDistributed($topLevelDomain, $host, IInfoParser $infoParser)
     {
-        $s = new WhoisServer();
+        $s = new Server();
         $s->isCentralized = false;
         $s->topLevelDomain = $topLevelDomain;
         $s->host = $host;
