@@ -6,7 +6,17 @@ PHP >= 5.4
 - intl
 
 ## Installing with Composer
-Add to your own project __composer.json__ repository:
+#### Run cli command
+````
+composer require io-developer/php-whois
+````
+#### Or edit composer.json
+````
+"require": {
+    "io-developer/php-whois": "^1.1.0"
+}
+````
+_Optional:_ add repository if needed
 ````
 "repositories": [
     {
@@ -15,12 +25,7 @@ Add to your own project __composer.json__ repository:
     }
 ]
 ````
-and require:
-````
-"require": {
-    "io-developer/php-whois": "^1.1.0"
-}
-````
+
 
 
 ## Usage
