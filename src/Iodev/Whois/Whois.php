@@ -14,10 +14,10 @@ class Whois
     public static function create()
     {
         return (new Whois())
-            ->addServer(WhoisServer::createDistributed(".com", "whois.crsnic.net", new ComInfoParser()))
-            ->addServer(WhoisServer::createDistributed(".net", "whois.crsnic.net", new ComInfoParser()))
-            ->addServer(WhoisServer::createCentralized(".ru", "whois.ripn.net", new RuInfoParser()))
-            ->addServer(WhoisServer::createCentralized(".xn--p1ai", "whois.ripn.net", new RuInfoParser()));
+            ->addServer(Server::createDistributed(".com", "whois.crsnic.net", new ComInfoParser()))
+            ->addServer(Server::createDistributed(".net", "whois.crsnic.net", new ComInfoParser()))
+            ->addServer(Server::createCentralized(".ru", "whois.ripn.net", new RuInfoParser()))
+            ->addServer(Server::createCentralized(".xn--p1ai", "whois.ripn.net", new RuInfoParser()));
     }
 
     public function __construct()
@@ -29,14 +29,14 @@ class Whois
     /** @var Loader */
     private $loader;
     
-    /** @var WhoisServer[] */
+    /** @var Server[] */
     private $servers;
     
     /**
-     * @param WhoisServer $server
+     * @param Server $server
      * @return Whois
      */
-    public function addServer(WhoisServer $server)
+    public function addServer(Server $server)
     {
         $this->servers[] = $server;
         return $this;
@@ -44,7 +44,7 @@ class Whois
     
     /**
      * @param string $domain
-     * @return WhoisServer[]
+     * @return Server[]
      */
     public function matchServers($domain)
     {
