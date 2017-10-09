@@ -44,10 +44,7 @@ $whois = Whois::create();
 
 ```php
 /**
- * Returns null if
- * domain info not loaded
- * or domain not found
- * or domain not supported by current whois servers
+ * null if domain not found (in defined whois server list)
  */
 $info = $whois->loadInfo("google.com");
 

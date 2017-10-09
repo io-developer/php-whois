@@ -1,6 +1,11 @@
 {
     "name": "io-developer/php-whois",
     "description": "Library implements requests to real WHOIS service (via port 43) and provides parsed responses",
+    "keywords": [
+        "whois",
+        "info",
+        "client"
+    ],
     "type": "library",
     "license": "MIT",
     "version": "1.1.0",
