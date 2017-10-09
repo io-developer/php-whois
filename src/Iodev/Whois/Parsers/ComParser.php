@@ -59,9 +59,9 @@ class ComParser implements IParser
     {
         return DomainHelper::toAscii(
             $group->getByKeyDict([
-                "domain" => 1
-                , "domainname" => 1
-                , "domain name" => 1
+                "domain" => 1,
+                "domainname" => 1,
+                "domain name" => 1,
             ])
         );
     }
@@ -74,10 +74,10 @@ class ComParser implements IParser
     {
         return DomainHelper::toAscii(
             $group->getByKeyDict([
-                "whois" => 1
-                , "whoisserver" => 1
-                , "whois server" => 1
-                , "registrar whois server" => 1
+                "whois" => 1,
+                "whoisserver" => 1,
+                "whois server" => 1,
+                "registrar whois server" => 1,
             ])
         );
     }
@@ -90,8 +90,8 @@ class ComParser implements IParser
     {
         $nservers = [];
         $arr = $group->getByKeyDict([
-            "nameserver" => 1
-            , "name server" => 1
+            "nameserver" => 1,
+            "name server" => 1,
         ]);
         $arr = is_array($arr) ? $arr : [ "".$arr ];
         foreach ($arr as $nserv) {
@@ -108,8 +108,8 @@ class ComParser implements IParser
     {
         return DateHelper::parseDate(
             $group->getByKeyDict([
-                "creationdate" => 1
-                , "creation date" => 1
+                "creationdate" => 1,
+                "creation date" => 1,
             ])
         );
     }
@@ -122,9 +122,9 @@ class ComParser implements IParser
     {
         return DateHelper::parseDate(
             $group->getByKeyDict([
-                "expirationdate" => 1
-                , "expiration date" => 1
-                , "registrar registration expiration date" => 1
+                "expirationdate" => 1,
+                "expiration date" => 1,
+                "registrar registration expiration date" => 1,
             ])
         );
     }
@@ -137,9 +137,9 @@ class ComParser implements IParser
     {
         $states = [];
         $rawstates = $group->getByKeyDict([
-            "status" => 1
-            , "domainstatus" => 1
-            , "domain status" => 1
+            "status" => 1,
+            "domainstatus" => 1,
+            "domain status" => 1,
         ]);
         $rawstates = is_array($rawstates) ? $rawstates : [ "".$rawstates ];
         foreach ($rawstates as $state) {
@@ -157,9 +157,9 @@ class ComParser implements IParser
     private function parseOwner(ResponseGroup $group)
     {
         return $group->getByKeyDict([
-            "organization" => 1
-            , "tech organization" => 1
-            , "admin organization" => 1
+            "organization" => 1,
+            "tech organization" => 1,
+            "admin organization" => 1,
         ]);
     }
     

@@ -28,7 +28,7 @@ class RuParser implements IParser
         $info->whoisServer = $this->parseWhoisServer($group);
         $info->nameServers = $this->parseNameServers($group);
         $info->creationDate = $this->parseCreationDate($group);
-        $info->expirationDate = $this->_parseExpirationDate($group);
+        $info->expirationDate = $this->parseExpirationDate($group);
         $info->states = $this->parseStates($group);
         $info->owner = $this->parseOwner($group);
         $info->registrar = $this->parseRegistrar($group);
@@ -59,9 +59,9 @@ class RuParser implements IParser
     {
         return DomainHelper::toAscii(
             $group->getByKeyDict([
-                "domain" => 1
-                , "domainname" => 1
-                , "domain name" => 1
+                "domain" => 1,
+                "domainname" => 1,
+                "domain name" => 1,
             ])
         );
     }
@@ -109,7 +109,7 @@ class RuParser implements IParser
      * @param ResponseGroup $group
      * @return int
      */
-    private function _parseExpirationDate(ResponseGroup $group)
+    private function parseExpirationDate(ResponseGroup $group)
     {
         return DateHelper::parseDate(
             $group->getByKeyDict([
