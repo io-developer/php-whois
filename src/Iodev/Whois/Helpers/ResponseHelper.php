@@ -48,4 +48,60 @@ class ResponseHelper
         }
         return false;
     }
+
+    /**
+     * @param array $groups
+     * @param string $domain
+     * @param string[] $domainParseKeys
+     * @return array
+     */
+    public static function findDomainGroup($groups, $domain, $domainParseKeys = null)
+    {
+        foreach ($groups as $group) {
+            $foundDomain = self::parseDomainName($group, $domainParseKeys);
+            if ($foundDomain && DomainHelper::compareNames($foundDomain, $domain)) {
+                return $group;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param array $group
+     * @param string[] $keys
+     * @return string
+     */
+    public static function parseDomainName($group, $keys = null)
+    {
+        $keys = !empty($keys) ? $keys : [ "domain", "domainname", "domain name" ];
+        return DomainHelper::toAscii(self::firstGroupMatch($group, $keys));
+    }
+
+    /**
+     * @param array $group
+     * @param string[] $keys
+     * @return string[]
+     */
+    public static function parseNameServersAscii($group, $keys = null)
+    {
+        $keys = !empty($keys) ? $keys : [ "nserver", "nameserver", "name server" ];
+        $nservers = [];
+        $arr = self::firstGroupMatch($group, $keys);
+        $arr = isset($arr) ? $arr : [];
+        $arr = is_array($arr) ? $arr : [ $arr ];
+        foreach ($arr as $nserv) {
+            $nservers[] = DomainHelper::toAscii($nserv);
+        }
+        return $nservers;
+    }
+
+    /**
+     * @param array $group
+     * @param string[] $keys
+     * @return int
+     */
+    public static function parseDate($group, $keys)
+    {
+        return DateHelper::parseDate(self::firstGroupMatch($group, $keys));
+    }
 }
