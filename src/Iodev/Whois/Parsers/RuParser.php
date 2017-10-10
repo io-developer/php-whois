@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois\Parsers;
 
+use Iodev\Whois\Helpers\ResponseHelper;
 use Iodev\Whois\Info;
 use Iodev\Whois\Helpers\DateHelper;
 use Iodev\Whois\Helpers\DomainHelper;
@@ -16,7 +17,9 @@ class RuParser implements IParser
      */
     public function parseResponse(Response $response)
     {
-        $group = $this->findGroup($response);
+        $groups = ResponseHelper::contentToGroups($response->content);
+
+        $group = $this->findGroup($response, $groups);
         if (!$group) {
             return null;
         }
@@ -40,11 +43,11 @@ class RuParser implements IParser
      * @param Response $response
      * @return ResponseGroup
      */
-    private function findGroup(Response $response)
+    private function findGroup(Response $response, $groups)
     {
         foreach ($response->groups as $group) {
             $foundDomain = $this->parseDomainName($group);
-            if ($foundDomain && DomainHelper::compareNames($foundDomain, $response->requestedDomain)) {
+            if ($foundDomain && DomainHelper::compareNames($foundDomain, $response->domain)) {
                 return $group;
             }
         }
@@ -58,11 +61,10 @@ class RuParser implements IParser
     private function parseDomainName(ResponseGroup $group)
     {
         return DomainHelper::toAscii(
-            $group->getByKeyDict([
-                "domain" => 1,
-                "domainname" => 1,
-                "domain name" => 1,
-            ])
+            ResponseHelper::firstGroupMatch(
+                $group->data,
+                [ "domain", "domainname", "domain name" ]
+            )
         );
     }
     
@@ -85,7 +87,8 @@ class RuParser implements IParser
         $arr = $group->getByKeyDict([
             "nserver" => 1
         ]);
-        $arr = is_array($arr) ? $arr : [ "".$arr ];
+        $arr = isset($arr) ? $arr : [];
+        $arr = is_array($arr) ? $arr : [ $arr ];
         foreach ($arr as $nserv) {
             $nservers[] = DomainHelper::toAscii($nserv);
         }

@@ -44,7 +44,7 @@ class ComParser implements IParser
     {
         foreach ($response->groups as $group) {
             $foundDomain = $this->parseDomainName($group);
-            if ($foundDomain && DomainHelper::compareNames($foundDomain, $response->requestedDomain)) {
+            if ($foundDomain && DomainHelper::compareNames($foundDomain, $response->domain)) {
                 return $group;
             }
         }

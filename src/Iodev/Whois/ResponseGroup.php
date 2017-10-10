@@ -2,6 +2,8 @@
 
 namespace Iodev\Whois;
 
+use Iodev\Whois\Helpers\ResponseHelper;
+
 class ResponseGroup
 {
     public function __construct($data = null)
@@ -18,11 +20,6 @@ class ResponseGroup
      */
     public function getByKeyDict($lowerKeyDict)
     {
-        foreach ($this->data as $k => $v) {
-            if (isset($lowerKeyDict[strtolower($k)])) {
-                return $v;
-            }
-        }
-        return false;
+        return ResponseHelper::firstGroupMatch($this->data, array_keys($lowerKeyDict));
     }
 }
