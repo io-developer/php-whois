@@ -2,7 +2,7 @@
 
 namespace Iodev\Whois\Parsers;
 
-use Iodev\Whois\Helpers\ResponseHelper;
+use Iodev\Whois\Helpers\GroupHelper;
 use Iodev\Whois\Info;
 use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Response;
@@ -15,28 +15,24 @@ class RuParser implements IParser
      */
     public function parseResponse(Response $response)
     {
-        $groups = [];
-        $oldGroups = ResponseHelper::contentToGroups($response->content);
-        foreach ($oldGroups as $oldGroup) {
-            $groups[] = $oldGroup->data;
-        }
-
-        $group = ResponseHelper::findDomainGroup($groups, $response->domain);
+        $domainKeys = [ "domain", "domainname", "domain name" ];
+        $groups = GroupHelper::groupsFromResponseText($response->text);
+        $group = GroupHelper::findDomainGroup($groups, $response->domain, $domainKeys);
         if (!$group) {
             return null;
         }
         
         $info = new Info();
         $info->response = $response;
-        $info->domainName = ResponseHelper::parseDomainName($group);
+        $info->domainName = GroupHelper::getAsciiServer($group, $domainKeys);
         $info->domainNameUnicode = DomainHelper::toUnicode($info->domainName);
         $info->whoisServer = "";
-        $info->nameServers = ResponseHelper::parseNameServersAscii($group, [ "nserver" ]);
-        $info->creationDate = ResponseHelper::parseDate($group, [ "created" ]);
-        $info->expirationDate = ResponseHelper::parseDate($group, [ "paid-till" ]);
+        $info->nameServers = GroupHelper::getAsciiServers($group, [ "nserver" ]);
+        $info->creationDate = GroupHelper::getUnixtime($group, [ "created" ]);
+        $info->expirationDate = GroupHelper::getUnixtime($group, [ "paid-till" ]);
         $info->states = $this->parseStates($group);
-        $info->owner = ResponseHelper::firstGroupMatch($group, [ "org" ]);
-        $info->registrar = ResponseHelper::firstGroupMatch($group, [ "registrar" ]);
+        $info->owner = GroupHelper::matchFirst($group, [ "org" ]);
+        $info->registrar = GroupHelper::matchFirst($group, [ "registrar" ]);
 
         return $info;
     }
@@ -47,7 +43,7 @@ class RuParser implements IParser
      */
     private function parseStates($group)
     {
-        $stateStr = ResponseHelper::firstGroupMatch($group, [ "state" ]);
+        $stateStr = GroupHelper::matchFirst($group, [ "state" ]);
         $states = [];
         $rawstates = explode(",", $stateStr);
         foreach ($rawstates as $state) {

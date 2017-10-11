@@ -120,11 +120,11 @@ class Whois
     {
         $key = $whoisHost . ":" . $domain . ":" . (int)$strict;
         if (isset($this->cache[$key])) {
-            $content = $this->cache[$key];
+            $text = $this->cache[$key];
         } else {
-            $content = $this->cache[$key] = $this->loader->loadContent($whoisHost, $domain, $strict);
+            $text = $this->cache[$key] = $this->loader->loadText($whoisHost, $domain, $strict);
         }
-        return Response::create($domain, $content);
+        return new Response($domain, $text);
     }
 
     /**

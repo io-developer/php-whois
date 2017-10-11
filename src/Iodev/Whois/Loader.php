@@ -13,7 +13,7 @@ class Loader
      * @return string
      * @throws ConnectionException
      */
-    public function loadContent($whoisHost, $domain, $strict = false)
+    public function loadText($whoisHost, $domain, $strict = false)
     {
         $handle = fsockopen($whoisHost, 43);
         if (!$handle) {
@@ -21,12 +21,12 @@ class Loader
         }
         
         fputs($handle, $strict ? "={$domain}\n" : "{$domain}\n");
-        $content = "";
+        $responseText = "";
         while (!feof($handle)) {
-            $content .= fgets($handle, 128);
+            $responseText .= fgets($handle, 128);
         }
         fclose($handle);
         
-        return $content;
+        return $responseText;
     }
 }

@@ -2,26 +2,24 @@
 
 namespace Iodev\Whois\Helpers;
 
-use Iodev\Whois\ResponseGroup;
-
-class ResponseHelper
+class GroupHelper
 {
     /**
-     * @param string $content
-     * @return ResponseGroup[]
+     * @param string $responseText
+     * @return array
      */
-    public static function contentToGroups($content)
+    public static function groupsFromResponseText($responseText)
     {
         $groups = [];
-        $splits = preg_split('/([\s\t]*\r?\n){2,}/', $content);
+        $splits = preg_split('/([\s\t]*\r?\n){2,}/', $responseText);
         foreach ($splits as $split) {
-            $data = [];
+            $group = [];
             preg_match_all('/^\s*(( *[\w-]+)+):[ \t]+(.+)$/mui', $split, $m);
             foreach ($m[1] as $index => $key) {
-                $data = array_merge_recursive($data, [ $key => $m[3][$index] ]);
+                $group = array_merge_recursive($group, [ $key => $m[3][$index] ]);
             }
-            if (count($data) > 2) {
-                $groups[] = new ResponseGroup($data);
+            if (count($group) > 2) {
+                $groups[] = $group;
             }
         }
         return $groups;
@@ -33,7 +31,7 @@ class ResponseHelper
      * @param bool $ignoreCase
      * @return mixed|bool
      */
-    public static function firstGroupMatch($group, $keys, $ignoreCase = true)
+    public static function matchFirst($group, $keys, $ignoreCase = true)
     {
         $kDict = [];
         foreach ($keys as $k) {
@@ -52,13 +50,13 @@ class ResponseHelper
     /**
      * @param array $groups
      * @param string $domain
-     * @param string[] $domainParseKeys
+     * @param string[] $domainKeys
      * @return array
      */
-    public static function findDomainGroup($groups, $domain, $domainParseKeys = null)
+    public static function findDomainGroup($groups, $domain, $domainKeys)
     {
         foreach ($groups as $group) {
-            $foundDomain = self::parseDomainName($group, $domainParseKeys);
+            $foundDomain = self::getAsciiServer($group, $domainKeys);
             if ($foundDomain && DomainHelper::compareNames($foundDomain, $domain)) {
                 return $group;
             }
@@ -71,10 +69,9 @@ class ResponseHelper
      * @param string[] $keys
      * @return string
      */
-    public static function parseDomainName($group, $keys = null)
+    public static function getAsciiServer($group, $keys)
     {
-        $keys = !empty($keys) ? $keys : [ "domain", "domainname", "domain name" ];
-        return DomainHelper::toAscii(self::firstGroupMatch($group, $keys));
+        return DomainHelper::toAscii(self::matchFirst($group, $keys));
     }
 
     /**
@@ -82,11 +79,10 @@ class ResponseHelper
      * @param string[] $keys
      * @return string[]
      */
-    public static function parseNameServersAscii($group, $keys = null)
+    public static function getAsciiServers($group, $keys)
     {
-        $keys = !empty($keys) ? $keys : [ "nserver", "nameserver", "name server" ];
         $nservers = [];
-        $arr = self::firstGroupMatch($group, $keys);
+        $arr = self::matchFirst($group, $keys);
         $arr = isset($arr) ? $arr : [];
         $arr = is_array($arr) ? $arr : [ $arr ];
         foreach ($arr as $nserv) {
@@ -100,8 +96,8 @@ class ResponseHelper
      * @param string[] $keys
      * @return int
      */
-    public static function parseDate($group, $keys)
+    public static function getUnixtime($group, $keys)
     {
-        return DateHelper::parseDate(self::firstGroupMatch($group, $keys));
+        return DateHelper::parseDate(self::matchFirst($group, $keys));
     }
 }
