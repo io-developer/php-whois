@@ -67,9 +67,8 @@ echo "WHOIS response for '{$resp->domain}':\n{$resp->text}";
 use Iodev\Whois\Server;
 use Iodev\Whois\Parsers\ComParser;
 
-$edu = new Server();
+$edu = new Server(".edu");
 $edu->isCentralized = false;
-$edu->zone = ".edu";
 $edu->host = "whois.crsnic.net";
 $edu->parser = new ComParser();
 

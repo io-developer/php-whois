@@ -33,20 +33,4 @@ class Info
     
     /** @var string */
     public $registrar = "";
-
-
-    public function getHash()
-    {
-        return md5(serialize([
-            $this->domainName,
-            $this->domainNameUnicode,
-            $this->whoisServer,
-            $this->nameServers,
-            $this->creationDate,
-            $this->expirationDate,
-            $this->states,
-            $this->owner,
-            $this->registrar,
-        ]));
-    }
 }
