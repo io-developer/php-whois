@@ -1,15 +1,15 @@
 <?php
 
-namespace Iodev\Whois\InfoParsers;
+namespace Iodev\Whois\Parsers;
 
 use Iodev\Whois\Info;
 use Iodev\Whois\Response;
 
-interface IInfoParser
+interface IParser
 {
     /**
      * @param Response $response
      * @return Info
      */
-    function fromResponse(Response $response);
+    function parseResponse(Response $response);
 }

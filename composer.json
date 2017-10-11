@@ -1,9 +1,20 @@
 {
     "name": "io-developer/php-whois",
     "description": "Library implements requests to real WHOIS service (via port 43) and provides parsed responses",
+    "keywords": [
+        "whois",
+        "info",
+        "client",
+        "domain",
+        "host",
+        "site",
+        "registrar",
+        "expiration",
+        "idna"
+    ],
     "type": "library",
     "license": "MIT",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "homepage": "https://github.com/io-developer/php-whois",
     "authors": [
         {

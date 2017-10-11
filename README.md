@@ -13,7 +13,7 @@ composer require io-developer/php-whois
 #### Or edit composer.json
 ````
 "require": {
-    "io-developer/php-whois": "^1.1.0"
+    "io-developer/php-whois": "^1.2.0"
 }
 ````
 _Optional:_ add repository if needed
@@ -43,17 +43,13 @@ $whois = Whois::create();
 #### 2. Loading domain info
 
 ```php
-/**
- * Returns null if
- * domain info not loaded
- * or domain not found
- * or domain not supported by current whois servers
- */
 $info = $whois->loadInfo("google.com");
-
-echo $info->domainName . " expiring at: " . date("d.m.Y H:i:s", $info->expirationDate);
-
-var_dump($info);
+if ($info) {
+    echo $info->domainName . " expires at: " . date("d.m.Y H:i:s", $info->expirationDate);
+    var_dump($info);
+} else {
+    echo "Domain is available!";
+}
 ```
 
 #### 3. Getting original whois text response
@@ -62,23 +58,20 @@ var_dump($info);
 $info = $whois->loadInfo("google.com");
 $resp = $info->response;
 
-echo "WHOIS response for '{$resp->requestedDomain}':\n{$resp->content}";
+echo "WHOIS response for '{$resp->domain}':\n{$resp->text}";
 ```
 
 #### 4. Using custom whois server (for example is .edu)
 
 ```php
 use Iodev\Whois\Server;
-use Iodev\Whois\InfoParsers\ComInfoParser;
+use Iodev\Whois\Parsers\ComParser;
 
 $edu = new Server();
 $edu->isCentralized = false;
-$edu->topLevelDomain = ".edu";
+$edu->zone = ".edu";
 $edu->host = "whois.crsnic.net";
-$edu->infoParser = new ComInfoParser();
-
-// Or via static factory method
-$edu = Server::createDistributed(".edu", "whois.crsnic.net", new ComInfoParser());
+$edu->parser = new ComParser();
 
 // Attaching
 $whois->addServer($edu);

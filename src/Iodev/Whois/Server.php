@@ -2,51 +2,27 @@
 
 namespace Iodev\Whois;
 
-use Iodev\Whois\InfoParsers\IInfoParser;
+use Iodev\Whois\Parsers\IParser;
 
 class Server
 {
     /**
-     * @param string $topLevelDomain
-     * @param string $host
-     * @param IInfoParser $infoParser
-     * @return Server
+      * @param string $zone
      */
-    public static function createCentralized($topLevelDomain, $host, IInfoParser $infoParser)
+    public function __construct($zone)
     {
-        $s = new Server();
-        $s->isCentralized = true;
-        $s->topLevelDomain = $topLevelDomain;
-        $s->host = $host;
-        $s->infoParser = $infoParser;
-        return $s;
+        $this->zone = $zone;
     }
-    
-    /**
-     * @param string $topLevelDomain
-     * @param string $host
-     * @param IInfoParser $infoParser
-     * @return Server
-     */
-    public static function createDistributed($topLevelDomain, $host, IInfoParser $infoParser)
-    {
-        $s = new Server();
-        $s->isCentralized = false;
-        $s->topLevelDomain = $topLevelDomain;
-        $s->host = $host;
-        $s->infoParser = $infoParser;
-        return $s;
-    }
-    
+
+    /** @var string */
+    public $zone;
+
+    /** @var string */
+    public $host;
+
     /** @var bool */
     public $isCentralized;
     
-    /** @var string */
-    public $host;
-    
-    /** @var string */
-    public $topLevelDomain;
-    
-    /** @var IInfoParser */
-    public $infoParser;
+    /** @var IParser */
+    public $parser;
 }
