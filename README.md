@@ -1,5 +1,5 @@
-# PHP WHOIS client
-PHP library implements requests to real WHOIS service (via port 43) and provides parsed info.
+# PHP WHOIS
+PHP library provides parsed WHOIS domain information. Easy way to check domain availability or expiration date. Implements requests to real WHOIS service via port 43.
 
 ## Requirements
 PHP >= 5.4
