@@ -1,32 +1,31 @@
 <?php
 
-namespace Iodev\Whois;
+namespace Iodev\Whois\Loaders;
 
 use Iodev\Whois\Exceptions\ConnectionException;
+use Iodev\Whois\Response;
 
-class Loader
+class SocketLoader implements ILoader
 {
     /**
      * @param string $whoisHost
      * @param string $domain
      * @param bool $strict
-     * @return string
+     * @return Response
      * @throws ConnectionException
      */
-    public function loadText($whoisHost, $domain, $strict = false)
+    public function loadResponse($whoisHost, $domain, $strict = false)
     {
         $handle = fsockopen($whoisHost, 43);
         if (!$handle) {
             throw new ConnectionException("Could not open socket on port 43");
         }
-        
         fputs($handle, $strict ? "={$domain}\n" : "{$domain}\n");
-        $responseText = "";
+        $text = "";
         while (!feof($handle)) {
-            $responseText .= fgets($handle, 128);
+            $text .= fgets($handle, 128);
         }
         fclose($handle);
-        
-        return $responseText;
+        return new Response($domain, $text);
     }
 }

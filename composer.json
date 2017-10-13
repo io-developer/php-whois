@@ -38,11 +38,12 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Iodev\\": [ "src/Iodev/", "tests/Iodev/" ]
+            "Iodev\\": [ "tests/Iodev/" ],
+            "Tools\\": [ "tests/Tools/" ]
         }
     },
     "scripts": {
-        "tests": [
+        "test": [
             "phpunit --bootstrap vendor/autoload.php tests"
         ]
     }
