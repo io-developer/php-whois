@@ -40,5 +40,10 @@
         "psr-4": {
             "Iodev\\": [ "src/Iodev/", "tests/Iodev/" ]
         }
+    },
+    "scripts": {
+        "tests": [
+            "phpunit --bootstrap vendor/autoload.php tests"
+        ]
     }
 }
