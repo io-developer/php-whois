@@ -4,40 +4,36 @@ namespace Iodev\Whois;
 
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Helpers\DomainHelper;
+use Iodev\Whois\Loaders\ILoader;
+use Iodev\Whois\Loaders\SocketLoader;
 
 class Whois
 {
     /**
-     * @param null $servers
-     * @param Loader|null $loader
+     * @param Server[] $servers
+     * @param ILoader $loader
      * @return Whois
      */
-    public static function create($servers = null, Loader $loader = null)
+    public static function create($servers = null, ILoader $loader = null)
     {
+        $whois = new Whois($loader ? $loader : new SocketLoader());
         $servers = isset($servers) ? $servers : ServerFactory::createAll();
-        $loader = $loader ? $loader : new Loader();
-
-        $whois = new Whois($loader);
         foreach ($servers as $server) {
             $whois->addServer($server);
         }
-
         return $whois;
     }
 
-    public function __construct(Loader $loader)
+    public function __construct(ILoader $loader)
     {
         $this->loader = $loader;
     }
     
-    /** @var Loader */
+    /** @var ILoader */
     private $loader;
     
     /** @var Server[] */
     private $servers = [];
-
-    /** @var string[] */
-    private $cache = [];
     
     /**
      * @param Server $server
@@ -95,44 +91,16 @@ class Whois
      */
     public function loadInfoFrom(Server $server, $domain)
     {
-        $parser = $server->parser;
-        $resp = $this->loadResponseFrom($server->host, $domain);
-        $info = $parser->parseResponse($resp);
+        $l = $this->loader;
+        $p = $server->parser;
+        $info = $p->parseResponse($l->loadResponse($server->host, $domain));
         if (!$info) {
-            $resp = $this->loadResponseFrom($server->host, $domain, true);
-            $info = $parser->parseResponse($resp);
+            $info = $p->parseResponse($l->loadResponse($server->host, $domain, true));
         }
         if ($info && $info->whoisServer && !$server->isCentralized) {
-            $resp = $this->loadResponseFrom($info->whoisServer, $domain);
-            $tmpInfo = $parser->parseResponse($resp);
+            $tmpInfo = $p->parseResponse($l->loadResponse($info->whoisServer, $domain));
             $info = $tmpInfo ? $tmpInfo : $info;
         }
         return $info;
-    }
-
-    /**
-     * @param string $whoisHost
-     * @param string $domain
-     * @param bool $strict
-     * @return Response
-     */
-    public function loadResponseFrom($whoisHost, $domain, $strict = false)
-    {
-        $key = $whoisHost . ":" . $domain . ":" . (int)$strict;
-        if (isset($this->cache[$key])) {
-            $text = $this->cache[$key];
-        } else {
-            $text = $this->cache[$key] = $this->loader->loadText($whoisHost, $domain, $strict);
-        }
-        return new Response($domain, $text);
-    }
-
-    /**
-     * @return $this
-     */
-    public function clearCache()
-    {
-        $this->cache = [];
-        return $this;
     }
 }

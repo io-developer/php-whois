@@ -18,7 +18,7 @@ class ServerFactory
     private static function getConfigs()
     {
         if (!isset(self::$configs)) {
-            self::$configs = require __DIR__ . '/default_servers.php';
+            self::$configs = require __DIR__ . '/_servers.php';
         }
         return self::$configs;
     }
