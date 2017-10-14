@@ -7,7 +7,7 @@ use Iodev\Whois\Helpers\GroupHelper;
 use Iodev\Whois\Info;
 use Iodev\Whois\Response;
 
-class ComParser implements IParser
+class CommonParser implements IParser
 {
     /**
      * @param Response $response
@@ -16,8 +16,8 @@ class ComParser implements IParser
     public function parseResponse(Response $response)
     {
         $domainKeys = [ "domain", "domainname", "domain name" ];
-        $groups = GroupHelper::groupsFromResponseText($response->text);
-        $group = GroupHelper::findDomainGroup($groups, $response->domain, $domainKeys);
+        $groups = GroupHelper::groupsFromResponseText($response->getText());
+        $group = GroupHelper::findDomainGroup($groups, $response->getDomain(), $domainKeys);
         if (!$group) {
             return null;
         }

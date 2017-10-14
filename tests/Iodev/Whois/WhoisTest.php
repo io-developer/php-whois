@@ -3,10 +3,20 @@
 namespace Iodev\Whois;
 
 use Iodev\Whois\Exceptions\ConnectionException;
+use Iodev\Whois\Parsers\CommonParser;
 use Tools\FakeSocketLoader;
 
 class WhoisTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @param $zone
+     * @return Server
+     */
+    private static function createServer($zone)
+    {
+        return new Server($zone, false, "some.host.net", new CommonParser());
+    }
+
     /** @var Whois */
     private $whois;
 
@@ -30,7 +40,7 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
 
     public function testAddServerReturnsSelf()
     {
-        $res = $this->whois->addServer(new Server(".abc"));
+        $res = $this->whois->addServer(self::createServer(".abc"));
         self::assertSame($this->whois, $res, "Result must be self reference");
     }
 
@@ -43,7 +53,7 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchServersOne()
     {
-        $s = new Server(".com");
+        $s = self::createServer(".com");
         $this->whois->addServer($s);
         $servers = $this->whois->matchServers("domain.com");
         self::assertTrue(is_array($servers), "Result must be Array");
@@ -53,16 +63,16 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchServersSome()
     {
-        $s = new Server(".com");
+        $s = self::createServer(".com");
         $this->whois
-            ->addServer(new Server(".net"))
-            ->addServer(new Server(".com"))
-            ->addServer(new Server(".net"))
-            ->addServer(new Server(".com"))
-            ->addServer(new Server(".su"))
+            ->addServer(self::createServer(".net"))
+            ->addServer(self::createServer(".com"))
+            ->addServer(self::createServer(".net"))
+            ->addServer(self::createServer(".com"))
+            ->addServer(self::createServer(".su"))
             ->addServer($s)
-            ->addServer(new Server(".com"))
-            ->addServer(new Server(".gov"));
+            ->addServer(self::createServer(".com"))
+            ->addServer(self::createServer(".gov"));
 
         $servers = $this->whois->matchServers("domain.com");
         self::assertTrue(is_array($servers), "Result must be Array");
@@ -73,13 +83,13 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
     public function testMatchServersNoneInSome()
     {
         $this->whois
-            ->addServer(new Server(".net"))
-            ->addServer(new Server(".com"))
-            ->addServer(new Server(".net"))
-            ->addServer(new Server(".com"))
-            ->addServer(new Server(".su"))
-            ->addServer(new Server(".com"))
-            ->addServer(new Server(".gov"));
+            ->addServer(self::createServer(".net"))
+            ->addServer(self::createServer(".com"))
+            ->addServer(self::createServer(".net"))
+            ->addServer(self::createServer(".com"))
+            ->addServer(self::createServer(".su"))
+            ->addServer(self::createServer(".com"))
+            ->addServer(self::createServer(".gov"));
 
         $servers = $this->whois->matchServers("domain.xyz");
         self::assertTrue(is_array($servers), "Result must be Array");

@@ -16,8 +16,8 @@ class RuParser implements IParser
     public function parseResponse(Response $response)
     {
         $domainKeys = [ "domain", "domainname", "domain name" ];
-        $groups = GroupHelper::groupsFromResponseText($response->text);
-        $group = GroupHelper::findDomainGroup($groups, $response->domain, $domainKeys);
+        $groups = GroupHelper::groupsFromResponseText($response->getText());
+        $group = GroupHelper::findDomainGroup($groups, $response->getDomain(), $domainKeys);
         if (!$group) {
             return null;
         }

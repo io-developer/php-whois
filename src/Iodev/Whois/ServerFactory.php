@@ -57,18 +57,12 @@ class ServerFactory
      */
     public static function createFromConfig($conf)
     {
-        $server = new Server($conf['zone']);
-        $server->host = $conf['host'];
-        $server->isCentralized = $conf['centralized'];
-
-        $parserClass = $conf['parser'];
+        $parserClass = isset($conf['parser']) ? $conf['parser'] : '\Iodev\Whois\Parsers\CommonParser';
         if (isset(self::$parserPool[$parserClass])) {
-            $server->parser = self::$parserPool[$parserClass];
+            $parser = self::$parserPool[$parserClass];
         } else {
-            $server->parser = new $parserClass();
-            self::$parserPool[$parserClass] = $server->parser;
+            $parser = self::$parserPool[$parserClass] = new $parserClass();
         }
-
-        return $server;
+        return new Server($conf['zone'], !empty($conf['centralized']), $conf['host'], $parser);
     }
 }

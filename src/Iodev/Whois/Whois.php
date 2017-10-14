@@ -54,9 +54,7 @@ class Whois
         $domain = DomainHelper::toAscii($domain);
         $servers = [];
         foreach ($this->servers as $server) {
-            $tld = $server->zone;
-            $pos = mb_strpos($domain, $tld);
-            if ($pos !== false && $pos == (mb_strlen($domain) - mb_strlen($tld))) {
+            if ($server->isDomainZone($domain)) {
                 $servers[] = $server;
             }
         }
@@ -92,12 +90,12 @@ class Whois
     public function loadInfoFrom(Server $server, $domain)
     {
         $l = $this->loader;
-        $p = $server->parser;
-        $info = $p->parseResponse($l->loadResponse($server->host, $domain));
+        $p = $server->getParser();
+        $info = $p->parseResponse($l->loadResponse($server->getHost(), $domain));
         if (!$info) {
-            $info = $p->parseResponse($l->loadResponse($server->host, $domain, true));
+            $info = $p->parseResponse($l->loadResponse($server->getHost(), $domain, true));
         }
-        if ($info && $info->whoisServer && !$server->isCentralized) {
+        if ($info && $info->whoisServer && !$server->isCentralized()) {
             $tmpInfo = $p->parseResponse($l->loadResponse($info->whoisServer, $domain));
             $info = $tmpInfo ? $tmpInfo : $info;
         }

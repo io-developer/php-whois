@@ -15,8 +15,24 @@ class Response
     }
 
     /** @var string */
-    public $domain;
+    private $domain;
     
     /** @var string */
-    public $text;
+    private $text;
+
+    /**
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
+    /**
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
 }
