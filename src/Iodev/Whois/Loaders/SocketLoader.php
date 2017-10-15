@@ -26,6 +26,6 @@ class SocketLoader implements ILoader
             $text .= fgets($handle, 128);
         }
         fclose($handle);
-        return new Response($domain, $text);
+        return new Response($domain, $text, $whoisHost);
     }
 }

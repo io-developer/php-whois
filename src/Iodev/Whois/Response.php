@@ -4,14 +4,11 @@ namespace Iodev\Whois;
 
 class Response
 {
-    /**
-     * @param string $domain
-     * @param string $text
-     */
-    public function __construct($domain = "", $text = "")
+    public function __construct($domain = "", $text = "", $whoisHost = "")
     {
-        $this->domain = $domain;
-        $this->text = $text;
+        $this->domain = strval($domain);
+        $this->text = strval($text);
+        $this->whoisHost = strval($whoisHost);
     }
 
     /** @var string */
@@ -19,6 +16,9 @@ class Response
     
     /** @var string */
     private $text;
+
+    /** @var string */
+    private $whoisHost;
 
     /**
      * @return string
@@ -34,5 +34,13 @@ class Response
     public function getText()
     {
         return $this->text;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWhoisHost()
+    {
+        return $this->whoisHost;
     }
 }
