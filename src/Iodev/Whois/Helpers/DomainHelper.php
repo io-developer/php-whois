@@ -22,6 +22,9 @@ class DomainHelper
      */
     public static function toAscii($domain)
     {
+        if (empty($domain)) {
+            return "";
+        }
         $cor = self::correct($domain);
         if (function_exists("idn_to_ascii")) {
             return idn_to_ascii($cor);
