@@ -35,23 +35,31 @@ class CommonParser implements IParser
         $info->nameServers = GroupHelper::getAsciiServers($group, [
             "nameserver",
             "name server",
+            "nserver",
         ]);
         $info->creationDate = GroupHelper::getUnixtime($group, [
             "creationdate",
             "creation date",
+            "created",
         ]);
         $info->expirationDate = GroupHelper::getUnixtime($group, [
             "expirationdate",
             "expiration date",
             "registrar registration expiration date",
+            "paid-till",
         ]);
-        $info->states = $this->parseStates($group);
         $info->owner = GroupHelper::matchFirst($group, [
             "organization",
             "tech organization",
             "admin organization",
+            "org",
         ]);
         $info->registrar = GroupHelper::matchFirst($group, [ "registrar" ]);
+
+        $info->states = $this->parseStates($group);
+        if (empty($info->states)) {
+            $info->states = $this->parseStatesJoined($group);
+        }
         
         return $info;
     }
@@ -71,8 +79,23 @@ class CommonParser implements IParser
         $rawstates = is_array($rawstates) ? $rawstates : [ "".$rawstates ];
         foreach ($rawstates as $state) {
             if (preg_match('/^\s*([\w-]+)/ui', $state, $m)) {
-                $states[] = mb_strtoupper($m[1]);
+                $states[] = mb_strtolower($m[1]);
             }
+        }
+        return $states;
+    }
+
+    /**
+     * @param array $group
+     * @return string[]
+     */
+    private function parseStatesJoined($group)
+    {
+        $stateStr = GroupHelper::matchFirst($group, [ "state" ]);
+        $states = [];
+        $rawstates = explode(",", $stateStr);
+        foreach ($rawstates as $state) {
+            $states[] = mb_strtolower(trim($state));
         }
         return $states;
     }

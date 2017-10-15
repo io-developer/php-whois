@@ -47,7 +47,7 @@ class RuParser implements IParser
         $states = [];
         $rawstates = explode(",", $stateStr);
         foreach ($rawstates as $state) {
-            $states[] = mb_strtoupper(trim($state));
+            $states[] = mb_strtolower(trim($state));
         }
         return $states;
     }
