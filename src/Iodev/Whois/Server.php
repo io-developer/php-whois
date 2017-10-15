@@ -7,25 +7,22 @@ use Iodev\Whois\Parsers\IParser;
 
 class Server
 {
-    /**
-      * @param string $zone
-     */
     public function __construct($zone, $centralized, $host, IParser $parser)
     {
-        $this->zone = $zone;
-        $this->isCentralized = $centralized;
-        $this->host = $host;
+        $this->zone = strval($zone);
+        $this->centralized = (bool)$centralized;
+        $this->host = strval($host);
         $this->parser = $parser;
     }
 
     /** @var string */
     private $zone;
 
+    /** @var bool */
+    private $centralized;
+
     /** @var string */
     private $host;
-
-    /** @var bool */
-    private $isCentralized;
     
     /** @var IParser */
     private $parser;
@@ -35,7 +32,7 @@ class Server
      */
     public function isCentralized()
     {
-        return (bool)$this->isCentralized;
+        return (bool)$this->centralized;
     }
 
     /**
