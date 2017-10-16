@@ -2,16 +2,15 @@
 
 namespace Iodev\Whois\Parsers;
 
-use Iodev\Whois\Helpers\DomainHelper;
-use Iodev\Whois\Helpers\GroupHelper;
-use Iodev\Whois\Info;
+use Iodev\Whois\DomainInfo;
 use Iodev\Whois\Response;
+use Iodev\Whois\Helpers\GroupHelper;
 
 class CommonParser implements IParser
 {
     /**
      * @param Response $response
-     * @return Info
+     * @return DomainInfo
      */
     public function parseResponse(Response $response)
     {
@@ -21,47 +20,40 @@ class CommonParser implements IParser
         if (!$group) {
             return null;
         }
-        
-        $info = new Info();
-        $info->response = $response;
-        $info->domainName = GroupHelper::getAsciiServer($group, $domainKeys);
-        $info->domainNameUnicode = DomainHelper::toUnicode($info->domainName);
-        $info->whoisServer = GroupHelper::getAsciiServer($group, [
-            "whois",
-            "whoisserver",
-            "whois server",
-            "registrar whois server",
+        return new DomainInfo([
+            "response" => $response,
+            "domainName" => GroupHelper::getAsciiServer($group, $domainKeys),
+            "whoisServer" => GroupHelper::getAsciiServer($group, [
+                "whois",
+                "whoisserver",
+                "whois server",
+                "registrar whois server",
+            ]),
+            "nameServers" => GroupHelper::getAsciiServers($group, [
+                "nameserver",
+                "name server",
+                "nserver",
+            ]),
+            "creationDate" => GroupHelper::getUnixtime($group, [
+                "creationdate",
+                "creation date",
+                "created",
+            ]),
+            "expirationDate" => GroupHelper::getUnixtime($group, [
+                "expirationdate",
+                "expiration date",
+                "registrar registration expiration date",
+                "paid-till",
+            ]),
+            "owner" => GroupHelper::matchFirst($group, [
+                "organization",
+                "tech organization",
+                "admin organization",
+                "org",
+            ]),
+            "registrar" => GroupHelper::matchFirst($group, [ "registrar" ]),
+            "states" => $this->parseStates($group),
         ]);
-        $info->nameServers = GroupHelper::getAsciiServers($group, [
-            "nameserver",
-            "name server",
-            "nserver",
-        ]);
-        $info->creationDate = GroupHelper::getUnixtime($group, [
-            "creationdate",
-            "creation date",
-            "created",
-        ]);
-        $info->expirationDate = GroupHelper::getUnixtime($group, [
-            "expirationdate",
-            "expiration date",
-            "registrar registration expiration date",
-            "paid-till",
-        ]);
-        $info->owner = GroupHelper::matchFirst($group, [
-            "organization",
-            "tech organization",
-            "admin organization",
-            "org",
-        ]);
-        $info->registrar = GroupHelper::matchFirst($group, [ "registrar" ]);
-
-        $info->states = $this->parseStates($group);
-        if (empty($info->states)) {
-            $info->states = $this->parseStatesJoined($group);
-        }
-        
-        return $info;
     }
 
     /**
@@ -69,6 +61,19 @@ class CommonParser implements IParser
      * @return string[]
      */
     private function parseStates($group)
+    {
+        $states = $this->parseStatesIndividual($group);
+        if (!empty($states)) {
+            return $states;
+        }
+        return $this->parseStatesJoined($group);
+    }
+
+    /**
+     * @param array $group
+     * @return string[]
+     */
+    private function parseStatesIndividual($group)
     {
         $states = [];
         $rawstates = GroupHelper::matchFirst($group, [

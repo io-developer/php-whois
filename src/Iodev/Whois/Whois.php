@@ -63,7 +63,7 @@ class Whois
     
     /**
      * @param string $domain
-     * @return Info
+     * @return DomainInfo
      * @throws ServerMismatchException
      */
     public function loadInfo($domain)
@@ -85,7 +85,7 @@ class Whois
     /**
      * @param Server $server
      * @param string $domain
-     * @return Info
+     * @return DomainInfo
      */
     public function loadInfoFrom(Server $server, $domain)
     {
@@ -95,8 +95,8 @@ class Whois
         if (!$info) {
             $info = $p->parseResponse($l->loadResponse($server->getHost(), $domain, true));
         }
-        if ($info && $info->whoisServer && !$server->isCentralized()) {
-            $tmpInfo = $p->parseResponse($l->loadResponse($info->whoisServer, $domain));
+        if ($info && $info->getWhoisServer() && !$server->isCentralized()) {
+            $tmpInfo = $p->parseResponse($l->loadResponse($info->getWhoisServer(), $domain));
             $info = $tmpInfo ? $tmpInfo : $info;
         }
         return $info;

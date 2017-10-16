@@ -3,7 +3,7 @@
 namespace Iodev\Whois\Parsers;
 
 use Iodev\Whois\Helpers\GroupHelper;
-use Iodev\Whois\Info;
+use Iodev\Whois\DomainInfo;
 use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Response;
 
@@ -11,7 +11,7 @@ class RuParser implements IParser
 {
     /**
      * @param Response $response
-     * @return Info
+     * @return DomainInfo
      */
     public function parseResponse(Response $response)
     {
@@ -21,20 +21,17 @@ class RuParser implements IParser
         if (!$group) {
             return null;
         }
-        
-        $info = new Info();
-        $info->response = $response;
-        $info->domainName = GroupHelper::getAsciiServer($group, $domainKeys);
-        $info->domainNameUnicode = DomainHelper::toUnicode($info->domainName);
-        $info->whoisServer = "";
-        $info->nameServers = GroupHelper::getAsciiServers($group, [ "nserver" ]);
-        $info->creationDate = GroupHelper::getUnixtime($group, [ "created" ]);
-        $info->expirationDate = GroupHelper::getUnixtime($group, [ "paid-till" ]);
-        $info->states = $this->parseStates($group);
-        $info->owner = GroupHelper::matchFirst($group, [ "org" ]);
-        $info->registrar = GroupHelper::matchFirst($group, [ "registrar" ]);
-
-        return $info;
+        return new DomainInfo([
+            "response" => $response,
+            "domainName" => GroupHelper::getAsciiServer($group, $domainKeys),
+            "whoisServer" => "",
+            "nameServers" => GroupHelper::getAsciiServers($group, [ "nserver" ]),
+            "creationDate" => GroupHelper::getUnixtime($group, [ "created" ]),
+            "expirationDate" => GroupHelper::getUnixtime($group, [ "paid-till" ]),
+            "states" => $this->parseStates($group),
+            "owner" => GroupHelper::matchFirst($group, [ "org" ]),
+            "registrar" => GroupHelper::matchFirst($group, [ "registrar" ]),
+        ]);
     }
 
     /**
