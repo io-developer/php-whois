@@ -1,17 +1,15 @@
 <?php
 
-namespace Iodev\Whois\ServerProviders;
+namespace Iodev\Whois;
 
-use Iodev\Whois\Server;
-
-class CommonServerProvider implements IServerProvider
+class ServerProvider
 {
     /**
      *  @param Server[] $servers
      */
     public function __construct($servers)
     {
-        $this->addServers($servers);
+        $this->add($servers);
     }
 
     /** @var Server[] */
@@ -21,20 +19,20 @@ class CommonServerProvider implements IServerProvider
      * @param Server $server
      * @return $this
      */
-    public function addServer(Server $server)
+    public function addOne(Server $server)
     {
-        return $this->addServers([ $server ]);
+        return $this->add([ $server ]);
     }
 
     /**
      * @param Server[] $servers
      * @return $this
      */
-    public function addServers($servers)
+    public function add($servers)
     {
         $this->servers = array_merge($this->servers, $servers);
         usort($this->servers, function(Server $a, Server $b) {
-            return strcmp($b->getZone(), $a->getZone());
+            return strlen($b->getZone()) - strlen($a->getZone());
         });
         return $this;
     }
@@ -43,7 +41,7 @@ class CommonServerProvider implements IServerProvider
      * @param string $domain
      * @return Server[]
      */
-    public function getServersForDomain($domain)
+    public function match($domain)
     {
         $servers = [];
         $maxlen = 0;
@@ -52,7 +50,7 @@ class CommonServerProvider implements IServerProvider
             if (strlen($zone) < $maxlen) {
                 break;
             }
-            if (DomainHelper::belongsToZone($domain, $zone)) {
+            if ($server->isDomainZone($domain)) {
                 $servers[] = $server;
                 $maxlen = max($maxlen, strlen($zone));
             }
