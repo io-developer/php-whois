@@ -28,4 +28,16 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
     {
         self::assertInstanceOf(Whois::class, self::getWhois());
     }
+
+    public function testGetServerProvider()
+    {
+        $w = self::getWhois();
+        self:self::assertSame($this->provider, $w->getServerProvider());
+    }
+
+    public function testGetLoader()
+    {
+        $w = self::getWhois();
+        self:self::assertSame($this->loader, $w->getLoader());
+    }
 }
