@@ -10,57 +10,46 @@ use Iodev\Whois\Loaders\SocketLoader;
 class Whois
 {
     /**
-     * @param Server[] $servers
+     * @param ServerProvider $provider
      * @param ILoader $loader
      * @return Whois
      */
-    public static function create($servers = null, ILoader $loader = null)
+    public static function create(ServerProvider $provider = null, ILoader $loader = null)
     {
-        $whois = new Whois($loader ? $loader : new SocketLoader());
-        $servers = isset($servers) ? $servers : ServerFactory::createAll();
-        foreach ($servers as $server) {
-            $whois->addServer($server);
-        }
-        return $whois;
+        return new Whois(
+            $provider ?: new ServerProvider(Server::fromDataList(Config::getServersData())),
+            $loader ?: new SocketLoader()
+        );
     }
 
-    public function __construct(ILoader $loader)
+    public function __construct(ServerProvider $provider, ILoader $loader)
     {
+        $this->serverProvider = $provider;
         $this->loader = $loader;
     }
-    
+
+    /** @var ServerProvider */
+    private $serverProvider;
+
     /** @var ILoader */
     private $loader;
-    
-    /** @var Server[] */
-    private $servers = [];
-    
+
     /**
-     * @param Server $server
-     * @return $this
+     * @return ServerProvider
      */
-    public function addServer(Server $server)
+    public function getServerProvider()
     {
-        $this->servers[] = $server;
-        return $this;
+        return $this->serverProvider;
     }
-    
+
     /**
-     * @param string $domain
-     * @return Server[]
+     * @return ILoader
      */
-    public function matchServers($domain)
+    public function getLoader()
     {
-        $domain = DomainHelper::toAscii($domain);
-        $servers = [];
-        foreach ($this->servers as $server) {
-            if ($server->isDomainZone($domain)) {
-                $servers[] = $server;
-            }
-        }
-        return $servers;
+        return $this->loader;
     }
-    
+
     /**
      * @param string $domain
      * @return DomainInfo
@@ -69,7 +58,7 @@ class Whois
     public function loadInfo($domain)
     {
         $domain = DomainHelper::toAscii($domain);
-        $servers = $this->matchServers($domain);
+        $servers = $this->serverProvider->match($domain);
         if (empty($servers)) {
             throw new ServerMismatchException("No servers matched for domain '$domain'");
         }

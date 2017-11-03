@@ -9,23 +9,23 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
     /** @var Whois */
     private $whois;
 
+    /** @var ServerProvider */
+    private $provider;
+
     /** @var FakeSocketLoader */
     private $loader;
 
-
-    public function setUp()
+    private function getWhois()
     {
+        $this->provider = new ServerProvider([]);
         $this->loader = new FakeSocketLoader();
-        $this->whois = new Whois($this->loader);
-    }
-
-    public function tearDown()
-    {
+        $this->whois = new Whois($this->provider, $this->loader);
+        return $this->whois;
     }
 
 
     public function testConstruct()
     {
-        self::assertInstanceOf(Whois::class, new Whois(new FakeSocketLoader()));
+        self::assertInstanceOf(Whois::class, self::getWhois());
     }
 }
