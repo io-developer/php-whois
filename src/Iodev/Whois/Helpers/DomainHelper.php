@@ -38,6 +38,9 @@ class DomainHelper
      */
     public static function toUnicode($domain)
     {
+        if (empty($domain)) {
+            return "";
+        }
         $cor = self::correct($domain);
         if (function_exists("idn_to_utf8")) {
             return idn_to_utf8($cor);
