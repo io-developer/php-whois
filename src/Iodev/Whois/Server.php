@@ -125,13 +125,20 @@ class Server
      */
     public function getParser()
     {
-        if (!$this->parser) {
-            $class = $this->parserClass;
-            $this->parser = new $class();
-            if (!($this->parser instanceof IParser)) {
-                $this->parser = null;
-                throw new RuntimeException("Parser class must implements IParser");
-            }
+        return $this->parser ?: $this->resolveParser();
+    }
+
+    /**
+     * @return IParser
+     * @throws RuntimeException  if parser class not valid
+     */
+    private function resolveParser()
+    {
+        $class = $this->parserClass;
+        $this->parser = new $class();
+        if (!($this->parser instanceof IParser)) {
+            $this->parser = null;
+            throw new RuntimeException("Parser class must implements IParser");
         }
         return $this->parser;
     }
