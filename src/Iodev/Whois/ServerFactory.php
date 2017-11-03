@@ -63,6 +63,6 @@ class ServerFactory
         } else {
             $parser = self::$parserPool[$parserClass] = new $parserClass();
         }
-        return new Server($conf['zone'], !empty($conf['centralized']), $conf['host'], $parser);
+        return new Server($conf['zone'], $conf['host'], !empty($conf['centralized']), $parser);
     }
 }

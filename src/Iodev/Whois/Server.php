@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois;
 
+use InvalidArgumentException;
 use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Parsers\CommonParser;
 use Iodev\Whois\Parsers\IParser;
@@ -17,8 +18,8 @@ class Server
     {
         return new Server(
             $data['zone'],
-            !empty($data['centralized']),
             $data['host'],
+            !empty($data['centralized']),
             isset($data['parser']) ? $data['parser'] : $defaultParser
         );
     }
@@ -41,20 +42,31 @@ class Server
 
     /**
      * @param string $zone
-     * @param bool $centralized
      * @param string $host
+     * @param bool $centralized
      * @param IParser|string $parserOrClass
+     * @throws InvalidArgumentException
      */
-    public function __construct($zone, $centralized, $host, $parserOrClass)
+    public function __construct($zone, $host, $centralized, $parserOrClass)
     {
         $this->zone = strval($zone);
-        $this->centralized = (bool)$centralized;
         $this->host = strval($host);
+        $this->centralized = (bool)$centralized;
 
         if ($parserOrClass instanceof IParser) {
             $this->parser = $parserOrClass;
         } else {
-            $this->parserClass = (string)$parserOrClass;
+            $this->parserClass = strval($parserOrClass);
+        }
+
+        if (empty($this->zone)) {
+            throw new InvalidArgumentException("Zone must be specified");
+        }
+        if (empty($this->host)) {
+            throw new InvalidArgumentException("Host must be specified");
+        }
+        if (empty($this->parser) && empty($this->parserClass)) {
+            throw new InvalidArgumentException("Parser or parser class not specified ($parserOrClass)");
         }
     }
 
@@ -108,12 +120,17 @@ class Server
 
     /**
      * @return IParser
+     * @throws InvalidArgumentException  if parser class not valid
      */
     public function getParser()
     {
         if (!$this->parser) {
             $class = $this->parserClass;
             $this->parser = new $class();
+            if (!($this->parser instanceof IParser)) {
+                $this->parser = null;
+                throw new InvalidArgumentException("Parser class must implements IParser");
+            }
         }
         return $this->parser;
     }

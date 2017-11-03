@@ -12,7 +12,7 @@ class ServerProviderTest extends \PHPUnit_Framework_TestCase
      */
     private static function createServer($zone)
     {
-        return new Server($zone, false, "some.host.net", new CommonParser());
+        return new Server($zone, "some.host.net", false, new CommonParser());
     }
 
     /** @var ServerProvider */
