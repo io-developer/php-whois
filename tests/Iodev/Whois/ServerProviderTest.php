@@ -77,6 +77,26 @@ class ServerProviderTest extends \PHPUnit_Framework_TestCase
         self::assertContains($s, $servers, "Server not matched");
     }
 
+    public function testMatchSomeViaConstruct()
+    {
+        $s = self::createServer(".com");
+        $provider = new ServerProvider([
+            self::createServer(".net"),
+            self::createServer(".com"),
+            self::createServer(".net"),
+            self::createServer(".com"),
+            self::createServer(".su"),
+            $s,
+            self::createServer(".com"),
+            self::createServer(".gov"),
+        ]);
+
+        $servers = $provider->match("domain.com");
+        self::assertTrue(is_array($servers), "Result must be Array");
+        self::assertEquals(4, count($servers), "Count of matched servers not equals");
+        self::assertContains($s, $servers, "Server not matched");
+    }
+
     public function testMatchSome()
     {
         $s = self::createServer(".com");

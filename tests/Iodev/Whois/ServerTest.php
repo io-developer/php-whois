@@ -6,12 +6,12 @@ use Iodev\Whois\Parsers\CommonParser;
 
 class ServerTest extends \PHPUnit_Framework_TestCase
 {
-    private function getParser()
+    private static function getParser()
     {
         return new CommonParser();
     }
 
-    private function getParserClass()
+    private static function getParserClass()
     {
         return '\Iodev\Whois\Parsers\CommonParser';
     }

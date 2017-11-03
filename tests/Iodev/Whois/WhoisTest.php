@@ -26,18 +26,18 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
 
     public function testConstruct()
     {
-        self::assertInstanceOf(Whois::class, self::getWhois());
+        self::assertInstanceOf(Whois::class, $this->getWhois());
     }
 
     public function testGetServerProvider()
     {
-        $w = self::getWhois();
-        self:self::assertSame($this->provider, $w->getServerProvider());
+        $w = $this->getWhois();
+        self::assertSame($this->provider, $w->getServerProvider());
     }
 
     public function testGetLoader()
     {
-        $w = self::getWhois();
-        self:self::assertSame($this->loader, $w->getLoader());
+        $w = $this->getWhois();
+        self::assertSame($this->loader, $w->getLoader());
     }
 }
