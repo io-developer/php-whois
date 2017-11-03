@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Parsers\CommonParser;
 use Iodev\Whois\Parsers\IParser;
+use RuntimeException;
 
 class Server
 {
@@ -17,8 +18,8 @@ class Server
     public static function fromData($data, $defaultParser = '\Iodev\Whois\Parsers\CommonParser')
     {
         return new Server(
-            $data['zone'],
-            $data['host'],
+            isset($data['zone']) ? $data['zone'] : '',
+            isset($data['host']) ? $data['host'] : '',
             !empty($data['centralized']),
             isset($data['parser']) ? $data['parser'] : $defaultParser
         );
@@ -55,7 +56,7 @@ class Server
 
         if ($parserOrClass instanceof IParser) {
             $this->parser = $parserOrClass;
-        } else {
+        } elseif (is_string($parserOrClass)) {
             $this->parserClass = strval($parserOrClass);
         }
 
@@ -120,7 +121,7 @@ class Server
 
     /**
      * @return IParser
-     * @throws InvalidArgumentException  if parser class not valid
+     * @throws RuntimeException  if parser class not valid
      */
     public function getParser()
     {
@@ -129,7 +130,7 @@ class Server
             $this->parser = new $class();
             if (!($this->parser instanceof IParser)) {
                 $this->parser = null;
-                throw new InvalidArgumentException("Parser class must implements IParser");
+                throw new RuntimeException("Parser class must implements IParser");
             }
         }
         return $this->parser;
