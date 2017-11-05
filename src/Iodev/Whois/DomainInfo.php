@@ -8,47 +8,24 @@ use Iodev\Whois\Helpers\DomainHelper;
 class DomainInfo
 {
     /**
+     * @param Response $response
      * @param array $data
      * @throws InvalidArgumentException
      */
-    public function __construct($data)
+    public function __construct(Response $response, $data = [])
     {
-        foreach ($data as $field => $val) {
-            if (property_exists($this, $field)) {
-                $this->{$field} = $val;
-            } else {
-                throw new InvalidArgumentException("Unsupported data field '$field'");
-            }
+        if (!is_array($data)) {
+            throw new InvalidArgumentException("Data must be an array");
         }
+        $this->response = $response;
+        $this->data = $data;
     }
 
     /** @var Response */
     private $response;
 
-    /** @var string */
-    private $domainName = "";
-
-    /** @var string */
-    private $whoisServer = "";
-
-    /** @var string[] */
-    private $nameServers = [];
-
-    /** @var int */
-    private $creationDate = 0;
-
-    /** @var int */
-    private $expirationDate = 0;
-
-    /** @var string[] */
-    private $states = [];
-
-    /** @var string */
-    private $owner = "";
-
-    /** @var string */
-    private $registrar = "";
-
+    /** @var array */
+    private $data;
 
     /**
      * @return Response
@@ -63,7 +40,7 @@ class DomainInfo
      */
     public function getDomainName()
     {
-        return $this->domainName;
+        return $this->getval("domainName", "");
     }
 
     /**
@@ -71,7 +48,7 @@ class DomainInfo
      */
     public function getDomainNameUnicode()
     {
-        return DomainHelper::toUnicode($this->domainName);
+        return DomainHelper::toUnicode($this->getDomainName());
     }
 
     /**
@@ -79,7 +56,7 @@ class DomainInfo
      */
     public function getWhoisServer()
     {
-        return $this->whoisServer;
+        return $this->getval("whoisServer", "");
     }
 
     /**
@@ -87,7 +64,7 @@ class DomainInfo
      */
     public function getNameServers()
     {
-        return $this->nameServers;
+        return $this->getval("nameServers", []);
     }
 
     /**
@@ -95,7 +72,7 @@ class DomainInfo
      */
     public function getCreationDate()
     {
-        return $this->creationDate;
+        return $this->getval("creationDate", 0);
     }
 
     /**
@@ -103,7 +80,7 @@ class DomainInfo
      */
     public function getExpirationDate()
     {
-        return $this->expirationDate;
+        return $this->getval("expirationDate", 0);
     }
 
     /**
@@ -111,7 +88,7 @@ class DomainInfo
      */
     public function getStates()
     {
-        return $this->states;
+        return $this->getval("states", []);
     }
 
     /**
@@ -119,7 +96,7 @@ class DomainInfo
      */
     public function getOwner()
     {
-        return $this->owner;
+        return $this->getval("owner", "");
     }
 
     /**
@@ -127,6 +104,16 @@ class DomainInfo
      */
     public function getRegistrar()
     {
-        return $this->registrar;
+        return $this->getval("registrar", "");
+    }
+
+    /**
+     * @param $key
+     * @param mixed $default
+     * @return mixed
+     */
+    private function getval($key, $default = "")
+    {
+        return isset($this->data[$key]) ? $this->data[$key] : $default;
     }
 }

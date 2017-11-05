@@ -20,8 +20,7 @@ class CommonParser implements IParser
         if (!$group) {
             return null;
         }
-        return new DomainInfo([
-            "response" => $response,
+        return new DomainInfo($response, [
             "domainName" => GroupHelper::getAsciiServer($group, $domainKeys),
             "whoisServer" => GroupHelper::getAsciiServer($group, [
                 "whois",

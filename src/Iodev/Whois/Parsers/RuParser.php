@@ -21,8 +21,7 @@ class RuParser implements IParser
         if (!$group) {
             return null;
         }
-        return new DomainInfo([
-            "response" => $response,
+        return new DomainInfo($response, [
             "domainName" => GroupHelper::getAsciiServer($group, $domainKeys),
             "whoisServer" => "",
             "nameServers" => GroupHelper::getAsciiServers($group, [ "nserver" ]),

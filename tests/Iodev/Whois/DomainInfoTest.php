@@ -4,164 +4,149 @@ namespace Iodev\Whois;
 
 class DomainInfoTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConstructEmpty()
+    private static function createInfo($data = [])
     {
-        new DomainInfo([]);
+        return new DomainInfo(self::getResponse(), $data);
     }
 
-    public function testConstructValidSome()
+    private static function getResponse()
     {
-        new DomainInfo([
-            "response" => new Response(),
-            "domainName" => "foo.bar",
-        ]);
+        return new Response("domain.com", "Hello world");
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testConstructInvalid()
-    {
-        new DomainInfo([
-            "response" => new Response(),
-            "foobar" => "foo.bar",
-        ]);
-    }
 
+    public function testConstructEmptyData()
+    {
+        new DomainInfo(self::getResponse(), []);
+    }
 
     public function testGetResponse()
     {
-        $r = new Response();
-        $i = new DomainInfo([ "response" => $r ]);
+        $r = self::getResponse();
+        $i = new DomainInfo($r, []);
         self::assertSame($r, $i->getResponse());
-    }
-
-    public function testGetResponseDefault()
-    {
-        $i = new DomainInfo([]);
-        self::assertSame(null, $i->getResponse());
     }
 
 
     public function testGetDomainName()
     {
-        $i = new DomainInfo([ "domainName" => "foo.bar" ]);
+        $i = self::createInfo([ "domainName" => "foo.bar" ]);
         self::assertEquals("foo.bar", $i->getDomainName());
     }
 
     public function testGetDomainNameDefault()
     {
-        $i = new DomainInfo([]);
+        $i = self::createInfo();
         self::assertSame("", $i->getDomainName());
     }
 
 
     public function testGetDomainNameUnicode()
     {
-        $i = new DomainInfo([ "domainName" => "foo.bar" ]);
+        $i = self::createInfo([ "domainName" => "foo.bar" ]);
         self::assertEquals("foo.bar", $i->getDomainNameUnicode());
     }
 
     public function testGetDomainNameUnicodePunnycode()
     {
-        $i = new DomainInfo([ "domainName" => "xn--d1acufc.xn--p1ai" ]);
+        $i = self::createInfo([ "domainName" => "xn--d1acufc.xn--p1ai" ]);
         self::assertEquals("домен.рф", $i->getDomainNameUnicode());
     }
 
     public function testGetDomainNameUnicodeDefault()
     {
-        $i = new DomainInfo([]);
+        $i = self::createInfo();
         self::assertSame("", $i->getDomainNameUnicode());
     }
 
 
     public function testGetWhoisServer()
     {
-        $i = new DomainInfo([ "whoisServer" => "whois.bar" ]);
+        $i = self::createInfo([ "whoisServer" => "whois.bar" ]);
         self::assertEquals("whois.bar", $i->getWhoisServer());
     }
 
     public function testGetWhoisServerDefault()
     {
-        $i = new DomainInfo([]);
+        $i = self::createInfo();
         self::assertSame("", $i->getWhoisServer());
     }
 
 
     public function testGetNameServers()
     {
-        $i = new DomainInfo([ "nameServers" => [ "a.bar", "b.baz" ] ]);
+        $i = self::createInfo([ "nameServers" => [ "a.bar", "b.baz" ] ]);
         self::assertEquals([ "a.bar", "b.baz" ], $i->getNameServers());
     }
 
     public function testGetNameServersDefault()
     {
-        $i = new DomainInfo([]);
+        $i = self::createInfo();
         self::assertSame([], $i->getNameServers());
     }
 
 
     public function testGetCreationDate()
     {
-        $i = new DomainInfo([ "creationDate" => 123456789 ]);
+        $i = self::createInfo([ "creationDate" => 123456789 ]);
         self::assertEquals(123456789, $i->getCreationDate());
     }
 
     public function testGetCreationDateDefault()
     {
-        $i = new DomainInfo([]);
+        $i = self::createInfo();
         self::assertSame(0, $i->getCreationDate());
     }
 
 
     public function testGetExpirationDate()
     {
-        $i = new DomainInfo([ "expirationDate" => 123456789 ]);
+        $i = self::createInfo([ "expirationDate" => 123456789 ]);
         self::assertEquals(123456789, $i->getExpirationDate());
     }
 
     public function testGetExpirationDateDefault()
     {
-        $i = new DomainInfo([]);
+        $i = self::createInfo();
         self::assertSame(0, $i->getExpirationDate());
     }
 
 
     public function testGetStates()
     {
-        $i = new DomainInfo([ "states" => [ "abc", "def", "ghi" ] ]);
+        $i = self::createInfo([ "states" => [ "abc", "def", "ghi" ] ]);
         self::assertEquals([ "abc", "def", "ghi" ], $i->getStates());
     }
 
     public function testGetStatesDefault()
     {
-        $i = new DomainInfo([]);
+        $i = self::createInfo();
         self::assertSame([], $i->getStates());
     }
 
 
     public function testGetOwner()
     {
-        $i = new DomainInfo([ "owner" => "Some Company" ]);
+        $i = self::createInfo([ "owner" => "Some Company" ]);
         self::assertEquals("Some Company", $i->getOwner());
     }
 
     public function testGetOwnerDefault()
     {
-        $i = new DomainInfo([]);
+        $i = self::createInfo();
         self::assertSame("", $i->getOwner());
     }
 
 
     public function testGetRegistrar()
     {
-        $i = new DomainInfo([ "registrar" => "Some Registrar" ]);
+        $i = self::createInfo([ "registrar" => "Some Registrar" ]);
         self::assertEquals("Some Registrar", $i->getRegistrar());
     }
 
     public function testGetRegistrarDefault()
     {
-        $i = new DomainInfo([]);
+        $i = self::createInfo();
         self::assertSame("", $i->getRegistrar());
     }
 }
