@@ -1,7 +1,5 @@
 <?php
 
-namespace Tools;
-
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Loaders\SocketLoader;
 

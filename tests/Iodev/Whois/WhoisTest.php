@@ -2,7 +2,8 @@
 
 namespace Iodev\Whois;
 
-use Tools\FakeSocketLoader;
+use FakeSocketLoader;
+use Iodev\Whois\Loaders\SocketLoader;
 
 class WhoisTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +27,7 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
 
     public function testConstruct()
     {
-        new Whois(new ServerProvider([]), new FakeSocketLoader());
+        new Whois(new ServerProvider([]), new SocketLoader());
     }
 
     public function testGetServerProvider()

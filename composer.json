@@ -15,7 +15,7 @@
     ],
     "type": "library",
     "license": "MIT",
-    "version": "1.2.2",
+    "version": "2.0.0",
     "homepage": "https://github.com/io-developer/php-whois",
     "authors": [
         {
@@ -38,8 +38,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Iodev\\": [ "tests/Iodev/" ],
-            "Tools\\": [ "tests/Tools/" ]
+            "": [ "tests/" ]
         }
     },
     "scripts": {

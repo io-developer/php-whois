@@ -4,31 +4,13 @@ PHP library provides parsed WHOIS domain information. Easy way to check domain a
 [![Build Status](https://travis-ci.org/io-developer/php-whois.svg?branch=master)](https://travis-ci.org/io-developer/php-whois)
 
 ## Requirements
-PHP >= 5.4
+- PHP >= 5.4
 - intl
 
-## Installing with Composer
-#### Run cli command
+## Installing
 ````
 composer require io-developer/php-whois
 ````
-#### Or edit composer.json
-````
-"require": {
-    "io-developer/php-whois": "^1.2.0"
-}
-````
-_Optional:_ add repository if needed
-````
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "https://github.com/io-developer/php-whois"
-    }
-]
-````
-
-
 
 ## Usage
 
@@ -96,6 +78,6 @@ $whois = Whois::create();
 var_dump($whois->loadInfo("google.com"));
 var_dump($whois->loadInfo("google.ru"));
 var_dump($whois->loadInfo("php.net"));
-var_dump($whois->loadInfo("speedtest.net"));
+var_dump($whois->loadInfo("speedtest.net.txt"));
 var_dump($whois->loadInfo("почта.рф"));
 ```
