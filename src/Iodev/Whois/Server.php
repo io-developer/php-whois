@@ -6,22 +6,26 @@ use InvalidArgumentException;
 use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Parsers\CommonParser;
 use Iodev\Whois\Parsers\IParser;
-use RuntimeException;
 
 class Server
 {
     /**
      * @param array $data
-     * @param IParser|string $defaultParser
+     * @param IParser $defaultParser
      * @return Server
      */
-    public static function fromData($data, $defaultParser = '\Iodev\Whois\Parsers\CommonParser')
+    public static function fromData($data, IParser $defaultParser = null)
     {
+        $parser = $defaultParser;
+        if (isset($data['parser'])) {
+            $parserClass = $data['parser'];
+            $parser = new $parserClass();
+        }
         return new Server(
             isset($data['zone']) ? $data['zone'] : '',
             isset($data['host']) ? $data['host'] : '',
             !empty($data['centralized']),
-            isset($data['parser']) ? $data['parser'] : $defaultParser
+            $parser ? $parser : new CommonParser()
         );
     }
 
@@ -30,7 +34,7 @@ class Server
      * @param IParser|string $defaultParser
      * @return Server[]
      */
-    public static function fromDataList($dataList, $defaultParser = null)
+    public static function fromDataList($dataList, IParser $defaultParser = null)
     {
         $defaultParser = $defaultParser ? $defaultParser : new CommonParser();
         $servers = [];
@@ -40,35 +44,25 @@ class Server
         return $servers;
     }
 
-
     /**
      * @param string $zone
      * @param string $host
      * @param bool $centralized
-     * @param IParser|string $parserOrClass
+     * @param IParser $parser
      * @throws InvalidArgumentException
      */
-    public function __construct($zone, $host, $centralized, $parserOrClass)
+    public function __construct($zone, $host, $centralized, IParser $parser)
     {
         $this->zone = strval($zone);
-        $this->host = strval($host);
-        $this->centralized = (bool)$centralized;
-
-        if ($parserOrClass instanceof IParser) {
-            $this->parser = $parserOrClass;
-        } elseif (is_string($parserOrClass)) {
-            $this->parserClass = strval($parserOrClass);
-        }
-
         if (empty($this->zone)) {
             throw new InvalidArgumentException("Zone must be specified");
         }
+        $this->host = strval($host);
         if (empty($this->host)) {
             throw new InvalidArgumentException("Host must be specified");
         }
-        if (empty($this->parser) && empty($this->parserClass)) {
-            throw new InvalidArgumentException("Parser or parser class not specified ($parserOrClass)");
-        }
+        $this->centralized = (bool)$centralized;
+        $this->parser = $parser;
     }
 
     /** @var string */
@@ -82,9 +76,6 @@ class Server
     
     /** @var IParser */
     private $parser;
-
-    /** @var string */
-    private $parserClass;
 
     /**
      * @return bool
@@ -121,25 +112,9 @@ class Server
 
     /**
      * @return IParser
-     * @throws RuntimeException  if parser class not valid
      */
     public function getParser()
     {
-        return $this->parser ?: $this->resolveParser();
-    }
-
-    /**
-     * @return IParser
-     * @throws RuntimeException  if parser class not valid
-     */
-    private function resolveParser()
-    {
-        $class = $this->parserClass;
-        $this->parser = new $class();
-        if (!($this->parser instanceof IParser)) {
-            $this->parser = null;
-            throw new RuntimeException("Parser class must implements IParser");
-        }
         return $this->parser;
     }
 }

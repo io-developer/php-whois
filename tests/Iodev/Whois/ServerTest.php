@@ -27,11 +27,6 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         new Server(".abc", "some.host.com", false, self::getParser());
     }
 
-    public function testConstructValidWithParserClass()
-    {
-        new Server(".abc", "some.host.com", false, self::getParserClass());
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      */
@@ -46,30 +41,6 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     public function testConstructEmptyHost()
     {
         new Server(".abc", "", false, self::getParser());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testConstructEmptyParser()
-    {
-        new Server(".abc", "", false, "");
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testConstructInvalidParserInstance()
-    {
-        new Server("", "some.host.com", false, new \DateTime());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testConstructInvalidParserNotString()
-    {
-        new Server("", "some.host.com", false, 123);
     }
 
     public function testGetZone()
@@ -109,21 +80,6 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         self::assertSame($p, $s->getParser());
     }
 
-    public function testGetParserViaClass()
-    {
-        $s = new Server(".abc", "some.host.com", false, self::getParserClass());
-        self::assertInstanceOf(self::getParserClass(), $s->getParser());
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testGetParserInvalidViaClass()
-    {
-        $s = new Server(".abc", "some.host.com", false, '\DateTime');
-        $s->getParser();
-    }
-
     public function testIsDomainZoneValid()
     {
         $s = new Server(".abc", "some.host.com", false, self::getParser());
@@ -156,7 +112,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             "host" => "some.host",
             "centralized" => true,
             "parser" => self::getParserClass(),
-        ], '');
+        ]);
 
         self::assertEquals(".abc", $s->getZone());
         self::assertEquals("some.host", $s->getHost());
@@ -166,7 +122,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     public function testFromDataZoneHostOnly()
     {
-        $s = Server::fromData([ "zone" => ".abc", "host" => "some.host" ], self::getParserClass());
+        $s = Server::fromData([ "zone" => ".abc", "host" => "some.host" ], self::getParser());
 
         self::assertEquals(".abc", $s->getZone());
         self::assertEquals("some.host", $s->getHost());
@@ -179,7 +135,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testFromDataMissingZone()
     {
-        Server::fromData([ "host" => "some.host" ], self::getParserClass());
+        Server::fromData([ "host" => "some.host" ], self::getParser());
     }
 
     /**
@@ -187,7 +143,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testFromDataMissingHost()
     {
-        Server::fromData([ "zone" => ".abc" ], self::getParserClass());
+        Server::fromData([ "zone" => ".abc" ], self::getParser());
     }
 
     /**
@@ -195,14 +151,14 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testFromDataMissingAll()
     {
-        Server::fromData([], self::getParserClass());
+        Server::fromData([], self::getParser());
     }
 
     public function testFromDataListOne()
     {
         $s = Server::fromDataList(
             [ [ "zone" => ".abc", "host" => "some.host" ] ],
-            self::getParserClass()
+            self::getParser()
         );
         self::assertTrue(is_array($s), "Array expected");
         self::assertEquals(1, count($s));
@@ -218,7 +174,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
                 [ "zone" => ".abc", "host" => "some.host" ],
                 [ "zone" => ".cde", "host" => "other.host", "centralized" => true ],
             ],
-            self::getParserClass()
+            self::getParser()
         );
         self::assertTrue(is_array($s), "Array expected");
         self::assertEquals(2, count($s));
