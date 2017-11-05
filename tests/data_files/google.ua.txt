@@ -1,0 +1,57 @@
+% request from 178.141.214.119
+% This is the Ukrainian Whois query server #B.
+% The Whois is subject to Terms of use
+% See https://hostmaster.ua/services/
+%
+
+domain:           google.ua
+dom-public:       NO
+license:          82319
+registrant:       imena-1555-sfw49
+mnt-by:           ua.markmonitor
+nserver:          ns3.google.com
+nserver:          ns1.google.com
+nserver:          ns4.google.com
+nserver:          ns2.google.com
+status:           clientDeleteProhibited
+status:           clientTransferProhibited
+status:           clientUpdateProhibited
+created:          2011-07-21 18:03:50+03
+modified:         2017-07-28 21:07:36+03
+expires:          2018-07-21 18:03:50+03
+source:           UAEPP
+
+% Registrar:
+% ==========
+registrar:        ua.markmonitor
+organization:     MarkMonitor Inc.
+organization-loc: MarkMonitor Inc.
+url:              http://markmonitor.com
+city:             Meridian
+country:          US
+source:           UAEPP
+
+% Registrant:
+% ===========
+contact-id:       imena-1555-sfw49
+person:           n/a
+person-loc:       Inc. Google
+organization-loc: Google Inc.
+e-mail:           dns-admin@google.com
+address:          n/a
+address-loc:      Amphitheatre Parkway, 1600
+address-loc:      Mountain View
+postal-code-loc:  94043
+country-loc:      US
+phone:            +1.6502530000
+fax:              +1.6506188571
+mnt-by:           ua.markmonitor
+status:           ok
+status:           linked
+created:          2017-07-21 23:55:01+03
+source:           UAEPP
+
+
+
+% Query time:     6 msec
+
