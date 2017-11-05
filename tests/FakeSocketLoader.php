@@ -2,6 +2,7 @@
 
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Loaders\SocketLoader;
+use Iodev\Whois\Response;
 
 class FakeSocketLoader extends SocketLoader
 {
@@ -13,6 +14,6 @@ class FakeSocketLoader extends SocketLoader
         if ($this->failOnConnect) {
             throw new ConnectionException("Fake connection fault");
         }
-        return $this->text;
+        return new Response($domain, $this->text, $whoisHost);
     }
 }

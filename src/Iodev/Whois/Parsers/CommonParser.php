@@ -42,11 +42,13 @@ class CommonParser implements IParser
             "expirationDate" => GroupHelper::getUnixtime($group, [
                 "expirationdate",
                 "expiration date",
+                "registry expiry date",
                 "registrar registration expiration date",
                 "paid-till",
             ]),
             "owner" => GroupHelper::matchFirst($group, [
                 "organization",
+                "registrant organization",
                 "tech organization",
                 "admin organization",
                 "org",
