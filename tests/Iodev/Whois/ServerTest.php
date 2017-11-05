@@ -6,6 +6,11 @@ use Iodev\Whois\Parsers\CommonParser;
 
 class ServerTest extends \PHPUnit_Framework_TestCase
 {
+    private static function getServerClass()
+    {
+        return '\Iodev\Whois\Server';
+    }
+
     private static function getParser()
     {
         return new CommonParser();
@@ -201,7 +206,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         );
         self::assertTrue(is_array($s), "Array expected");
         self::assertEquals(1, count($s));
-        self::assertInstanceOf(Server::class, $s[0]);
+        self::assertInstanceOf(self::getServerClass(), $s[0]);
         self::assertEquals(".abc", $s[0]->getZone());
         self::assertEquals("some.host", $s[0]->getHost());
         self::assertInstanceOf(self::getParserClass(), $s[0]->getParser());
@@ -218,13 +223,13 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         self::assertTrue(is_array($s), "Array expected");
         self::assertEquals(2, count($s));
 
-        self::assertInstanceOf(Server::class, $s[0]);
+        self::assertInstanceOf(self::getServerClass(), $s[0]);
         self::assertEquals(".abc", $s[0]->getZone());
         self::assertEquals("some.host", $s[0]->getHost());
         self::assertFalse($s[0]->isCentralized());
         self::assertInstanceOf(self::getParserClass(), $s[0]->getParser());
 
-        self::assertInstanceOf(Server::class, $s[1]);
+        self::assertInstanceOf(self::getServerClass(), $s[1]);
         self::assertEquals(".cde", $s[1]->getZone());
         self::assertEquals("other.host", $s[1]->getHost());
         self::assertTrue($s[1]->isCentralized());

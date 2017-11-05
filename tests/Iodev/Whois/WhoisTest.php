@@ -26,7 +26,7 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
 
     public function testConstruct()
     {
-        self::assertInstanceOf(Whois::class, $this->getWhois());
+        new Whois(new ServerProvider([]), new FakeSocketLoader());
     }
 
     public function testGetServerProvider()
