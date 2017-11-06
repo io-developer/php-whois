@@ -36,11 +36,13 @@ class CommonParser implements IParser
             "creationDate" => GroupHelper::getUnixtime($group, [
                 "creationdate",
                 "creation date",
+                "domain registration date",
                 "created",
             ]),
             "expirationDate" => GroupHelper::getUnixtime($group, [
                 "expirationdate",
                 "expiration date",
+                "domain expiration date",
                 "registry expiry date",
                 "registrar registration expiration date",
                 "paid-till",
@@ -52,7 +54,10 @@ class CommonParser implements IParser
                 "admin organization",
                 "org",
             ]),
-            "registrar" => GroupHelper::matchFirst($group, [ "registrar" ]),
+            "registrar" => GroupHelper::matchFirst($group, [
+                "registrar",
+                "sponsoring registrar",
+            ]),
             "states" => $this->parseStates($group),
         ]);
     }
