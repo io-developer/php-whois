@@ -23,9 +23,10 @@ class SocketLoader implements ILoader
         fputs($handle, $strict ? "={$domain}\n" : "{$domain}\n");
         $text = "";
         while (!feof($handle)) {
-            $text .= fgets($handle, 128);
+            $chunk = fread($handle, 8192);
+            $text .= $chunk;
         }
         fclose($handle);
-        return new Response($domain, $text);
+        return new Response($domain, $text, $whoisHost);
     }
 }

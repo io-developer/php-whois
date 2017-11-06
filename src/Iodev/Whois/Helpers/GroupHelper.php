@@ -14,11 +14,11 @@ class GroupHelper
         $splits = preg_split('/([\s\t]*\r?\n){2,}/', $responseText);
         foreach ($splits as $split) {
             $group = [];
-            preg_match_all('/^\s*(( *[\w-]+)+):[ \t]+(.+)$/mui', $split, $m);
+            preg_match_all('/^\s*(( *[\w-\/]+)+):[ \t]*(.*)$/mui', $split, $m);
             foreach ($m[1] as $index => $key) {
                 $group = array_merge_recursive($group, [ $key => $m[3][$index] ]);
             }
-            if (count($group) > 2) {
+            if (count($group) > 1) {
                 $groups[] = $group;
             }
         }
@@ -29,7 +29,7 @@ class GroupHelper
      * @param array $group
      * @param string[] $keys
      * @param bool $ignoreCase
-     * @return mixed|bool
+     * @return string
      */
     public static function matchFirst($group, $keys, $ignoreCase = true)
     {
@@ -44,7 +44,7 @@ class GroupHelper
                 return $v;
             }
         }
-        return false;
+        return "";
     }
 
     /**
@@ -81,14 +81,14 @@ class GroupHelper
      */
     public static function getAsciiServers($group, $keys)
     {
-        $nservers = [];
-        $arr = self::matchFirst($group, $keys);
-        $arr = isset($arr) ? $arr : [];
-        $arr = is_array($arr) ? $arr : [ $arr ];
-        foreach ($arr as $nserv) {
-            $nservers[] = DomainHelper::toAscii($nserv);
+        $raws = self::matchFirst($group, $keys);
+        $raws = !empty($raws) ? $raws : [];
+        $raws = is_array($raws) ? $raws : [ $raws ];
+        $servers = [];
+        foreach ($raws as $raw) {
+            $servers[] = DomainHelper::toAscii($raw);
         }
-        return $nservers;
+        return $servers;
     }
 
     /**

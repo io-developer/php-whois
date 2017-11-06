@@ -10,68 +10,55 @@ use Iodev\Whois\Loaders\SocketLoader;
 class Whois
 {
     /**
-     * @param Server[] $servers
+     * @param ServerProvider $provider
      * @param ILoader $loader
      * @return Whois
      */
-    public static function create($servers = null, ILoader $loader = null)
+    public static function create(ServerProvider $provider = null, ILoader $loader = null)
     {
-        $whois = new Whois($loader ? $loader : new SocketLoader());
-        $servers = isset($servers) ? $servers : ServerFactory::createAll();
-        foreach ($servers as $server) {
-            $whois->addServer($server);
-        }
-        return $whois;
+        return new Whois(
+            $provider ?: new ServerProvider(Server::fromDataList(Config::getServersData())),
+            $loader ?: new SocketLoader()
+        );
     }
 
-    public function __construct(ILoader $loader)
+    public function __construct(ServerProvider $provider, ILoader $loader)
     {
+        $this->serverProvider = $provider;
         $this->loader = $loader;
     }
-    
+
+    /** @var ServerProvider */
+    private $serverProvider;
+
     /** @var ILoader */
     private $loader;
-    
-    /** @var Server[] */
-    private $servers = [];
-    
+
     /**
-     * @param Server $server
-     * @return $this
+     * @return ServerProvider
      */
-    public function addServer(Server $server)
+    public function getServerProvider()
     {
-        $this->servers[] = $server;
-        return $this;
+        return $this->serverProvider;
     }
-    
+
+    /**
+     * @return ILoader
+     */
+    public function getLoader()
+    {
+        return $this->loader;
+    }
+
     /**
      * @param string $domain
-     * @return Server[]
-     */
-    public function matchServers($domain)
-    {
-        $domain = DomainHelper::toAscii($domain);
-        $servers = [];
-        foreach ($this->servers as $server) {
-            $tld = $server->zone;
-            $pos = mb_strpos($domain, $tld);
-            if ($pos !== false && $pos == (mb_strlen($domain) - mb_strlen($tld))) {
-                $servers[] = $server;
-            }
-        }
-        return $servers;
-    }
-    
-    /**
-     * @param string $domain
-     * @return Info
+     * @return DomainInfo
      * @throws ServerMismatchException
      */
     public function loadInfo($domain)
     {
         $domain = DomainHelper::toAscii($domain);
-        $servers = $this->matchServers($domain);
+        $servers = $this->serverProvider->match($domain);
         if (empty($servers)) {
             throw new ServerMismatchException("No servers matched for domain '$domain'");
         }
@@ -87,18 +74,18 @@ class Whois
     /**
      * @param Server $server
      * @param string $domain
-     * @return Info
+     * @return DomainInfo
      */
     public function loadInfoFrom(Server $server, $domain)
     {
         $l = $this->loader;
-        $p = $server->parser;
-        $info = $p->parseResponse($l->loadResponse($server->host, $domain));
+        $p = $server->getParser();
+        $info = $p->parseResponse($l->loadResponse($server->getHost(), $domain));
         if (!$info) {
-            $info = $p->parseResponse($l->loadResponse($server->host, $domain, true));
+            $info = $p->parseResponse($l->loadResponse($server->getHost(), $domain, true));
         }
-        if ($info && $info->whoisServer && !$server->isCentralized) {
-            $tmpInfo = $p->parseResponse($l->loadResponse($info->whoisServer, $domain));
+        if ($info && $info->getWhoisServer() && !$server->isCentralized()) {
+            $tmpInfo = $p->parseResponse($l->loadResponse($info->getWhoisServer(), $domain));
             $info = $tmpInfo ? $tmpInfo : $info;
         }
         return $info;
