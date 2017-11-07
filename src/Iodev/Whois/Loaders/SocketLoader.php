@@ -20,7 +20,7 @@ class SocketLoader implements ILoader
         if (!$handle) {
             throw new ConnectionException("Could not open socket on port 43");
         }
-        fputs($handle, $strict ? "={$domain}\n" : "{$domain}\n");
+        fwrite($handle, $strict ? "={$domain}\r\n" : "{$domain}\r\n");
         $text = "";
         while (!feof($handle)) {
             $chunk = fread($handle, 8192);
