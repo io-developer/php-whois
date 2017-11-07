@@ -4,8 +4,7 @@ PHP library provides parsed WHOIS domain information. Easy way to check domain a
 [![Travis](https://img.shields.io/travis/io-developer/php-whois.svg?style=flat-square)](https://travis-ci.org/io-developer/php-whois)
 [![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-blue.svg?style=flat-square)](https://secure.php.net/)
 [![Packagist](https://img.shields.io/packagist/v/io-developer/php-whois.svg?style=flat-square)](https://packagist.org/packages/io-developer/php-whois)
-[![license](https://img.shields.io/github/license/io-developer/php-whois.svg?style=flat-square)](https://github.com/io-developer/php-whois/blob/master/LICENSE.md)
-
+[![Packagist](https://img.shields.io/packagist/l/io-developer/php-whois.svg?style=flat-square)](https://github.com/io-developer/php-whois/blob/master/LICENSE)
 
 ## Requirements
 - PHP >= 5.4
