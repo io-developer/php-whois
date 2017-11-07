@@ -14,7 +14,7 @@ class GroupHelper
         $splits = preg_split('/([\s\t]*\r?\n){2,}/', $responseText);
         foreach ($splits as $split) {
             $group = [];
-            preg_match_all('/^\s*(( *[\w-\/]+)+):[ \t]*(.*)$/mui', $split, $m);
+            preg_match_all('/^\s*(( *[\w-\/]+)+):[ \t]*(.*?)[\s\r\n\t]*?$/mui', $split, $m);
             foreach ($m[1] as $index => $key) {
                 $group = array_merge_recursive($group, [ $key => $m[3][$index] ]);
             }
