@@ -50,12 +50,14 @@ class CommonParser implements IParser
             "owner" => GroupHelper::matchFirst($group, [
                 "organization",
                 "registrant organization",
+                "registrant",
                 "tech organization",
                 "admin organization",
                 "org",
             ]),
             "registrar" => GroupHelper::matchFirst($group, [
                 "registrar",
+                "registrar name",
                 "sponsoring registrar",
             ]),
             "states" => $this->parseStates($group),
