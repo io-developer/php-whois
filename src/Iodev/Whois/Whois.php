@@ -52,6 +52,16 @@ class Whois
 
     /**
      * @param string $domain
+     * @return bool
+     * @throws ServerMismatchException
+     */
+    public function isDomainAvailable($domain)
+    {
+        return (bool)$this->loadDomainInfo($domain);
+    }
+
+    /**
+     * @param string $domain
      * @return DomainInfo
      * @throws ServerMismatchException
      */
