@@ -12,7 +12,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
         $l = new FakeSocketLoader();
         $l->text = \TestData::loadContent($filename);
         $w = new Whois($p, $l);
-        return $w->loadInfo($domain);
+        return $w->loadDomainInfo($domain);
     }
 
     private static function sort($a)
@@ -70,20 +70,20 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testLoadInfoRegistered()
+    public function testLoadDomainInfoRegistered()
     {
         $info = self::loadTestDataInfo("google.com", "google.com.txt");
         self::assertNotNull($info);
         self::assertInstanceOf('\Iodev\Whois\DomainInfo', $info);
     }
 
-    public function testLoadInfoNotRegistered()
+    public function testLoadDomainInfoNotRegistered()
     {
         $info = $this->loadTestDataInfo("google.com", "notregistered.txt");
         self::assertNull($info);
     }
 
-    public function testLoadInfoValidation()
+    public function testLoadDomainInfoValidation()
     {
         $tests = [
             [ "github.io", "github.io.txt", "github.io.json" ],

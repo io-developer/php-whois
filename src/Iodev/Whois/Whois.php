@@ -55,7 +55,7 @@ class Whois
      * @return DomainInfo
      * @throws ServerMismatchException
      */
-    public function loadInfo($domain)
+    public function loadDomainInfo($domain)
     {
         $domain = DomainHelper::toAscii($domain);
         $servers = $this->serverProvider->match($domain);
@@ -63,7 +63,7 @@ class Whois
             throw new ServerMismatchException("No servers matched for domain '$domain'");
         }
         foreach ($servers as $server) {
-            $info = $this->loadInfoFrom($server, $domain);
+            $info = $this->loadDomainInfoFrom($server, $domain);
             if ($info) {
                 return $info;
             }
@@ -76,7 +76,7 @@ class Whois
      * @param string $domain
      * @return DomainInfo
      */
-    public function loadInfoFrom(Server $server, $domain)
+    public function loadDomainInfoFrom(Server $server, $domain)
     {
         $l = $this->loader;
         $p = $server->getParser();

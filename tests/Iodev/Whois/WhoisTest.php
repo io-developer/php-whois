@@ -32,7 +32,7 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
         $w = $this->getWhois();
         $l = $this->loader;
         $l->text = \TestData::loadContent($filename);
-        return $w->loadInfo($domain);
+        return $w->loadDomainInfo($domain);
     }
 
     private static function sort($a)
