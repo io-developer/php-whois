@@ -1,22 +1,22 @@
 # PHP WHOIS
 PHP library provides parsed WHOIS domain information. Easy way to check domain availability or expiration date. Implements requests to real WHOIS service via port 43.
 
-[![Travis](https://img.shields.io/travis/io-developer/php-whois.svg?style=flat-square)](https://travis-ci.org/io-developer/php-whois)
-[![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-blue.svg?style=flat-square)](https://secure.php.net/)
-[![Packagist](https://img.shields.io/packagist/v/io-developer/php-whois.svg?style=flat-square)](https://packagist.org/packages/io-developer/php-whois)
-[![Packagist](https://img.shields.io/packagist/l/io-developer/php-whois.svg?style=flat-square)](https://github.com/io-developer/php-whois/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/io-developer/php-whois.svg?branch=master)](https://travis-ci.org/io-developer/php-whois)
+[![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-blue.svg)](https://secure.php.net/)
+[![Packagist](https://img.shields.io/packagist/v/io-developer/php-whois.svg)](https://packagist.org/packages/io-developer/php-whois)
+[![Packagist](https://img.shields.io/packagist/l/io-developer/php-whois.svg)](https://github.com/io-developer/php-whois/blob/master/LICENSE)
 
 ## Requirements
 - PHP >= 5.4
 - intl
 
 
-## Installing
-#### Via Composer cli command
+## Installation
+Via Composer cli command
 ````
 composer require io-developer/php-whois
 ````
-#### Or via composer.json
+Or via composer.json
 ````
 "require": {
     "io-developer/php-whois": "^2.0.0"
@@ -24,12 +24,47 @@ composer require io-developer/php-whois
 ````
 
 
-## Example: info about google.com
+## Usage
+
+#### Common Whois client
 
 ```php
 <?php
 
 require_once '../vendor/autoload.php';
+
+use Iodev\Whois\Whois;
+
+$whois = Whois::create();
+```
+
+#### Domain availability
+
+```php
+<?php
+
+use Iodev\Whois\Whois;
+
+if (Whois::create()->isDomainAvailable("google.com")) {
+    echo "Bingo! Domain is available! :)";
+}
+```
+
+#### Domain lookup
+
+```php
+<?php
+
+use Iodev\Whois\Whois;
+
+$response = Whois::create()->lookupDomain("google.com");
+echo $response->getText();
+```
+
+#### Parsed domain info loading
+
+```php
+<?php
 
 use Iodev\Whois\Whois;
 
@@ -40,33 +75,9 @@ echo "Domain owner: " . $info->getOwner();
 ```
 
 
-## Example: domain availability
+## Advanced usage
 
-```php
-<?php
-
-use Iodev\Whois\Whois;
-
-$info = Whois::create()->loadInfo("google.com");
-if (!$info) {
-    echo "Bingo! Domain is available! :)";
-}
-```
-
-
-## Usage
-
-#### 1. Common Whois client
-
-```php
-<?php
-
-use Iodev\Whois\Whois;
-
-$whois = Whois::create();
-```
-
-#### 1.1. With memcached
+#### Creating common client powered by memcached
 ```php
 <?php
 
@@ -81,7 +92,8 @@ $loader = new MemcachedLoader(new SocketLoader(), $m);
 $whois = Whois::create(null, $loader);
 ```
 
-#### 2. Domain info loading
+
+#### Complete domain info loading
 
 ```php
 <?php
@@ -92,7 +104,7 @@ use Iodev\Whois\Exceptions\ServerMismatchException;
 
 $whois = Whois::create();
 try {
-    $info = $whois->loadInfo("google.com");
+    $info = $whois->loadDomainInfo("google.com");
     if (!$info) {
         echo "Null if domain available";
         exit;
@@ -105,20 +117,22 @@ try {
 }
 ```
 
-#### 3. Whois text response from info
+
+#### Getting whois text response from info
 
 ```php
 <?php
 
 use Iodev\Whois\Whois;
 
-$info = Whois::create()->loadInfo("google.com");
+$info = Whois::create()->loadDomainInfo("google.com");
 $resp = $info->getResponse();
 
 echo "WHOIS response for '{$resp->getDomain()}':\n{$resp->getText()}";
 ```
 
-#### 4. Custom whois hosts
+
+#### Using custom whois hosts
 
 ```php
 <?php
@@ -142,7 +156,7 @@ $customServer = Server::fromData([
 $whois->getServerProvider()->addOne($customServer);
 
 // Now you can load info
-$info = $whois->loadInfo("google.co");
+$info = $whois->loadDomainInfo("google.co");
 
 var_dump($info);
 ```
