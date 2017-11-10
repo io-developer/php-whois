@@ -57,18 +57,8 @@ class Whois
      */
     public function loadDomainInfo($domain)
     {
-        $domain = DomainHelper::toAscii($domain);
-        $servers = $this->serverProvider->match($domain);
-        if (empty($servers)) {
-            throw new ServerMismatchException("No servers matched for domain '$domain'");
-        }
-        foreach ($servers as $server) {
-            $info = $this->loadDomainInfoFrom($server, $domain);
-            if ($info) {
-                return $info;
-            }
-        }
-        return null;
+        list (, $info) = $this->loadDomainData($domain);
+        return $info;
     }
 
     /**
@@ -78,16 +68,77 @@ class Whois
      */
     public function loadDomainInfoFrom(Server $server, $domain)
     {
-        $l = $this->loader;
+        list (, $info) = $this->loadDomainDataFrom($server, $domain);
+        return $info;
+    }
+
+    /**
+     * @param string $domain
+     * @return Response
+     * @throws ServerMismatchException
+     */
+    public function lookupDomain($domain)
+    {
+        list ($response) = $this->loadDomainData($domain);
+        return $response;
+    }
+
+    /**
+     * @param Server $server
+     * @param string $domain
+     * @return Response
+     */
+    public function lookupDomainFrom(Server $server, $domain)
+    {
+        list ($response) = $this->loadDomainDataFrom($server, $domain);
+        return $response;
+    }
+
+    /**
+     * @param string $domain
+     * @return array
+     * @throws ServerMismatchException
+     */
+    private function loadDomainData($domain)
+    {
+        $domain = DomainHelper::toAscii($domain);
+        $servers = $this->serverProvider->match($domain);
+        if (empty($servers)) {
+            throw new ServerMismatchException("No servers matched for domain '$domain'");
+        }
+        $response = null;
+        $info = null;
+        foreach ($servers as $server) {
+            list ($response, $info) = $this->loadDomainDataFrom($server, $domain);
+            if ($info) {
+                return [ $response, $info ];
+            }
+        }
+        return [ $response, $info ];
+    }
+
+    /**
+     * @param Server $server
+     * @param string $domain
+     * @return array
+     */
+    private function loadDomainDataFrom(Server $server, $domain)
+    {
         $p = $server->getParser();
-        $info = $p->parseResponse($l->loadResponse($server->getHost(), $domain));
+        $response = $this->loader->loadResponse($server->getHost(), $domain);
+        $info = $p->parseResponse($response);
         if (!$info) {
-            $info = $p->parseResponse($l->loadResponse($server->getHost(), $domain, true));
+            $response = $this->loader->loadResponse($server->getHost(), $domain, true);
+            $info = $p->parseResponse($response);
         }
         if ($info && $info->getWhoisServer() && !$server->isCentralized()) {
-            $tmpInfo = $p->parseResponse($l->loadResponse($info->getWhoisServer(), $domain));
-            $info = $tmpInfo ? $tmpInfo : $info;
+            $tmpResponse = $this->loader->loadResponse($info->getWhoisServer(), $domain);
+            $tmpInfo = $p->parseResponse($tmpResponse);
+            if ($tmpInfo) {
+                $response = $tmpResponse;
+                $info = $tmpInfo;
+            }
         }
-        return $info;
+        return [ $response, $info ];
     }
 }
