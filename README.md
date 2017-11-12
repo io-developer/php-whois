@@ -7,7 +7,7 @@ PHP library provides parsed WHOIS domain information. Easy way to check domain a
 [![Packagist](https://img.shields.io/packagist/l/io-developer/php-whois.svg)](https://github.com/io-developer/php-whois/blob/master/LICENSE)
 
 ## Requirements
-- PHP >= 5.4
+- PHP 5.4, 5.5, 5.6, 7.0, 7.1
 - intl
 
 
