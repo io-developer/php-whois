@@ -19,7 +19,7 @@ composer require io-developer/php-whois
 Or via __composer.json__
 ````
 "require": {
-    "io-developer/php-whois": "^2.0.0"
+    "io-developer/php-whois": "^2.1.0"
 }
 ````
 
