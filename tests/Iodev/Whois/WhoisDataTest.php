@@ -72,7 +72,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
 
     public function testLoadDomainInfoRegistered()
     {
-        $info = self::loadTestDataInfo("google.com", "google.com.txt");
+        $info = self::loadTestDataInfo("google.com", ".com/google.com.txt");
         self::assertNotNull($info);
         self::assertInstanceOf('\Iodev\Whois\DomainInfo', $info);
     }
@@ -86,17 +86,17 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
     public function testLoadDomainInfoValidation()
     {
         $tests = [
-            [ "github.io", "github.io.txt", "github.io.json" ],
-            [ "google.com", "google.com.txt", "google.com.json" ],
-            [ "google.com", "google.com_registrar_whois.txt", "google.com_registrar_whois.json" ],
-            [ "google.ru", "google.ru.txt", "google.ru.json" ],
-            [ "google.co", "google.co.txt", "google.co.json" ],
-            [ "info.info", "info.info.txt", "info.info.json" ],
-            [ "linux.org", "linux.org.txt", "linux.org.json" ],
-            [ "speedtest.net", "speedtest.net.txt", "speedtest.net.json" ],
-            [ "speedtest.net", "speedtest.net_registrar_whois.txt", "speedtest.net_registrar_whois.json" ],
-            [ "xn--80a1acny.xn--p1ai", "xn--80a1acny.xn--p1ai.txt", "xn--80a1acny.xn--p1ai.json" ],
-            [ "usa.gov", "usa.gov.txt", "usa.gov.json" ],
+            [ "google.co", ".co/google.co.txt", ".co/google.co.json" ],
+            [ "google.com", ".com/google.com.txt", ".com/google.com.json" ],
+            [ "google.com", ".com/google.com_registrar_whois.txt", ".com/google.com_registrar_whois.json" ],
+            [ "usa.gov", ".gov/usa.gov.txt", ".gov/usa.gov.json" ],
+            [ "info.info", ".info/info.info.txt", ".info/info.info.json" ],
+            [ "github.io", ".io/github.io.txt", ".io/github.io.json" ],
+            [ "speedtest.net", ".net/speedtest.net.txt", ".net/speedtest.net.json" ],
+            [ "speedtest.net", ".net/speedtest.net_registrar_whois.txt", ".net/speedtest.net_registrar_whois.json" ],
+            [ "linux.org", ".org/linux.org.txt", ".org/linux.org.json" ],
+            [ "google.ru", ".ru/google.ru.txt", ".ru/google.ru.json" ],
+            [ "xn--80a1acny.xn--p1ai", ".xn--p1ai/xn--80a1acny.xn--p1ai.txt", ".xn--p1ai/xn--80a1acny.xn--p1ai.json" ],
         ];
 
         foreach ($tests as $test) {
