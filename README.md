@@ -7,19 +7,19 @@ PHP library provides parsed WHOIS domain information. Easy way to check domain a
 [![Packagist](https://img.shields.io/packagist/l/io-developer/php-whois.svg)](https://github.com/io-developer/php-whois/blob/master/LICENSE)
 
 ## Requirements
-- PHP >= 5.4
+- PHP >= __5.4__ (compatible with __7.0__ and higher)
 - intl
 
 
 ## Installation
-Via Composer cli command
+Via __Composer__ cli command
 ````
 composer require io-developer/php-whois
 ````
-Or via composer.json
+Or via __composer.json__
 ````
 "require": {
-    "io-developer/php-whois": "^2.0.0"
+    "io-developer/php-whois": "^2.1.0"
 }
 ````
 
@@ -68,7 +68,7 @@ echo $response->getText();
 
 use Iodev\Whois\Whois;
 
-$info = Whois::create()->loadInfo("google.com");
+$info = Whois::create()->loadDomainInfo("google.com");
 echo "Domain created: " . date("Y-m-d", $info->getCreationDate());
 echo "Domain expires: " . date("Y-m-d", $info->getExpirationDate());
 echo "Domain owner: " . $info->getOwner();
@@ -77,7 +77,7 @@ echo "Domain owner: " . $info->getOwner();
 
 ## Advanced usage
 
-#### Creating common client powered by memcached
+#### Сommon client powered by memcached
 ```php
 <?php
 
@@ -132,7 +132,7 @@ echo "WHOIS response for '{$resp->getDomain()}':\n{$resp->getText()}";
 ```
 
 
-#### Using custom whois hosts
+#### Сustom whois hosts
 
 ```php
 <?php
