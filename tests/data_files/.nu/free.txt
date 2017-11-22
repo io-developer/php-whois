@@ -13,4 +13,4 @@
 # the .nu top level domain.
 # This whois printout is printed with UTF-8 encoding.
 #
-domain "ajsfgasfrewqwerygsdaj785-58936712.nu" not found.
+domain "free.nu" not found.

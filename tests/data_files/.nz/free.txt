@@ -30,6 +30,6 @@
 %
 version: 8.0
 query_datetime: 2017-11-19T10:20:33+13:00
-domain_name: ajsfgasfrewqwerygsdaj785-58936712.nz
+domain_name: free.nz
 query_status: 440 Request Denied
 %

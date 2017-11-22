@@ -13,4 +13,4 @@
 # the .se top level domain.
 # This whois printout is printed with UTF-8 encoding.
 #
-domain "ajsfgasfrewqwerygsdaj785-58936712.se" not found.
+domain "free.se" not found.
