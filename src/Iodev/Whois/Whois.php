@@ -57,7 +57,7 @@ class Whois
      */
     public function isDomainAvailable($domain)
     {
-        return (bool)$this->loadDomainInfo($domain);
+        return !$this->loadDomainInfo($domain);
     }
 
     /**
