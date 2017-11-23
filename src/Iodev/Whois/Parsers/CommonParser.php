@@ -20,6 +20,16 @@ class CommonParser implements IParser
         if (!$group) {
             return null;
         }
+        $states = $this->parseStates($group);
+        $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
+        $notFoundStatesDict = [
+            "no object found" => 1,
+            "available" => 1,
+            "free" => 1,
+        ];
+        if (!empty($states) && !empty($notFoundStatesDict[$firstState])) {
+            return null;
+        }
         return new DomainInfo($response, [
             "domainName" => GroupHelper::getAsciiServer($group, $domainKeys),
             "whoisServer" => GroupHelper::getAsciiServer($group, [
@@ -60,21 +70,29 @@ class CommonParser implements IParser
                 "registrar name",
                 "sponsoring registrar",
             ]),
-            "states" => $this->parseStates($group),
+            "states" => $states,
         ]);
     }
 
     /**
      * @param array $group
+     * @param bool $removeUrls
      * @return string[]
      */
-    private function parseStates($group)
+    private function parseStates($group, $removeUrls = true)
     {
         $states = $this->parseStatesIndividual($group);
-        if (!empty($states)) {
-            return $states;
+        if (empty($states)) {
+            $states = $this->parseStatesJoined($group);
         }
-        return $this->parseStatesJoined($group);
+        if ($removeUrls) {
+            $filtered = [];
+            foreach ($states as $state) {
+                $filtered[] = trim(preg_replace('~\(?http.+\)?~ui', '', $state));
+            }
+            return $filtered;
+        }
+        return $states;
     }
 
     /**
@@ -91,7 +109,7 @@ class CommonParser implements IParser
         ]);
         $rawstates = is_array($rawstates) ? $rawstates : [ "".$rawstates ];
         foreach ($rawstates as $state) {
-            if (preg_match('/^\s*([\w-]+)/ui', $state, $m)) {
+            if (preg_match('/^\s*(.+)\s*/ui', $state, $m)) {
                 $states[] = mb_strtolower($m[1]);
             }
         }
@@ -104,7 +122,9 @@ class CommonParser implements IParser
      */
     private function parseStatesJoined($group)
     {
-        $stateStr = GroupHelper::matchFirst($group, [ "state" ]);
+        $stateStr = GroupHelper::matchFirst($group, [
+            "state",
+        ]);
         $states = [];
         $rawstates = explode(",", $stateStr);
         foreach ($rawstates as $state) {
