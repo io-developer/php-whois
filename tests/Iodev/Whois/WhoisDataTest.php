@@ -8,16 +8,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
 {
     private static function whoisFrom($filename)
     {
-        $dataList = array_merge(Config::getServersData(), [
-            [ "zone" => ".cm", "host" => "fake.test" ],
-            [ "zone" => ".cr", "host" => "fake.test" ],
-            [ "zone" => ".ga", "host" => "fake.test" ],
-            [ "zone" => ".nr", "host" => "fake.test" ],
-            [ "zone" => ".ps", "host" => "fake.test" ],
-            [ "zone" => ".rw", "host" => "fake.test" ],
-            [ "zone" => ".sl", "host" => "fake.test" ],
-            [ "zone" => ".tg", "host" => "fake.test" ],
-        ]);
+        $dataList = array_merge(Config::getServersData(), []);
         $p = new ServerProvider(Server::fromDataList($dataList));
         $l = new FakeSocketLoader();
         $l->text = \TestData::loadContent($filename);
@@ -396,9 +387,6 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
 
             [ "free.no", ".no/free.txt", null ],
             // [ "google.no", ".no/google.no.txt", ".no/google.no.json" ],
-
-            [ "free.nr", ".nr/free.txt", null ],
-            // [ "google.nr", ".nr/google.nr.txt", ".nr/google.nr.json" ],
 
             [ "free.nu", ".nu/free.txt", null ],
             // [ "google.nu", ".nu/google.nu.txt", ".nu/google.nu.json" ],
