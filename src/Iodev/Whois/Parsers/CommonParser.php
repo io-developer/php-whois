@@ -8,15 +8,66 @@ use Iodev\Whois\Helpers\GroupHelper;
 
 class CommonParser implements IParser
 {
+    protected $domainKeys = [
+        "domain",
+        "domainname",
+        "domain name",
+    ];
+
+    protected $whoisServerKeys = [
+        "whois",
+        "whoisserver",
+        "whois server",
+        "registrar whois server",
+    ];
+
+    protected $nameServersKeys = [
+        "nameserver",
+        "name server",
+        "nserver",
+    ];
+
+    protected $creationDateKeys = [
+        "creationdate",
+        "creation date",
+        "domain registration date",
+        "registration time",
+        "created",
+    ];
+
+    protected $expirationDateKeys = [
+        "expirationdate",
+        "expiration date",
+        "domain expiration date",
+        "registry expiry date",
+        "registrar registration expiration date",
+        "expiration time",
+        "paid-till",
+    ];
+
+    protected $ownerKeys = [
+        "organization",
+        "registrant organization",
+        "registrant contact organisation",
+        "registrant",
+        "tech organization",
+        "admin organization",
+        "org",
+    ];
+
+    protected $registrarKeys = [
+        "registrar",
+        "registrar name",
+        "sponsoring registrar",
+    ];
+
     /**
      * @param Response $response
      * @return DomainInfo
      */
     public function parseResponse(Response $response)
     {
-        $domainKeys = [ "domain", "domainname", "domain name" ];
-        $groups = GroupHelper::groupsFromResponseText($response->getText());
-        $group = GroupHelper::findDomainGroup($groups, $response->getDomain(), $domainKeys);
+        $group = $this->groupFrom($response);
         if (!$group) {
             return null;
         }
@@ -31,64 +82,42 @@ class CommonParser implements IParser
             return null;
         }
         return new DomainInfo($response, [
-            "domainName" => GroupHelper::getAsciiServer($group, $domainKeys),
-            "whoisServer" => GroupHelper::getAsciiServer($group, [
-                "whois",
-                "whoisserver",
-                "whois server",
-                "registrar whois server",
-            ]),
-            "nameServers" => GroupHelper::getAsciiServers($group, [
-                "nameserver",
-                "name server",
-                "nserver",
-            ]),
-            "creationDate" => GroupHelper::getUnixtime($group, [
-                "creationdate",
-                "creation date",
-                "domain registration date",
-                "created",
-            ]),
-            "expirationDate" => GroupHelper::getUnixtime($group, [
-                "expirationdate",
-                "expiration date",
-                "domain expiration date",
-                "registry expiry date",
-                "registrar registration expiration date",
-                "paid-till",
-            ]),
-            "owner" => GroupHelper::matchFirst($group, [
-                "organization",
-                "registrant organization",
-                "registrant",
-                "tech organization",
-                "admin organization",
-                "org",
-            ]),
-            "registrar" => GroupHelper::matchFirst($group, [
-                "registrar",
-                "registrar name",
-                "sponsoring registrar",
-            ]),
+            "domainName" => GroupHelper::getAsciiServer($group, $this->domainKeys),
+            "whoisServer" => GroupHelper::getAsciiServer($group, $this->whoisServerKeys),
+            "nameServers" => GroupHelper::getAsciiServers($group, $this->nameServersKeys),
+            "creationDate" => GroupHelper::getUnixtime($group, $this->creationDateKeys),
+            "expirationDate" => GroupHelper::getUnixtime($group, $this->expirationDateKeys),
+            "owner" => GroupHelper::matchFirst($group, $this->ownerKeys),
+            "registrar" => GroupHelper::matchFirst($group, $this->registrarKeys),
             "states" => $states,
         ]);
     }
 
     /**
+     * @param Response $response
+     * @return array
+     */
+    protected function groupFrom(Response $response)
+    {
+        $groups = GroupHelper::groupsFromText($response->getText());
+        return GroupHelper::findDomainGroup($groups, $response->getDomain(), $this->domainKeys);
+    }
+
+    /**
      * @param array $group
-     * @param bool $removeUrls
+     * @param bool $removeExtra
      * @return string[]
      */
-    private function parseStates($group, $removeUrls = true)
+    private function parseStates($group, $removeExtra = true)
     {
         $states = $this->parseStatesIndividual($group);
         if (empty($states)) {
             $states = $this->parseStatesJoined($group);
         }
-        if ($removeUrls) {
+        if ($removeExtra) {
             $filtered = [];
             foreach ($states as $state) {
-                $filtered[] = trim(preg_replace('~\(?http.+\)?~ui', '', $state));
+                $filtered[] = trim(preg_replace('~\(.+?\)|http.+~ui', '', $state));
             }
             return $filtered;
         }
@@ -128,7 +157,10 @@ class CommonParser implements IParser
         $states = [];
         $rawstates = explode(",", $stateStr);
         foreach ($rawstates as $state) {
-            $states[] = mb_strtolower(trim($state));
+            $state = trim($state);
+            if (!empty($state)) {
+                $states[] = mb_strtolower($state);
+            }
         }
         return $states;
     }

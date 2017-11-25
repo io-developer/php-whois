@@ -5,24 +5,34 @@ namespace Iodev\Whois\Helpers;
 class GroupHelper
 {
     /**
-     * @param string $responseText
+     * @param string $text
      * @return array
      */
-    public static function groupsFromResponseText($responseText)
+    public static function groupsFromText($text)
     {
         $groups = [];
-        $splits = preg_split('/([\s\t]*\r?\n){2,}/', $responseText);
+        $splits = preg_split('/([\s\t]*\r?\n){2,}/', $text);
         foreach ($splits as $split) {
-            $group = [];
-            preg_match_all('/^\s*(( *[\w-\/]+)+):[ \t]*(.*?)[\s\r\n\t]*?$/mui', $split, $m);
-            foreach ($m[1] as $index => $key) {
-                $group = array_merge_recursive($group, [ $key => $m[3][$index] ]);
-            }
+            $group = self::groupFromText($split);
             if (count($group) > 1) {
                 $groups[] = $group;
             }
         }
         return $groups;
+    }
+
+    /**
+     * @param string $text
+     * @return array
+     */
+    public static function groupFromText($text)
+    {
+        $group = [];
+        preg_match_all('/^\s*(( *[\w-\/]+)+):[ \t]*(.*?)[\s\r\n\t]*?$/mui', $text, $m);
+        foreach ($m[1] as $index => $key) {
+            $group = array_merge_recursive($group, [ $key => $m[3][$index] ]);
+        }
+        return $group;
     }
 
     /**
