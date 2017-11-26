@@ -68,6 +68,13 @@ class CommonParser implements IParser
         "sponsoring registrar organization",
     ];
 
+    protected $statesKeys = [
+        "domain status",
+        "domainstatus",
+        "status",
+        "state",
+    ];
+
     /**
      * @param Response $response
      * @return DomainInfo
@@ -78,7 +85,7 @@ class CommonParser implements IParser
         if (!$group) {
             return null;
         }
-        $states = $this->parseStates($group);
+        $states = $this->parseStates(GroupHelper::matchFirst($group, $this->statesKeys));
         $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
         $notFoundStatesDict = [
             "no object found" => 1,
@@ -111,64 +118,42 @@ class CommonParser implements IParser
     }
 
     /**
-     * @param array $group
+     * @param string[]|string $rawstates
      * @param bool $removeExtra
      * @return string[]
      */
-    private function parseStates($group, $removeExtra = true)
+    protected function parseStates($rawstates, $removeExtra = true)
     {
-        $states = $this->parseStatesIndividual($group);
-        if (empty($states)) {
-            $states = $this->parseStatesJoined($group);
-        }
-        if ($removeExtra) {
-            $filtered = [];
-            foreach ($states as $state) {
-                $filtered[] = trim(preg_replace('~\(.+?\)|http.+~ui', '', $state));
+        $states = [];
+        $rawstates = is_array($rawstates) ? $rawstates : [ strval($rawstates) ];
+        foreach ($rawstates as $rawstate) {
+            if (preg_match('/^\s*(.+)\s*/ui', $rawstate, $m)) {
+                $state = mb_strtolower($m[1]);
+                $states[] = $removeExtra
+                    ? trim(preg_replace('~\(.+?\)|http.+~ui', '', $state))
+                    : $state;
             }
-            return $filtered;
+        }
+        if (count($states) == 1) {
+            return $this->splitJoinedStates($states[0]);
         }
         return $states;
     }
 
     /**
-     * @param array $group
+     * @param string $stateStr
      * @return string[]
      */
-    private function parseStatesIndividual($group)
+    protected function splitJoinedStates($stateStr)
     {
-        $states = [];
-        $rawstates = GroupHelper::matchFirst($group, [
-            "status",
-            "domainstatus",
-            "domain status",
-        ]);
-        $rawstates = is_array($rawstates) ? $rawstates : [ "".$rawstates ];
-        foreach ($rawstates as $state) {
-            if (preg_match('/^\s*(.+)\s*/ui', $state, $m)) {
-                $states[] = mb_strtolower($m[1]);
-            }
-        }
-        return $states;
-    }
-
-    /**
-     * @param array $group
-     * @return string[]
-     */
-    private function parseStatesJoined($group)
-    {
-        $stateStr = GroupHelper::matchFirst($group, [
-            "state",
-        ]);
-        $states = [];
-        $rawstates = explode(",", $stateStr);
-        foreach ($rawstates as $state) {
-            $state = trim($state);
+        $splits = [];
+        $rawsplits = explode(",", $stateStr);
+        foreach ($rawsplits as $rawsplit) {
+            $state = trim($rawsplit);
             if (!empty($state)) {
-                $states[] = mb_strtolower($state);
+                $splits[] = $state;
             }
         }
-        return $states;
+        return $splits;
     }
 }
