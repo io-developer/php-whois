@@ -28,10 +28,11 @@ class GroupHelper
     public static function groupFromText($text)
     {
         $group = [];
-        preg_match_all('/^\s*(( *[^%#:]+)+):[ \t]*(.*?)[\s\r\n\t]*?$/mui', $text, $m);
+        preg_match_all('/^[ \t]*([^%#\r\n:]+):[ \t]*(.*?)\s*$/mui', $text, $m);
         foreach ($m[1] as $index => $key) {
+            $key = trim($key);
             if ($key != 'http' && $key != 'https') {
-                $group = array_merge_recursive($group, [$key => $m[3][$index]]);
+                $group = array_merge_recursive($group, [$key => $m[2][$index]]);
             }
         }
         return $group;
@@ -98,7 +99,10 @@ class GroupHelper
         $raws = is_array($raws) ? $raws : [ $raws ];
         $servers = [];
         foreach ($raws as $raw) {
-            $servers[] = DomainHelper::toAscii($raw);
+            $s = trim(DomainHelper::toAscii($raw));
+            if (!empty($s)) {
+                $servers[] = $s;
+            }
         }
         return $servers;
     }

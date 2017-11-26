@@ -3,7 +3,6 @@
 namespace Iodev\Whois\Parsers;
 
 use Iodev\Whois\DomainInfo;
-use Iodev\Whois\Helpers\DateHelper;
 use Iodev\Whois\Response;
 use Iodev\Whois\Helpers\GroupHelper;
 
@@ -13,6 +12,7 @@ class CommonParser implements IParser
         "domain",
         "domainname",
         "domain name",
+        "query",
     ];
 
     protected $whoisServerKeys = [
@@ -26,6 +26,7 @@ class CommonParser implements IParser
         "nameserver",
         "name server",
         "nserver",
+        "host name",
     ];
 
     protected $creationDateKeys = [
@@ -36,6 +37,7 @@ class CommonParser implements IParser
         "created",
         "created on",
         "registered",
+        "registered date",
         "record created",
     ];
 
@@ -75,6 +77,13 @@ class CommonParser implements IParser
         "state",
     ];
 
+    protected $notRegisteredStatesDict = [
+        "not registered" => 1,
+        "no object found" => 1,
+        "available" => 1,
+        "free" => 1,
+    ];
+
     /**
      * @param Response $response
      * @return DomainInfo
@@ -85,26 +94,25 @@ class CommonParser implements IParser
         if (!$group) {
             return null;
         }
-        $states = $this->parseStates(GroupHelper::matchFirst($group, $this->statesKeys));
-        $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
-        $notFoundStatesDict = [
-            "no object found" => 1,
-            "available" => 1,
-            "free" => 1,
-        ];
-        if (!empty($states) && !empty($notFoundStatesDict[$firstState])) {
+        $info = $this->infoFrom($response, $group);
+        if (empty($info->getDomainName())) {
             return null;
         }
-        return new DomainInfo($response, [
-            "domainName" => GroupHelper::getAsciiServer($group, $this->domainKeys),
-            "whoisServer" => GroupHelper::getAsciiServer($group, $this->whoisServerKeys),
-            "nameServers" => GroupHelper::getAsciiServers($group, $this->nameServersKeys),
-            "creationDate" => GroupHelper::getUnixtime($group, $this->creationDateKeys),
-            "expirationDate" => GroupHelper::getUnixtime($group, $this->expirationDateKeys),
-            "owner" => GroupHelper::matchFirst($group, $this->ownerKeys),
-            "registrar" => GroupHelper::matchFirst($group, $this->registrarKeys),
-            "states" => $states,
-        ]);
+        $states = $info->getStates();
+        $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
+        if (!empty($this->notRegisteredStatesDict[$firstState])) {
+            return null;
+        }
+        if (empty($states)
+            && empty($info->getNameServers())
+            && empty($info->getOwner())
+            && empty($info->getCreationDate())
+            && empty($info->getExpirationDate())
+            && empty($info->getRegistrar())
+        ) {
+            return null;
+        }
+        return $info;
     }
 
     /**
@@ -115,6 +123,25 @@ class CommonParser implements IParser
     {
         $groups = GroupHelper::groupsFromText($response->getText());
         return GroupHelper::findDomainGroup($groups, $response->getDomain(), $this->domainKeys);
+    }
+
+    /**
+     * @param Response $response
+     * @param array $group
+     * @return DomainInfo
+     */
+    protected function infoFrom($response, $group)
+    {
+        return new DomainInfo($response, [
+            "domainName" => GroupHelper::getAsciiServer($group, $this->domainKeys),
+            "whoisServer" => GroupHelper::getAsciiServer($group, $this->whoisServerKeys),
+            "nameServers" => GroupHelper::getAsciiServers($group, $this->nameServersKeys),
+            "creationDate" => GroupHelper::getUnixtime($group, $this->creationDateKeys),
+            "expirationDate" => GroupHelper::getUnixtime($group, $this->expirationDateKeys),
+            "owner" => GroupHelper::matchFirst($group, $this->ownerKeys),
+            "registrar" => GroupHelper::matchFirst($group, $this->registrarKeys),
+            "states" => $this->parseStates(GroupHelper::matchFirst($group, $this->statesKeys)),
+        ]);
     }
 
     /**
