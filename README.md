@@ -1,13 +1,13 @@
 # PHP WHOIS
-PHP library provides parsed WHOIS domain information. Easy way to check domain availability or expiration date. Implements requests to real WHOIS service via port 43.
+PHP WHOIS client implementation. Provides raw-text and parsed answers. Sends WHOIS queries to real service via port 43
 
 [![Build Status](https://travis-ci.org/io-developer/php-whois.svg?branch=master)](https://travis-ci.org/io-developer/php-whois)
-[![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-blue.svg)](https://secure.php.net/)
+[![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-8892BF.svg)](https://secure.php.net/)
 [![Packagist](https://img.shields.io/packagist/v/io-developer/php-whois.svg)](https://packagist.org/packages/io-developer/php-whois)
 [![Packagist](https://img.shields.io/packagist/l/io-developer/php-whois.svg)](https://github.com/io-developer/php-whois/blob/master/LICENSE)
 
 ## Requirements
-- PHP >= __5.4__ (compatible with __7.0__ and higher)
+- PHP >= __5.4__ (compatible with __7.0__ up to __nightly__)
 - intl
 
 
@@ -19,14 +19,14 @@ composer require io-developer/php-whois
 Or via __composer.json__
 ````
 "require": {
-    "io-developer/php-whois": "^2.2.0"
+    "io-developer/php-whois": "^2.3.0"
 }
 ````
 
 
 ## Usage
 
-#### Common Whois client
+#### Whois client creation
 
 ```php
 <?php
@@ -61,7 +61,7 @@ $response = Whois::create()->lookupDomain("google.com");
 echo $response->getText();
 ```
 
-#### Parsed domain info loading
+#### Parsed domain info
 
 ```php
 <?php
@@ -118,7 +118,19 @@ try {
 ```
 
 
-#### Getting whois text response from info
+#### Original WHOIS answer via lookup
+
+```php
+<?php
+
+use Iodev\Whois\Whois;
+
+$response = Whois::create()->lookupDomain("google.com");
+echo $response->getText();
+```
+
+#### Original WHOIS answer via domain info
+
 
 ```php
 <?php
