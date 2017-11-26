@@ -3,6 +3,7 @@
 namespace Iodev\Whois\Parsers;
 
 use Iodev\Whois\DomainInfo;
+use Iodev\Whois\Helpers\DateHelper;
 use Iodev\Whois\Response;
 use Iodev\Whois\Helpers\GroupHelper;
 
@@ -33,6 +34,9 @@ class CommonParser implements IParser
         "domain registration date",
         "registration time",
         "created",
+        "created on",
+        "registered",
+        "record created",
     ];
 
     protected $expirationDateKeys = [
@@ -50,15 +54,18 @@ class CommonParser implements IParser
         "registrant organization",
         "registrant contact organisation",
         "registrant",
+        "registrant name",
         "tech organization",
         "admin organization",
         "org",
+        "holder",
     ];
 
     protected $registrarKeys = [
         "registrar",
         "registrar name",
         "sponsoring registrar",
+        "sponsoring registrar organization",
     ];
 
     /**

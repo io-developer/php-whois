@@ -28,9 +28,11 @@ class GroupHelper
     public static function groupFromText($text)
     {
         $group = [];
-        preg_match_all('/^\s*(( *[\w-\/]+)+):[ \t]*(.*?)[\s\r\n\t]*?$/mui', $text, $m);
+        preg_match_all('/^\s*(( *[^%#:]+)+):[ \t]*(.*?)[\s\r\n\t]*?$/mui', $text, $m);
         foreach ($m[1] as $index => $key) {
-            $group = array_merge_recursive($group, [ $key => $m[3][$index] ]);
+            if ($key != 'http' && $key != 'https') {
+                $group = array_merge_recursive($group, [$key => $m[3][$index]]);
+            }
         }
         return $group;
     }
@@ -43,15 +45,15 @@ class GroupHelper
      */
     public static function matchFirst($group, $keys, $ignoreCase = true)
     {
-        $kDict = [];
-        foreach ($keys as $k) {
-            $k = $ignoreCase ? strtolower($k) : $k;
-            $kDict[$k] = 1;
+        if ($ignoreCase) {
+            foreach ($group as $k => $v) {
+                $group[mb_strtolower($k)] = $v;
+            }
         }
-        foreach ($group as $k => $v) {
-            $k = $ignoreCase ? strtolower($k) : $k;
-            if (isset($kDict[$k])) {
-                return $v;
+        foreach ($keys as $k) {
+            $k = $ignoreCase ? mb_strtolower($k) : $k;
+            if (isset($group[$k])) {
+                return $group[$k];
             }
         }
         return "";
