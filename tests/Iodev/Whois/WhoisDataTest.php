@@ -265,17 +265,17 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.im", ".im/google.im.txt", ".im/google.im.json" ],
 
             [ "free.in", ".in/free.txt", null ],
-            // [ "google.co.in", ".in/google.co.in.txt", ".in/google.co.in.json" ],
+            [ "google.co.in", ".in/google.co.in.txt", ".in/google.co.in.json" ],
 
             [ "free.info", ".info/free.txt", null ],
             [ "info.info", ".info/info.info.txt", ".info/info.info.json" ],
 
             [ "free.io", ".io/free.txt", null ],
             [ "github.io", ".io/github.io.txt", ".io/github.io.json" ],
-            // [ "google.io", ".io/google.io.txt", ".io/google.io.json" ],
+            [ "google.io", ".io/google.io.txt", ".io/google.io.json" ],
 
             [ "free.iq", ".iq/free.txt", null ],
-            // [ "google.iq", ".iq/google.iq.txt", ".iq/google.iq.json" ],
+            [ "google.iq", ".iq/google.iq.txt", ".iq/google.iq.json" ],
 
             [ "free.is", ".is/free.txt", null ],
             // [ "google.is", ".is/google.is.txt", ".is/google.is.json" ],
@@ -293,19 +293,19 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.kg", ".kg/google.kg.txt", ".kg/google.kg.json" ],
 
             [ "free.ki", ".ki/free.txt", null ],
-            // [ "google.ki", ".ki/google.ki.txt", ".ki/google.ki.json" ],
+            [ "google.ki", ".ki/google.ki.txt", ".ki/google.ki.json" ],
 
             [ "free.kr", ".kr/free.txt", null ],
-            // [ "google.co.kr", ".kr/google.co.kr.txt", ".kr/google.co.kr.json" ],
+            [ "google.co.kr", ".kr/google.co.kr.txt", ".kr/google.co.kr.json" ],
 
             [ "free.kz", ".kz/free.txt", null ],
             // [ "google.kz", ".kz/google.kz.txt", ".kz/google.kz.json" ],
 
             [ "free.la", ".la/free.txt", null ],
-            // [ "google.la", ".la/google.la.txt", ".la/google.la.json" ],
+            [ "google.la", ".la/google.la.txt", ".la/google.la.json" ],
 
             [ "free.lc", ".lc/free.txt", null ],
-            // [ "google.com.lc", ".lc/google.com.lc.txt", ".lc/google.com.lc.json" ],
+            [ "google.com.lc", ".lc/google.com.lc.txt", ".lc/google.com.lc.json" ],
 
             [ "free.lt", ".lt/free.txt", null ],
             // [ "google.lt", ".lt/google.lt.txt", ".lt/google.lt.json" ],
@@ -320,16 +320,16 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.com.ly", ".ly/google.com.ly.txt", ".ly/google.com.ly.json" ],
 
             [ "free.ma", ".ma/free.txt", null ],
-            // [ "google.co.ma", ".ma/google.co.ma.txt", ".ma/google.co.ma.json" ],
+            [ "google.co.ma", ".ma/google.co.ma.txt", ".ma/google.co.ma.json" ],
 
             [ "free.md", ".md/free.txt", null ],
-            // [ "google.md", ".md/google.md.txt", ".md/google.md.json" ],
+            [ "google.md", ".md/google.md.txt", ".md/google.md.json" ],
 
             [ "free.me", ".me/free.txt", null ],
-            // [ "google.me", ".me/google.me.txt", ".me/google.me.json" ],
+            [ "google.me", ".me/google.me.txt", ".me/google.me.json" ],
 
             [ "free.mg", ".mg/free.txt", null ],
-            // [ "google.mg", ".mg/google.mg.txt", ".mg/google.mg.json" ],
+            [ "google.mg", ".mg/google.mg.txt", ".mg/google.mg.json" ],
 
             [ "free.mk", ".mk/free.txt", null ],
             // [ "google.mk", ".mk/google.mk.txt", ".mk/google.mk.json" ],
@@ -338,32 +338,32 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.ml", ".ml/google.ml.txt", ".ml/google.ml.json" ],
 
             [ "free.mn", ".mn/free.txt", null ],
-            // [ "google.mn", ".mn/google.mn.txt", ".mn/google.mn.json" ],
+            [ "google.mn", ".mn/google.mn.txt", ".mn/google.mn.json" ],
 
             [ "free.ms", ".ms/free.txt", null ],
-            // [ "google.ms", ".ms/google.ms.txt", ".ms/google.ms.json" ],
+            [ "google.ms", ".ms/google.ms.txt", ".ms/google.ms.json" ],
 
             [ "free.mu", ".mu/free.txt", null ],
-            // [ "google.mu", ".mu/google.mu.txt", ".mu/google.mu.json" ],
+            [ "google.mu", ".mu/google.mu.txt", ".mu/google.mu.json" ],
 
             [ "free.mx", ".mx/free.txt", null ],
             // [ "google.com.mx", ".mx/google.com.mx.txt", ".mx/google.com.mx.json" ],
 
             [ "free.mz", ".mz/free.txt", null ],
-            // [ "google.co.mz", ".mz/google.co.mz.txt", ".mz/google.co.mz.json" ],
+            [ "google.co.mz", ".mz/google.co.mz.txt", ".mz/google.co.mz.json" ],
 
             [ "free.na", ".na/free.txt", null ],
-            // [ "google.com.na", ".na/google.com.na.txt", ".na/google.com.na.json" ],
+            [ "google.com.na", ".na/google.com.na.txt", ".na/google.com.na.json" ],
 
             [ "free.net", ".net/free.txt", null ],
             [ "speedtest.net", ".net/speedtest.net.txt", ".net/speedtest.net.json" ],
             [ "speedtest.net", ".net/speedtest.net_registrar_whois.txt", ".net/speedtest.net_registrar_whois.json" ],
 
             [ "free.nf", ".nf/free.txt", null ],
-            // [ "google.com.nf", ".nf/google.com.nf.txt", ".nf/google.com.nf.json" ],
+            [ "google.com.nf", ".nf/google.com.nf.txt", ".nf/google.com.nf.json" ],
 
             [ "free.ng", ".ng/free.txt", null ],
-            // [ "google.com.ng", ".ng/google.com.ng.txt", ".ng/google.com.ng.json" ],
+            [ "google.com.ng", ".ng/google.com.ng.txt", ".ng/google.com.ng.json" ],
 
             [ "free.nl", ".nl/free.txt", null ],
             // [ "google.nl", ".nl/google.nl.txt", ".nl/google.nl.json" ],
@@ -381,7 +381,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             [ "linux.org", ".org/linux.org.txt", ".org/linux.org.json" ],
 
             [ "free.om", ".om/free.txt", null ],
-            // [ "google.com.om", ".om/google.com.om.txt", ".om/google.com.om.json" ],
+            [ "google.com.om", ".om/google.com.om.txt", ".om/google.com.om.json" ],
 
             [ "free.pe", ".pe/free.txt", null ],
             // [ "google.com.pe", ".pe/google.com.pe.txt", ".pe/google.com.pe.json" ],
