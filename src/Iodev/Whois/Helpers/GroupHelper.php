@@ -110,6 +110,26 @@ class GroupHelper
     /**
      * @param array $group
      * @param string[] $keys
+     * @param array $keysGroups
+     * @return string[]
+     */
+    public static function getAsciiServersComplex($group, $keys, $keysGroups = null)
+    {
+        $servers = self::getAsciiServers($group, $keys);
+        if (!empty($servers) || empty($keysGroups)) {
+            return $servers;
+        }
+        foreach ($keysGroups as $keysGroup) {
+            foreach ($keysGroup as $key) {
+                $servers = array_merge($servers, self::getAsciiServers($group, [ $key ]));
+            }
+        }
+        return $servers;
+    }
+
+    /**
+     * @param array $group
+     * @param string[] $keys
      * @return int
      */
     public static function getUnixtime($group, $keys)

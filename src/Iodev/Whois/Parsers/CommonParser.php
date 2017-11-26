@@ -27,16 +27,24 @@ class CommonParser implements IParser
         "name server",
         "nserver",
         "host name",
+        "dns",
+    ];
+
+    protected $nameServersKeysGroups = [
+        [ "ns 1", "ns 2", "ns 3", "ns 4" ],
     ];
 
     protected $creationDateKeys = [
         "creationdate",
         "creation date",
+        "registration date",
         "domain registration date",
         "registration time",
         "created",
         "created on",
+        "created date",
         "registered",
+        "registered on",
         "registered date",
         "record created",
     ];
@@ -44,23 +52,29 @@ class CommonParser implements IParser
     protected $expirationDateKeys = [
         "expirationdate",
         "expiration date",
+        "expiration time",
+        "exp date",
         "domain expiration date",
         "registry expiry date",
         "registrar registration expiration date",
-        "expiration time",
+        "expiry",
         "paid-till",
     ];
 
     protected $ownerKeys = [
         "organization",
         "registrant organization",
+        "registrant internationalized organization",
         "registrant contact organisation",
         "registrant",
         "registrant name",
-        "tech organization",
-        "admin organization",
         "org",
         "holder",
+        "domain holder",
+        "owner orgname",
+        "owner name",
+        "tech organization",
+        "admin organization",
     ];
 
     protected $registrarKeys = [
@@ -97,7 +111,7 @@ class CommonParser implements IParser
         $data = [
             "domainName" => GroupHelper::getAsciiServer($group, $this->domainKeys),
             "whoisServer" => GroupHelper::getAsciiServer($group, $this->whoisServerKeys),
-            "nameServers" => GroupHelper::getAsciiServers($group, $this->nameServersKeys),
+            "nameServers" => GroupHelper::getAsciiServersComplex($group, $this->nameServersKeys, $this->nameServersKeysGroups),
             "creationDate" => GroupHelper::getUnixtime($group, $this->creationDateKeys),
             "expirationDate" => GroupHelper::getUnixtime($group, $this->expirationDateKeys),
             "owner" => GroupHelper::matchFirst($group, $this->ownerKeys),
