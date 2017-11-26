@@ -94,25 +94,34 @@ class CommonParser implements IParser
         if (!$group) {
             return null;
         }
-        $info = $this->infoFrom($response, $group);
-        if (empty($info->getDomainName())) {
+        $data = [
+            "domainName" => GroupHelper::getAsciiServer($group, $this->domainKeys),
+            "whoisServer" => GroupHelper::getAsciiServer($group, $this->whoisServerKeys),
+            "nameServers" => GroupHelper::getAsciiServers($group, $this->nameServersKeys),
+            "creationDate" => GroupHelper::getUnixtime($group, $this->creationDateKeys),
+            "expirationDate" => GroupHelper::getUnixtime($group, $this->expirationDateKeys),
+            "owner" => GroupHelper::matchFirst($group, $this->ownerKeys),
+            "registrar" => GroupHelper::matchFirst($group, $this->registrarKeys),
+            "states" => $this->parseStates(GroupHelper::matchFirst($group, $this->statesKeys)),
+        ];
+        if (empty($data["domainName"])) {
             return null;
         }
-        $states = $info->getStates();
+        $states = $data["states"];
         $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
         if (!empty($this->notRegisteredStatesDict[$firstState])) {
             return null;
         }
         if (empty($states)
-            && empty($info->getNameServers())
-            && empty($info->getOwner())
-            && empty($info->getCreationDate())
-            && empty($info->getExpirationDate())
-            && empty($info->getRegistrar())
+            && empty($data["nameServers"])
+            && empty($data["owner"])
+            && empty($data["creationDate"])
+            && empty($data["expirationDate"])
+            && empty($data["registrar"])
         ) {
             return null;
         }
-        return $info;
+        return new DomainInfo($response, $data);
     }
 
     /**
@@ -123,25 +132,6 @@ class CommonParser implements IParser
     {
         $groups = GroupHelper::groupsFromText($response->getText());
         return GroupHelper::findDomainGroup($groups, $response->getDomain(), $this->domainKeys);
-    }
-
-    /**
-     * @param Response $response
-     * @param array $group
-     * @return DomainInfo
-     */
-    protected function infoFrom($response, $group)
-    {
-        return new DomainInfo($response, [
-            "domainName" => GroupHelper::getAsciiServer($group, $this->domainKeys),
-            "whoisServer" => GroupHelper::getAsciiServer($group, $this->whoisServerKeys),
-            "nameServers" => GroupHelper::getAsciiServers($group, $this->nameServersKeys),
-            "creationDate" => GroupHelper::getUnixtime($group, $this->creationDateKeys),
-            "expirationDate" => GroupHelper::getUnixtime($group, $this->expirationDateKeys),
-            "owner" => GroupHelper::matchFirst($group, $this->ownerKeys),
-            "registrar" => GroupHelper::matchFirst($group, $this->registrarKeys),
-            "states" => $this->parseStates(GroupHelper::matchFirst($group, $this->statesKeys)),
-        ]);
     }
 
     /**
