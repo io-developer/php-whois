@@ -141,7 +141,11 @@ class Whois
             $response = $this->loader->loadResponse($server->getHost(), $domain, true);
             $info = $p->parseResponse($response);
         }
-        if ($info && $info->getWhoisServer() && !$server->isCentralized()) {
+        if ($info
+            && $info->getWhoisServer()
+            && $info->getWhoisServer() != $server->getHost()
+            && !$server->isCentralized()
+        ) {
             $tmpResponse = $this->loader->loadResponse($info->getWhoisServer(), $domain);
             $tmpInfo = $p->parseResponse($tmpResponse);
             if ($tmpInfo) {

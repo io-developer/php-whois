@@ -8,128 +8,183 @@ use Iodev\Whois\Helpers\GroupHelper;
 
 class CommonParser implements IParser
 {
+    protected $domainKeys = [
+        "domain",
+        "domainname",
+        "domain name",
+        "query",
+    ];
+
+    protected $whoisServerKeys = [
+        "whois",
+        "whoisserver",
+        "whois server",
+        "registrar whois server",
+    ];
+
+    protected $nameServersKeys = [
+        "nameserver",
+        "name server",
+        "nserver",
+        "host name",
+        "dns",
+    ];
+
+    protected $nameServersKeysGroups = [
+        [ "ns 1", "ns 2", "ns 3", "ns 4" ],
+    ];
+
+    protected $creationDateKeys = [
+        "creationdate",
+        "creation date",
+        "registration date",
+        "domain registration date",
+        "registration time",
+        "created",
+        "created on",
+        "created date",
+        "registered",
+        "registered on",
+        "registered date",
+        "record created",
+    ];
+
+    protected $expirationDateKeys = [
+        "expirationdate",
+        "expiration date",
+        "expiration time",
+        "exp date",
+        "domain expiration date",
+        "registry expiry date",
+        "registrar registration expiration date",
+        "expiry",
+        "paid-till",
+    ];
+
+    protected $ownerKeys = [
+        "organization",
+        "registrant organization",
+        "registrant internationalized organization",
+        "registrant contact organisation",
+        "registrant",
+        "registrant name",
+        "org",
+        "holder",
+        "domain holder",
+        "owner orgname",
+        "owner name",
+        "tech organization",
+        "admin organization",
+    ];
+
+    protected $registrarKeys = [
+        "registrar",
+        "registrar name",
+        "sponsoring registrar",
+        "sponsoring registrar organization",
+    ];
+
+    protected $statesKeys = [
+        "domain status",
+        "domainstatus",
+        "status",
+        "state",
+    ];
+
+    protected $notRegisteredStatesDict = [
+        "not registered" => 1,
+        "no object found" => 1,
+        "available" => 1,
+        "free" => 1,
+    ];
+
     /**
      * @param Response $response
      * @return DomainInfo
      */
     public function parseResponse(Response $response)
     {
-        $domainKeys = [ "domain", "domainname", "domain name" ];
-        $groups = GroupHelper::groupsFromResponseText($response->getText());
-        $group = GroupHelper::findDomainGroup($groups, $response->getDomain(), $domainKeys);
+        $group = $this->groupFrom($response);
         if (!$group) {
             return null;
         }
-        $states = $this->parseStates($group);
-        $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
-        $notFoundStatesDict = [
-            "no object found" => 1,
-            "available" => 1,
-            "free" => 1,
+        $data = [
+            "domainName" => GroupHelper::getAsciiServer($group, $this->domainKeys),
+            "whoisServer" => GroupHelper::getAsciiServer($group, $this->whoisServerKeys),
+            "nameServers" => GroupHelper::getAsciiServersComplex($group, $this->nameServersKeys, $this->nameServersKeysGroups),
+            "creationDate" => GroupHelper::getUnixtime($group, $this->creationDateKeys),
+            "expirationDate" => GroupHelper::getUnixtime($group, $this->expirationDateKeys),
+            "owner" => GroupHelper::matchFirst($group, $this->ownerKeys),
+            "registrar" => GroupHelper::matchFirst($group, $this->registrarKeys),
+            "states" => $this->parseStates(GroupHelper::matchFirst($group, $this->statesKeys)),
         ];
-        if (!empty($states) && !empty($notFoundStatesDict[$firstState])) {
+        if (empty($data["domainName"])) {
             return null;
         }
-        return new DomainInfo($response, [
-            "domainName" => GroupHelper::getAsciiServer($group, $domainKeys),
-            "whoisServer" => GroupHelper::getAsciiServer($group, [
-                "whois",
-                "whoisserver",
-                "whois server",
-                "registrar whois server",
-            ]),
-            "nameServers" => GroupHelper::getAsciiServers($group, [
-                "nameserver",
-                "name server",
-                "nserver",
-            ]),
-            "creationDate" => GroupHelper::getUnixtime($group, [
-                "creationdate",
-                "creation date",
-                "domain registration date",
-                "created",
-            ]),
-            "expirationDate" => GroupHelper::getUnixtime($group, [
-                "expirationdate",
-                "expiration date",
-                "domain expiration date",
-                "registry expiry date",
-                "registrar registration expiration date",
-                "paid-till",
-            ]),
-            "owner" => GroupHelper::matchFirst($group, [
-                "organization",
-                "registrant organization",
-                "registrant",
-                "tech organization",
-                "admin organization",
-                "org",
-            ]),
-            "registrar" => GroupHelper::matchFirst($group, [
-                "registrar",
-                "registrar name",
-                "sponsoring registrar",
-            ]),
-            "states" => $states,
-        ]);
+        $states = $data["states"];
+        $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
+        if (!empty($this->notRegisteredStatesDict[$firstState])) {
+            return null;
+        }
+        if (empty($states)
+            && empty($data["nameServers"])
+            && empty($data["owner"])
+            && empty($data["creationDate"])
+            && empty($data["expirationDate"])
+            && empty($data["registrar"])
+        ) {
+            return null;
+        }
+        return new DomainInfo($response, $data);
     }
 
     /**
-     * @param array $group
-     * @param bool $removeUrls
-     * @return string[]
+     * @param Response $response
+     * @return array
      */
-    private function parseStates($group, $removeUrls = true)
+    protected function groupFrom(Response $response)
     {
-        $states = $this->parseStatesIndividual($group);
-        if (empty($states)) {
-            $states = $this->parseStatesJoined($group);
-        }
-        if ($removeUrls) {
-            $filtered = [];
-            foreach ($states as $state) {
-                $filtered[] = trim(preg_replace('~\(?http.+\)?~ui', '', $state));
-            }
-            return $filtered;
-        }
-        return $states;
+        $groups = GroupHelper::groupsFromText($response->getText());
+        return GroupHelper::findDomainGroup($groups, $response->getDomain(), $this->domainKeys);
     }
 
     /**
-     * @param array $group
+     * @param string[]|string $rawstates
+     * @param bool $removeExtra
      * @return string[]
      */
-    private function parseStatesIndividual($group)
+    protected function parseStates($rawstates, $removeExtra = true)
     {
         $states = [];
-        $rawstates = GroupHelper::matchFirst($group, [
-            "status",
-            "domainstatus",
-            "domain status",
-        ]);
-        $rawstates = is_array($rawstates) ? $rawstates : [ "".$rawstates ];
-        foreach ($rawstates as $state) {
-            if (preg_match('/^\s*(.+)\s*/ui', $state, $m)) {
-                $states[] = mb_strtolower($m[1]);
+        $rawstates = is_array($rawstates) ? $rawstates : [ strval($rawstates) ];
+        foreach ($rawstates as $rawstate) {
+            if (preg_match('/^\s*(.+)\s*/ui', $rawstate, $m)) {
+                $state = mb_strtolower($m[1]);
+                $states[] = $removeExtra
+                    ? trim(preg_replace('~\(.+?\)|http.+~ui', '', $state))
+                    : $state;
             }
+        }
+        if (count($states) == 1) {
+            return $this->splitJoinedStates($states[0]);
         }
         return $states;
     }
 
     /**
-     * @param array $group
+     * @param string $stateStr
      * @return string[]
      */
-    private function parseStatesJoined($group)
+    protected function splitJoinedStates($stateStr)
     {
-        $stateStr = GroupHelper::matchFirst($group, [
-            "state",
-        ]);
-        $states = [];
-        $rawstates = explode(",", $stateStr);
-        foreach ($rawstates as $state) {
-            $states[] = mb_strtolower(trim($state));
+        $splits = [];
+        $rawsplits = explode(",", $stateStr);
+        foreach ($rawsplits as $rawsplit) {
+            $state = trim($rawsplit);
+            if (!empty($state)) {
+                $splits[] = $state;
+            }
         }
-        return $states;
+        return $splits;
     }
 }

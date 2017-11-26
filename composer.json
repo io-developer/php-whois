@@ -1,6 +1,6 @@
 {
     "name": "io-developer/php-whois",
-    "description": "Pure PHP WHOIS client provides raw and parsed WHOIS domain information. Easy way to check domain availability or expiration date. Implements requests to real WHOIS service via port 43",
+    "description": "PHP WHOIS client implementation. Provides raw-text and parsed answers. Allows easy check domain availability or expiration date. Sends WHOIS queries to real service via port 43",
     "keywords": [
         "php",
         "whois",
@@ -9,7 +9,9 @@
         "domain",
         "information",
         "availability",
+        "registrant",
         "registrar",
+        "expiry",
         "expiration",
         "parser",
         "lookup",
@@ -19,7 +21,7 @@
     ],
     "type": "library",
     "license": "MIT",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "homepage": "https://github.com/io-developer/php-whois",
     "authors": [
         {

@@ -1,2 +1,0 @@
-This TLD has no whois server, but you can access the whois database at
-http://www.cenpac.net.nr/dns/whois.html
