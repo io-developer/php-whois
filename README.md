@@ -4,7 +4,6 @@ PHP WHOIS client implementation. Provides raw-text and parsed answers. Sends WHO
 [![Build Status](https://travis-ci.org/io-developer/php-whois.svg?branch=master)](https://travis-ci.org/io-developer/php-whois)
 [![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-8892BF.svg)](https://secure.php.net/)
 [![Packagist](https://img.shields.io/packagist/v/io-developer/php-whois.svg)](https://packagist.org/packages/io-developer/php-whois)
-[![Packagist](https://img.shields.io/packagist/l/io-developer/php-whois.svg)](https://github.com/io-developer/php-whois/blob/master/LICENSE)
 
 ## Requirements
 - PHP >= __5.4__ (compatible with __7.0__ up to __nightly__)
