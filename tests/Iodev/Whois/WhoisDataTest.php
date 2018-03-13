@@ -190,7 +190,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.dk", ".dk/google.dk.txt", ".dk/google.dk.json" ],
 
             [ "free.dm", ".dm/free.txt", null ],
-            // [ "google.dm", ".dm/google.dm.txt", ".dm/google.dm.json" ],
+            [ "google.dm", ".dm/google.dm.txt", ".dm/google.dm.json" ],
 
             [ "free.do", ".do/free.txt", null ],
             [ "google.com.do", ".do/google.com.do.txt", ".do/google.com.do.json" ],
@@ -220,7 +220,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.ga", ".ga/google.ga.txt", ".ga/google.ga.json" ],
 
             [ "free.gd", ".gd/free.txt", null ],
-            // [ "google.gd", ".gd/google.gd.txt", ".gd/google.gd.json" ],
+            [ "google.gd", ".gd/google.gd.txt", ".gd/google.gd.json" ],
 
             [ "free.gf", ".gf/free.txt", null ],
             // [ "google.gf", ".gf/google.gf.txt", ".gf/google.gf.json" ],
@@ -501,7 +501,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.co.ve", ".ve/google.co.ve.txt", ".ve/google.co.ve.json" ],
 
             [ "free.vg", ".vg/free.txt", null ],
-            // [ "google.vg", ".vg/google.vg.txt", ".vg/google.vg.json" ],
+            [ "google.vg", ".vg/google.vg.txt", ".vg/google.vg.json" ],
 
             [ "free.vu", ".vu/free.txt", null ],
             // [ "google.vu", ".vu/google.vu.txt", ".vu/google.vu.json" ],
