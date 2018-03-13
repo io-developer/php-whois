@@ -62,17 +62,20 @@ class CommonParser implements IParser
     ];
 
     protected $ownerKeys = [
+        "owner orgname",
+        "owner-organization",
+        "owner name",
+        "owner-name",
         "organization",
         "registrant organization",
+        "registrant-organization",
         "registrant internationalized organization",
         "registrant contact organisation",
         "registrant",
         "registrant name",
-        "org",
-        "holder",
         "domain holder",
-        "owner orgname",
-        "owner name",
+        "holder",
+        "org",
         "tech organization",
         "admin organization",
     ];
