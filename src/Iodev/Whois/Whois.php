@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois;
 
+use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Loaders\ILoader;
@@ -54,6 +55,7 @@ class Whois
      * @param string $domain
      * @return bool
      * @throws ServerMismatchException
+     * @throws ConnectionException
      */
     public function isDomainAvailable($domain)
     {
@@ -64,6 +66,7 @@ class Whois
      * @param string $domain
      * @return DomainInfo
      * @throws ServerMismatchException
+     * @throws ConnectionException
      */
     public function loadDomainInfo($domain)
     {
@@ -75,6 +78,7 @@ class Whois
      * @param Server $server
      * @param string $domain
      * @return DomainInfo
+     * @throws ConnectionException
      */
     public function loadDomainInfoFrom(Server $server, $domain)
     {
@@ -86,6 +90,7 @@ class Whois
      * @param string $domain
      * @return Response
      * @throws ServerMismatchException
+     * @throws ConnectionException
      */
     public function lookupDomain($domain)
     {
@@ -97,6 +102,7 @@ class Whois
      * @param Server $server
      * @param string $domain
      * @return Response
+     * @throws ConnectionException
      */
     public function lookupDomainFrom(Server $server, $domain)
     {
@@ -108,6 +114,7 @@ class Whois
      * @param string $domain
      * @return array
      * @throws ServerMismatchException
+     * @throws ConnectionException
      */
     private function loadDomainData($domain)
     {
@@ -131,6 +138,7 @@ class Whois
      * @param Server $server
      * @param string $domain
      * @return array
+     * @throws ConnectionException
      */
     private function loadDomainDataFrom(Server $server, $domain)
     {
