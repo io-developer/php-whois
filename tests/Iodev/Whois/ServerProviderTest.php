@@ -2,8 +2,6 @@
 
 namespace Iodev\Whois;
 
-use Iodev\Whois\Parsers\CommonParser;
-
 class ServerProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -12,7 +10,7 @@ class ServerProviderTest extends \PHPUnit_Framework_TestCase
      */
     private static function createServer($zone)
     {
-        return new Server($zone, "some.host.net", false, new CommonParser());
+        return new Server($zone, "some.host.net", false, Parser::create());
     }
 
     /** @var ServerProvider */

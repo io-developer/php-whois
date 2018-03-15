@@ -4,39 +4,37 @@ namespace Iodev\Whois;
 
 use InvalidArgumentException;
 use Iodev\Whois\Helpers\DomainHelper;
-use Iodev\Whois\Parsers\CommonParser;
-use Iodev\Whois\Parsers\IParser;
 
 class Server
 {
     /**
      * @param array $data
-     * @param IParser $defaultParser
+     * @param Parser $defaultParser
      * @return Server
      */
-    public static function fromData($data, IParser $defaultParser = null)
+    public static function fromData($data, Parser $defaultParser = null)
     {
+        /* @var $parser Parser */
         $parser = $defaultParser;
         if (isset($data['parser'])) {
-            $parserClass = $data['parser'];
-            $parser = new $parserClass();
+            $parser = Parser::create($data['parser'], isset($data['parserConfigType']) ? $data['parserConfigType'] : null);
         }
         return new Server(
             isset($data['zone']) ? $data['zone'] : '',
             isset($data['host']) ? $data['host'] : '',
             !empty($data['centralized']),
-            $parser ? $parser : new CommonParser()
+            $parser ? $parser : Parser::create()
         );
     }
 
     /**
      * @param array $dataList
-     * @param IParser|string $defaultParser
+     * @param Parser $defaultParser
      * @return Server[]
      */
-    public static function fromDataList($dataList, IParser $defaultParser = null)
+    public static function fromDataList($dataList, Parser $defaultParser = null)
     {
-        $defaultParser = $defaultParser ? $defaultParser : new CommonParser();
+        $defaultParser = $defaultParser ? $defaultParser : Parser::create();
         $servers = [];
         foreach ($dataList as $data) {
             $servers[] = self::fromData($data, $defaultParser);
@@ -48,10 +46,10 @@ class Server
      * @param string $zone
      * @param string $host
      * @param bool $centralized
-     * @param IParser $parser
+     * @param Parser $parser
      * @throws InvalidArgumentException
      */
-    public function __construct($zone, $host, $centralized, IParser $parser)
+    public function __construct($zone, $host, $centralized, Parser $parser)
     {
         $this->zone = strval($zone);
         if (empty($this->zone)) {
@@ -74,7 +72,7 @@ class Server
     /** @var string */
     private $host;
     
-    /** @var IParser */
+    /** @var Parser */
     private $parser;
 
     /**
@@ -111,7 +109,7 @@ class Server
     }
 
     /**
-     * @return IParser
+     * @return Parser
      */
     public function getParser()
     {

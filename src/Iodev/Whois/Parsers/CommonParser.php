@@ -3,103 +3,53 @@
 namespace Iodev\Whois\Parsers;
 
 use Iodev\Whois\DomainInfo;
+use Iodev\Whois\Parser;
 use Iodev\Whois\Response;
 use Iodev\Whois\Helpers\GroupHelper;
 
-class CommonParser implements IParser
+class CommonParser extends Parser
 {
-    protected $domainKeys = [
-        "domain",
-        "domainname",
-        "domain name",
-        "query",
-    ];
+    /** @var array */
+    private $domainKeys = [ "domain name" ];
 
-    protected $whoisServerKeys = [
-        "whois",
-        "whoisserver",
-        "whois server",
-        "registrar whois server",
-    ];
+    /** @var array */
+    private $whoisServerKeys = [ "whois server" ];
 
-    protected $nameServersKeys = [
-        "nameserver",
-        "name server",
-        "nserver",
-        "host name",
-        "dns",
-    ];
+    /** @var array */
+    private $nameServersKeys = [ "name server" ];
 
-    protected $nameServersKeysGroups = [
-        [ "ns 1", "ns 2", "ns 3", "ns 4" ],
-    ];
+    /** @var array */
+    private $nameServersKeysGroups = [ [ "ns 1", "ns 2", "ns 3", "ns 4" ] ];
 
-    protected $creationDateKeys = [
-        "creationdate",
-        "creation date",
-        "registration date",
-        "domain registration date",
-        "registration time",
-        "created",
-        "created on",
-        "created date",
-        "registered",
-        "registered on",
-        "registered date",
-        "record created",
-    ];
+    /** @var array */
+    private $creationDateKeys = [ "creation date" ];
 
-    protected $expirationDateKeys = [
-        "expirationdate",
-        "expiration date",
-        "expiration time",
-        "exp date",
-        "domain expiration date",
-        "registry expiry date",
-        "registrar registration expiration date",
-        "expiry",
-        "paid-till",
-    ];
+    /** @var array */
+    private $expirationDateKeys = [ "expiration date" ];
 
-    protected $ownerKeys = [
-        "owner orgname",
-        "owner-organization",
-        "owner name",
-        "owner-name",
-        "organization",
-        "registrant organization",
-        "registrant-organization",
-        "registrant internationalized organization",
-        "registrant contact organisation",
-        "registrant",
-        "registrant name",
-        "domain holder",
-        "holder",
-        "org",
-        "tech organization",
-        "admin organization",
-    ];
+    /** @var array */
+    private $ownerKeys = [ "owner-organization" ];
 
-    protected $registrarKeys = [
-        "registrar",
-        "registrar name",
-        "sponsoring registrar",
-        "sponsoring registrar organization",
-    ];
+    /** @var array */
+    private $registrarKeys = [ "registrar" ];
 
-    protected $statesKeys = [
-        "domain status",
-        "domainstatus",
-        "status",
-        "state",
-    ];
+    /** @var array */
+    private $statesKeys = [ "domain status" ];
 
-    protected $notRegisteredStatesDict = [
-        "not registered" => 1,
-        "no object found" => 1,
-        "available" => 1,
-        "free" => 1,
-    ];
+    /** @var array */
+    private $notRegisteredStatesDict = [ "not registered" => 1 ];
+
+    /**
+     * @param array $cfg
+     * @return $this
+     */
+    public function setConfig($cfg)
+    {
+        foreach ($cfg as $k => $v) {
+            $this->{$k} = $v;
+        }
+        return $this;
+    }
 
     /**
      * @param Response $response

@@ -2,8 +2,6 @@
 
 namespace Iodev\Whois;
 
-use Iodev\Whois\Parsers\CommonParser;
-
 class ServerTest extends \PHPUnit_Framework_TestCase
 {
     private static function getServerClass()
@@ -13,7 +11,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     private static function getParser()
     {
-        return new CommonParser();
+        return Parser::create();
     }
 
     private static function getParserClass()

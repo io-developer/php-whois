@@ -1079,4 +1079,105 @@ class Config
             [ "zone" => ".zuerich", "host" => "whois.ksregistry.net" ],
         ];
     }
+
+    /**
+     * @param string $type
+     * @return array
+     */
+    public static function getParserConfig($type = null)
+    {
+        return self::getCommonParserConfig();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getCommonParserConfig()
+    {
+        return [
+            'domainKeys' => [
+                "domain",
+                "domainname",
+                "domain name",
+                "query",
+            ],
+            'whoisServerKeys' => [
+                "whois",
+                "whoisserver",
+                "whois server",
+                "registrar whois server",
+            ],
+            'nameServersKeys' => [
+                "nameserver",
+                "name server",
+                "nserver",
+                "host name",
+                "dns",
+            ],
+            'nameServersKeysGroups' => [
+                [ "ns 1", "ns 2", "ns 3", "ns 4" ],
+            ],
+            'creationDateKeys' => [
+                "creationdate",
+                "creation date",
+                "registration date",
+                "domain registration date",
+                "registration time",
+                "created",
+                "created on",
+                "created date",
+                "registered",
+                "registered on",
+                "registered date",
+                "record created",
+            ],
+            'expirationDateKeys' => [
+                "expirationdate",
+                "expiration date",
+                "expiration time",
+                "exp date",
+                "domain expiration date",
+                "registry expiry date",
+                "registrar registration expiration date",
+                "expiry",
+                "paid-till",
+            ],
+            'ownerKeys' => [
+                "owner orgname",
+                "owner-organization",
+                "owner name",
+                "owner-name",
+                "organization",
+                "registrant organization",
+                "registrant-organization",
+                "registrant internationalized organization",
+                "registrant contact organisation",
+                "registrant",
+                "registrant name",
+                "domain holder",
+                "holder",
+                "org",
+                "tech organization",
+                "admin organization",
+            ],
+            'registrarKeys' => [
+                "registrar",
+                "registrar name",
+                "sponsoring registrar",
+                "sponsoring registrar organization",
+            ],
+            'statesKeys' => [
+                "domain status",
+                "domainstatus",
+                "status",
+                "state",
+            ],
+            'notRegisteredStatesDict' => [
+                "not registered" => 1,
+                "no object found" => 1,
+                "available" => 1,
+                "free" => 1,
+            ],
+        ];
+    }
 }
