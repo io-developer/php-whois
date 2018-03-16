@@ -5,40 +5,6 @@ namespace Iodev\Whois\Helpers;
 class GroupHelper
 {
     /**
-     * @param string $text
-     * @return array
-     */
-    public static function groupsFromText($text)
-    {
-        $groups = [];
-        $splits = preg_split('/([\s\t]*\r?\n){2,}/', $text);
-        foreach ($splits as $split) {
-            $group = self::groupFromText($split);
-            if (count($group) > 1) {
-                $groups[] = $group;
-            }
-        }
-        return $groups;
-    }
-
-    /**
-     * @param string $text
-     * @return array
-     */
-    public static function groupFromText($text)
-    {
-        $group = [];
-        preg_match_all('/^[ \t]*([^%#\r\n:]+):[ \t]*(.*?)\s*$/mui', $text, $m);
-        foreach ($m[1] as $index => $key) {
-            $key = trim($key);
-            if ($key != 'http' && $key != 'https') {
-                $group = array_merge_recursive($group, [$key => $m[2][$index]]);
-            }
-        }
-        return $group;
-    }
-
-    /**
      * @param array $group
      * @param string[] $keys
      * @param bool $ignoreCase

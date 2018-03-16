@@ -2,19 +2,34 @@
 
 namespace Iodev\Whois;
 
-use Iodev\Whois\Parsers\CommonParser;
-
 abstract class Parser
 {
+    const COMMON = 'common';
+    const COMMON_FLAT = 'common_flat';
+
+    /**
+     * @param string $type
+     * @return Parser
+     */
+    public static function create($type = null)
+    {
+        $type = $type ? $type : self::COMMON;
+        $d = [
+            self::COMMON => '\Iodev\Whois\Parsers\CommonParser',
+            self::COMMON_FLAT => '\Iodev\Whois\Parsers\CommonParser',
+        ];
+        return self::createByClass($d[$type], $type);
+    }
+
     /**
      * @param string $className
      * @param string $configType
      * @return Parser
      */
-    public static function create($className = null, $configType = null)
+    public static function createByClass($className, $configType = null)
     {
         /* @var $p Parser */
-        $p = !empty($className) ? new $className() : new CommonParser();
+        $p = new $className();
         $p->setConfig(Config::getParserConfig($configType));
         return $p;
     }
