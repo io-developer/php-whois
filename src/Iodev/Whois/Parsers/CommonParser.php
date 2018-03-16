@@ -9,6 +9,9 @@ use Iodev\Whois\Helpers\GroupHelper;
 
 class CommonParser extends Parser
 {
+    /** @var bool */
+    private $isFlat = false;
+
     /** @var array */
     private $domainKeys = [ "domain name" ];
 
@@ -97,8 +100,48 @@ class CommonParser extends Parser
      */
     protected function groupFrom(Response $response)
     {
-        $groups = GroupHelper::groupsFromText($response->getText());
-        return GroupHelper::findDomainGroup($groups, $response->getDomain(), $this->domainKeys);
+        if ($this->isFlat) {
+            return $this->groupFromText($response->getText());
+        }
+        return GroupHelper::findDomainGroup(
+            $this->groupsFromText($response->getText()),
+            $response->getDomain(),
+            $this->domainKeys
+        );
+    }
+
+    /**
+     * @param string $text
+     * @return array
+     */
+    protected function groupsFromText($text)
+    {
+        $groups = [];
+        $splits = preg_split('/([\s\t]*\r?\n){2,}/', $text);
+        foreach ($splits as $split) {
+            $group = $this->groupFromText($split);
+            if (count($group) > 1) {
+                $groups[] = $group;
+            }
+        }
+        return $groups;
+    }
+
+    /**
+     * @param string $text
+     * @return array
+     */
+    protected function groupFromText($text)
+    {
+        $group = [];
+        preg_match_all('/^[ \t]*([^%#\r\n:]+):[ \t]*(.*?)\s*$/mui', $text, $m);
+        foreach ($m[1] as $index => $key) {
+            $key = trim($key);
+            if ($key != 'http' && $key != 'https') {
+                $group = array_merge_recursive($group, [$key => $m[2][$index]]);
+            }
+        }
+        return $group;
     }
 
     /**

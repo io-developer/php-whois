@@ -11,7 +11,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     private static function getParser()
     {
-        return Parser::create();
+        return Parser::createByClass(self::getParserClass());
     }
 
     private static function getParserClass()
