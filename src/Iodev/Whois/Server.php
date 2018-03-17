@@ -25,7 +25,8 @@ class Server
             isset($data['zone']) ? $data['zone'] : '',
             isset($data['host']) ? $data['host'] : '',
             !empty($data['centralized']),
-            $parser ? $parser : Parser::create()
+            $parser ? $parser : Parser::create(),
+            isset($data['queryFormat']) ? $data['queryFormat'] : null
         );
     }
 
@@ -49,9 +50,10 @@ class Server
      * @param string $host
      * @param bool $centralized
      * @param Parser $parser
+     * @param string $queryFormat
      * @throws InvalidArgumentException
      */
-    public function __construct($zone, $host, $centralized, Parser $parser)
+    public function __construct($zone, $host, $centralized, Parser $parser, $queryFormat = null)
     {
         $this->zone = strval($zone);
         if (empty($this->zone)) {
@@ -63,6 +65,7 @@ class Server
         }
         $this->centralized = (bool)$centralized;
         $this->parser = $parser;
+        $this->queryFormat = !empty($queryFormat) ? strval($queryFormat) : "%s\r\n";
     }
 
     /** @var string */
@@ -76,6 +79,9 @@ class Server
     
     /** @var Parser */
     private $parser;
+
+    /** @var string */
+    private $queryFormat;
 
     /**
      * @return bool
@@ -116,5 +122,24 @@ class Server
     public function getParser()
     {
         return $this->parser;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQueryFormat()
+    {
+        return $this->queryFormat;
+    }
+
+    /**
+     * @param string $domain
+     * @param bool $strict
+     * @return string
+     */
+    public function buildDomainQuery($domain, $strict = false)
+    {
+        $query = sprintf($this->queryFormat, $domain);
+        return $strict ? "=$query" : $query;
     }
 }

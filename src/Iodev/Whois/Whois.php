@@ -143,10 +143,10 @@ class Whois
     private function loadDomainDataFrom(Server $server, $domain)
     {
         $p = $server->getParser();
-        $response = $this->loader->loadResponse($server->getHost(), $domain);
+        $response = $this->loadDomainResponse($server, $server->getHost(), $domain);
         $info = $p->parseResponse($response);
         if (!$info) {
-            $response = $this->loader->loadResponse($server->getHost(), $domain, true);
+            $response = $this->loadDomainResponse($server, $server->getHost(), $domain, true);
             $info = $p->parseResponse($response);
         }
         if ($info
@@ -154,7 +154,7 @@ class Whois
             && $info->getWhoisServer() != $server->getHost()
             && !$server->isCentralized()
         ) {
-            $tmpResponse = $this->loader->loadResponse($info->getWhoisServer(), $domain);
+            $tmpResponse = $this->loadDomainResponse($server, $info->getWhoisServer(), $domain, true);
             $tmpInfo = $p->parseResponse($tmpResponse);
             if ($tmpInfo) {
                 $response = $tmpResponse;
@@ -162,5 +162,19 @@ class Whois
             }
         }
         return [ $response, $info ];
+    }
+
+    /**
+     * @param Server $server
+     * @param string $whoisHost
+     * @param string $domain
+     * @param bool $strict
+     * @return Response
+     * @throws ConnectionException
+     */
+    private function loadDomainResponse(Server $server, $whoisHost, $domain, $strict = false)
+    {
+        $text = $this->loader->loadText($whoisHost, $server->buildDomainQuery($domain), $strict);
+        return new Response($domain, $text, $whoisHost);
     }
 }
