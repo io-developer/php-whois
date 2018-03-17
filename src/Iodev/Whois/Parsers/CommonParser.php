@@ -10,37 +10,37 @@ use Iodev\Whois\Helpers\GroupHelper;
 class CommonParser extends Parser
 {
     /** @var bool */
-    private $isFlat = false;
+    protected $isFlat = false;
 
     /** @var array */
-    private $domainKeys = [ "domain name" ];
+    protected $domainKeys = [ "domain name" ];
 
     /** @var array */
-    private $whoisServerKeys = [ "whois server" ];
+    protected $whoisServerKeys = [ "whois server" ];
 
     /** @var array */
-    private $nameServersKeys = [ "name server" ];
+    protected $nameServersKeys = [ "name server" ];
 
     /** @var array */
-    private $nameServersKeysGroups = [ [ "ns 1", "ns 2", "ns 3", "ns 4" ] ];
+    protected $nameServersKeysGroups = [ [ "ns 1", "ns 2", "ns 3", "ns 4" ] ];
 
     /** @var array */
-    private $creationDateKeys = [ "creation date" ];
+    protected $creationDateKeys = [ "creation date" ];
 
     /** @var array */
-    private $expirationDateKeys = [ "expiration date" ];
+    protected $expirationDateKeys = [ "expiration date" ];
 
     /** @var array */
-    private $ownerKeys = [ "owner-organization" ];
+    protected $ownerKeys = [ "owner-organization" ];
 
     /** @var array */
-    private $registrarKeys = [ "registrar" ];
+    protected $registrarKeys = [ "registrar" ];
 
     /** @var array */
-    private $statesKeys = [ "domain status" ];
+    protected $statesKeys = [ "domain status" ];
 
     /** @var array */
-    private $notRegisteredStatesDict = [ "not registered" => 1 ];
+    protected $notRegisteredStatesDict = [ "not registered" => 1 ];
 
     /**
      * @param array $cfg

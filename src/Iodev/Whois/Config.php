@@ -240,14 +240,14 @@ class Config
             [ "zone" => ".cuisinella", "host" => "whois.nic.cuisinella" ],
             [ "zone" => ".cx", "host" => "whois.nic.cx" ],
             [ "zone" => ".cymru", "host" => "whois.nic.cymru" ],
-            [ "zone" => ".cz", "host" => "whois.nic.cz" ],
+            [ "zone" => ".cz", "host" => "whois.nic.cz", "parser_type" => "block" ],
             [ "zone" => ".dad", "host" => "domain-registry-whois.l.google.com" ],
             [ "zone" => ".dance", "host" => "whois.unitedtld.com" ],
             [ "zone" => ".dating", "host" => "whois.donuts.co" ],
             [ "zone" => ".datsun", "host" => "whois.nic.gmo" ],
             [ "zone" => ".day", "host" => "domain-registry-whois.l.google.com" ],
             [ "zone" => ".dclk", "host" => "domain-registry-whois.l.google.com" ],
-            [ "zone" => ".de", "host" => "whois.denic.de" ],
+            [ "zone" => ".de", "host" => "whois.denic.de", "parser_type" => "block" ],
             [ "zone" => ".de.com", "host" => "whois.centralnic.net" ],
             [ "zone" => ".deals", "host" => "whois.donuts.co" ],
             [ "zone" => ".degree", "host" => "whois.rightside.co" ],
@@ -1086,6 +1086,9 @@ class Config
      */
     public static function getParserConfig($type = null)
     {
+        if ($type == 'block') {
+            return self::getBlockParserConfig();
+        }
         if ($type == 'common_flat') {
             return self::getCommonFlatParserConfig();
         }
@@ -1095,7 +1098,15 @@ class Config
     /**
      * @return array
      */
-    public static function getCommonFlatParserConfig()
+    private static function getBlockParserConfig()
+    {
+        $cfg = self::getCommonParserConfig();
+        return $cfg;
+    }
+    /**
+     * @return array
+     */
+    private static function getCommonFlatParserConfig()
     {
         $cfg = self::getCommonParserConfig();
         $cfg['isFlat'] = true;
@@ -1105,7 +1116,7 @@ class Config
     /**
      * @return array
      */
-    public static function getCommonParserConfig()
+    private static function getCommonParserConfig()
     {
         return [
             'domainKeys' => [
