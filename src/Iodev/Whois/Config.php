@@ -247,7 +247,7 @@ class Config
             [ "zone" => ".datsun", "host" => "whois.nic.gmo" ],
             [ "zone" => ".day", "host" => "domain-registry-whois.l.google.com" ],
             [ "zone" => ".dclk", "host" => "domain-registry-whois.l.google.com" ],
-            [ "zone" => ".de", "host" => "whois.denic.de", "parserType" => "block" ],
+            [ "zone" => ".de", "host" => "whois.denic.de", "parserType" => "block", "queryFormat" => "-T dn,ace %s\r\n" ],
             [ "zone" => ".de.com", "host" => "whois.centralnic.net" ],
             [ "zone" => ".deals", "host" => "whois.donuts.co" ],
             [ "zone" => ".degree", "host" => "whois.rightside.co" ],
