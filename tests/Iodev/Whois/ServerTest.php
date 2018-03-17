@@ -16,7 +16,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     private static function getParserClass()
     {
-        return '\Iodev\Whois\Parsers\CommonParser';
+        return '\TestCommonParser';
     }
 
 
@@ -109,7 +109,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             "zone" => ".abc",
             "host" => "some.host",
             "centralized" => true,
-            "parser" => self::getParserClass(),
+            "parser_class" => self::getParserClass(),
         ]);
 
         self::assertEquals(".abc", $s->getZone());
