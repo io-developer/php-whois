@@ -16,10 +16,10 @@ class Server
     {
         /* @var $parser Parser */
         $parser = $defaultParser;
-        if (isset($data['parser_class'])) {
-            $parser = Parser::createByClass($data['parser_class'], isset($data['parser_type']) ? $data['parser_type'] : null);
-        } elseif (isset($data['parser_type'])) {
-            $parser = Parser::create($data['parser_type']);
+        if (isset($data['parserClass'])) {
+            $parser = Parser::createByClass($data['parserClass'], isset($data['parserType']) ? $data['parserType'] : null);
+        } elseif (isset($data['parserType'])) {
+            $parser = Parser::create($data['parserType']);
         }
         return new Server(
             isset($data['zone']) ? $data['zone'] : '',

@@ -109,7 +109,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             "zone" => ".abc",
             "host" => "some.host",
             "centralized" => true,
-            "parser_class" => self::getParserClass(),
+            "parserClass" => self::getParserClass(),
         ]);
 
         self::assertEquals(".abc", $s->getZone());
