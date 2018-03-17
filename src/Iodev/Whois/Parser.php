@@ -6,6 +6,7 @@ abstract class Parser
 {
     const COMMON = 'common';
     const COMMON_FLAT = 'common_flat';
+    const BLOCK = 'block';
 
     /**
      * @param string $type
@@ -17,6 +18,7 @@ abstract class Parser
         $d = [
             self::COMMON => '\Iodev\Whois\Parsers\CommonParser',
             self::COMMON_FLAT => '\Iodev\Whois\Parsers\CommonParser',
+            self::BLOCK => '\Iodev\Whois\Parsers\BlockParser',
         ];
         return self::createByClass($d[$type], $type);
     }
