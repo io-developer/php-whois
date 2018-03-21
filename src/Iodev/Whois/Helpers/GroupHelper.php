@@ -6,16 +6,55 @@ class GroupHelper
 {
     /**
      * @param array $group
+     * @param bool $keysOnly
+     * @return array
+     */
+    public static function toLowerCase($group, $keysOnly = false)
+    {
+        return $keysOnly
+            ? self::mapRecursiveKeys($group, 'mb_strtolower')
+            : self::mapRecursive($group, 'mb_strtolower');
+    }
+
+    /**
+     * @param array $group
+     * @param callable $callback
+     * @return array
+     */
+    public static function mapRecursive($group, $callback) {
+        $out = [];
+        array_walk($group, function($val, $key) use (&$out, $callback) {
+            $out[$callback($key)] = is_array($val) ? self::mapRecursive($val, $callback) : $callback($val);
+        });
+        return $out;
+    }
+
+    /**
+     * @param array $group
+     * @param callable $callback
+     * @return array
+     */
+    public static function mapRecursiveKeys($group, $callback) {
+        $out = [];
+        array_walk($group, function($val, $key) use (&$out, $callback) {
+            $out[$callback($key)] = is_array($val) ? self::mapRecursiveKeys($val, $callback) : $val;
+        });
+        return $out;
+    }
+
+    /**
+     * @param array $group
      * @param string[] $keys
      * @param bool $ignoreCase
      * @return string
      */
     public static function matchFirst($group, $keys, $ignoreCase = true)
     {
+        if (empty($group)) {
+            return "";
+        }
         if ($ignoreCase) {
-            foreach ($group as $k => $v) {
-                $group[mb_strtolower($k)] = $v;
-            }
+            $group = self::toLowerCase($group, true);
         }
         foreach ($keys as $k) {
             $k = $ignoreCase ? mb_strtolower($k) : $k;
@@ -24,6 +63,86 @@ class GroupHelper
             }
         }
         return "";
+    }
+
+    /**
+     * @param array $groups
+     * @param string[] $keys
+     * @param bool $ignoreCase
+     * @return string
+     */
+    public static function matchFirstIn($groups, $keys, $ignoreCase = true)
+    {
+        foreach ($groups as $group) {
+            $v = self::matchFirst($group, $keys, $ignoreCase);
+            if (!empty($v)) {
+                return $v;
+            }
+        }
+        return "";
+    }
+
+    /**
+     * @param array $groups
+     * @param array $subsets
+     * @param bool $ignoreCase
+     * @return array|null
+     */
+    public static function findGroupHasSubsetOf($groups, $subsets, $ignoreCase = true)
+    {
+        $subsets = $ignoreCase ? self::toLowerCase($subsets) : $subsets;
+        foreach ($groups as $group) {
+            $g = $ignoreCase ? self::toLowerCase($group) : $group;
+            if (self::hasSubsetOf($g, $subsets)) {
+                return $group;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param array $group
+     * @param array $subsets
+     * @return bool
+     */
+    public static function hasSubsetOf($group, $subsets)
+    {
+        foreach ($subsets as $subset) {
+            if (self::hasSubset($group, $subset)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param array $group
+     * @param array $subset
+     * @return bool
+     */
+    public static function hasSubset($group, $subset)
+    {
+        foreach ($subset as $k => $v) {
+            if (!isset($group[$k])) {
+                return false;
+            }
+            if (empty($v)) {
+                continue;
+            }
+            if (is_array($group[$k])) {
+                foreach ($group[$k] as $sub) {
+                    if (strval($sub) == strval($v)) {
+                        $found = true;
+                    }
+                }
+            } else {
+                $found = (strval($group[$k]) == strval($v));
+            }
+            if (empty($found)) {
+                 return false;
+            }
+        }
+        return true;
     }
 
     /**
