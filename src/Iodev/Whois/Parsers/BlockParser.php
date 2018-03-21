@@ -8,7 +8,17 @@ use Iodev\Whois\Helpers\GroupHelper;
 
 class BlockParser extends CommonParser
 {
-    const HEADER_KEY = ' header ';
+    /** @var string */
+    protected $headerKey = 'HEADER';
+
+    /** @var array */
+    protected $domainSubsets = [];
+
+    /** @var array */
+    protected $ownerSubsets = [];
+
+    /** @var array */
+    protected $registrarSubsets = [];
 
     /**
      * @param Response $response
@@ -16,10 +26,58 @@ class BlockParser extends CommonParser
      */
     public function parseResponse(Response $response)
     {
-        return null;
         $groups = $this->groupsFromText($response->getText());
-        var_dump($groups);
-        return null;
+        
+        $domainGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->domainSubsets, $response));
+        $ownerGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->ownerSubsets, $response));
+        $registrarGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->registrarSubsets, $response));
+
+        $data = [
+            "domainName" => GroupHelper::getAsciiServer($domainGroup, $this->domainKeys),
+            "whoisServer" => GroupHelper::getAsciiServer($domainGroup, $this->whoisServerKeys),
+            "nameServers" => GroupHelper::getAsciiServersComplex($domainGroup, $this->nameServersKeys, $this->nameServersKeysGroups),
+            "creationDate" => GroupHelper::getUnixtime($domainGroup, $this->creationDateKeys),
+            "expirationDate" => GroupHelper::getUnixtime($domainGroup, $this->expirationDateKeys),
+            "owner" => GroupHelper::matchFirstIn([ $ownerGroup, $domainGroup ], $this->ownerKeys),
+            "registrar" => GroupHelper::matchFirstIn([ $registrarGroup, $domainGroup], $this->registrarKeys),
+            "states" => $this->parseStates(GroupHelper::matchFirst($domainGroup, $this->statesKeys)),
+        ];
+        if (empty($data["domainName"])) {
+            return null;
+        }
+
+        $states = $data["states"];
+        $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
+        if (!empty($this->notRegisteredStatesDict[$firstState])) {
+            return null;
+        }
+
+        if (empty($states)
+            && empty($data["nameServers"])
+            && empty($data["owner"])
+            && empty($data["creationDate"])
+            && empty($data["expirationDate"])
+            && empty($data["registrar"])
+        ) {
+            return null;
+        }
+
+        return new DomainInfo($response, $data);
+    }
+
+    /**
+     * @param array $subsets
+     * @param Response $response
+     * @return array
+     */
+    private function renderSubsets($subsets, Response $response)
+    {
+        array_walk_recursive($subsets, function(&$val) use ($response) {
+            if ($val == '$domain') {
+                $val = $response->getDomain();
+            }
+        });
+        return $subsets;
     }
 
     /**
@@ -34,8 +92,8 @@ class BlockParser extends CommonParser
             if ($hasHeader && ltrim($line, '%#*') !== $line) {
                 continue;
             }
-            $split = explode(':', ltrim($line, "%#*:;= \t\0\x0B"), 2);
-            $k = isset($split[0]) ? trim($split[0]) : '';
+            $split = explode(':', ltrim($line, "%#*:;= \t\n\r\0\x0B"), 2);
+            $k = isset($split[0]) ? trim($split[0], ".\t\n\r\0\x0B") : '';
             $v = isset($split[1]) ? trim($split[1]) : '';
             if (strlen($k) && strlen($v)) {
                 $group = array_merge_recursive($group, [ $k => $v ]);
@@ -43,7 +101,7 @@ class BlockParser extends CommonParser
             }
             $k = trim($k, "%#*:;=[] \t\0\x0B");
             if (strlen($k) && !$hasHeader) {
-                $group = array_merge_recursive($group, [ self::HEADER_KEY => $k ]);
+                $group = array_merge_recursive($group, [ $this->headerKey => $k ]);
                 $hasHeader = true;
             }
         }

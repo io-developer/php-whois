@@ -1101,8 +1101,38 @@ class Config
     private static function getBlockParserConfig()
     {
         $cfg = self::getCommonParserConfig();
+        $cfg = array_merge($cfg, [
+            "headerKey" => "__HEADER__",
+            "domainSubsets" => [
+                [ "domain" => '$domain' ],
+                [ "domainname" => '$domain' ],
+                [ "domain name" => '$domain' ],
+                [ "query" => '$domain' ],
+            ],
+            "ownerSubsets" => [
+                [ "__HEADER__" => "Registrant" ],
+                [ "__HEADER__" => "Tech-C", "Organisation" => "" ],
+                [ "__HEADER__" => "holder", "Organisation" => "" ],
+            ],
+            "registrarSubsets" => [
+                [ "__HEADER__" => "Registrar" ],
+                [ "__HEADER__" => "Zone-C", "Organisation" => "" ],
+            ],
+        ]);
+        $cfg["ownerKeys"] = array_merge($cfg["ownerKeys"], [
+            "Organisation",
+            "organization",
+            "organization-loc",
+            "name",
+        ]);
+        $cfg["registrarKeys"] = array_merge($cfg["registrarKeys"], [
+            "Organisation",
+            "organization",
+            "organization-loc",
+        ]);
         return $cfg;
     }
+
     /**
      * @return array
      */
@@ -1164,6 +1194,7 @@ class Config
                 "registry expiry date",
                 "registrar registration expiration date",
                 "expiry",
+                "expires",
                 "paid-till",
             ],
             'ownerKeys' => [
