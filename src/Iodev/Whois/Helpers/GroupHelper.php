@@ -184,7 +184,7 @@ class GroupHelper
         $raws = is_array($raws) ? $raws : [ $raws ];
         $servers = [];
         foreach ($raws as $raw) {
-            $s = trim(DomainHelper::toAscii($raw));
+            $s = trim(preg_replace('~\[.*?\]~ui', '', DomainHelper::toAscii($raw)));
             if (!empty($s)) {
                 $servers[] = $s;
             }

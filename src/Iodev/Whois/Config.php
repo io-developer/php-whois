@@ -1109,10 +1109,15 @@ class Config
                 [ "domain name" => '$domain' ],
                 [ "query" => '$domain' ],
             ],
+            "nameServersSubsets" => [
+                [ "__HEADER__" => "NameServers" ],
+                [ "nameserver" => "" ],
+                [ "nserver" => "" ],
+            ],
             "ownerSubsets" => [
                 [ "__HEADER__" => "Registrant" ],
                 [ "__HEADER__" => "Tech-C", "Organisation" => "" ],
-                [ "__HEADER__" => "holder", "Organisation" => "" ],
+                [ "__HEADER__" => "holder" ],
             ],
             "registrarSubsets" => [
                 [ "__HEADER__" => "Registrar" ],
