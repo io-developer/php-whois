@@ -117,11 +117,15 @@ class CommonParser extends Parser
     protected function groupsFromText($text)
     {
         $groups = [];
+        $prevEmptyGroupText = '';
         $splits = preg_split('/([\s\t]*\r?\n){2,}/', $text);
-        foreach ($splits as $split) {
-            $group = $this->groupFromText($split);
+        foreach ($splits as $groupText) {
+            $group = $this->groupFromText($groupText, $prevEmptyGroupText);
             if (count($group) > 1) {
                 $groups[] = $group;
+                $prevEmptyGroupText = '';
+            } else {
+                $prevEmptyGroupText = $groupText;
             }
         }
         return $groups;
@@ -129,9 +133,10 @@ class CommonParser extends Parser
 
     /**
      * @param string $text
+     * @param string $prevEmptyGroupText
      * @return array
      */
-    protected function groupFromText($text)
+    protected function groupFromText($text, $prevEmptyGroupText = '')
     {
         $group = [];
         preg_match_all('/^[ \t]*([^%#\r\n:]+):[ \t]*(.*?)\s*$/mui', $text, $m);
