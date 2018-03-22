@@ -15,6 +15,9 @@ class BlockParser extends CommonParser
     protected $domainSubsets = [];
 
     /** @var array */
+    protected $nameServersSubsets = [];
+
+    /** @var array */
     protected $ownerSubsets = [];
 
     /** @var array */
@@ -29,28 +32,38 @@ class BlockParser extends CommonParser
         $groups = $this->groupsFromText($response->getText());
         
         $domainGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->domainSubsets, $response));
-        $ownerGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->ownerSubsets, $response));
-        $registrarGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->registrarSubsets, $response));
-
-        $data = [
-            "domainName" => GroupHelper::getAsciiServer($domainGroup, $this->domainKeys),
-            "whoisServer" => GroupHelper::getAsciiServer($domainGroup, $this->whoisServerKeys),
-            "nameServers" => GroupHelper::getAsciiServersComplex($domainGroup, $this->nameServersKeys, $this->nameServersKeysGroups),
-            "creationDate" => GroupHelper::getUnixtime($domainGroup, $this->creationDateKeys),
-            "expirationDate" => GroupHelper::getUnixtime($domainGroup, $this->expirationDateKeys),
-            "owner" => GroupHelper::matchFirstIn([ $ownerGroup, $domainGroup ], $this->ownerKeys),
-            "registrar" => GroupHelper::matchFirstIn([ $registrarGroup, $domainGroup], $this->registrarKeys),
-            "states" => $this->parseStates(GroupHelper::matchFirst($domainGroup, $this->statesKeys)),
-        ];
-        if (empty($data["domainName"])) {
+        $domain = GroupHelper::getAsciiServer($domainGroup, $this->domainKeys);
+        if (empty($domain)) {
             return null;
         }
 
-        $states = $data["states"];
+        // States
+        $states = $this->parseStates(GroupHelper::matchFirst($domainGroup, $this->statesKeys));
         $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
         if (!empty($this->notRegisteredStatesDict[$firstState])) {
             return null;
         }
+
+        // NameServers
+        $nameServersGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->nameServersSubsets, $response));
+        $nameServers = GroupHelper::getAsciiServersComplex($nameServersGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
+        if (empty($nameServers)) {
+            $nameServers = GroupHelper::getAsciiServersComplex($domainGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
+        }
+
+        $ownerGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->ownerSubsets, $response));
+        $registrarGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->registrarSubsets, $response));
+
+        $data = [
+            "domainName" => $domain,
+            "whoisServer" => GroupHelper::getAsciiServer($domainGroup, $this->whoisServerKeys),
+            "creationDate" => GroupHelper::getUnixtime($domainGroup, $this->creationDateKeys),
+            "expirationDate" => GroupHelper::getUnixtime($domainGroup, $this->expirationDateKeys),
+            "nameServers" => $nameServers,
+            "owner" => GroupHelper::matchFirstIn([ $ownerGroup, $domainGroup ], $this->ownerKeys),
+            "registrar" => GroupHelper::matchFirstIn([ $registrarGroup, $domainGroup], $this->registrarKeys),
+            "states" => $states,
+        ];
 
         if (empty($states)
             && empty($data["nameServers"])
@@ -100,12 +113,14 @@ class BlockParser extends CommonParser
                 $group = array_merge_recursive($group, [ $k => $v ]);
                 continue;
             }
-            if (!isset($header) && !isset($split[1])) {
+            if (!isset($header)) {
                 $k = trim($k, "%#*:;=[] \t\0\x0B");
                 $header = strlen($k) ? $k : null;
             }
         }
-        $header = isset($header) ? $header : trim($prevEmptyGroupText, "%#*:;=[]. \t\n\r\0\x0B");
+        $headerAlt = trim($prevEmptyGroupText, "%#*:;=[]. \t\n\r\0\x0B");
+        $header = isset($header) ? $header : $headerAlt;
+        $header = ($headerAlt && strlen($headerAlt) < strlen($header)) ? $headerAlt : $header;
         return !empty($header)
             ? array_merge_recursive($group, [$this->headerKey => $header])
             : $group;
