@@ -56,13 +56,13 @@ class DomainHelper
      * @param string $domain
      * @return string
      */
-    public static function correct($domain)
+    private static function correct($domain)
     {
         // Fix for .UZ whois response
         while (preg_match('~\bnot\.defined\.?\b~ui', $domain)) {
             $domain = preg_replace('~\bnot\.defined\.?\b~ui', '', $domain);
         }
-        return mb_strtolower(rtrim(preg_replace('~\s*\.\s*~ui', '.', $domain), ".-\t "));
+        return rtrim(preg_replace('~\s*\.\s*~ui', '.', $domain), ".-\t ");
     }
 
     /**
