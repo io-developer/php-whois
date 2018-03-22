@@ -205,7 +205,9 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.ee", ".ee/google.ee.txt", ".ee/google.ee.json" ],
 
             [ "free.fi", ".fi/free.txt", null ],
-            // [ "google.fi", ".fi/google.fi.txt", ".fi/google.fi.json" ],
+            [ "google.fi", ".fi/google.fi.txt", ".fi/google.fi.json" ],
+            [ "xn--sisministeri-icb5x.fi", ".fi/xn--sisministeri-icb5x.fi.txt", ".fi/xn--sisministeri-icb5x.fi.json" ],
+            [ "sisäministeriö.fi", ".fi/xn--sisministeri-icb5x.fi.txt", ".fi/xn--sisministeri-icb5x.fi.json" ],
 
             [ "free.fj", ".fj/free.txt", null ],
             // [ "google.com.fj", ".fj/google.com.fj.txt", ".fj/google.com.fj.json" ],
