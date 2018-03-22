@@ -82,14 +82,15 @@ class BlockParser extends CommonParser
 
     /**
      * @param string $text
+     * @param string $prevEmptyGroupText
      * @return array
      */
-    protected function groupFromText($text)
+    protected function groupFromText($text, $prevEmptyGroupText = '')
     {
         $group = [];
-        $hasHeader = false;
+        $header = null;
         foreach (preg_split('~\r\n|[\r\n]~u', $text) as $line) {
-            if ($hasHeader && ltrim($line, '%#*') !== $line) {
+            if (isset($header) && ltrim($line, '%#*') !== $line) {
                 continue;
             }
             $split = explode(':', ltrim($line, "%#*:;= \t\n\r\0\x0B"), 2);
@@ -99,12 +100,14 @@ class BlockParser extends CommonParser
                 $group = array_merge_recursive($group, [ $k => $v ]);
                 continue;
             }
-            $k = trim($k, "%#*:;=[] \t\0\x0B");
-            if (strlen($k) && !$hasHeader) {
-                $group = array_merge_recursive($group, [ $this->headerKey => $k ]);
-                $hasHeader = true;
+            if (!isset($header) && !isset($split[1])) {
+                $k = trim($k, "%#*:;=[] \t\0\x0B");
+                $header = strlen($k) ? $k : null;
             }
         }
-        return $group;
+        $header = isset($header) ? $header : trim($prevEmptyGroupText, "%#*:;=[]. \t\n\r\0\x0B");
+        return !empty($header)
+            ? array_merge_recursive($group, [$this->headerKey => $header])
+            : $group;
     }
 }
