@@ -27,7 +27,9 @@ class DomainHelper
         }
         $cor = self::correct($domain);
         if (function_exists("idn_to_ascii")) {
-            return idn_to_ascii($cor, 0, INTL_IDNA_VARIANT_UTS46);
+            return defined('INTL_IDNA_VARIANT_UTS46')
+                ? idn_to_ascii($cor, 0, INTL_IDNA_VARIANT_UTS46)
+                : idn_to_ascii($cor);
         }
         return $cor;
     }
@@ -43,7 +45,9 @@ class DomainHelper
         }
         $cor = self::correct($domain);
         if (function_exists("idn_to_utf8")) {
-            return idn_to_utf8($cor, 0, INTL_IDNA_VARIANT_UTS46);
+            return defined('INTL_IDNA_VARIANT_UTS46')
+                ? idn_to_utf8($cor, 0, INTL_IDNA_VARIANT_UTS46)
+                : idn_to_utf8($cor);
         }
         return $cor;
     }
