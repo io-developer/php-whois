@@ -169,7 +169,8 @@ class GroupHelper
      */
     public static function getAsciiServer($group, $keys)
     {
-        return DomainHelper::toAscii(self::matchFirst($group, $keys));
+        $servers = self::getAsciiServers($group, $keys);
+        return empty($servers) ? "" : $servers[0];
     }
 
     /**
