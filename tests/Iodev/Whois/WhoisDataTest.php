@@ -482,7 +482,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.co.tz", ".tz/google.co.tz.txt", ".tz/google.co.tz.json" ],
 
             [ "free.ua", ".ua/free.txt", null ],
-            // [ "google.com.ua", ".ua/google.com.ua.txt", ".ua/google.com.ua.json" ],
+            [ "google.com.ua", ".ua/google.com.ua.txt", ".ua/google.com.ua.json" ],
 
             [ "free.uk", ".uk/free.txt", null ],
             // [ "google.co.uk", ".uk/google.co.uk.txt", ".uk/google.co.uk.json" ],
