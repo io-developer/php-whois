@@ -143,20 +143,28 @@ class Whois
     private function loadDomainDataFrom(Server $server, $domain)
     {
         $p = $server->getParser();
-        $response = $this->loadDomainResponse($server, $server->getHost(), $domain);
+
+        /* @var $response Response */
+        /* @var $error ConnectionException */
+        list($response, $error) = $this->loadDomainResponse($server, $server->getHost(), $domain);
+
         $info = $p->parseResponse($response);
         if (!$info) {
-            $response = $this->loadDomainResponse($server, $server->getHost(), $domain, true);
+            list($response, $error) = $this->loadDomainResponse($server, $server->getHost(), $domain, true);
             $info = $p->parseResponse($response);
         }
+        if ($error) {
+            throw $error;
+        }
+
         if ($info
             && $info->getWhoisServer()
             && $info->getWhoisServer() != $server->getHost()
             && !$server->isCentralized()
         ) {
-            $tmpResponse = $this->loadDomainResponse($server, $info->getWhoisServer(), $domain, true);
+            list($tmpResponse, $error) = $this->loadDomainResponse($server, $info->getWhoisServer(), $domain, true);
             $tmpInfo = $p->parseResponse($tmpResponse);
-            if ($tmpInfo) {
+            if ($tmpInfo && empty($error)) {
                 $response = $tmpResponse;
                 $info = $tmpInfo;
             }
@@ -169,12 +177,17 @@ class Whois
      * @param string $whoisHost
      * @param string $domain
      * @param bool $strict
-     * @return Response
-     * @throws ConnectionException
+     * @return array
      */
     private function loadDomainResponse(Server $server, $whoisHost, $domain, $strict = false)
     {
-        $text = $this->loader->loadText($whoisHost, $server->buildDomainQuery($domain), $strict);
-        return new Response($domain, $text, $whoisHost);
+        $error = null;
+        try {
+            $text = $this->loader->loadText($whoisHost, $server->buildDomainQuery($domain, $strict));
+        } catch (ConnectionException $e) {
+            $error = $e;
+            $text = "";
+        }
+        return [ new Response($domain, $text, $whoisHost), $error ];
     }
 }
