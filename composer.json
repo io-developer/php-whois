@@ -1,6 +1,6 @@
 {
     "name": "io-developer/php-whois",
-    "description": "PHP WHOIS client implementation. Provides raw-text and parsed answers. Allows easy check domain availability or expiration date. Sends WHOIS queries to real service via port 43",
+    "description": "PHP WHOIS provides parsed and raw-text whois lookup info of domains. PHP 5.4+ and 7+ compatible",
     "keywords": [
         "php",
         "whois",
@@ -16,8 +16,9 @@
         "parser",
         "lookup",
         "idna",
-        "punnycode",
-        "unicode"
+        "punycode",
+        "unicode",
+        "црщшы"
     ],
     "type": "library",
     "license": "MIT",

@@ -1,12 +1,13 @@
 # PHP WHOIS
-PHP WHOIS client implementation. Provides raw-text and parsed answers. Sends WHOIS queries to real service via port 43
+PHP WHOIS client implementation. Provides parsed domain info and raw-text lookup responses. Sends queries to native WHOIS services via port 43
 
 [![Build Status](https://travis-ci.org/io-developer/php-whois.svg?branch=master)](https://travis-ci.org/io-developer/php-whois)
 [![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-8892BF.svg)](https://secure.php.net/)
 [![Packagist](https://img.shields.io/packagist/v/io-developer/php-whois.svg)](https://packagist.org/packages/io-developer/php-whois)
 
 ## Requirements
-- PHP >= __5.4__ (compatible with __7.0__ up to __nightly__)
+- PHP >= __5.4__ (compatible with __7.*__ up to __nightly__)
+- mbstring
 - intl
 
 
@@ -18,7 +19,7 @@ composer require io-developer/php-whois
 Or via __composer.json__
 ````
 "require": {
-    "io-developer/php-whois": "^2.3.0"
+    "io-developer/php-whois": "^3.0.0"
 }
 ````
 
