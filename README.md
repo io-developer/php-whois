@@ -150,12 +150,12 @@ echo "WHOIS response for '{$resp->getDomain()}':\n{$resp->getText()}";
 
 use Iodev\Whois\Server;
 use Iodev\Whois\Whois;
-use Iodev\Whois\Parsers\CommonParser;
+use Iodev\Whois\Parser;
 
 $whois = Whois::create();
 
 // Define custom whois host
-$customServer = new Server(".co", "whois.nic.co", false, new CommonParser());
+$customServer = new Server(".co", "whois.nic.co", false, Parser::create());
 
 // Or define the same via assoc way
 $customServer = Server::fromData([

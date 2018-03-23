@@ -3,100 +3,56 @@
 namespace Iodev\Whois\Parsers;
 
 use Iodev\Whois\DomainInfo;
+use Iodev\Whois\Parser;
 use Iodev\Whois\Response;
 use Iodev\Whois\Helpers\GroupHelper;
 
-class CommonParser implements IParser
+class CommonParser extends Parser
 {
-    protected $domainKeys = [
-        "domain",
-        "domainname",
-        "domain name",
-        "query",
-    ];
+    /** @var bool */
+    protected $isFlat = false;
 
-    protected $whoisServerKeys = [
-        "whois",
-        "whoisserver",
-        "whois server",
-        "registrar whois server",
-    ];
+    /** @var array */
+    protected $domainKeys = [ "domain name" ];
 
-    protected $nameServersKeys = [
-        "nameserver",
-        "name server",
-        "nserver",
-        "host name",
-        "dns",
-    ];
+    /** @var array */
+    protected $whoisServerKeys = [ "whois server" ];
 
-    protected $nameServersKeysGroups = [
-        [ "ns 1", "ns 2", "ns 3", "ns 4" ],
-    ];
+    /** @var array */
+    protected $nameServersKeys = [ "name server" ];
 
-    protected $creationDateKeys = [
-        "creationdate",
-        "creation date",
-        "registration date",
-        "domain registration date",
-        "registration time",
-        "created",
-        "created on",
-        "created date",
-        "registered",
-        "registered on",
-        "registered date",
-        "record created",
-    ];
+    /** @var array */
+    protected $nameServersKeysGroups = [ [ "ns 1", "ns 2", "ns 3", "ns 4" ] ];
 
-    protected $expirationDateKeys = [
-        "expirationdate",
-        "expiration date",
-        "expiration time",
-        "exp date",
-        "domain expiration date",
-        "registry expiry date",
-        "registrar registration expiration date",
-        "expiry",
-        "paid-till",
-    ];
+    /** @var array */
+    protected $creationDateKeys = [ "creation date" ];
 
-    protected $ownerKeys = [
-        "organization",
-        "registrant organization",
-        "registrant internationalized organization",
-        "registrant contact organisation",
-        "registrant",
-        "registrant name",
-        "org",
-        "holder",
-        "domain holder",
-        "owner orgname",
-        "owner name",
-        "tech organization",
-        "admin organization",
-    ];
+    /** @var array */
+    protected $expirationDateKeys = [ "expiration date" ];
 
-    protected $registrarKeys = [
-        "registrar",
-        "registrar name",
-        "sponsoring registrar",
-        "sponsoring registrar organization",
-    ];
+    /** @var array */
+    protected $ownerKeys = [ "owner-organization" ];
 
-    protected $statesKeys = [
-        "domain status",
-        "domainstatus",
-        "status",
-        "state",
-    ];
+    /** @var array */
+    protected $registrarKeys = [ "registrar" ];
 
-    protected $notRegisteredStatesDict = [
-        "not registered" => 1,
-        "no object found" => 1,
-        "available" => 1,
-        "free" => 1,
-    ];
+    /** @var array */
+    protected $statesKeys = [ "domain status" ];
+
+    /** @var array */
+    protected $notRegisteredStatesDict = [ "not registered" => 1 ];
+
+    /**
+     * @param array $cfg
+     * @return $this
+     */
+    public function setConfig($cfg)
+    {
+        foreach ($cfg as $k => $v) {
+            $this->{$k} = $v;
+        }
+        return $this;
+    }
 
     /**
      * @param Response $response
@@ -144,8 +100,53 @@ class CommonParser implements IParser
      */
     protected function groupFrom(Response $response)
     {
-        $groups = GroupHelper::groupsFromText($response->getText());
-        return GroupHelper::findDomainGroup($groups, $response->getDomain(), $this->domainKeys);
+        if ($this->isFlat) {
+            return $this->groupFromText($response->getText());
+        }
+        return GroupHelper::findDomainGroup(
+            $this->groupsFromText($response->getText()),
+            $response->getDomain(),
+            $this->domainKeys
+        );
+    }
+
+    /**
+     * @param string $text
+     * @return array
+     */
+    protected function groupsFromText($text)
+    {
+        $groups = [];
+        $prevEmptyGroupText = '';
+        $splits = preg_split('/([\s\t]*\r?\n){2,}/', $text);
+        foreach ($splits as $groupText) {
+            $group = $this->groupFromText($groupText, $prevEmptyGroupText);
+            if (count($group) > 1) {
+                $groups[] = $group;
+                $prevEmptyGroupText = '';
+            } else {
+                $prevEmptyGroupText = $groupText;
+            }
+        }
+        return $groups;
+    }
+
+    /**
+     * @param string $text
+     * @param string $prevEmptyGroupText
+     * @return array
+     */
+    protected function groupFromText($text, $prevEmptyGroupText = '')
+    {
+        $group = [];
+        preg_match_all('/^[ \t]*([^%#\r\n:]+):[ \t]*(.*?)\s*$/mui', $text, $m);
+        foreach ($m[1] as $index => $key) {
+            $key = trim($key);
+            if ($key != 'http' && $key != 'https') {
+                $group = array_merge_recursive($group, [$key => $m[2][$index]]);
+            }
+        }
+        return $group;
     }
 
     /**

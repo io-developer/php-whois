@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois;
 
+use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Loaders\ILoader;
@@ -54,6 +55,7 @@ class Whois
      * @param string $domain
      * @return bool
      * @throws ServerMismatchException
+     * @throws ConnectionException
      */
     public function isDomainAvailable($domain)
     {
@@ -64,6 +66,7 @@ class Whois
      * @param string $domain
      * @return DomainInfo
      * @throws ServerMismatchException
+     * @throws ConnectionException
      */
     public function loadDomainInfo($domain)
     {
@@ -75,6 +78,7 @@ class Whois
      * @param Server $server
      * @param string $domain
      * @return DomainInfo
+     * @throws ConnectionException
      */
     public function loadDomainInfoFrom(Server $server, $domain)
     {
@@ -86,6 +90,7 @@ class Whois
      * @param string $domain
      * @return Response
      * @throws ServerMismatchException
+     * @throws ConnectionException
      */
     public function lookupDomain($domain)
     {
@@ -97,6 +102,7 @@ class Whois
      * @param Server $server
      * @param string $domain
      * @return Response
+     * @throws ConnectionException
      */
     public function lookupDomainFrom(Server $server, $domain)
     {
@@ -108,6 +114,7 @@ class Whois
      * @param string $domain
      * @return array
      * @throws ServerMismatchException
+     * @throws ConnectionException
      */
     private function loadDomainData($domain)
     {
@@ -131,14 +138,15 @@ class Whois
      * @param Server $server
      * @param string $domain
      * @return array
+     * @throws ConnectionException
      */
     private function loadDomainDataFrom(Server $server, $domain)
     {
         $p = $server->getParser();
-        $response = $this->loader->loadResponse($server->getHost(), $domain);
+        $response = $this->loadDomainResponse($server, $server->getHost(), $domain);
         $info = $p->parseResponse($response);
         if (!$info) {
-            $response = $this->loader->loadResponse($server->getHost(), $domain, true);
+            $response = $this->loadDomainResponse($server, $server->getHost(), $domain, true);
             $info = $p->parseResponse($response);
         }
         if ($info
@@ -146,7 +154,7 @@ class Whois
             && $info->getWhoisServer() != $server->getHost()
             && !$server->isCentralized()
         ) {
-            $tmpResponse = $this->loader->loadResponse($info->getWhoisServer(), $domain);
+            $tmpResponse = $this->loadDomainResponse($server, $info->getWhoisServer(), $domain, true);
             $tmpInfo = $p->parseResponse($tmpResponse);
             if ($tmpInfo) {
                 $response = $tmpResponse;
@@ -154,5 +162,19 @@ class Whois
             }
         }
         return [ $response, $info ];
+    }
+
+    /**
+     * @param Server $server
+     * @param string $whoisHost
+     * @param string $domain
+     * @param bool $strict
+     * @return Response
+     * @throws ConnectionException
+     */
+    private function loadDomainResponse(Server $server, $whoisHost, $domain, $strict = false)
+    {
+        $text = $this->loader->loadText($whoisHost, $server->buildDomainQuery($domain), $strict);
+        return new Response($domain, $text, $whoisHost);
     }
 }

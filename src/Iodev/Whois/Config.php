@@ -32,8 +32,8 @@ class Config
             [ "zone" => ".adm.br", "host" => "whois.nic.br" ],
             [ "zone" => ".adult", "host" => "whois.afilias-srs.net" ],
             [ "zone" => ".adv.br", "host" => "whois.nic.br" ],
-            [ "zone" => ".ae", "host" => "whois-check.aeda.net.ae", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
-            [ "zone" => ".ae", "host" => "whois.aeda.net.ae", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".ae", "host" => "whois-check.aeda.net.ae", "parserType" => "common_flat" ],
+            [ "zone" => ".ae", "host" => "whois.aeda.net.ae", "parserType" => "common_flat" ],
             [ "zone" => ".ae.com", "host" => "whois.centralnic.net" ],
             [ "zone" => ".aero", "host" => "whois.aero" ],
             [ "zone" => ".af", "host" => "whois.netnames.net" ],
@@ -69,8 +69,8 @@ class Config
             [ "zone" => ".at", "host" => "whois.nic.at" ],
             [ "zone" => ".atm.pl", "host" => "whois.dns.pl" ],
             [ "zone" => ".attorney", "host" => "whois.rightside.co" ],
-            [ "zone" => ".au", "host" => "whois.audns.net.au", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
-            [ "zone" => ".au", "host" => "whois.aunic.net", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".au", "host" => "whois.audns.net.au", "parserType" => "common_flat" ],
+            [ "zone" => ".au", "host" => "whois.aunic.net", "parserType" => "common_flat" ],
             [ "zone" => ".auction", "host" => "whois.donuts.co" ],
             [ "zone" => ".auction", "host" => "whois.unitedtld.com" ],
             [ "zone" => ".audio", "host" => "whois.uniregistry.net" ],
@@ -203,7 +203,6 @@ class Config
             [ "zone" => ".com.br", "host" => "whois.nic.br" ],
             [ "zone" => ".com.cn", "host" => "whois.cnnic.net.cn" ],
             [ "zone" => ".com.co", "host" => "whois.nic.co" ],
-            [ "zone" => ".com.de", "host" => "whois.centralnic.com" ],
             [ "zone" => ".com.ec", "host" => "whois.lac.net" ],
             [ "zone" => ".com.fr", "host" => "whois.nic.fr" ],
             [ "zone" => ".com.hk", "host" => "whois.hkdnr.net.hk" ],
@@ -217,7 +216,6 @@ class Config
             [ "zone" => ".com.sg", "host" => "whois.nic.net.sg" ],
             [ "zone" => ".com.tr", "host" => "whois.metu.edu.tr" ],
             [ "zone" => ".com.tw", "host" => "whois.twnic.net" ],
-            [ "zone" => ".com.ua", "host" => "whois.net.ua" ],
             [ "zone" => ".com.ve", "host" => "whois.nic.ve" ],
             [ "zone" => ".community", "host" => "whois.donuts.co" ],
             [ "zone" => ".company", "host" => "whois.donuts.co" ],
@@ -240,14 +238,14 @@ class Config
             [ "zone" => ".cuisinella", "host" => "whois.nic.cuisinella" ],
             [ "zone" => ".cx", "host" => "whois.nic.cx" ],
             [ "zone" => ".cymru", "host" => "whois.nic.cymru" ],
-            [ "zone" => ".cz", "host" => "whois.nic.cz" ],
+            [ "zone" => ".cz", "host" => "whois.nic.cz", "parserType" => "block" ],
             [ "zone" => ".dad", "host" => "domain-registry-whois.l.google.com" ],
             [ "zone" => ".dance", "host" => "whois.unitedtld.com" ],
             [ "zone" => ".dating", "host" => "whois.donuts.co" ],
             [ "zone" => ".datsun", "host" => "whois.nic.gmo" ],
             [ "zone" => ".day", "host" => "domain-registry-whois.l.google.com" ],
             [ "zone" => ".dclk", "host" => "domain-registry-whois.l.google.com" ],
-            [ "zone" => ".de", "host" => "whois.denic.de" ],
+            [ "zone" => ".de", "host" => "whois.denic.de", "parserType" => "block", "queryFormat" => "-T dn,ace %s\r\n" ],
             [ "zone" => ".de.com", "host" => "whois.centralnic.net" ],
             [ "zone" => ".deals", "host" => "whois.donuts.co" ],
             [ "zone" => ".degree", "host" => "whois.rightside.co" ],
@@ -265,9 +263,8 @@ class Config
             [ "zone" => ".directory", "host" => "whois.donuts.co" ],
             [ "zone" => ".discount", "host" => "whois.donuts.co" ],
             [ "zone" => ".dk", "host" => "whois.dk-hostmaster.dk" ],
-            [ "zone" => ".dm", "host" => "whois.nic.cx" ],
-            [ "zone" => ".dm", "host" => "whois.nic.dm" ],
-            [ "zone" => ".dn.ua", "host" => "whois.net.ua" ],
+            [ "zone" => ".dm", "host" => "whois.nic.cx", "parserType" => "common_flat" ],
+            [ "zone" => ".dm", "host" => "whois.nic.dm", "parserType" => "common_flat" ],
             [ "zone" => ".do", "host" => "whois.nic.do" ],
             [ "zone" => ".docs", "host" => "domain-registry-whois.l.google.com" ],
             [ "zone" => ".domains", "host" => "whois.donuts.co" ],
@@ -324,8 +321,8 @@ class Config
             [ "zone" => ".farm", "host" => "whois.donuts.co" ],
             [ "zone" => ".fashion", "host" => "whois-dub.mm-registry.com" ],
             [ "zone" => ".feedback", "host" => "whois.centralnic.com" ],
-            [ "zone" => ".fi", "host" => "whois.fi" ],
-            [ "zone" => ".fi", "host" => "whois.ficora.fi" ],
+            [ "zone" => ".fi", "host" => "whois.fi", "parserType" => "block" ],
+            [ "zone" => ".fi", "host" => "whois.ficora.fi", "parserType" => "block" ],
             [ "zone" => ".fin.ec", "host" => "whois.lac.net" ],
             [ "zone" => ".finance", "host" => "whois.donuts.co" ],
             [ "zone" => ".financial", "host" => "whois.donuts.co" ],
@@ -366,7 +363,7 @@ class Config
             [ "zone" => ".gb.net", "host" => "whois.centralnic.com" ],
             [ "zone" => ".gb.net", "host" => "whois.centralnic.net" ],
             [ "zone" => ".gbiz", "host" => "domain-registry-whois.l.google.com" ],
-            [ "zone" => ".gd", "host" => "whois.nic.gd" ],
+            [ "zone" => ".gd", "host" => "whois.nic.gd", "parserType" => "common_flat" ],
             [ "zone" => ".gd.cn", "host" => "whois.cnnic.net.cn" ],
             [ "zone" => ".gdn", "host" => "whois.gdnregistry.com" ],
             [ "zone" => ".geek.nz", "host" => "whois.srs.net.nz" ],
@@ -512,17 +509,15 @@ class Config
             [ "zone" => ".kddi", "host" => "whois.nic.kddi" ],
             [ "zone" => ".ke", "host" => "whois.kenic.or.ke" ],
             [ "zone" => ".kg", "host" => "whois.domain.kg" ],
-            [ "zone" => ".kh.ua", "host" => "whois.net.ua" ],
             [ "zone" => ".ki", "host" => "whois.nic.ki" ],
-            [ "zone" => ".kiev.ua", "host" => "whois.net.ua" ],
             [ "zone" => ".kim", "host" => "whois.afilias.net" ],
             [ "zone" => ".kitchen", "host" => "whois.donuts.co" ],
             [ "zone" => ".kiwi", "host" => "whois.dot-kiwi.com" ],
             [ "zone" => ".kiwi", "host" => "whois.nic.kiwi" ],
             [ "zone" => ".kiwi.nz", "host" => "whois.srs.net.nz" ],
             [ "zone" => ".koeln", "host" => "whois-fe1.pdt.koeln.tango.knipp.de" ],
-            [ "zone" => ".kr", "host" => "whois.kr", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
-            [ "zone" => ".kr", "host" => "whois.nic.or.kr", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".kr", "host" => "whois.kr", "parserType" => "common_flat" ],
+            [ "zone" => ".kr", "host" => "whois.nic.or.kr", "parserType" => "common_flat" ],
             [ "zone" => ".kr.com", "host" => "whois.centralnic.net" ],
             [ "zone" => ".krd", "host" => "whois.aridnrs.net.au" ],
             [ "zone" => ".kred", "host" => "whois.nic.kred" ],
@@ -541,7 +536,6 @@ class Config
             [ "zone" => ".leclerc", "host" => "whois-leclerc.nic.fr" ],
             [ "zone" => ".legal", "host" => "whois.donuts.co" ],
             [ "zone" => ".lel.br", "host" => "whois.nic.br" ],
-            [ "zone" => ".lg.ua", "host" => "whois.net.ua" ],
             [ "zone" => ".lgbt", "host" => "whois.afilias.net" ],
             [ "zone" => ".li", "host" => "whois.nic.li" ],
             [ "zone" => ".life", "host" => "whois.donuts.co" ],
@@ -564,7 +558,6 @@ class Config
             [ "zone" => ".luxury", "host" => "whois.donuts.co" ],
             [ "zone" => ".luxury", "host" => "whois.nic.luxury" ],
             [ "zone" => ".lv", "host" => "whois.nic.lv" ],
-            [ "zone" => ".lviv.ua", "host" => "whois.net.ua" ],
             [ "zone" => ".ly", "host" => "whois.lydomains.com" ],
             [ "zone" => ".ly", "host" => "whois.nic.ly" ],
             [ "zone" => ".ma", "host" => "whois.iam.net.ma" ],
@@ -622,7 +615,7 @@ class Config
             [ "zone" => ".ms", "host" => "whois.nic.ms" ],
             [ "zone" => ".msk.ru", "host" => "whois.nic.ru" ],
             [ "zone" => ".mtpc", "host" => "whois.nic.gmo" ],
-            [ "zone" => ".mu", "host" => "whois.nic.mu", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".mu", "host" => "whois.nic.mu", "parserType" => "common_flat" ],
             [ "zone" => ".muni.il", "host" => "whois.isoc.org.il" ],
             [ "zone" => ".museum", "host" => "whois.museum" ],
             [ "zone" => ".mx", "host" => "whois.mx" ],
@@ -656,7 +649,6 @@ class Config
             [ "zone" => ".net.th", "host" => "whois.thnic.net" ],
             [ "zone" => ".net.tr", "host" => "whois.metu.edu.tr" ],
             [ "zone" => ".net.tw", "host" => "whois.twnic.net" ],
-            [ "zone" => ".net.ua", "host" => "whois.net.ua" ],
             [ "zone" => ".net.uk", "host" => "whois.nic.uk" ],
             [ "zone" => ".net.ve", "host" => "whois.nic.ve" ],
             [ "zone" => ".net.za", "host" => "whois.co.za" ],
@@ -692,7 +684,7 @@ class Config
             [ "zone" => ".nz", "host" => "whois.srs.net.nz" ],
             [ "zone" => ".odo.br", "host" => "whois.nic.br" ],
             [ "zone" => ".okinawa", "host" => "whois.gmoregistry.ne" ],
-            [ "zone" => ".om", "host" => "whois.registry.om", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".om", "host" => "whois.registry.om", "parserType" => "common_flat" ],
             [ "zone" => ".one", "host" => "whois.nic.one" ],
             [ "zone" => ".ong", "host" => "whois.publicinterestregistry.net" ],
             [ "zone" => ".onl", "host" => "whois.afilias-srs.net" ],
@@ -718,7 +710,6 @@ class Config
             [ "zone" => ".org.sg", "host" => "whois.nic.net.sg" ],
             [ "zone" => ".org.tr", "host" => "whois.metu.edu.tr" ],
             [ "zone" => ".org.tw", "host" => "whois.twnic.net" ],
-            [ "zone" => ".org.ua", "host" => "whois.net.ua" ],
             [ "zone" => ".org.uk", "host" => "whois.nic.uk" ],
             [ "zone" => ".org.ve", "host" => "whois.nic.ve" ],
             [ "zone" => ".organic", "host" => "whois.afilias.net" ],
@@ -768,7 +759,7 @@ class Config
             [ "zone" => ".pt", "host" => "whois.dns.pt" ],
             [ "zone" => ".pub", "host" => "whois.unitedtld.com" ],
             [ "zone" => ".pw", "host" => "whois.nic.pw" ],
-            [ "zone" => ".qa", "host" => "whois.registry.qa", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".qa", "host" => "whois.registry.qa", "parserType" => "common_flat" ],
             [ "zone" => ".qc.com", "host" => "whois.centralnic.com" ],
             [ "zone" => ".qc.com", "host" => "whois.centralnic.net" ],
             [ "zone" => ".qh.cn", "host" => "whois.cnnic.net.cn" ],
@@ -796,10 +787,10 @@ class Config
             [ "zone" => ".rich", "host" => "whois.afilias-srs.net" ],
             [ "zone" => ".rio", "host" => "whois.gtlds.nic.br" ],
             [ "zone" => ".rip", "host" => "whois.rightside.co" ],
-            [ "zone" => ".ro", "host" => "whois.rotld.ro", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".ro", "host" => "whois.rotld.ro", "parserType" => "common_flat" ],
             [ "zone" => ".rocks", "host" => "whois.unitedtld.com" ],
             [ "zone" => ".rodeo", "host" => "whois-dub.mm-registry.com" ],
-            [ "zone" => ".rs", "host" => "whois.rnids.rs", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".rs", "host" => "whois.rnids.rs", "parserType" => "common_flat" ],
             [ "zone" => ".rsvp", "host" => "domain-registry-whois.l.google.com" ],
             [ "zone" => ".ru", "host" => "whois.ripn.net" ],
             [ "zone" => ".ru", "host" => "whois.tcinet.ru" ],
@@ -901,7 +892,7 @@ class Config
             [ "zone" => ".tk", "host" => "whois.dot.tk" ],
             [ "zone" => ".tl", "host" => "whois.domains.tl" ],
             [ "zone" => ".tl", "host" => "whois.nic.tl" ],
-            [ "zone" => ".tm", "host" => "whois.nic.tm", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".tm", "host" => "whois.nic.tm", "parserType" => "common_flat" ],
             [ "zone" => ".tm.fr", "host" => "whois.nic.fr" ],
             [ "zone" => ".tm.mc", "host" => "whois.ripe.net" ],
             [ "zone" => ".tm.pl", "host" => "whois.dns.pl" ],
@@ -933,8 +924,8 @@ class Config
             [ "zone" => ".tw", "host" => "whois.twnic.net.tw" ],
             [ "zone" => ".tw.cn", "host" => "whois.cnnic.net.cn" ],
             [ "zone" => ".tz", "host" => "whois.tznic.or.tz" ],
-            [ "zone" => ".ua", "host" => "whois.net.ua" ],
-            [ "zone" => ".ua", "host" => "whois.ua" ],
+            [ "zone" => ".ua", "host" => "whois.ua", "parserType" => "block" ],
+            [ "zone" => ".ua", "host" => "whois.net.ua", "parserType" => "block" ],
             [ "zone" => ".ug", "host" => "whois.co.ug" ],
             [ "zone" => ".uk", "host" => "whois.nic.uk" ],
             [ "zone" => ".uk.co", "host" => "whois.uk.co" ],
@@ -963,8 +954,8 @@ class Config
             [ "zone" => ".versicherung", "host" => "whois.nic.versicherung" ],
             [ "zone" => ".vet", "host" => "whois.rightside.co" ],
             [ "zone" => ".vet.br", "host" => "whois.nic.br" ],
-            [ "zone" => ".vg", "host" => "ccwhois.ksregistry.net" ],
-            [ "zone" => ".vg", "host" => "whois.adamsnames.tc" ],
+            [ "zone" => ".vg", "host" => "ccwhois.ksregistry.net", "parserType" => "common_flat" ],
+            [ "zone" => ".vg", "host" => "whois.adamsnames.tc", "parserType" => "common_flat" ],
             [ "zone" => ".viajes", "host" => "whois.donuts.co" ],
             [ "zone" => ".video", "host" => "whois.rightside.co" ],
             [ "zone" => ".villas", "host" => "whois.donuts.co" ],
@@ -1001,7 +992,7 @@ class Config
             [ "zone" => ".xn--1qqw23a", "host" => "whois.ngtld.cn" ],
             [ "zone" => ".xn--3bst00m", "host" => "whois.gtld.knet.cn" ],
             [ "zone" => ".xn--3ds443g", "host" => "whois.afilias-srs.net" ],
-            [ "zone" => ".xn--3e0b707e", "host" => "whois.kr", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".xn--3e0b707e", "host" => "whois.kr", "parserType" => "common_flat" ],
             [ "zone" => ".xn--45q11c", "host" => "whois.nic.xn--45q11c" ],
             [ "zone" => ".xn--4gbrim", "host" => "whois.afilias-srs.net" ],
             [ "zone" => ".xn--55qw42g", "host" => "whois.conac.cn" ],
@@ -1013,7 +1004,7 @@ class Config
             [ "zone" => ".xn--80asehdb", "host" => "whois.online.rs.corenic.net" ],
             [ "zone" => ".xn--80aswg", "host" => "whois.site.rs.corenic.net" ],
             [ "zone" => ".xn--c1avg", "host" => "whois.publicinterestregistry.net" ],
-            [ "zone" => ".xn--cg4bki", "host" => "whois.kr", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".xn--cg4bki", "host" => "whois.kr", "parserType" => "common_flat" ],
             [ "zone" => ".xn--clchc0ea0b2g2a9gcd", "host" => "whois.sgnic.sg" ],
             [ "zone" => ".xn--czrs0t", "host" => "whois.donuts.co" ],
             [ "zone" => ".xn--czru2d", "host" => "whois.gtld.knet.cn" ],
@@ -1033,9 +1024,9 @@ class Config
             [ "zone" => ".xn--kpry57d", "host" => "whois.twnic.net.tw" ],
             [ "zone" => ".xn--kput3i", "host" => "whois.afilias-srs.net" ],
             [ "zone" => ".xn--lgbbat1ad8j", "host" => "whois.nic.dz" ],
-            [ "zone" => ".xn--mgb9awbf", "host" => "whois.registry.om", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".xn--mgb9awbf", "host" => "whois.registry.om", "parserType" => "common_flat" ],
             [ "zone" => ".xn--mgba3a4f16a", "host" => "whois.nic.ir" ],
-            [ "zone" => ".xn--mgbaam7a8h", "host" => "whois.aeda.net.ae", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".xn--mgbaam7a8h", "host" => "whois.aeda.net.ae", "parserType" => "common_flat" ],
             [ "zone" => ".xn--mgbab2bd", "host" => "whois.bazaar.coreregistry.net" ],
             [ "zone" => ".xn--mgberp4a5d4ar", "host" => "whois.nic.net.sa" ],
             [ "zone" => ".xn--mgbx4cd0ab", "host" => "whois.mynic.my" ],
@@ -1055,7 +1046,7 @@ class Config
             [ "zone" => ".xn--vermgensberater-ctb", "host" => "whois.ksregistry.net" ],
             [ "zone" => ".xn--vermgensberatung-pwb", "host" => "whois.ksregistry.net" ],
             [ "zone" => ".xn--vhquv", "host" => "whois.donuts.co" ],
-            [ "zone" => ".xn--wgbl6a", "host" => "whois.registry.qa", "parser" => '\Iodev\Whois\Parsers\FlatCommonParser' ],
+            [ "zone" => ".xn--wgbl6a", "host" => "whois.registry.qa", "parserType" => "common_flat" ],
             [ "zone" => ".xn--xhq521b", "host" => "whois.ngtld.cn" ],
             [ "zone" => ".xn--yfro4i67o", "host" => "whois.sgnic.sg" ],
             [ "zone" => ".xn--ygbi2ammx", "host" => "whois.pnina.ps" ],
@@ -1077,6 +1068,167 @@ class Config
             [ "zone" => ".zm", "host" => "whois.nic.zm" ],
             [ "zone" => ".zone", "host" => "whois.donuts.co" ],
             [ "zone" => ".zuerich", "host" => "whois.ksregistry.net" ],
+        ];
+    }
+
+    /**
+     * @param string $type
+     * @return array
+     */
+    public static function getParserConfig($type = null)
+    {
+        if ($type == 'block') {
+            return self::getBlockParserConfig();
+        }
+        if ($type == 'common_flat') {
+            return self::getCommonFlatParserConfig();
+        }
+        return self::getCommonParserConfig();
+    }
+
+    /**
+     * @return array
+     */
+    private static function getBlockParserConfig()
+    {
+        $cfg = self::getCommonParserConfig();
+        $cfg = array_merge($cfg, [
+            "headerKey" => "__HEADER__",
+            "domainSubsets" => [
+                [ "domain" => '$domain' ],
+                [ "domainname" => '$domain' ],
+                [ "domain name" => '$domain' ],
+                [ "query" => '$domain' ],
+            ],
+            "nameServersSubsets" => [
+                [ "__HEADER__" => "NameServers" ],
+                [ "nameserver" => "" ],
+                [ "nserver" => "" ],
+            ],
+            "ownerSubsets" => [
+                [ "__HEADER__" => "Registrant" ],
+                [ "__HEADER__" => "Tech-C", "Organisation" => "" ],
+                [ "__HEADER__" => "holder" ],
+            ],
+            "registrarSubsets" => [
+                [ "__HEADER__" => "Registrar" ],
+                [ "__HEADER__" => "Zone-C", "Organisation" => "" ],
+            ],
+        ]);
+        $cfg["ownerKeys"] = array_merge($cfg["ownerKeys"], [
+            "Organisation",
+            "organization",
+            "organization-loc",
+            "name",
+        ]);
+        $cfg["registrarKeys"] = array_merge($cfg["registrarKeys"], [
+            "Organisation",
+            "organization",
+            "organization-loc",
+        ]);
+        return $cfg;
+    }
+
+    /**
+     * @return array
+     */
+    private static function getCommonFlatParserConfig()
+    {
+        $cfg = self::getCommonParserConfig();
+        $cfg['isFlat'] = true;
+        return $cfg;
+    }
+
+    /**
+     * @return array
+     */
+    private static function getCommonParserConfig()
+    {
+        return [
+            'domainKeys' => [
+                "domain",
+                "domainname",
+                "domain name",
+                "query",
+            ],
+            'whoisServerKeys' => [
+                "whois",
+                "whoisserver",
+                "whois server",
+                "registrar whois server",
+            ],
+            'nameServersKeys' => [
+                "nameserver",
+                "name server",
+                "nserver",
+                "host name",
+                "dns",
+            ],
+            'nameServersKeysGroups' => [
+                [ "ns 1", "ns 2", "ns 3", "ns 4" ],
+            ],
+            'creationDateKeys' => [
+                "creationdate",
+                "creation date",
+                "registration date",
+                "domain registration date",
+                "registration time",
+                "created",
+                "created on",
+                "created date",
+                "registered",
+                "registered on",
+                "registered date",
+                "record created",
+            ],
+            'expirationDateKeys' => [
+                "expirationdate",
+                "expiration date",
+                "expiration time",
+                "exp date",
+                "domain expiration date",
+                "registry expiry date",
+                "registrar registration expiration date",
+                "expiry",
+                "expires",
+                "paid-till",
+            ],
+            'ownerKeys' => [
+                "owner orgname",
+                "owner-organization",
+                "owner name",
+                "owner-name",
+                "organization",
+                "registrant organization",
+                "registrant-organization",
+                "registrant internationalized organization",
+                "registrant contact organisation",
+                "registrant",
+                "registrant name",
+                "domain holder",
+                "holder",
+                "org",
+                "tech organization",
+                "admin organization",
+            ],
+            'registrarKeys' => [
+                "registrar",
+                "registrar name",
+                "sponsoring registrar",
+                "sponsoring registrar organization",
+            ],
+            'statesKeys' => [
+                "domain status",
+                "domainstatus",
+                "status",
+                "state",
+            ],
+            'notRegisteredStatesDict' => [
+                "not registered" => 1,
+                "no object found" => 1,
+                "available" => 1,
+                "free" => 1,
+            ],
         ];
     }
 }

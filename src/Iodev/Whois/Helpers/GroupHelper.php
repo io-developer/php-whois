@@ -5,37 +5,41 @@ namespace Iodev\Whois\Helpers;
 class GroupHelper
 {
     /**
-     * @param string $text
+     * @param array $group
+     * @param bool $keysOnly
      * @return array
      */
-    public static function groupsFromText($text)
+    public static function toLowerCase($group, $keysOnly = false)
     {
-        $groups = [];
-        $splits = preg_split('/([\s\t]*\r?\n){2,}/', $text);
-        foreach ($splits as $split) {
-            $group = self::groupFromText($split);
-            if (count($group) > 1) {
-                $groups[] = $group;
-            }
-        }
-        return $groups;
+        return $keysOnly
+            ? self::mapRecursiveKeys($group, 'mb_strtolower')
+            : self::mapRecursive($group, 'mb_strtolower');
     }
 
     /**
-     * @param string $text
+     * @param array $group
+     * @param callable $callback
      * @return array
      */
-    public static function groupFromText($text)
-    {
-        $group = [];
-        preg_match_all('/^[ \t]*([^%#\r\n:]+):[ \t]*(.*?)\s*$/mui', $text, $m);
-        foreach ($m[1] as $index => $key) {
-            $key = trim($key);
-            if ($key != 'http' && $key != 'https') {
-                $group = array_merge_recursive($group, [$key => $m[2][$index]]);
-            }
-        }
-        return $group;
+    public static function mapRecursive($group, $callback) {
+        $out = [];
+        array_walk($group, function($val, $key) use (&$out, $callback) {
+            $out[$callback($key)] = is_array($val) ? self::mapRecursive($val, $callback) : $callback($val);
+        });
+        return $out;
+    }
+
+    /**
+     * @param array $group
+     * @param callable $callback
+     * @return array
+     */
+    public static function mapRecursiveKeys($group, $callback) {
+        $out = [];
+        array_walk($group, function($val, $key) use (&$out, $callback) {
+            $out[$callback($key)] = is_array($val) ? self::mapRecursiveKeys($val, $callback) : $val;
+        });
+        return $out;
     }
 
     /**
@@ -46,10 +50,11 @@ class GroupHelper
      */
     public static function matchFirst($group, $keys, $ignoreCase = true)
     {
+        if (empty($group)) {
+            return "";
+        }
         if ($ignoreCase) {
-            foreach ($group as $k => $v) {
-                $group[mb_strtolower($k)] = $v;
-            }
+            $group = self::toLowerCase($group, true);
         }
         foreach ($keys as $k) {
             $k = $ignoreCase ? mb_strtolower($k) : $k;
@@ -58,6 +63,86 @@ class GroupHelper
             }
         }
         return "";
+    }
+
+    /**
+     * @param array $groups
+     * @param string[] $keys
+     * @param bool $ignoreCase
+     * @return string
+     */
+    public static function matchFirstIn($groups, $keys, $ignoreCase = true)
+    {
+        foreach ($groups as $group) {
+            $v = self::matchFirst($group, $keys, $ignoreCase);
+            if (!empty($v)) {
+                return $v;
+            }
+        }
+        return "";
+    }
+
+    /**
+     * @param array $groups
+     * @param array $subsets
+     * @param bool $ignoreCase
+     * @return array|null
+     */
+    public static function findGroupHasSubsetOf($groups, $subsets, $ignoreCase = true)
+    {
+        $subsets = $ignoreCase ? self::toLowerCase($subsets) : $subsets;
+        foreach ($groups as $group) {
+            $g = $ignoreCase ? self::toLowerCase($group) : $group;
+            if (self::hasSubsetOf($g, $subsets)) {
+                return $group;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param array $group
+     * @param array $subsets
+     * @return bool
+     */
+    public static function hasSubsetOf($group, $subsets)
+    {
+        foreach ($subsets as $subset) {
+            if (self::hasSubset($group, $subset)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param array $group
+     * @param array $subset
+     * @return bool
+     */
+    public static function hasSubset($group, $subset)
+    {
+        foreach ($subset as $k => $v) {
+            if (!isset($group[$k])) {
+                return false;
+            }
+            if (empty($v)) {
+                continue;
+            }
+            if (is_array($group[$k])) {
+                foreach ($group[$k] as $sub) {
+                    if (strval($sub) == strval($v)) {
+                        $found = true;
+                    }
+                }
+            } else {
+                $found = (strval($group[$k]) == strval($v));
+            }
+            if (empty($found)) {
+                 return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -84,7 +169,8 @@ class GroupHelper
      */
     public static function getAsciiServer($group, $keys)
     {
-        return DomainHelper::toAscii(self::matchFirst($group, $keys));
+        $servers = self::getAsciiServers($group, $keys);
+        return empty($servers) ? "" : $servers[0];
     }
 
     /**
@@ -99,7 +185,7 @@ class GroupHelper
         $raws = is_array($raws) ? $raws : [ $raws ];
         $servers = [];
         foreach ($raws as $raw) {
-            $s = trim(DomainHelper::toAscii($raw));
+            $s = trim(preg_replace('~\[.*?\]~ui', '', DomainHelper::toAscii($raw)));
             if (!empty($s)) {
                 $servers[] = $s;
             }

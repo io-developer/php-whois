@@ -2,8 +2,6 @@
 
 namespace Iodev\Whois;
 
-use Iodev\Whois\Parsers\CommonParser;
-
 class ServerTest extends \PHPUnit_Framework_TestCase
 {
     private static function getServerClass()
@@ -13,12 +11,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     private static function getParser()
     {
-        return new CommonParser();
+        return Parser::createByClass(self::getParserClass());
     }
 
     private static function getParserClass()
     {
-        return '\Iodev\Whois\Parsers\CommonParser';
+        return '\TestCommonParser';
     }
 
 
@@ -104,6 +102,35 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         self::assertFalse($s->isDomainZone("some.bar"));
     }
 
+    public function testBuildDomainQueryDefault()
+    {
+        $s = new Server(".foo.bar", "some.host.com", false, self::getParser());
+        self::assertEquals("domain.com\r\n", $s->buildDomainQuery("domain.com"));
+    }
+
+    public function testBuildDomainQueryNull()
+    {
+        $s = new Server(".foo.bar", "some.host.com", false, self::getParser(), null);
+        self::assertEquals("site.com\r\n", $s->buildDomainQuery("site.com"));
+    }
+
+    public function testBuildDomainQueryEmpty()
+    {
+        $s = new Server(".foo.bar", "some.host.com", false, self::getParser(), "");
+        self::assertEquals("some.com\r\n", $s->buildDomainQuery("some.com"));
+    }
+
+    public function testBuildDomainQueryCustom()
+    {
+        $s = new Server(".foo.bar", "some.host.com", false, self::getParser(), "prefix %s suffix\r\n");
+        self::assertEquals("prefix domain.com suffix\r\n", $s->buildDomainQuery("domain.com"));
+    }
+
+    public function testBuildDomainQueryCustomNoParam()
+    {
+        $s = new Server(".foo.bar", "some.host.com", false, self::getParser(), "prefix suffix\r\n");
+        self::assertEquals("prefix suffix\r\n", $s->buildDomainQuery("domain.com"));
+    }
 
     public function testFromDataFullArgs()
     {
@@ -111,13 +138,15 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             "zone" => ".abc",
             "host" => "some.host",
             "centralized" => true,
-            "parser" => self::getParserClass(),
+            "parserClass" => self::getParserClass(),
+            "queryFormat" => "prefix %s suffix\r\n",
         ]);
 
         self::assertEquals(".abc", $s->getZone());
         self::assertEquals("some.host", $s->getHost());
         self::assertTrue($s->isCentralized());
         self::assertInstanceOf(self::getParserClass(), $s->getParser());
+        self::assertEquals("prefix %s suffix\r\n", $s->getQueryFormat());
     }
 
     public function testFromDataZoneHostOnly()
@@ -172,7 +201,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         $s = Server::fromDataList([
                 [ "zone" => ".abc", "host" => "some.host" ],
-                [ "zone" => ".cde", "host" => "other.host", "centralized" => true ],
+                [ "zone" => ".cde", "host" => "other.host", "centralized" => true, "queryFormat" => "prefix %s suffix\r\n" ],
             ],
             self::getParser()
         );
@@ -190,5 +219,6 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         self::assertEquals("other.host", $s[1]->getHost());
         self::assertTrue($s[1]->isCentralized());
         self::assertInstanceOf(self::getParserClass(), $s[1]->getParser());
+        self::assertEquals("prefix %s suffix\r\n", $s[1]->getQueryFormat());
     }
 }

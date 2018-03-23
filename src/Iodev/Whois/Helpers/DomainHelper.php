@@ -27,7 +27,9 @@ class DomainHelper
         }
         $cor = self::correct($domain);
         if (function_exists("idn_to_ascii")) {
-            return idn_to_ascii($cor, 0, INTL_IDNA_VARIANT_UTS46);
+            return defined('INTL_IDNA_VARIANT_UTS46')
+                ? idn_to_ascii($cor, 0, INTL_IDNA_VARIANT_UTS46)
+                : idn_to_ascii($cor);
         }
         return $cor;
     }
@@ -43,7 +45,9 @@ class DomainHelper
         }
         $cor = self::correct($domain);
         if (function_exists("idn_to_utf8")) {
-            return idn_to_utf8($cor, 0, INTL_IDNA_VARIANT_UTS46);
+            return defined('INTL_IDNA_VARIANT_UTS46')
+                ? idn_to_utf8($cor, 0, INTL_IDNA_VARIANT_UTS46)
+                : idn_to_utf8($cor);
         }
         return $cor;
     }
@@ -52,13 +56,13 @@ class DomainHelper
      * @param string $domain
      * @return string
      */
-    public static function correct($domain)
+    private static function correct($domain)
     {
         // Fix for .UZ whois response
         while (preg_match('~\bnot\.defined\.?\b~ui', $domain)) {
             $domain = preg_replace('~\bnot\.defined\.?\b~ui', '', $domain);
         }
-        return mb_strtolower(rtrim(preg_replace('~\s*\.\s*~ui', '.', $domain), ".-\t "));
+        return rtrim(preg_replace('~\s*\.\s*~ui', '.', $domain), ".-\t ");
     }
 
     /**
