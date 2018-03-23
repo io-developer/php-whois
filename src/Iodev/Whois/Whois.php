@@ -150,8 +150,15 @@ class Whois
 
         $info = $p->parseResponse($response);
         if (!$info) {
-            list($response, $error) = $this->loadDomainResponse($server, $server->getHost(), $domain, true);
-            $info = $p->parseResponse($response);
+            list($tmpResponse, $tmpError) = $this->loadDomainResponse($server, $server->getHost(), $domain, true);
+            $tmpInfo = $p->parseResponse($response);
+            if ($tmpInfo) {
+                $response = $tmpResponse;
+                $info = $tmpInfo;
+                $error = null;
+            } elseif ($tmpError) {
+                $error = $error ? $error : $tmpError;
+            }
         }
         if ($error) {
             throw $error;
