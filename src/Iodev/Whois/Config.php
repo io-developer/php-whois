@@ -203,7 +203,6 @@ class Config
             [ "zone" => ".com.br", "host" => "whois.nic.br" ],
             [ "zone" => ".com.cn", "host" => "whois.cnnic.net.cn" ],
             [ "zone" => ".com.co", "host" => "whois.nic.co" ],
-            [ "zone" => ".com.de", "host" => "whois.centralnic.com" ],
             [ "zone" => ".com.ec", "host" => "whois.lac.net" ],
             [ "zone" => ".com.fr", "host" => "whois.nic.fr" ],
             [ "zone" => ".com.hk", "host" => "whois.hkdnr.net.hk" ],

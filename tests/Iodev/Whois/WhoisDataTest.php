@@ -184,7 +184,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.cz", ".cz/google.cz.txt", ".cz/google.cz.json" ],
 
             [ "free.de", ".de/free.txt", null ],
-            // [ "google.de", ".de/google.de.txt", ".de/google.de.json" ],
+            [ "google.de", ".de/google.de.txt", ".de/google.de.json" ],
 
             [ "free.dk", ".dk/free.txt", null ],
             // [ "google.dk", ".dk/google.dk.txt", ".dk/google.dk.json" ],
