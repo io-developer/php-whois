@@ -30,6 +30,7 @@ class SocketLoader implements ILoader
             $text .= $chunk;
         }
         fclose($handle);
-        return $text;
+        $textUtf8 = iconv('windows-1250', 'utf-8', $text);
+        return $textUtf8 ? $textUtf8 : $text;
     }
 }
