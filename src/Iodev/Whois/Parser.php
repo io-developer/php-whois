@@ -5,7 +5,7 @@ namespace Iodev\Whois;
 abstract class Parser
 {
     const COMMON = 'common';
-    const COMMON_FLAT = 'common_flat';
+    const COMMON_FLAT = 'commonFlat';
     const BLOCK = 'block';
 
     /**
