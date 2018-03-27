@@ -33,8 +33,12 @@ class BlockParser extends CommonParser
     public function parseResponse(Response $response)
     {
         $groups = $this->groupsFromText($response->getText());
-        
-        $domainGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->domainSubsets, $response));
+
+        $params = [
+            '$domain' => $response->getDomain(),
+        ];
+
+        $domainGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->domainSubsets, $params));
         $domain = GroupHelper::getAsciiServer($domainGroup, $this->domainKeys);
         if (empty($domain)) {
             return null;
@@ -48,14 +52,14 @@ class BlockParser extends CommonParser
         }
 
         // NameServers
-        $nameServersGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->nameServersSubsets, $response));
+        $nameServersGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->nameServersSubsets, $params));
         $nameServers = GroupHelper::getAsciiServersComplex($nameServersGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
         if (empty($nameServers)) {
             $nameServers = GroupHelper::getAsciiServersComplex($domainGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
         }
 
-        $ownerGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->ownerSubsets, $response));
-        $registrarGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->registrarSubsets, $response));
+        $ownerGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->ownerSubsets, $params));
+        $registrarGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->registrarSubsets, $params));
 
         $data = [
             "domainName" => $domain,
@@ -78,17 +82,34 @@ class BlockParser extends CommonParser
             return null;
         }
 
+        $contactSubsets = [
+            ["nic-hdl" => '$id'],
+            ["contact" => '$id'],
+        ];
+
         if ($data["owner"]) {
-            $ownerContactGroup = GroupHelper::findGroupHasSubsetOf($groups, [["contact" => $data["owner"]]]);
+            $ownerContactGroup = GroupHelper::findGroupHasSubsetOf(
+                $groups,
+                $this->renderSubsets($contactSubsets, ['$id' => $data["owner"]])
+            );
             $ownerOrg = GroupHelper::matchFirst($ownerContactGroup, $this->contactOrgKeys);
-            $data["owner"] = $ownerOrg ? $ownerOrg : $data["owner"];
+            $data["owner"] = $ownerOrg
+                ? $ownerOrg
+                : $data["owner"];
         }
 
         $techGroup = GroupHelper::findGroupHasSubsetOf($groups, [["nsset" => "", "tech-c" => ""]]);
         if ($techGroup && $techGroup["tech-c"]) {
-            $registrarContactGroup = GroupHelper::findGroupHasSubsetOf($groups, [["contact" => $techGroup["tech-c"]]]);
+            $id = $techGroup["tech-c"];
+            $id = is_array($id) ? reset($id) : $id;
+            $registrarContactGroup = GroupHelper::findGroupHasSubsetOf(
+                $groups,
+                $this->renderSubsets($contactSubsets, ['$id' => $id])
+            );
             $registrarOrg = GroupHelper::matchFirst($registrarContactGroup, $this->contactOrgKeys);
-            $data["registrar"] = $registrarOrg ? $registrarOrg : $data["registrar"];
+            $data["registrar"] = ($registrarOrg && $registrarOrg != $data["owner"])
+                ? $registrarOrg
+                : $data["registrar"];
         }
 
         return new DomainInfo($response, $data);
@@ -96,14 +117,14 @@ class BlockParser extends CommonParser
 
     /**
      * @param array $subsets
-     * @param Response $response
+     * @param array $params
      * @return array
      */
-    private function renderSubsets($subsets, Response $response)
+    private function renderSubsets($subsets, $params)
     {
-        array_walk_recursive($subsets, function(&$val) use ($response) {
-            if ($val == '$domain') {
-                $val = $response->getDomain();
+        array_walk_recursive($subsets, function(&$val) use ($params) {
+            if (isset($params[$val])) {
+                $val = $params[$val];
             }
         });
         return $subsets;
