@@ -88,11 +88,11 @@ class BlockParser extends CommonParser
         ];
 
         if ($data["owner"]) {
-            $ownerContactGroup = GroupHelper::findGroupHasSubsetOf(
+            $group = GroupHelper::findGroupHasSubsetOf(
                 $groups,
                 $this->renderSubsets($contactSubsets, ['$id' => $data["owner"]])
             );
-            $ownerOrg = GroupHelper::matchFirst($ownerContactGroup, $this->contactOrgKeys);
+            $ownerOrg = GroupHelper::matchFirst($group, $this->contactOrgKeys);
             $data["owner"] = $ownerOrg
                 ? $ownerOrg
                 : $data["owner"];
@@ -102,14 +102,32 @@ class BlockParser extends CommonParser
         if ($techGroup && $techGroup["tech-c"]) {
             $id = $techGroup["tech-c"];
             $id = is_array($id) ? reset($id) : $id;
-            $registrarContactGroup = GroupHelper::findGroupHasSubsetOf(
+            $group = GroupHelper::findGroupHasSubsetOf(
                 $groups,
                 $this->renderSubsets($contactSubsets, ['$id' => $id])
             );
-            $registrarOrg = GroupHelper::matchFirst($registrarContactGroup, $this->contactOrgKeys);
+            $registrarOrg = GroupHelper::matchFirst($group, $this->contactOrgKeys);
             $data["registrar"] = ($registrarOrg && $registrarOrg != $data["owner"])
                 ? $registrarOrg
                 : $data["registrar"];
+        }
+
+        if (empty($data["creationDate"])) {
+            $subsests = [];
+            foreach ($this->creationDateKeys as $k) {
+                $subsests[] = [$k => ""];
+            }
+            $group = GroupHelper::findGroupHasSubsetOf($groups, $subsests);
+            $data["creationDate"] = GroupHelper::getUnixtime($group, $this->creationDateKeys);
+        }
+
+        if (empty($data["expirationDate"])) {
+            $subsests = [];
+            foreach ($this->expirationDateKeys as $k) {
+                $subsests[] = [$k => ""];
+            }
+            $group = GroupHelper::findGroupHasSubsetOf($groups, $subsests);
+            $data["expirationDate"] = GroupHelper::getUnixtime($group, $this->expirationDateKeys);
         }
 
         return new DomainInfo($response, $data);
@@ -158,8 +176,18 @@ class BlockParser extends CommonParser
         $headerAlt = trim($prevEmptyGroupText, "%#*:;=[]. \t\n\r\0\x0B");
         $header = isset($header) ? $header : $headerAlt;
         $header = ($headerAlt && strlen($headerAlt) < strlen($header)) ? $headerAlt : $header;
-        return !empty($header)
+        $group = !empty($header)
             ? array_merge_recursive($group, [$this->headerKey => $header])
             : $group;
+
+        if (count($group) == 1) {
+            foreach ($this->domainKeys as $k) {
+                if (isset($group[$k])) {
+                    $group[$this->headerKey] = "domain";
+                    break;
+                }
+            }
+        }
+        return $group;
     }
 }
