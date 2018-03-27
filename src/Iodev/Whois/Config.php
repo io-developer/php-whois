@@ -112,7 +112,7 @@ class Config
             [ "zone" => ".bmw", "host" => "whois.ksregistry.net" ],
             [ "zone" => ".bn", "host" => "whois.bn" ],
             [ "zone" => ".bnpparibas", "host" => "whois.afilias-srs.net" ],
-            [ "zone" => ".bo", "host" => "whois.nic.bo" ],
+            [ "zone" => ".bo", "host" => "whois.nic.bo", "parserType" => "block" ],
             [ "zone" => ".boo", "host" => "domain-registry-whois.l.google.com" ],
             [ "zone" => ".boutique", "host" => "whois.donuts.co" ],
             [ "zone" => ".br", "host" => "whois.nic.br" ],
@@ -1098,6 +1098,7 @@ class Config
                 [ "domain" => '$domain' ],
                 [ "domainname" => '$domain' ],
                 [ "domain name" => '$domain' ],
+                [ "Dominio" => '$domain' ],
                 [ "query" => '$domain' ],
             ],
             "nameServersSubsets" => [
@@ -1109,10 +1110,12 @@ class Config
                 [ "__HEADER__" => "Registrant" ],
                 [ "__HEADER__" => "Tech-C", "Organisation" => "" ],
                 [ "__HEADER__" => "holder" ],
+                [ "__HEADER__" => "TITULAR", "Organizacion" => "" ],
             ],
             "registrarSubsets" => [
                 [ "__HEADER__" => "Registrar" ],
                 [ "__HEADER__" => "Zone-C", "Organisation" => "" ],
+                [ "__HEADER__" => "CONTACTO FINANCIERO", "Organizacion" => "" ],
             ],
             "contactOrgKeys" => [
                 "organisation",
@@ -1126,12 +1129,14 @@ class Config
             "Organisation",
             "organization",
             "organization-loc",
+            "Organizacion",
             "name",
         ]);
         $cfg["registrarKeys"] = array_merge($cfg["registrarKeys"], [
             "Organisation",
             "organization",
             "organization-loc",
+            "Organizacion",
         ]);
         return $cfg;
     }
@@ -1156,6 +1161,7 @@ class Config
                 "domain",
                 "domainname",
                 "domain name",
+                "Dominio",
                 "query",
             ],
             'whoisServerKeys' => [
@@ -1187,6 +1193,7 @@ class Config
                 "registered on",
                 "registered date",
                 "record created",
+                "Fecha de registro",
             ],
             'expirationDateKeys' => [
                 "expirationdate",
@@ -1200,6 +1207,7 @@ class Config
                 "expires",
                 "expire",
                 "paid-till",
+                "Fecha de vencimiento",
             ],
             'ownerKeys' => [
                 "owner orgname",
@@ -1216,6 +1224,7 @@ class Config
                 "domain holder",
                 "holder",
                 "org",
+                "Organizacion",
                 "tech organization",
                 "admin organization",
             ],
