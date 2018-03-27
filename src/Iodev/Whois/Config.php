@@ -66,7 +66,7 @@ class Config
             [ "zone" => ".asso.fr", "host" => "whois.nic.fr" ],
             [ "zone" => ".asso.mc", "host" => "whois.ripe.net" ],
             [ "zone" => ".associates", "host" => "whois.donuts.co" ],
-            [ "zone" => ".at", "host" => "whois.nic.at" ],
+            [ "zone" => ".at", "host" => "whois.nic.at", "parserType" => "block" ],
             [ "zone" => ".atm.pl", "host" => "whois.dns.pl" ],
             [ "zone" => ".attorney", "host" => "whois.rightside.co" ],
             [ "zone" => ".au", "host" => "whois.audns.net.au", "parserType" => "commonFlat" ],

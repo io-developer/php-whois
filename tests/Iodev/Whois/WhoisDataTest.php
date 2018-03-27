@@ -110,7 +110,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             // [ "google.as", ".as/google.as.txt", ".as/google.as.json" ],
 
             [ "free.at", ".at/free.txt", null ],
-            // [ "google.at", ".at/google.at.txt", ".at/google.at.json" ],
+            [ "google.at", ".at/google.at.txt", ".at/google.at.json" ],
 
             [ "free.au", ".au/free.txt", null ],
             [ "google.com.au", ".au/google.com.au.txt", ".au/google.com.au.json" ],
