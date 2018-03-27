@@ -53,7 +53,7 @@ class Config
             [ "zone" => ".am", "host" => "whois.nic.am" ],
             [ "zone" => ".am.br", "host" => "whois.nic.br" ],
             [ "zone" => ".android", "host" => "domain-registry-whois.l.google.com" ],
-            [ "zone" => ".ao", "host" => "whois.reg.it.ao" ],
+            [ "zone" => ".ao", "host" => "whois.reg.it.ao", "parserType" => "block" ],
             [ "zone" => ".apartments", "host" => "whois.donuts.co" ],
             [ "zone" => ".aquarelle", "host" => "whois-aquarelle.nic.fr" ],
             [ "zone" => ".archi", "host" => "whois.ksregistry.net" ],
@@ -1114,6 +1114,13 @@ class Config
                 [ "__HEADER__" => "Registrar" ],
                 [ "__HEADER__" => "Zone-C", "Organisation" => "" ],
             ],
+            "contactOrgKeys" => [
+                "organisation",
+                "organization",
+                "organization-loc",
+                "org",
+                "name",
+            ],
         ]);
         $cfg["ownerKeys"] = array_merge($cfg["ownerKeys"], [
             "Organisation",
@@ -1191,6 +1198,7 @@ class Config
                 "registrar registration expiration date",
                 "expiry",
                 "expires",
+                "expire",
                 "paid-till",
             ],
             'ownerKeys' => [

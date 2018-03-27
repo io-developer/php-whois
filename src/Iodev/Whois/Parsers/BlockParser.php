@@ -23,6 +23,9 @@ class BlockParser extends CommonParser
     /** @var array */
     protected $registrarSubsets = [];
 
+    /** @var array */
+    protected $contactOrgKeys = [];
+
     /**
      * @param Response $response
      * @return DomainInfo
@@ -73,6 +76,19 @@ class BlockParser extends CommonParser
             && empty($data["registrar"])
         ) {
             return null;
+        }
+
+        if ($data["owner"]) {
+            $ownerContactGroup = GroupHelper::findGroupHasSubsetOf($groups, [["contact" => $data["owner"]]]);
+            $ownerOrg = GroupHelper::matchFirst($ownerContactGroup, $this->contactOrgKeys);
+            $data["owner"] = $ownerOrg ? $ownerOrg : $data["owner"];
+        }
+
+        $techGroup = GroupHelper::findGroupHasSubsetOf($groups, [["nsset" => "", "tech-c" => ""]]);
+        if ($techGroup && $techGroup["tech-c"]) {
+            $registrarContactGroup = GroupHelper::findGroupHasSubsetOf($groups, [["contact" => $techGroup["tech-c"]]]);
+            $registrarOrg = GroupHelper::matchFirst($registrarContactGroup, $this->contactOrgKeys);
+            $data["registrar"] = $registrarOrg ? $registrarOrg : $data["registrar"];
         }
 
         return new DomainInfo($response, $data);
