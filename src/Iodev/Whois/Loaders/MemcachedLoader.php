@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois\Loaders;
 
+use Iodev\Whois\AsnResponse;
 use Memcached;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Response;
@@ -43,6 +44,24 @@ class MemcachedLoader implements ILoader
             return unserialize($val);
         }
         $val = $this->loader->loadResponse($whoisHost, $domain, $strict);
+        $this->memcached->set($key, serialize($val), $this->ttl);
+        return $val;
+    }
+
+    /**
+     * @param string $whoisHost
+     * @param string $asn
+     * @return AsnResponse
+     * @throws ConnectionException
+     */
+    public function loadAsnResponse($whoisHost, $asn)
+    {
+        $key = $this->keyPrefix . md5(serialize([$whoisHost, $asn]));
+        $val = $this->memcached->get($key);
+        if ($val) {
+            return unserialize($val);
+        }
+        $val = $this->loader->loadAsnResponse($whoisHost, $asn);
         $this->memcached->set($key, serialize($val), $this->ttl);
         return $val;
     }
