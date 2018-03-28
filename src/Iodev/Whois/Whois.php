@@ -6,6 +6,7 @@ use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\SocketLoader;
+use Iodev\Whois\Parsers\AsnParser;
 
 class Whois
 {
@@ -102,6 +103,29 @@ class Whois
     {
         list ($response) = $this->loadDomainDataFrom($server, $domain);
         return $response;
+    }
+
+    /**
+     * @param Server $server
+     * @param string $asn
+     * @return RouteInfo[]
+     */
+    public function loadAsnInfo(Server $server, $asn)
+    {
+        $response = $this->lookupAsn($server, $asn);
+        $asnParser = new AsnParser();
+
+        return $asnParser->parseResponse($response);
+    }
+
+    /**
+     * @param Server $server
+     * @param string $asn
+     * @return AsnResponse
+     */
+    public function lookupAsn(Server $server, $asn)
+    {
+        return $this->loader->loadAsnResponse($server->getHost(), $asn);
     }
 
     /**
