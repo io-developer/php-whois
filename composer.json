@@ -51,7 +51,7 @@
     },
     "scripts": {
         "test": [
-            "phpunit --bootstrap vendor/autoload.php tests"
+            "phpunit --bootstrap tests/bootstrap.php tests"
         ]
     }
 }
