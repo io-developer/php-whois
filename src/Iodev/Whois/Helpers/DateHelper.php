@@ -21,6 +21,8 @@ class DateHelper
         } elseif (preg_match('/^(\d{2})\s+(\w+)\s+(\d{4})/ui', $s, $m)) {
             $mon = self::textMonthToDigital($m[2]);
             $s = "{$m[3]}-{$mon}-{$m[1]}T00:00:00";
+        } elseif (preg_match('/^(\d{4})(\d{2})(\d{2})$/ui', preg_replace('/\s*#.*/ui', '', $s), $m)) {
+            $s = "{$m[1]}-{$m[2]}-{$m[3]}T00:00:00";
         }
         return (int)strtotime($s);
     }

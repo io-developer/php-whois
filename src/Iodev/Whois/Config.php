@@ -1115,6 +1115,8 @@ class Config
             "registrarSubsets" => [
                 [ "__HEADER__" => "Registrar" ],
                 [ "__HEADER__" => "Zone-C", "Organisation" => "" ],
+                [ "__HEADER__" => "billing-c", "Organisation" => "" ],
+                [ "__HEADER__" => "billing-c", "person" => "" ],
                 [ "__HEADER__" => "CONTACTO FINANCIERO", "Organizacion" => "" ],
             ],
             "contactOrgKeys" => [
@@ -1123,6 +1125,7 @@ class Config
                 "organization-loc",
                 "org",
                 "name",
+                "person",
             ],
         ]);
         $cfg["ownerKeys"] = array_merge($cfg["ownerKeys"], [
@@ -1137,6 +1140,7 @@ class Config
             "organization",
             "organization-loc",
             "Organizacion",
+            "person",
         ]);
         return $cfg;
     }
@@ -1214,6 +1218,7 @@ class Config
                 "owner-organization",
                 "owner name",
                 "owner-name",
+                "owner",
                 "organization",
                 "registrant organization",
                 "registrant-organization",
@@ -1233,6 +1238,7 @@ class Config
                 "registrar name",
                 "sponsoring registrar",
                 "sponsoring registrar organization",
+                "billing-c",
             ],
             'statesKeys' => [
                 "domain status",
