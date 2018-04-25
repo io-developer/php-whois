@@ -27,6 +27,7 @@ class Whois
     {
         $this->serverProvider = $provider;
         $this->loader = $loader;
+        $this->fetcher = new Fetcher($loader);
     }
 
     /** @var ServerProvider */
@@ -34,6 +35,9 @@ class Whois
 
     /** @var ILoader */
     private $loader;
+
+    /** @var Fetcher */
+    private $fetcher;
 
     /**
      * @return ServerProvider
@@ -82,7 +86,7 @@ class Whois
      */
     public function loadDomainInfoFrom(Server $server, $domain)
     {
-        list (, $info) = $this->loadDomainDataFrom($server, $domain);
+        $this->fetcher->fetchDomainParsedTo($response, $info, $server, $domain);
         return $info;
     }
 
@@ -106,7 +110,7 @@ class Whois
      */
     public function lookupDomainFrom(Server $server, $domain)
     {
-        list ($response) = $this->loadDomainDataFrom($server, $domain);
+        $this->fetcher->fetchDomainParsedTo($response, $info, $server, $domain);
         return $response;
     }
 
@@ -126,75 +130,11 @@ class Whois
         $response = null;
         $info = null;
         foreach ($servers as $server) {
-            list ($response, $info) = $this->loadDomainDataFrom($server, $domain);
+            $this->fetcher->fetchDomainParsedTo($response, $info, $server, $domain);
             if ($info) {
                 return [ $response, $info ];
             }
         }
         return [ $response, $info ];
-    }
-
-    /**
-     * @param Server $server
-     * @param string $domain
-     * @return array
-     * @throws ConnectionException
-     */
-    private function loadDomainDataFrom(Server $server, $domain)
-    {
-        $p = $server->getParser();
-
-        /* @var $response Response */
-        /* @var $error ConnectionException */
-        list($response, $error) = $this->loadDomainResponse($server, $server->getHost(), $domain);
-
-        $info = $p->parseResponse($response);
-        if (!$info) {
-            list($tmpResponse, $tmpError) = $this->loadDomainResponse($server, $server->getHost(), $domain, true);
-            $tmpInfo = $p->parseResponse($response);
-            if ($tmpInfo) {
-                $response = $tmpResponse;
-                $info = $tmpInfo;
-                $error = null;
-            } elseif ($tmpError) {
-                $error = $error ? $error : $tmpError;
-            }
-        }
-        if ($error) {
-            throw $error;
-        }
-
-        if ($info
-            && $info->getWhoisServer()
-            && $info->getWhoisServer() != $server->getHost()
-            && !$server->isCentralized()
-        ) {
-            list($tmpResponse, $error) = $this->loadDomainResponse($server, $info->getWhoisServer(), $domain, true);
-            $tmpInfo = $p->parseResponse($tmpResponse);
-            if ($tmpInfo && empty($error)) {
-                $response = $tmpResponse;
-                $info = $tmpInfo;
-            }
-        }
-        return [ $response, $info ];
-    }
-
-    /**
-     * @param Server $server
-     * @param string $whoisHost
-     * @param string $domain
-     * @param bool $strict
-     * @return array
-     */
-    private function loadDomainResponse(Server $server, $whoisHost, $domain, $strict = false)
-    {
-        $error = null;
-        try {
-            $text = $this->loader->loadText($whoisHost, $server->buildDomainQuery($domain, $strict));
-        } catch (ConnectionException $e) {
-            $error = $e;
-            $text = "";
-        }
-        return [ new Response($domain, $text, $whoisHost), $error ];
     }
 }
