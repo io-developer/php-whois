@@ -9,7 +9,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->resp = new Response("domain.some", "Test content", "whois.host.abc");
+        $this->resp = new Response(ResponseType::DOMAIN, "domain.some", "Test content", "whois.host.abc");
     }
 
 

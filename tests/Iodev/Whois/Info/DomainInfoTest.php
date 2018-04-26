@@ -13,7 +13,7 @@ class DomainInfoTest extends \PHPUnit_Framework_TestCase
 
     private static function getResponse()
     {
-        return new Response("domain.com", "Hello world");
+        return Response::createDomainResponse("domain.com", "Hello world");
     }
 
 

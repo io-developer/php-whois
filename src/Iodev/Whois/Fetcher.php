@@ -36,7 +36,7 @@ class Fetcher
     {
         $host = $host ?: $server->getHost();
         $text = $this->loader->loadText($host, $server->buildDomainQuery($domain, $strict));
-        return new Response($domain, $text, $host);
+        return Response::createDomainResponse($domain, $text, $host);
     }
 
     /**
