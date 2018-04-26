@@ -5,6 +5,7 @@ namespace Iodev\Whois;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Helpers\DomainHelper;
+use Iodev\Whois\Info\DomainInfo;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\SocketLoader;
 

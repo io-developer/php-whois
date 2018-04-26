@@ -1,6 +1,8 @@
 <?php
 
-namespace Iodev\Whois;
+namespace Iodev\Whois\Info;
+
+use Iodev\Whois\Response;
 
 class DomainInfoTest extends \PHPUnit_Framework_TestCase
 {

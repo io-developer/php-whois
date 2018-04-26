@@ -2,6 +2,8 @@
 
 namespace Iodev\Whois;
 
+use Iodev\Whois\Info\DomainInfo;
+
 abstract class Parser
 {
     const COMMON = 'common';

@@ -1,9 +1,10 @@
 <?php
 
-namespace Iodev\Whois;
+namespace Iodev\Whois\Info;
 
 use InvalidArgumentException;
 use Iodev\Whois\Helpers\DomainHelper;
+use Iodev\Whois\Response;
 
 class DomainInfo
 {

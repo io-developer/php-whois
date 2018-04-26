@@ -3,6 +3,7 @@
 namespace Iodev\Whois;
 
 use Iodev\Whois\Exceptions\ConnectionException;
+use Iodev\Whois\Info\DomainInfo;
 use Iodev\Whois\Loaders\ILoader;
 
 class Fetcher
