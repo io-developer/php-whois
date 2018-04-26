@@ -13,9 +13,9 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testGetDomain()
+    public function testGetTarget()
     {
-        self::assertEquals("domain.some", $this->resp->getDomain());
+        self::assertEquals("domain.some", $this->resp->getTarget());
     }
 
     public function testGetText()

@@ -105,7 +105,7 @@ class CommonParser extends Parser
         }
         return GroupHelper::findDomainGroup(
             $this->groupsFromText($response->getText()),
-            $response->getDomain(),
+            $response->getTarget(),
             $this->domainKeys
         );
     }

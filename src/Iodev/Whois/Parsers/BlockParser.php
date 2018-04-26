@@ -35,7 +35,7 @@ class BlockParser extends CommonParser
         $groups = $this->groupsFromText($response->getText());
 
         $params = [
-            '$domain' => $response->getDomain(),
+            '$domain' => $response->getTarget(),
         ];
 
         $domainGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->domainSubsets, $params));

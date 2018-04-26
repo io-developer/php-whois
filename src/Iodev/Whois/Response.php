@@ -15,10 +15,10 @@ class Response
         return new Response(ResponseType::DOMAIN, $domain, $text, $whoisHost);
     }
 
-    public function __construct($type, $domain = "", $text = "", $whoisHost = "")
+    public function __construct($type, $target = "", $text = "", $whoisHost = "")
     {
         $this->type = strval($type);
-        $this->domain = strval($domain);
+        $this->target = strval($target);
         $this->text = strval($text);
         $this->whoisHost = strval($whoisHost);
     }
@@ -27,7 +27,7 @@ class Response
     private $type;
 
     /** @var string */
-    private $domain;
+    private $target;
     
     /** @var string */
     private $text;
@@ -46,9 +46,9 @@ class Response
     /**
      * @return string
      */
-    public function getDomain()
+    public function getTarget()
     {
-        return $this->domain;
+        return $this->target;
     }
 
     /**
