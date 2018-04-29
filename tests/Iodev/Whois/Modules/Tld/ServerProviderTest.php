@@ -1,6 +1,6 @@
 <?php
 
-namespace Iodev\Whois;
+namespace Iodev\Whois\Modules\Tld;
 
 class ServerProviderTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Iodev\Whois;
+namespace Iodev\Whois\Modules\Tld;
 
 class ServerTest extends \PHPUnit_Framework_TestCase
 {
     private static function getServerClass()
     {
-        return '\Iodev\Whois\Server';
+        return '\Iodev\Whois\Modules\Tld\Server';
     }
 
     private static function getParser()
@@ -16,7 +16,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
     private static function getParserClass()
     {
-        return '\TestCommonParser';
+        return '\Iodev\Whois\Modules\Tld\Parsers\TestCommonParser';
     }
 
 

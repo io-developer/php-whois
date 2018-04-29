@@ -2,8 +2,10 @@
 
 namespace Iodev\Whois;
 
-use FakeSocketLoader;
+use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Loaders\SocketLoader;
+use Iodev\Whois\Modules\Tld\Server;
+use Iodev\Whois\Modules\Tld\ServerProvider;
 
 class WhoisTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,7 +33,7 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
     {
         $w = $this->getWhois();
         $l = $this->loader;
-        $l->text = \TestData::loadContent($filename);
+        $l->text = Modules\Tld\ParsingData::loadContent($filename);
         return $w->loadDomainInfo($domain);
     }
 

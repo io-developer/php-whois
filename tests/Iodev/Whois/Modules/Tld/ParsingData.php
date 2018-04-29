@@ -1,6 +1,10 @@
 <?php
 
-class TestData
+namespace Iodev\Whois\Modules\Tld;
+
+use InvalidArgumentException;
+
+class ParsingData
 {
     /**
      * @param $filename
@@ -9,7 +13,7 @@ class TestData
      */
     public static function loadContent($filename)
     {
-        $file = __DIR__ . '/data_files/' . $filename;
+        $file = __DIR__ . '/parsing_data/' . $filename;
         if (!file_exists($file)) {
             throw new InvalidArgumentException("File '$file' not found");
         }

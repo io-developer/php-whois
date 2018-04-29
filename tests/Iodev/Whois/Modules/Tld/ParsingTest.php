@@ -1,8 +1,10 @@
 <?php
 
-namespace Iodev\Whois;
+namespace Iodev\Whois\Modules\Tld;
 
-use FakeSocketLoader;
+use Iodev\Whois\Config;
+use Iodev\Whois\Loaders\FakeSocketLoader;
+use Iodev\Whois\Whois;
 
 class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
 {
@@ -11,7 +13,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
         $dataList = array_merge(Config::getServersData(), []);
         $p = new ServerProvider(Server::fromDataList($dataList));
         $l = new FakeSocketLoader();
-        $l->text = \TestData::loadContent($filename);
+        $l->text = \Iodev\Whois\Modules\Tld\ParsingData::loadContent($filename);
         $w = new Whois($p, $l);
         return $w;
     }
@@ -33,7 +35,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             return;
         }
 
-        $expected = json_decode(\TestData::loadContent($expectedJsonFilename), true);
+        $expected = json_decode(\Iodev\Whois\Modules\Tld\ParsingData::loadContent($expectedJsonFilename), true);
         self::assertNotEmpty($expected, "Failed to load/parse expected json");
 
         self::assertNotNull($info, "Loaded info should not be null ($srcTextFilename)");

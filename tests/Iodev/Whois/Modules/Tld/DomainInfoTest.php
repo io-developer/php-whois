@@ -1,6 +1,6 @@
 <?php
 
-namespace Iodev\Whois\Info;
+namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Response;
 

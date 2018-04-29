@@ -1,7 +1,8 @@
 <?php
 
+namespace Iodev\Whois\Loaders;
+
 use Iodev\Whois\Exceptions\ConnectionException;
-use Iodev\Whois\Loaders\SocketLoader;
 
 class FakeSocketLoader extends SocketLoader
 {
