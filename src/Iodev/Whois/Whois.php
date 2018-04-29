@@ -5,9 +5,11 @@ namespace Iodev\Whois;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Helpers\DomainHelper;
-use Iodev\Whois\Info\DomainInfo;
+use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\SocketLoader;
+use Iodev\Whois\Modules\Tld\Server;
+use Iodev\Whois\Modules\Tld\ServerProvider;
 
 class Whois
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Iodev\Whois;
+namespace Iodev\Whois\Modules\Tld;
 
 use InvalidArgumentException;
 use Iodev\Whois\Helpers\DomainHelper;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Iodev\Whois\Parsers;
+namespace Iodev\Whois\Modules\Tld\Parsers;
 
-use Iodev\Whois\Info\DomainInfo;
+use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Response;
 use Iodev\Whois\Helpers\GroupHelper;
 

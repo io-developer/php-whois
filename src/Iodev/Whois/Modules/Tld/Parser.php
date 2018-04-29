@@ -1,8 +1,9 @@
 <?php
 
-namespace Iodev\Whois;
+namespace Iodev\Whois\Modules\Tld;
 
-use Iodev\Whois\Info\DomainInfo;
+use Iodev\Whois\Config;
+use Iodev\Whois\Response;
 
 abstract class Parser
 {
@@ -18,9 +19,9 @@ abstract class Parser
     {
         $type = $type ? $type : self::COMMON;
         $d = [
-            self::COMMON => '\Iodev\Whois\Parsers\CommonParser',
-            self::COMMON_FLAT => '\Iodev\Whois\Parsers\CommonParser',
-            self::BLOCK => '\Iodev\Whois\Parsers\BlockParser',
+            self::COMMON => '\Iodev\Whois\Modules\Tld\Parsers\CommonParser',
+            self::COMMON_FLAT => '\Iodev\Whois\Modules\Tld\Parsers\CommonParser',
+            self::BLOCK => '\Iodev\Whois\Modules\Tld\Parsers\BlockParser',
         ];
         return self::createByClass($d[$type], $type);
     }
