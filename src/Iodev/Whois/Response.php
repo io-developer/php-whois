@@ -2,7 +2,7 @@
 
 namespace Iodev\Whois;
 
-use Iodev\Whois\Modules\Type;
+use Iodev\Whois\Modules\ModuleType;
 
 class Response
 {
@@ -14,7 +14,7 @@ class Response
      */
     public static function createDomainResponse($domain, $text, $whoisHost = "")
     {
-        return new Response(Type::TLD, $domain, $text, $whoisHost);
+        return new Response(ModuleType::TLD, $domain, $text, $whoisHost);
     }
 
     public function __construct($type, $target = "", $text = "", $whoisHost = "")

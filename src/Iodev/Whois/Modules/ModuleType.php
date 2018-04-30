@@ -2,7 +2,7 @@
 
 namespace Iodev\Whois\Modules;
 
-class Type
+class ModuleType
 {
     const TLD = "tld";
 }
