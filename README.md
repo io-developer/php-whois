@@ -89,7 +89,7 @@ $m = new Memcached();
 $m->addServer('127.0.0.1', 11211);
 $loader = new MemcachedLoader(new SocketLoader(), $m);
 
-$whois = Whois::create(null, $loader);
+$whois = Whois::create($loader);
 ```
 
 
@@ -113,7 +113,7 @@ try {
 } catch (ConnectionException $e) {
     echo "Disconnect or connection timeout";
 } catch (ServerMismatchException $e) {
-    echo "Domain zone servers (.com for google.com) not found in current ServerProvider whois hosts";
+    echo "TLD server (.com for google.com) not found in current server hosts";
 }
 ```
 
@@ -149,9 +149,9 @@ echo "WHOIS response for '{$resp->getDomain()}':\n{$resp->getText()}";
 ```php
 <?php
 
-use Iodev\Whois\Server;
 use Iodev\Whois\Whois;
-use Iodev\Whois\Parser;
+use Iodev\Whois\Modules\Tld\Server;
+use Iodev\Whois\Modules\Tld\Parser;
 
 $whois = Whois::create();
 
@@ -165,7 +165,7 @@ $customServer = Server::fromData([
 ]);
 
 // Append to existing provider
-$whois->getServerProvider()->addOne($customServer);
+$whois->getTldModule()->addServers([$customServer]);
 
 // Now you can load info
 $info = $whois->loadDomainInfo("google.co");
