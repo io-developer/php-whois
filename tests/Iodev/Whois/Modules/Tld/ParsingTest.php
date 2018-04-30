@@ -10,11 +10,9 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
 {
     private static function whoisFrom($filename)
     {
-        $dataList = array_merge(Config::getServersData(), []);
-        $p = new ServerProvider(Server::fromDataList($dataList));
         $l = new FakeSocketLoader();
         $l->text = \Iodev\Whois\Modules\Tld\ParsingData::loadContent($filename);
-        $w = new Whois($p, $l);
+        $w = new Whois($l);
         return $w;
     }
 
@@ -27,11 +25,12 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
     private static function assertTestData($domain, $srcTextFilename, $expectedJsonFilename)
     {
         $w = self::whoisFrom($srcTextFilename);
-        $info = $w->loadDomainInfo($domain);
+        $tld = $w->getTldModule();
+        $info = $tld->loadDomainInfo($domain);
 
         if (empty($expectedJsonFilename)) {
             self::assertNull($info, "Loaded info should be null for free domain ($srcTextFilename)");
-            self::assertTrue($w->isDomainAvailable($domain), "Free domain should be available ($srcTextFilename)");
+            self::assertTrue($tld->isDomainAvailable($domain), "Free domain should be available ($srcTextFilename)");
             return;
         }
 
@@ -39,7 +38,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
         self::assertNotEmpty($expected, "Failed to load/parse expected json");
 
         self::assertNotNull($info, "Loaded info should not be null ($srcTextFilename)");
-        self::assertFalse($w->isDomainAvailable($domain), "Domain should not be available ($srcTextFilename)");
+        self::assertFalse($tld->isDomainAvailable($domain), "Domain should not be available ($srcTextFilename)");
 
         self::assertEquals(
             $expected["domainName"],
