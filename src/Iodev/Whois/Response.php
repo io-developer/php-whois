@@ -17,40 +17,28 @@ class Response
         return new Response(ModuleType::TLD, $domain, $text, $whoisHost);
     }
 
-    public function __construct($type, $target = "", $text = "", $whoisHost = "")
+    public function __construct($query = "", $text = "", $host = "")
     {
-        $this->type = strval($type);
-        $this->target = strval($target);
+        $this->query = strval($query);
         $this->text = strval($text);
-        $this->whoisHost = strval($whoisHost);
+        $this->host = strval($host);
     }
 
     /** @var string */
-    private $type;
-
-    /** @var string */
-    private $target;
+    private $query;
     
     /** @var string */
     private $text;
 
     /** @var string */
-    private $whoisHost;
+    private $host;
 
     /**
      * @return string
      */
-    public function getType()
+    public function getQuery()
     {
-        return $this->type;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTarget()
-    {
-        return $this->target;
+        return $this->query;
     }
 
     /**
@@ -66,6 +54,6 @@ class Response
      */
     public function getWhoisHost()
     {
-        return $this->whoisHost;
+        return $this->host;
     }
 }

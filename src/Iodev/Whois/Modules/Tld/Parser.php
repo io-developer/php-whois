@@ -3,7 +3,6 @@
 namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Config;
-use Iodev\Whois\Response;
 
 abstract class Parser
 {
@@ -46,8 +45,8 @@ abstract class Parser
     abstract public function setConfig($cfg);
 
     /**
-     * @param Response $response
+     * @param DomainResponse $response
      * @return DomainInfo
      */
-    abstract public function parseResponse(Response $response);
+    abstract public function parseResponse(DomainResponse $response);
 }

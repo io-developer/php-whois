@@ -2,8 +2,6 @@
 
 namespace Iodev\Whois;
 
-use Iodev\Whois\Modules\ModuleType;
-
 class ResponseTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Response */
@@ -11,13 +9,13 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->resp = new Response(ModuleType::TLD, "domain.some", "Test content", "whois.host.abc");
+        $this->resp = new Response("domain.some", "Test content", "whois.host.abc");
     }
 
 
-    public function testGetTarget()
+    public function testGetQuery()
     {
-        self::assertEquals("domain.some", $this->resp->getTarget());
+        self::assertEquals("domain.some", $this->resp->getQuery());
     }
 
     public function testGetText()

@@ -144,7 +144,7 @@ class TldModule extends Module
         $host = $host ?: $server->getHost();
         $query = $server->buildDomainQuery($domain, $strict);
         $text = $this->getLoader()->loadText($host, $query);
-        return new Response(ModuleType::TLD, $domain, $text, $host);
+        return new DomainResponse($domain, $query, $text, $host);
     }
 
     /**

@@ -3,8 +3,8 @@
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Modules\Tld\DomainInfo;
-use Iodev\Whois\Response;
 use Iodev\Whois\Helpers\GroupHelper;
+use Iodev\Whois\Modules\Tld\DomainResponse;
 
 class BlockParser extends CommonParser
 {
@@ -27,15 +27,15 @@ class BlockParser extends CommonParser
     protected $contactOrgKeys = [];
 
     /**
-     * @param Response $response
+     * @param DomainResponse $response
      * @return DomainInfo
      */
-    public function parseResponse(Response $response)
+    public function parseResponse(DomainResponse $response)
     {
         $groups = $this->groupsFromText($response->getText());
 
         $params = [
-            '$domain' => $response->getTarget(),
+            '$domain' => $response->getDomain(),
         ];
 
         $domainGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->domainSubsets, $params));

@@ -2,8 +2,6 @@
 
 namespace Iodev\Whois\Modules\Tld;
 
-use Iodev\Whois\Response;
-
 class DomainInfoTest extends \PHPUnit_Framework_TestCase
 {
     private static function createInfo($data = [])
@@ -13,7 +11,7 @@ class DomainInfoTest extends \PHPUnit_Framework_TestCase
 
     private static function getResponse()
     {
-        return Response::createDomainResponse("domain.com", "Hello world");
+        return new DomainResponse("domain.com", "domain.com", "Hello world");
     }
 
 

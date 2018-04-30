@@ -3,8 +3,8 @@
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Modules\Tld\DomainInfo;
+use Iodev\Whois\Modules\Tld\DomainResponse;
 use Iodev\Whois\Modules\Tld\Parser;
-use Iodev\Whois\Response;
 use Iodev\Whois\Helpers\GroupHelper;
 
 class CommonParser extends Parser
@@ -55,10 +55,10 @@ class CommonParser extends Parser
     }
 
     /**
-     * @param Response $response
+     * @param DomainResponse $response
      * @return DomainInfo
      */
-    public function parseResponse(Response $response)
+    public function parseResponse(DomainResponse $response)
     {
         $group = $this->groupFrom($response);
         if (!$group) {
@@ -95,17 +95,17 @@ class CommonParser extends Parser
     }
 
     /**
-     * @param Response $response
+     * @param DomainResponse $response
      * @return array
      */
-    protected function groupFrom(Response $response)
+    protected function groupFrom(DomainResponse $response)
     {
         if ($this->isFlat) {
             return $this->groupFromText($response->getText());
         }
         return GroupHelper::findDomainGroup(
             $this->groupsFromText($response->getText()),
-            $response->getTarget(),
+            $response->getDomain(),
             $this->domainKeys
         );
     }

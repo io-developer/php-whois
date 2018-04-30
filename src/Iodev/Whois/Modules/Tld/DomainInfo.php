@@ -4,16 +4,15 @@ namespace Iodev\Whois\Modules\Tld;
 
 use InvalidArgumentException;
 use Iodev\Whois\Helpers\DomainHelper;
-use Iodev\Whois\Response;
 
 class DomainInfo
 {
     /**
-     * @param Response $response
+     * @param DomainResponse $response
      * @param array $data
      * @throws InvalidArgumentException
      */
-    public function __construct(Response $response, $data = [])
+    public function __construct(DomainResponse $response, $data = [])
     {
         if (!is_array($data)) {
             throw new InvalidArgumentException("Data must be an array");
@@ -22,14 +21,14 @@ class DomainInfo
         $this->data = $data;
     }
 
-    /** @var Response */
+    /** @var DomainResponse */
     private $response;
 
     /** @var array */
     private $data;
 
     /**
-     * @return Response
+     * @return DomainResponse
      */
     public function getResponse()
     {
