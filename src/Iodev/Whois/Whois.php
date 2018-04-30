@@ -4,51 +4,35 @@ namespace Iodev\Whois;
 
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
-use Iodev\Whois\Helpers\DomainHelper;
-use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\SocketLoader;
-use Iodev\Whois\Modules\Tld\Server;
-use Iodev\Whois\Modules\Tld\ServerProvider;
+use Iodev\Whois\Modules\Tld\DomainInfo;
+use Iodev\Whois\Modules\Tld\TldModule;
 
 class Whois
 {
     /**
-     * @param ServerProvider $provider
      * @param ILoader $loader
      * @return Whois
      */
-    public static function create(ServerProvider $provider = null, ILoader $loader = null)
+    public static function create(ILoader $loader = null)
     {
-        return new Whois(
-            $provider ?: new ServerProvider(Server::fromDataList(Config::getServersData())),
-            $loader ?: new SocketLoader()
-        );
+        return new Whois($loader ?: new SocketLoader());
     }
 
-    public function __construct(ServerProvider $provider, ILoader $loader)
+    /**
+     * @param ILoader $loader
+     */
+    public function __construct(ILoader $loader)
     {
-        $this->serverProvider = $provider;
         $this->loader = $loader;
-        $this->fetcher = new Fetcher($loader);
     }
-
-    /** @var ServerProvider */
-    private $serverProvider;
 
     /** @var ILoader */
     private $loader;
 
-    /** @var Fetcher */
-    private $fetcher;
-
-    /**
-     * @return ServerProvider
-     */
-    public function getServerProvider()
-    {
-        return $this->serverProvider;
-    }
+    /** @var TldModule */
+    private $tldModule;
 
     /**
      * @return ILoader
@@ -59,6 +43,15 @@ class Whois
     }
 
     /**
+     * @return TldModule
+     */
+    public function getTldModule()
+    {
+        $this->tldModule = $this->tldModule ?: TldModule::create($this->loader);
+        return $this->tldModule;
+    }
+
+    /**
      * @param string $domain
      * @return bool
      * @throws ServerMismatchException
@@ -66,31 +59,7 @@ class Whois
      */
     public function isDomainAvailable($domain)
     {
-        return !$this->loadDomainInfo($domain);
-    }
-
-    /**
-     * @param string $domain
-     * @return DomainInfo
-     * @throws ServerMismatchException
-     * @throws ConnectionException
-     */
-    public function loadDomainInfo($domain)
-    {
-        list (, $info) = $this->loadDomainData($domain);
-        return $info;
-    }
-
-    /**
-     * @param Server $server
-     * @param string $domain
-     * @return DomainInfo
-     * @throws ConnectionException
-     */
-    public function loadDomainInfoFrom(Server $server, $domain)
-    {
-        $this->fetcher->fetchDomainParsedTo($response, $info, $server, $domain);
-        return $info;
+        return $this->getTldModule()->isDomainAvailable($domain);
     }
 
     /**
@@ -101,43 +70,17 @@ class Whois
      */
     public function lookupDomain($domain)
     {
-        list ($response) = $this->loadDomainData($domain);
-        return $response;
-    }
-
-    /**
-     * @param Server $server
-     * @param string $domain
-     * @return Response
-     * @throws ConnectionException
-     */
-    public function lookupDomainFrom(Server $server, $domain)
-    {
-        $this->fetcher->fetchDomainParsedTo($response, $info, $server, $domain);
-        return $response;
+        return $this->getTldModule()->lookupDomain($domain);
     }
 
     /**
      * @param string $domain
-     * @return array
+     * @return DomainInfo
      * @throws ServerMismatchException
      * @throws ConnectionException
      */
-    private function loadDomainData($domain)
+    public function loadDomainInfo($domain)
     {
-        $domain = DomainHelper::toAscii($domain);
-        $servers = $this->serverProvider->match($domain);
-        if (empty($servers)) {
-            throw new ServerMismatchException("No servers matched for domain '$domain'");
-        }
-        $response = null;
-        $info = null;
-        foreach ($servers as $server) {
-            $this->fetcher->fetchDomainParsedTo($response, $info, $server, $domain);
-            if ($info) {
-                return [ $response, $info ];
-            }
-        }
-        return [ $response, $info ];
+        return $this->getTldModule()->loadDomainInfo($domain);
     }
 }
