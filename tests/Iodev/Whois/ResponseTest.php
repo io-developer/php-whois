@@ -23,8 +23,8 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         self::assertEquals("Test content", $this->resp->getText());
     }
 
-    public function testGetWhoisHost()
+    public function testGetHost()
     {
-        self::assertEquals("whois.host.abc", $this->resp->getWhoisHost());
+        self::assertEquals("whois.host.abc", $this->resp->getHost());
     }
 }

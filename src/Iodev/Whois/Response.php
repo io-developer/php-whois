@@ -52,7 +52,7 @@ class Response
     /**
      * @return string
      */
-    public function getWhoisHost()
+    public function getHost()
     {
         return $this->host;
     }
