@@ -61,7 +61,7 @@ class AsnRouteInfo
      */
     public function getMntBy()
     {
-        return $this->getval("mntBy", "");
+        return $this->getval("mnt-by", "");
     }
 
     /**
