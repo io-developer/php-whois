@@ -9,7 +9,6 @@ use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Modules\Module;
 use Iodev\Whois\Modules\ModuleType;
-use Iodev\Whois\Response;
 
 class TldModule extends Module
 {
@@ -106,7 +105,7 @@ class TldModule extends Module
     /**
      * @param string $domain
      * @param Server $server
-     * @return Response
+     * @return DomainResponse
      * @throws ServerMismatchException
      * @throws ConnectionException
      */
@@ -136,7 +135,7 @@ class TldModule extends Module
      * @param string $domain
      * @param bool $strict
      * @param string $host
-     * @return Response
+     * @return DomainResponse
      * @throws ConnectionException
      */
     public function loadResponse(Server $server, $domain, $strict = false, $host = null)
