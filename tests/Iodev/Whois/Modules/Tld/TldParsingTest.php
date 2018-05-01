@@ -2,26 +2,41 @@
 
 namespace Iodev\Whois\Modules\Tld;
 
-use Iodev\Whois\Config;
+use Iodev\Whois\Exceptions\ConnectionException;
+use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Whois;
 
-class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
+class TldParsingTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @param string $filename
+     * @return Whois
+     */
     private static function whoisFrom($filename)
     {
         $l = new FakeSocketLoader();
-        $l->text = \Iodev\Whois\Modules\Tld\ParsingData::loadContent($filename);
-        $w = new Whois($l);
-        return $w;
+        $l->text = TldParsingData::loadContent($filename);
+        return new Whois($l);
     }
 
+    /**
+     * @param array $a
+     * @return array
+     */
     private static function sort($a)
     {
         sort($a);
         return $a;
     }
 
+    /**
+     * @param $domain
+     * @param $srcTextFilename
+     * @param $expectedJsonFilename
+     * @throws ConnectionException
+     * @throws ServerMismatchException
+     */
     private static function assertTestData($domain, $srcTextFilename, $expectedJsonFilename)
     {
         $w = self::whoisFrom($srcTextFilename);
@@ -34,7 +49,7 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
             return;
         }
 
-        $expected = json_decode(\Iodev\Whois\Modules\Tld\ParsingData::loadContent($expectedJsonFilename), true);
+        $expected = json_decode(\Iodev\Whois\Modules\Tld\TldParsingData::loadContent($expectedJsonFilename), true);
         self::assertNotEmpty($expected, "Failed to load/parse expected json");
 
         self::assertNotNull($info, "Loaded info should not be null ($srcTextFilename)");
@@ -82,6 +97,10 @@ class WhoisTestDataInfoTest  extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @throws ConnectionException
+     * @throws ServerMismatchException
+     */
     public function testLoadDomainInfoValidation()
     {
         $tests = [

@@ -4,7 +4,7 @@ namespace Iodev\Whois\Modules\Tld;
 
 use InvalidArgumentException;
 
-class ParsingData
+class TldParsingData
 {
     /**
      * @param $filename

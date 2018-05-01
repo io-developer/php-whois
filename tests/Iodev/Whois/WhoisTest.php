@@ -23,15 +23,6 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
         return $this->whois;
     }
 
-    private function loadTestDataInfo($domain, $filename)
-    {
-        $w = $this->getWhois();
-        $l = $this->loader;
-        $l->text = Modules\Tld\ParsingData::loadContent($filename);
-        return $w->getTldModule()->loadDomainInfo($domain);
-    }
-
-
     public function testConstruct()
     {
         new Whois(new SocketLoader());
