@@ -11,67 +11,130 @@ class AsnModule extends Module
 {
     /**
      * @param ILoader $loader
-     * @param AsnServer $server
+     * @param AsnServer[] $servers
      * @return self
      */
-    public static function create(ILoader $loader = null, AsnServer $server = null)
+    public static function create(ILoader $loader = null, $servers = null)
     {
-        $server = $server ?: new AsnServer("whois.ripe.net", new AsnParser());
-        return new self($loader, $server);
+        if (!isset($servers)) {
+            $parser = new AsnParser();
+            $servers = [
+                new AsnServer("whois.ripe.net", $parser),
+                new AsnServer("whois.radb.net", $parser),
+            ];
+        }
+        $m = new self($loader);
+        $m->setServers($servers);
+        return $m;
     }
 
     /**
      * @param ILoader $loader
-     * @param AsnServer $server
      */
-    public function __construct(ILoader $loader, AsnServer $server)
+    public function __construct(ILoader $loader)
     {
         parent::__construct(ModuleType::ASN, $loader);
-        $this->server = $server;
     }
 
-    /** @var AsnServer */
-    private $server;
+    /** @var AsnServer[] */
+    private $servers = [];
 
     /**
-     * @return AsnServer
+     * @return AsnServer[]
      */
-    public function getServer()
+    public function getServers()
     {
-        return $this->server;
+        return $this->servers;
     }
 
     /**
-     * @param AsnServer $server
+     * @param AsnServer[] $servers
      * @return $this
      */
-    public function setServer(AsnServer $server)
+    public function addServers($servers)
     {
-        $this->server = $server;
+        return $this->setServers(array_merge($this->servers, $servers));
+    }
+
+    /**
+     * @param AsnServer[] $servers
+     * @return $this
+     */
+    public function setServers($servers)
+    {
+        $this->servers = $servers;
         return $this;
     }
 
     /**
      * @param string $asn
+     * @param AsnServer $server
      * @return AsnResponse
      * @throws ConnectionException
      */
-    public function lookupAsn($asn)
+    public function lookupAsn($asn, AsnServer $server = null)
     {
-        $host = $this->server->getHost();
-        $query = $this->server->buildQuery($asn);
-        $text = $this->getLoader()->loadText($host, $query);
-        return new AsnResponse($asn, $query, $text, $host);
+        if ($server) {
+            return $this->loadResponse($asn, $server);
+        }
+        list ($resp, ) = $this->loadData($asn);
+        return $resp;
     }
 
     /**
      * @param $asn
+     * @param AsnServer $server
      * @return AsnInfo
      * @throws ConnectionException
      */
-    public function loadAsnInfo($asn)
+    public function loadAsnInfo($asn, AsnServer $server = null)
     {
-        $resp = $this->lookupAsn($asn);
-        return $this->server->getParser()->parseResponse($resp);
+        if ($server) {
+            $resp = $this->loadResponse($asn, $server);
+            return $server->getParser()->parseResponse($resp);
+        }
+        list (, $info) = $this->loadData($asn);
+        return $info;
+    }
+
+    /**
+     * @param string $asn
+     * @return array
+     * @throws ConnectionException
+     */
+    private function loadData($asn)
+    {
+        $response = null;
+        $info = null;
+        $error = null;
+        foreach ($this->servers as $s) {
+            try {
+                $response = $this->loadResponse($asn, $s);
+                $info = $s->getParser()->parseResponse($response);
+                if ($info) {
+                    break;
+                }
+            } catch (ConnectionException $e) {
+                $error = $e;
+            }
+        }
+        if (!$response && $error) {
+            throw $error;
+        }
+        return [$response, $info];
+    }
+
+    /**
+     * @param string $asn
+     * @param AsnServer $server
+     * @return AsnResponse
+     * @throws ConnectionException
+     */
+    private function loadResponse($asn, AsnServer $server)
+    {
+        $host = $server->getHost();
+        $query = $server->buildQuery($asn);
+        $text = $this->getLoader()->loadText($host, $query);
+        return new AsnResponse($asn, $query, $text, $host);
     }
 }
