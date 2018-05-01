@@ -2,8 +2,16 @@
 
 namespace Iodev\Whois;
 
+/**
+ * Immutable data object
+ */
 class Response
 {
+    /**
+     * @param string $query
+     * @param string $text
+     * @param string $host
+     */
     public function __construct($query = "", $text = "", $host = "")
     {
         $this->query = strval($query);

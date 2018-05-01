@@ -4,6 +4,9 @@ namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Response;
 
+/**
+ * Immutable data object
+ */
 class DomainResponse extends Response
 {
     /**

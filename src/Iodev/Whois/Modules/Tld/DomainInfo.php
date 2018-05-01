@@ -5,6 +5,9 @@ namespace Iodev\Whois\Modules\Tld;
 use InvalidArgumentException;
 use Iodev\Whois\Helpers\DomainHelper;
 
+/**
+ * Immutable data object
+ */
 class DomainInfo
 {
     /**
