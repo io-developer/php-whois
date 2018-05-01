@@ -6,6 +6,8 @@ use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\SocketLoader;
+use Iodev\Whois\Modules\Asn\AsnInfo;
+use Iodev\Whois\Modules\Asn\AsnModule;
 use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Modules\Tld\TldModule;
 
@@ -34,6 +36,9 @@ class Whois
     /** @var TldModule */
     private $tldModule;
 
+    /** @var AsnModule */
+    private $asnModule;
+
     /**
      * @return ILoader
      */
@@ -49,6 +54,15 @@ class Whois
     {
         $this->tldModule = $this->tldModule ?: TldModule::create($this->loader);
         return $this->tldModule;
+    }
+
+    /**
+     * @return AsnModule
+     */
+    public function getAsnModule()
+    {
+        $this->asnModule = $this->asnModule ?: AsnModule::create($this->loader);
+        return $this->asnModule;
     }
 
     /**
@@ -82,5 +96,25 @@ class Whois
     public function loadDomainInfo($domain)
     {
         return $this->getTldModule()->loadDomainInfo($domain);
+    }
+
+    /**
+     * @param string $asn
+     * @return Response
+     * @throws ConnectionException
+     */
+    public function lookupAsn($asn)
+    {
+        return $this->getAsnModule()->lookupAsn($asn);
+    }
+
+    /**
+     * @param string $asn
+     * @return AsnInfo
+     * @throws ConnectionException
+     */
+    public function loadAsnInfo($asn)
+    {
+        return $this->getAsnModule()->loadAsnInfo($asn);
     }
 }
