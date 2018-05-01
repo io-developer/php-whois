@@ -12,7 +12,7 @@ class AsnInfo
     /**
      * @param AsnResponse $response
      * @param string $asn
-     * @param AsnInfoRoute[] $routes
+     * @param AsnRouteInfo[] $routes
      */
     public function __construct(AsnResponse $response, $asn, $routes)
     {
@@ -30,7 +30,7 @@ class AsnInfo
     /** @var string */
     private $asn;
 
-    /** @var AsnInfoRoute[] */
+    /** @var AsnRouteInfo[] */
     private $routes;
 
     /**
@@ -50,7 +50,7 @@ class AsnInfo
     }
 
     /**
-     * @return AsnInfoRoute[]
+     * @return AsnRouteInfo[]
      */
     public function getRoutes()
     {

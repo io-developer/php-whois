@@ -26,7 +26,7 @@ class AsnParser
 
     /**
      * @param AsnResponse $asnResponse
-     * @return AsnInfoRoute[]
+     * @return AsnRouteInfo[]
      */
     private function parseRoutes(AsnResponse $asnResponse)
     {
@@ -39,7 +39,7 @@ class AsnParser
                 if (strpos($line, "$key:") === 0) {
                     if ($key === 'route' || $key == 'route6') {
                         if (!empty($data)) {
-                            $routes[] = new AsnInfoRoute($data);
+                            $routes[] = new AsnRouteInfo($data);
                         }
                         $data = [];
                     }
@@ -52,7 +52,7 @@ class AsnParser
             $line = strtok($separator);
         }
         if (!empty($data)) {
-            $routes[] = new AsnInfoRoute($data);
+            $routes[] = new AsnRouteInfo($data);
         }
         return $routes;
     }

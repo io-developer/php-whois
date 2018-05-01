@@ -7,7 +7,7 @@ use InvalidArgumentException;
 /**
  * Immutable data object
  */
-class AsnInfoRoute
+class AsnRouteInfo
 {
     /**
      * @param array $data
