@@ -118,7 +118,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "google.com.ag", ".ag/google.com.ag.txt", ".ag/google.com.ag.json" ],
 
             [ "free.ai", ".ai/free.txt", null ],
-            // [ "google.com.ai", ".ai/google.com.ai.txt", ".ai/google.com.ai.json" ],
+            [ "google.com.ai", ".ai/google.com.ai.txt", ".ai/google.com.ai.json" ],
 
             [ "free.am", ".am/free.txt", null ],
             // [ "google.am", ".am/google.am.txt", ".am/google.am.json" ],
@@ -198,16 +198,16 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "google.com", ".com/google.com_registrar_whois.txt", ".com/google.com_registrar_whois.json" ],
 
             [ "free.cr", ".cr/free.txt", null ],
-            // [ "google.co.cr", ".cr/google.co.cr.txt", ".cr/google.co.cr.json" ],
+            [ "google.co.cr", ".cr/google.co.cr.txt", ".cr/google.co.cr.json" ],
 
             [ "free.cz", ".cz/free.txt", null ],
-            // [ "google.cz", ".cz/google.cz.txt", ".cz/google.cz.json" ],
+            [ "google.cz", ".cz/google.cz.txt", ".cz/google.cz.json" ],
 
             [ "free.de", ".de/free.txt", null ],
             [ "google.de", ".de/google.de.txt", ".de/google.de.json" ],
 
             [ "free.dk", ".dk/free.txt", null ],
-            // [ "google.dk", ".dk/google.dk.txt", ".dk/google.dk.json" ],
+            [ "google.dk", ".dk/google.dk.txt", ".dk/google.dk.json" ],
 
             [ "free.dm", ".dm/free.txt", null ],
             [ "google.dm", ".dm/google.dm.txt", ".dm/google.dm.json" ],
@@ -222,7 +222,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             // [ "google.com.ec", ".ec/google.com.ec.txt", ".ec/google.com.ec.json" ],
 
             [ "free.ee", ".ee/free.txt", null ],
-            // [ "google.ee", ".ee/google.ee.txt", ".ee/google.ee.json" ],
+            [ "google.ee", ".ee/google.ee.txt", ".ee/google.ee.json" ],
 
             [ "free.fi", ".fi/free.txt", null ],
             [ "google.fi", ".fi/google.fi.txt", ".fi/google.fi.json" ],
