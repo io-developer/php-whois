@@ -236,7 +236,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "google.fm", ".fm/google.fm.txt", ".fm/google.fm.json" ],
 
             [ "free.fr", ".fr/free.txt", null ],
-            // [ "google.fr", ".fr/google.fr.txt", ".fr/google.fr.json" ],
+            [ "google.fr", ".fr/google.fr.txt", ".fr/google.fr.json" ],
 
             [ "free.ga", ".ga/free.txt", null ],
             // [ "google.ga", ".ga/google.ga.txt", ".ga/google.ga.json" ],
@@ -266,7 +266,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             // [ "google.com.hk", ".hk/google.com.hk.txt", ".hk/google.com.hk.json" ],
 
             [ "free.hr", ".hr/free.txt", null ],
-            // [ "google.hr", ".hr/google.hr.txt", ".hr/google.hr.json" ],
+            [ "google.hr", ".hr/google.hr.txt", ".hr/google.hr.json" ],
 
             [ "free.ht", ".ht/free.txt", null ],
             [ "google.ht", ".ht/google.ht.txt", ".ht/google.ht.json" ],
@@ -278,10 +278,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "google.co.id", ".id/google.co.id.txt", ".id/google.co.id.json" ],
 
             [ "free.ie", ".ie/free.txt", null ],
-            // [ "google.ie", ".ie/google.ie.txt", ".ie/google.ie.json" ],
+            [ "google.ie", ".ie/google.ie.txt", ".ie/google.ie.json" ],
 
             [ "free.il", ".il/free.txt", null ],
-            // [ "google.co.il", ".il/google.co.il.txt", ".il/google.co.il.json" ],
+            [ "google.co.il", ".il/google.co.il.txt", ".il/google.co.il.json" ],
 
             [ "free.im", ".im/free.txt", null ],
             // [ "google.im", ".im/google.im.txt", ".im/google.im.json" ],
@@ -300,7 +300,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "google.iq", ".iq/google.iq.txt", ".iq/google.iq.json" ],
 
             [ "free.is", ".is/free.txt", null ],
-            // [ "google.is", ".is/google.is.txt", ".is/google.is.json" ],
+            [ "google.is", ".is/google.is.txt", ".is/google.is.json" ],
 
             [ "free.it", ".it/free.txt", null ],
             // [ "google.it", ".it/google.it.txt", ".it/google.it.json" ],
