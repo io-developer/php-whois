@@ -46,7 +46,7 @@ class GroupHelper
      * @param array $group
      * @param string[] $keys
      * @param bool $ignoreCase
-     * @return string
+     * @return string|string[]
      */
     public static function matchFirst($group, $keys, $ignoreCase = true)
     {
@@ -57,6 +57,14 @@ class GroupHelper
             $group = self::toLowerCase($group, true);
         }
         foreach ($keys as $k) {
+            if (is_array($k)) {
+                $vals = self::matchAll($group, $k, $ignoreCase);
+                if (count($vals) > 1) {
+                    return $vals;
+                } elseif (count($vals) == 1) {
+                    return $vals[0];
+                }
+            }
             $k = $ignoreCase ? mb_strtolower($k) : $k;
             if (isset($group[$k])) {
                 return $group[$k];
@@ -64,6 +72,27 @@ class GroupHelper
         }
         return "";
     }
+
+    /**
+     * @param array $group
+     * @param string[] $keys
+     * @param bool $ignoreCase
+     * @return string[]
+     */
+    private static function matchAll($group, $keys, $ignoreCase = true)
+    {
+        $vals = [];
+        foreach ($keys as $k) {
+            $v = self::matchFirst($group, [$k], $ignoreCase);
+            if (is_array($v)) {
+                $vals = array_merge($vals, $v);
+            } else {
+                $vals[] = $v;
+            }
+        }
+        return $vals;
+    }
+
 
     /**
      * @param array $groups

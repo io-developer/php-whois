@@ -40,6 +40,9 @@ class BlockParser extends CommonParser
 
         $domainGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->domainSubsets, $params));
         $domain = GroupHelper::getAsciiServer($domainGroup, $this->domainKeys);
+        if (empty($domain) && !empty($domainGroup[$this->headerKey])) {
+            $domain = GroupHelper::getAsciiServer($domainGroup, ['name']);
+        }
         if (empty($domain)) {
             return null;
         }
@@ -59,7 +62,12 @@ class BlockParser extends CommonParser
         }
 
         $ownerGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->ownerSubsets, $params));
+
         $registrarGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->registrarSubsets, $params));
+        $registrar = GroupHelper::matchFirst($registrarGroup, $this->registrarKeys);
+        if (empty($registrar) && !empty($registrarGroup[$this->headerKey])) {
+            $registrar = GroupHelper::matchFirst($registrarGroup, ['name']);
+        }
 
         $data = [
             "domainName" => $domain,
@@ -68,7 +76,7 @@ class BlockParser extends CommonParser
             "expirationDate" => GroupHelper::getUnixtime($domainGroup, $this->expirationDateKeys),
             "nameServers" => $nameServers,
             "owner" => GroupHelper::matchFirst($ownerGroup, $this->ownerKeys),
-            "registrar" => GroupHelper::matchFirst($registrarGroup, $this->registrarKeys),
+            "registrar" => $registrar,
             "states" => $states,
         ];
         if (empty($data['owner'])) {
@@ -164,6 +172,50 @@ class BlockParser extends CommonParser
             }
         });
         return $subsets;
+    }
+
+    /**
+     * @param string $text
+     * @return array
+     */
+    protected function groupsFromText($text)
+    {
+        $groups = parent::groupsFromText($text);
+        if (count($groups) < 2) {
+            $altGroups = $this->altGroupsFromText($text);
+            $groups = count($altGroups) > 1 ? $altGroups : $groups;
+        }
+        return $groups;
+    }
+
+    /**
+     * @param string $text
+     * @return array
+     */
+    protected function altGroupsFromText($text)
+    {
+        $groups = [];
+        $group = [];
+        $lines = preg_split('~\r\n|\r|\n~ui', $text);
+        $lines[] = '';
+        foreach ($lines as $line) {
+            $line = trim($line, "%#*;= \t\n\r\0\x0B");
+            $kv = explode(':', $line, 2);
+            if (count($kv) == 2) {
+                $k = trim($kv[0], ".: \t\n\r\0\x0B");
+                $v = trim($kv[1], ": \t\n\r\0\x0B");
+                $group[$k] = $v;
+                continue;
+            }
+            if (!empty($group)) {
+                $groups[] = $group;
+                $group = [];
+            }
+            if (!isset($group[$this->headerKey])) {
+                $group[$this->headerKey] = $line;
+            }
+        }
+        return $groups;
     }
 
     /**
