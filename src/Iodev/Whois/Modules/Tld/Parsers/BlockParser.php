@@ -226,7 +226,7 @@ class BlockParser extends CommonParser
             if (count($kv) == 2) {
                 $k = trim($kv[0], ".: \t\n\r\0\x0B");
                 $v = trim($kv[1], ": \t\n\r\0\x0B");
-                $group[$k] = $v;
+                $group = array_merge_recursive($group, [ $k => $v ]);
                 continue;
             }
             if (!empty($group)) {
@@ -272,14 +272,13 @@ class BlockParser extends CommonParser
             ? array_merge_recursive($group, [$this->headerKey => $header])
             : $group;
 
-        if (count($group) == 1) {
-            foreach ($this->domainKeys as $k) {
-                if (isset($group[$k])) {
-                    $group[$this->headerKey] = "domain";
-                    break;
-                }
-            }
+        if (count($group) == 1 && GroupHelper::matchFirst($group, $this->domainKeys)) {
+            $group[$this->headerKey] = "domain";
         }
+        if (count($group) == 1 && GroupHelper::matchFirst($group, $this->nameServersKeys)) {
+            $group[$this->headerKey] = "nameservers";
+        }
+
         return $group;
     }
 }

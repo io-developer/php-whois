@@ -63,6 +63,8 @@ class GroupHelper
                     return $vals;
                 } elseif (count($vals) == 1) {
                     return $vals[0];
+                } else {
+                    return "";
                 }
             }
             $k = $ignoreCase ? mb_strtolower($k) : $k;
@@ -86,7 +88,7 @@ class GroupHelper
             $v = self::matchFirst($group, [$k], $ignoreCase);
             if (is_array($v)) {
                 $vals = array_merge($vals, $v);
-            } else {
+            } elseif (!empty($v)) {
                 $vals[] = $v;
             }
         }
@@ -119,11 +121,16 @@ class GroupHelper
      */
     public static function findGroupHasSubsetOf($groups, $subsets, $ignoreCase = true)
     {
-        $subsets = $ignoreCase ? self::toLowerCase($subsets) : $subsets;
+        $preparedGroups = [];
         foreach ($groups as $group) {
-            $g = $ignoreCase ? self::toLowerCase($group) : $group;
-            if (self::hasSubsetOf($g, $subsets)) {
-                return $group;
+            $preparedGroups[] = $ignoreCase ? self::toLowerCase($group) : $group;
+        }
+        $subsets = $ignoreCase ? self::toLowerCase($subsets) : $subsets;
+        foreach ($subsets as $subset) {
+            foreach ($preparedGroups as $index => $group) {
+                if (self::hasSubset($group, $subset)) {
+                    return $groups[$index];
+                }
             }
         }
         return null;
