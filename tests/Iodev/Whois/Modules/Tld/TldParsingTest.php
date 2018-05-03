@@ -336,7 +336,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             // [ "google.lu", ".lu/google.lu.txt", ".lu/google.lu.json" ],
 
             [ "free.lv", ".lv/free.txt", null ],
-            // [ "google.lv", ".lv/google.lv.txt", ".lv/google.lv.json" ],
+            [ "google.lv", ".lv/google.lv.txt", ".lv/google.lv.json" ],
 
             [ "free.ly", ".ly/free.txt", null ],
             // [ "google.com.ly", ".ly/google.com.ly.txt", ".ly/google.com.ly.json" ],
@@ -354,7 +354,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "google.mg", ".mg/google.mg.txt", ".mg/google.mg.json" ],
 
             [ "free.mk", ".mk/free.txt", null ],
-            // [ "google.mk", ".mk/google.mk.txt", ".mk/google.mk.json" ],
+            [ "google.mk", ".mk/google.mk.txt", ".mk/google.mk.json" ],
 
             [ "free.ml", ".ml/free.txt", null ],
             // [ "google.ml", ".ml/google.ml.txt", ".ml/google.ml.json" ],
@@ -394,7 +394,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             // [ "google.no", ".no/google.no.txt", ".no/google.no.json" ],
 
             [ "free.nu", ".nu/free.txt", null ],
-            // [ "google.nu", ".nu/google.nu.txt", ".nu/google.nu.json" ],
+            [ "google.nu", ".nu/google.nu.txt", ".nu/google.nu.json" ],
 
             [ "free.nz", ".nz/free.txt", null ],
             // [ "google.co.nz", ".nz/google.co.nz.txt", ".nz/google.co.nz.json" ],
@@ -412,7 +412,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             // [ "google.pl", ".pl/google.pl.txt", ".pl/google.pl.json" ],
 
             [ "free.pr", ".pr/free.txt", null ],
-            // [ "google.com.pr", ".pr/google.com.pr.txt", ".pr/google.com.pr.json" ],
+            [ "google.com.pr", ".pr/google.com.pr.txt", ".pr/google.com.pr.json" ],
 
             [ "free.ps", ".ps/free.txt", null ],
             [ "google.ps", ".ps/google.ps.txt", ".ps/google.ps.json" ],
@@ -442,7 +442,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "google.sc", ".sc/google.sc.txt", ".sc/google.sc.json" ],
 
             [ "free.se", ".se/free.txt", null ],
-            // [ "google.se", ".se/google.se.txt", ".se/google.se.json" ],
+            [ "google.se", ".se/google.se.txt", ".se/google.se.json" ],
 
             [ "free.sg", ".sg/free.txt", null ],
             // [ "google.com.sg", ".sg/google.com.sg.txt", ".sg/google.com.sg.json" ],
@@ -451,7 +451,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "google.sh", ".sh/google.sh.txt", ".sh/google.sh.json" ],
 
             [ "free.si", ".si/free.txt", null ],
-            // [ "google.si", ".si/google.si.txt", ".si/google.si.json" ],
+            [ "google.si", ".si/google.si.txt", ".si/google.si.json" ],
 
             [ "free.sk", ".sk/free.txt", null ],
             // [ "google.sk", ".sk/google.sk.txt", ".sk/google.sk.json" ],
