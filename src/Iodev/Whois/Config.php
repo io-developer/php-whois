@@ -743,7 +743,7 @@ class Config
             [ "zone" => ".rio", "host" => "whois.gtlds.nic.br" ],
             [ "zone" => ".rip", "host" => "whois.rightside.co" ],
             [ "zone" => ".ro", "host" => "whois.rotld.ro", "parserType" => "commonFlat" ],
-            [ "zone" => ".rocks", "host" => "whois.unitedtld.com" ],
+            [ "zone" => ".rocks", "host" => "whois.nic.rocks" ],
             [ "zone" => ".rodeo", "host" => "whois-dub.mm-registry.com" ],
             [ "zone" => ".rs", "host" => "whois.rnids.rs", "parserType" => "commonFlat" ],
             [ "zone" => ".rsvp", "host" => "domain-registry-whois.l.google.com" ],
