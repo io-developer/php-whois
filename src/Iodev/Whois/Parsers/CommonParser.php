@@ -53,6 +53,7 @@ class CommonParser implements IParser
         "expirationdate",
         "expiration date",
         "expiration time",
+        "expires on",
         "exp date",
         "domain expiration date",
         "registry expiry date",
