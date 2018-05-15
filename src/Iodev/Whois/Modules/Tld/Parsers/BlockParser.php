@@ -18,7 +18,13 @@ class BlockParser extends CommonParser
     protected $primarySubsets = [];
 
     /** @var array */
+    protected $statesSubsets = [];
+
+    /** @var array */
     protected $nameServersSubsets = [];
+
+    /** @var array */
+    protected $nameServersSparsedSubsets = [];
 
     /** @var array */
     protected $ownerSubsets = [];
@@ -58,14 +64,27 @@ class BlockParser extends CommonParser
         $primaryGroup = empty($primaryGroup) ? $domainGroup : $primaryGroup;
 
         $states = $this->parseStates(GroupHelper::matchFirst($primaryGroup, $this->statesKeys));
+        if (empty($states)) {
+            $statesGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->statesSubsets, $params));
+            $states = $this->parseStates(GroupHelper::matchFirst($statesGroup, $this->statesKeys));
+        }
         $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
         if (!empty($this->notRegisteredStatesDict[$firstState])) {
             return null;
         }
 
         // NameServers
-        $nameServersGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->nameServersSubsets, $params));
-        $nameServers = GroupHelper::getAsciiServersComplex($nameServersGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
+        $nsGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->nameServersSubsets, $params));
+        $nameServers = GroupHelper::getAsciiServersComplex($nsGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
+
+        // Sparsed ns
+        $nsGroups = GroupHelper::findGroupsHasSubsetOf($groups, $this->renderSubsets($this->nameServersSparsedSubsets, $params));
+        foreach ($nsGroups as $nsGroup) {
+            $list = GroupHelper::getAsciiServersComplex($nsGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
+            $nameServers = array_merge($nameServers, $list);
+        }
+        $nameServers = array_unique($nameServers);
+
         if (empty($nameServers)) {
             $nameServers = GroupHelper::getAsciiServersComplex($primaryGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
         }
@@ -254,7 +273,7 @@ class BlockParser extends CommonParser
                 continue;
             }
             $split = explode(':', ltrim($line, "%#*:;= \t\n\r\0\x0B"), 2);
-            $k = isset($split[0]) ? trim($split[0], ".\t\n\r\0\x0B") : '';
+            $k = isset($split[0]) ? trim($split[0], ". \t\n\r\0\x0B") : '';
             $v = isset($split[1]) ? trim($split[1]) : '';
             if (strlen($k) && strlen($v)) {
                 $group = array_merge_recursive($group, [ $k => $v ]);

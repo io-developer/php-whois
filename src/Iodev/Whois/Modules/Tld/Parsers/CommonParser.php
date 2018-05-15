@@ -91,6 +91,7 @@ class CommonParser extends Parser
         ) {
             return null;
         }
+        $data["owner"] = is_array($data["owner"]) ? reset($data["owner"]) : $data["owner"];
         return new DomainInfo($response, $data);
     }
 

@@ -27,6 +27,8 @@ class DateHelper
             $s = "{$m[1]}-{$m[2]}-{$m[3]}T00:00:00";
         } elseif (preg_match('~^(\d{2})/(\d{2})/(\d{4})$~ui', $s, $m)) {
             $s = "{$m[3]}-{$m[2]}-{$m[1]}T00:00:00";
+        } elseif (preg_match('/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+\(GMT([-+]\d+:\d{2})\)$/ui', $s, $m)) {
+            $s = "{$m[1]}T{$m[2]}{$m[3]}";
         }
         return (int)strtotime($s);
     }

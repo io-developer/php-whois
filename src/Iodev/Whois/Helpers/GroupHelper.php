@@ -137,6 +137,30 @@ class GroupHelper
     }
 
     /**
+     * @param array $groups
+     * @param array $subsets
+     * @param bool $ignoreCase
+     * @return array
+     */
+    public static function findGroupsHasSubsetOf($groups, $subsets, $ignoreCase = true)
+    {
+        $foundGroups = [];
+        $preparedGroups = [];
+        foreach ($groups as $group) {
+            $preparedGroups[] = $ignoreCase ? self::toLowerCase($group) : $group;
+        }
+        $subsets = $ignoreCase ? self::toLowerCase($subsets) : $subsets;
+        foreach ($subsets as $subset) {
+            foreach ($preparedGroups as $index => $group) {
+                if (self::hasSubset($group, $subset)) {
+                    $foundGroups[] = $groups[$index];
+                }
+            }
+        }
+        return $foundGroups;
+    }
+
+    /**
      * @param array $group
      * @param array $subsets
      * @return bool
