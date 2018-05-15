@@ -321,7 +321,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "google.co.kr", ".kr/google.co.kr.txt", ".kr/google.co.kr.json" ],
 
             [ "free.kz", ".kz/free.txt", null ],
-            // [ "google.kz", ".kz/google.kz.txt", ".kz/google.kz.json" ],
+            [ "google.kz", ".kz/google.kz.txt", ".kz/google.kz.json" ],
 
             [ "free.la", ".la/free.txt", null ],
             [ "google.la", ".la/google.la.txt", ".la/google.la.json" ],
@@ -330,10 +330,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "google.com.lc", ".lc/google.com.lc.txt", ".lc/google.com.lc.json" ],
 
             [ "free.lt", ".lt/free.txt", null ],
-            // [ "google.lt", ".lt/google.lt.txt", ".lt/google.lt.json" ],
+            [ "google.lt", ".lt/google.lt.txt", ".lt/google.lt.json" ],
 
             [ "free.lu", ".lu/free.txt", null ],
-            // [ "google.lu", ".lu/google.lu.txt", ".lu/google.lu.json" ],
+            [ "google.lu", ".lu/google.lu.txt", ".lu/google.lu.json" ],
 
             [ "free.lv", ".lv/free.txt", null ],
             [ "google.lv", ".lv/google.lv.txt", ".lv/google.lv.json" ],
