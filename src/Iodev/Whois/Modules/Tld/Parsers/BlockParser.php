@@ -45,7 +45,7 @@ class BlockParser extends CommonParser
     public function parseResponse(DomainResponse $response)
     {
         $groups = $this->groupsFromText($response->getText());
-
+        
         $params = [
             '$domain' => $response->getDomain(),
         ];
@@ -135,6 +135,7 @@ class BlockParser extends CommonParser
             ["nic-hdl" => '$id'],
             ["nic-hdl-br" => '$id'],
             ["contact" => '$id'],
+            ["norid handle" => '$id'],
         ];
 
         if ($data["owner"]) {
@@ -245,7 +246,7 @@ class BlockParser extends CommonParser
             if (count($kv) == 2) {
                 $k = trim($kv[0], ".: \t\n\r\0\x0B");
                 $v = trim($kv[1], ": \t\n\r\0\x0B");
-                $group = array_merge_recursive($group, [ $k => $v ]);
+                $group = array_merge_recursive($group, [ $k => ltrim($v, ".") ]);
                 continue;
             }
             if (!empty($group)) {
@@ -276,7 +277,7 @@ class BlockParser extends CommonParser
             $k = isset($split[0]) ? trim($split[0], ". \t\n\r\0\x0B") : '';
             $v = isset($split[1]) ? trim($split[1]) : '';
             if (strlen($k) && strlen($v)) {
-                $group = array_merge_recursive($group, [ $k => $v ]);
+                $group = array_merge_recursive($group, [ $k => ltrim($v, ".") ]);
                 continue;
             }
             if (!isset($header)) {
