@@ -422,6 +422,8 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
 
             [ "free.ro", ".ro/free.txt", null ],
             [ "google.ro", ".ro/google.ro.txt", ".ro/google.ro.json" ],
+            [ "rotld.ro", ".ro/rotld.ro.txt", ".ro/rotld.ro.json" ],
+            [ "anaf.ro", ".ro/anaf.ro.txt", ".ro/anaf.ro.json" ],
 
             [ "free.rs", ".rs/free.txt", null ],
             [ "google.rs", ".rs/google.rs.txt", ".rs/google.rs.json" ],
