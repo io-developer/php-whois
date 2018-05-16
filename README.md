@@ -9,8 +9,8 @@ PHP WHOIS client implementation. Sends queries directly to WHOIS services (via p
 ## Use case
  * Raw and parsed domain lookup
  * Raw and parsed ASN routes lookup
- * Customize hosts
  * Direct queries to TLD/ASN hosts
+ * Extending or customizing default hosts
 
 ## Installation
 
@@ -35,9 +35,9 @@ Or _composer.json_:
 ## Usage
 Ensure your project support PSR class autoloading.
 
-#### Domain lookup
+### Domain lookup
 
-How to get summary about domain:
+##### How to get summary about domain:
 ```php
 <?php
 
@@ -70,7 +70,7 @@ print_r([
 
 ```
 
-Exceptions on domain lookup:
+##### Exceptions on domain lookup:
 ```php
 <?php
 
@@ -92,7 +92,7 @@ try {
 }
 ```
 
-Сustomize TLD hosts:
+##### Сustomize TLD hosts:
 ```php
 <?php
 
@@ -120,9 +120,9 @@ $info = $whois->loadDomainInfo("google.custom");
 var_dump($info);
 ```
 
-#### ASN lookup
+### ASN lookup
 
-How to get summary using ASN number:
+##### How to get summary using ASN number:
 ```php
 <?php
 
@@ -144,7 +144,7 @@ foreach ($info->getRoutes() as $route) {
 
 ```
 
-#### Cache responses
+### Cached responses
 Some TLD hosts are very limited for requests. Use cache if in your case requests are frequently repeating.
 ```php
 <?php
