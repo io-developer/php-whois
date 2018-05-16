@@ -20,7 +20,7 @@ class TldModule extends Module
     public static function create(ILoader $loader = null, $servers = null)
     {
         $m = new self($loader);
-        $m->setServers($servers ?: Server::fromDataList(Config::getServersData()));
+        $m->setServers($servers ?: Server::fromDataList(Config::load("module.tld.servers")));
         return $m;
     }
 

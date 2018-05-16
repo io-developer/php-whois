@@ -32,10 +32,26 @@ abstract class Parser
      */
     public static function createByClass($className, $configType = null)
     {
+        $configType = empty($configType) ? self::COMMON : $configType;
+
         /* @var $p Parser */
         $p = new $className();
-        $p->setConfig(Config::getParserConfig($configType));
+        $p->setConfig(self::getConfigByType($configType));
         return $p;
+    }
+
+    /**
+     * @param string $type
+     * @return array
+     */
+    public static function getConfigByType($type)
+    {
+        if ($type == self::COMMON_FLAT) {
+            $type = self::COMMON;
+            $extra = ['isFlat' => true];
+        }
+        $config = Config::load("module.tld.parsers.$type");
+        return empty($extra) ? $config : array_merge($config, $extra);
     }
 
     /**
