@@ -12,35 +12,35 @@ class TldServer
 {
     /**
      * @param array $data
-     * @param Parser $defaultParser
+     * @param TldParser $defaultParser
      * @return TldServer
      */
-    public static function fromData($data, Parser $defaultParser = null)
+    public static function fromData($data, TldParser $defaultParser = null)
     {
-        /* @var $parser Parser */
+        /* @var $parser TldParser */
         $parser = $defaultParser;
         if (isset($data['parserClass'])) {
-            $parser = Parser::createByClass($data['parserClass'], isset($data['parserType']) ? $data['parserType'] : null);
+            $parser = TldParser::createByClass($data['parserClass'], isset($data['parserType']) ? $data['parserType'] : null);
         } elseif (isset($data['parserType'])) {
-            $parser = Parser::create($data['parserType']);
+            $parser = TldParser::create($data['parserType']);
         }
         return new TldServer(
             isset($data['zone']) ? $data['zone'] : '',
             isset($data['host']) ? $data['host'] : '',
             !empty($data['centralized']),
-            $parser ? $parser : Parser::create(),
+            $parser ? $parser : TldParser::create(),
             isset($data['queryFormat']) ? $data['queryFormat'] : null
         );
     }
 
     /**
      * @param array $dataList
-     * @param Parser $defaultParser
+     * @param TldParser $defaultParser
      * @return TldServer[]
      */
-    public static function fromDataList($dataList, Parser $defaultParser = null)
+    public static function fromDataList($dataList, TldParser $defaultParser = null)
     {
-        $defaultParser = $defaultParser ? $defaultParser : Parser::create();
+        $defaultParser = $defaultParser ? $defaultParser : TldParser::create();
         $servers = [];
         foreach ($dataList as $data) {
             $servers[] = self::fromData($data, $defaultParser);
@@ -52,11 +52,11 @@ class TldServer
      * @param string $zone
      * @param string $host
      * @param bool $centralized
-     * @param Parser $parser
+     * @param TldParser $parser
      * @param string $queryFormat
      * @throws InvalidArgumentException
      */
-    public function __construct($zone, $host, $centralized, Parser $parser, $queryFormat = null)
+    public function __construct($zone, $host, $centralized, TldParser $parser, $queryFormat = null)
     {
         $this->zone = strval($zone);
         if (empty($this->zone)) {
@@ -80,7 +80,7 @@ class TldServer
     /** @var string */
     private $host;
     
-    /** @var Parser */
+    /** @var TldParser */
     private $parser;
 
     /** @var string */
@@ -120,7 +120,7 @@ class TldServer
     }
 
     /**
-     * @return Parser
+     * @return TldParser
      */
     public function getParser()
     {

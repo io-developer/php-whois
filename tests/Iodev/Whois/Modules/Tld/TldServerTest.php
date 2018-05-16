@@ -11,7 +11,7 @@ class TldServerTest extends \PHPUnit_Framework_TestCase
 
     private static function getParser()
     {
-        return Parser::createByClass(self::getParserClass());
+        return TldParser::createByClass(self::getParserClass());
     }
 
     private static function getParserClass()

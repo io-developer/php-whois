@@ -4,10 +4,10 @@ namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Modules\Tld\DomainResponse;
-use Iodev\Whois\Modules\Tld\Parser;
+use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Helpers\GroupHelper;
 
-class CommonParser extends Parser
+class CommonTldParser extends TldParser
 {
     /** @var bool */
     protected $isFlat = false;

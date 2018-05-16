@@ -98,12 +98,12 @@ try {
 
 use Iodev\Whois\Whois;
 use Iodev\Whois\Modules\Tld\TldServer;
-use Iodev\Whois\Modules\Tld\Parser;
+use Iodev\Whois\Modules\Tld\TldParser;
 
 $whois = Whois::create();
 
 // Define custom whois host
-$customServer = new TldServer(".custom", "whois.nic.custom", false, Parser::create());
+$customServer = new TldServer(".custom", "whois.nic.custom", false, TldParser::create());
 
 // Or define the same via assoc way
 $customServer = TldServer::fromData([

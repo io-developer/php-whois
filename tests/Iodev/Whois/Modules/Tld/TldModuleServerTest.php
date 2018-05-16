@@ -12,7 +12,7 @@ class TldModuleServerTest extends \PHPUnit_Framework_TestCase
      */
     private static function createServer($zone)
     {
-        return new TldServer($zone, "some.host.net", false, Parser::create());
+        return new TldServer($zone, "some.host.net", false, TldParser::create());
     }
 
     /** @var TldModule */

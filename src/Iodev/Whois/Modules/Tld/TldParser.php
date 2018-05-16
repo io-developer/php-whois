@@ -4,7 +4,7 @@ namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Config;
 
-abstract class Parser
+abstract class TldParser
 {
     const COMMON = 'common';
     const COMMON_FLAT = 'commonFlat';
@@ -12,14 +12,14 @@ abstract class Parser
 
     /**
      * @param string $type
-     * @return Parser
+     * @return TldParser
      */
     public static function create($type = null)
     {
         $type = $type ? $type : self::COMMON;
         $d = [
-            self::COMMON => '\Iodev\Whois\Modules\Tld\Parsers\CommonParser',
-            self::COMMON_FLAT => '\Iodev\Whois\Modules\Tld\Parsers\CommonParser',
+            self::COMMON => '\Iodev\Whois\Modules\Tld\Parsers\CommonTldParser',
+            self::COMMON_FLAT => '\Iodev\Whois\Modules\Tld\Parsers\CommonTldParser',
             self::BLOCK => '\Iodev\Whois\Modules\Tld\Parsers\BlockParser',
         ];
         return self::createByClass($d[$type], $type);
@@ -28,13 +28,13 @@ abstract class Parser
     /**
      * @param string $className
      * @param string $configType
-     * @return Parser
+     * @return TldParser
      */
     public static function createByClass($className, $configType = null)
     {
         $configType = empty($configType) ? self::COMMON : $configType;
 
-        /* @var $p Parser */
+        /* @var $p TldParser */
         $p = new $className();
         $p->setConfig(self::getConfigByType($configType));
         return $p;
