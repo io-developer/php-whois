@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois\Modules\Asn;
 
+use InvalidArgumentException;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Whois;
@@ -9,23 +10,47 @@ use Iodev\Whois\Whois;
 class AsnParsingTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @param $filename
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    public static function loadContent($filename)
+    {
+        $file = __DIR__ . '/parsing_data/' . $filename;
+        if (!file_exists($file)) {
+            throw new InvalidArgumentException("File '$file' not found");
+        }
+        return file_get_contents($file);
+    }
+
+    /**
      * @param string $filename
      * @return Whois
      */
     private static function whoisFrom($filename)
     {
         $l = new FakeSocketLoader();
-        $l->text = AsnParsingData::loadContent($filename);
+        $l->text = self::loadContent($filename);
         return new Whois($l);
+    }
+
+    /**
+     * @param array $items
+     */
+    private static function assertDataItems($items)
+    {
+        foreach ($items as $item) {
+            list ($domain, $text, $json) = $item;
+            self::assertData($domain, $text, $json);
+        }
     }
 
     /**
      * @param string $asn
      * @param string $srcTextFilename
      * @param string $expectedJsonFilename
-     * @throws ConnectionException
      */
-    private static function assertTestData($asn, $srcTextFilename, $expectedJsonFilename)
+    private static function assertData($asn, $srcTextFilename, $expectedJsonFilename)
     {
         $w = self::whoisFrom($srcTextFilename);
         $info = $w->loadAsnInfo($asn);
@@ -35,7 +60,7 @@ class AsnParsingTest extends \PHPUnit_Framework_TestCase
             return;
         }
 
-        $expected = json_decode(AsnParsingData::loadContent($expectedJsonFilename), true);
+        $expected = json_decode(self::loadContent($expectedJsonFilename), true);
         self::assertNotEmpty($expected, "Failed to load/parse expected json");
 
         self::assertNotNull($info, "Loaded info should not be null ($srcTextFilename)");
@@ -95,22 +120,20 @@ class AsnParsingTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * @throws ConnectionException
-     */
-    public function testLoadAsnInfoValidation()
+
+    public function test_AS32934()
     {
-        $tests = [
+        self::assertDataItems([
             [ "AS32934", "AS32934/whois.ripe.net.txt", null ],
             [ "AS32934", "AS32934/whois.radb.net.txt", "AS32934/whois.radb.net.json" ],
+        ]);
+    }
 
+    public function test_AS62041()
+    {
+        self::assertDataItems([
             [ "AS62041", "AS62041/whois.ripe.net.txt", "AS62041/whois.ripe.net.json" ],
             [ "AS62041", "AS62041/whois.radb.net.txt", "AS62041/whois.radb.net.json" ],
-        ];
-
-        foreach ($tests as $test) {
-            list ($domain, $text, $json) = $test;
-            self::assertTestData($domain, $text, $json);
-        }
+        ]);
     }
 }
