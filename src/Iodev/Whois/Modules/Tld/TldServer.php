@@ -8,12 +8,12 @@ use Iodev\Whois\Helpers\DomainHelper;
 /**
  * Immutable data object
  */
-class Server
+class TldServer
 {
     /**
      * @param array $data
      * @param Parser $defaultParser
-     * @return Server
+     * @return TldServer
      */
     public static function fromData($data, Parser $defaultParser = null)
     {
@@ -24,7 +24,7 @@ class Server
         } elseif (isset($data['parserType'])) {
             $parser = Parser::create($data['parserType']);
         }
-        return new Server(
+        return new TldServer(
             isset($data['zone']) ? $data['zone'] : '',
             isset($data['host']) ? $data['host'] : '',
             !empty($data['centralized']),
@@ -36,7 +36,7 @@ class Server
     /**
      * @param array $dataList
      * @param Parser $defaultParser
-     * @return Server[]
+     * @return TldServer[]
      */
     public static function fromDataList($dataList, Parser $defaultParser = null)
     {

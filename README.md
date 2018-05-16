@@ -97,16 +97,16 @@ try {
 <?php
 
 use Iodev\Whois\Whois;
-use Iodev\Whois\Modules\Tld\Server;
+use Iodev\Whois\Modules\Tld\TldServer;
 use Iodev\Whois\Modules\Tld\Parser;
 
 $whois = Whois::create();
 
 // Define custom whois host
-$customServer = new Server(".custom", "whois.nic.custom", false, Parser::create());
+$customServer = new TldServer(".custom", "whois.nic.custom", false, Parser::create());
 
 // Or define the same via assoc way
-$customServer = Server::fromData([
+$customServer = TldServer::fromData([
     "zone" => ".custom",
     "host" => "whois.nic.custom",
 ]);

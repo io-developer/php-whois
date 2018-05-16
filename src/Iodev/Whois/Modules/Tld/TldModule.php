@@ -20,7 +20,7 @@ class TldModule extends Module
     public static function create(ILoader $loader = null, $servers = null)
     {
         $m = new self($loader);
-        $m->setServers($servers ?: Server::fromDataList(Config::load("module.tld.servers")));
+        $m->setServers($servers ?: TldServer::fromDataList(Config::load("module.tld.servers")));
         return $m;
     }
 
@@ -32,11 +32,11 @@ class TldModule extends Module
         parent::__construct(ModuleType::TLD, $loader);
     }
 
-    /** @var Server[] */
+    /** @var TldServer[] */
     private $servers = [];
 
     /**
-     * @return Server[]
+     * @return TldServer[]
      */
     public function getServers()
     {
@@ -44,7 +44,7 @@ class TldModule extends Module
     }
 
     /**
-     * @param Server[] $servers
+     * @param TldServer[] $servers
      * @return $this
      */
     public function addServers($servers)
@@ -53,13 +53,13 @@ class TldModule extends Module
     }
 
     /**
-     * @param Server[] $servers
+     * @param TldServer[] $servers
      * @return $this
      */
     public function setServers($servers)
     {
         $this->servers = $servers;
-        usort($this->servers, function(Server $a, Server $b) {
+        usort($this->servers, function(TldServer $a, TldServer $b) {
             return strlen($b->getZone()) - strlen($a->getZone());
         });
         return $this;
@@ -68,7 +68,7 @@ class TldModule extends Module
     /**
      * @param string $domain
      * @param bool $quiet
-     * @return Server[]
+     * @return TldServer[]
      * @throws ServerMismatchException
      */
     public function matchServers($domain, $quiet = false)
@@ -104,12 +104,12 @@ class TldModule extends Module
 
     /**
      * @param string $domain
-     * @param Server $server
+     * @param TldServer $server
      * @return DomainResponse
      * @throws ServerMismatchException
      * @throws ConnectionException
      */
-    public function lookupDomain($domain, Server $server = null)
+    public function lookupDomain($domain, TldServer $server = null)
     {
         $servers = $server ? [$server] : $this->matchServers($domain);
         list ($response) = $this->loadDomainData($domain, $servers);
@@ -118,12 +118,12 @@ class TldModule extends Module
 
     /**
      * @param string $domain
-     * @param Server $server
+     * @param TldServer $server
      * @return DomainInfo
      * @throws ServerMismatchException
      * @throws ConnectionException
      */
-    public function loadDomainInfo($domain, Server $server = null)
+    public function loadDomainInfo($domain, TldServer $server = null)
     {
         $servers = $server ? [$server] : $this->matchServers($domain);
         list (, $info) = $this->loadDomainData($domain, $servers);
@@ -131,14 +131,14 @@ class TldModule extends Module
     }
 
     /**
-     * @param Server $server
+     * @param TldServer $server
      * @param string $domain
      * @param bool $strict
      * @param string $host
      * @return DomainResponse
      * @throws ConnectionException
      */
-    public function loadResponse(Server $server, $domain, $strict = false, $host = null)
+    public function loadResponse(TldServer $server, $domain, $strict = false, $host = null)
     {
         $host = $host ?: $server->getHost();
         $query = $server->buildDomainQuery($domain, $strict);
@@ -148,7 +148,7 @@ class TldModule extends Module
 
     /**
      * @param string $domain
-     * @param Server[] $servers
+     * @param TldServer[] $servers
      * @return array
      * @throws ConnectionException
      */
@@ -169,7 +169,7 @@ class TldModule extends Module
     /**
      * @param $outResponse
      * @param DomainInfo $outInfo
-     * @param Server $server
+     * @param TldServer $server
      * @param $domain
      * @param $strict
      * @param $host
