@@ -1,22 +1,30 @@
 # PHP WHOIS
-PHP WHOIS client implementation. Provides parsed domain info and raw-text lookup responses. Sends queries to native WHOIS services via port 43
 
 [![Build Status](https://travis-ci.org/io-developer/php-whois.svg?branch=master)](https://travis-ci.org/io-developer/php-whois)
 [![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-8892BF.svg)](https://secure.php.net/)
 [![Packagist](https://img.shields.io/packagist/v/io-developer/php-whois.svg)](https://packagist.org/packages/io-developer/php-whois)
 
-## Requirements
-- PHP >= __5.4__ (compatible with __7.*__ up to __nightly__)
-- mbstring
-- intl
+PHP WHOIS client implementation. Sends queries directly to WHOIS services (via port 43).
 
+## Use case
+ * Raw and parsed domain lookup
+ * Raw and parsed ASN routes lookup
+ * Customize hosts
+ * Direct queries to TLD/ASN hosts
 
 ## Installation
-Via __Composer__ cli command
+
+#### Requirements
+* PHP >= __5.4__ (compatible with __7.*__ up to __nightly__)
+* intl
+* mbstring
+
+#### Composer
+CLI:
 ````
 composer require io-developer/php-whois
 ````
-Or via __composer.json__
+Or _composer.json_:
 ````
 "require": {
     "io-developer/php-whois": "^3.0.0"
@@ -25,59 +33,119 @@ Or via __composer.json__
 
 
 ## Usage
-
-#### Whois client creation
-
-```php
-<?php
-
-require_once '../vendor/autoload.php';
-
-use Iodev\Whois\Whois;
-
-$whois = Whois::create();
-```
-
-#### Domain availability
-
-```php
-<?php
-
-use Iodev\Whois\Whois;
-
-if (Whois::create()->isDomainAvailable("google.com")) {
-    echo "Bingo! Domain is available! :)";
-}
-```
+Ensure your project support PSR class autoloading.
 
 #### Domain lookup
 
+How to get summary about domain:
 ```php
 <?php
 
 use Iodev\Whois\Whois;
 
+// Creating default configured client
+Whois::create();
+
+// Checking availability
+if (Whois::create()->isDomainAvailable("google.com")) {
+    print "Bingo! Domain is available! :)";
+}
+
+// Supports Unicode (converts to punycode)
+if (Whois::create()->isDomainAvailable("почта.рф")) {
+    print "Bingo! Domain is available! :)";
+}
+
+// Getting raw-text lookup
 $response = Whois::create()->lookupDomain("google.com");
-echo $response->getText();
+print $response->getText();
+
+// Getting parsed domain info
+$info = Whois::create()->loadDomainInfo("google.com");
+print_r([
+    'Domain created' => date("Y-m-d", $info->getCreationDate()),
+    'Domain expires' => date("Y-m-d", $info->getExpirationDate()),
+    'Domain owner' => $info->getOwner(),
+]);
+
 ```
 
-#### Parsed domain info
+Exceptions on domain lookup:
+```php
+<?php
 
+use Iodev\Whois\Whois;
+use Iodev\Whois\Exceptions\ConnectionException;
+use Iodev\Whois\Exceptions\ServerMismatchException;
+
+try {
+    $info = Whois::create()->loadDomainInfo("google.com");
+    if (!$info) {
+        print "Null if domain available";
+        exit;
+    }
+    print $info->getDomainName() . " expires at: " . date("d.m.Y H:i:s", $info->getExpirationDate());
+} catch (ConnectionException $e) {
+    print "Disconnect or connection timeout";
+} catch (ServerMismatchException $e) {
+    print "TLD server (.com for google.com) not found in current server hosts";
+}
+```
+
+Сustomize TLD hosts:
+```php
+<?php
+
+use Iodev\Whois\Whois;
+use Iodev\Whois\Modules\Tld\Server;
+use Iodev\Whois\Modules\Tld\Parser;
+
+$whois = Whois::create();
+
+// Define custom whois host
+$customServer = new Server(".custom", "whois.nic.custom", false, Parser::create());
+
+// Or define the same via assoc way
+$customServer = Server::fromData([
+    "zone" => ".custom",
+    "host" => "whois.nic.custom",
+]);
+
+// Add custom server to existing whois instance
+$whois->getTldModule()->addServers([$customServer]);
+
+// Now it can be utilized
+$info = $whois->loadDomainInfo("google.custom");
+
+var_dump($info);
+```
+
+#### ASN lookup
+
+How to get summary using ASN number:
 ```php
 <?php
 
 use Iodev\Whois\Whois;
 
-$info = Whois::create()->loadDomainInfo("google.com");
-echo "Domain created: " . date("Y-m-d", $info->getCreationDate());
-echo "Domain expires: " . date("Y-m-d", $info->getExpirationDate());
-echo "Domain owner: " . $info->getOwner();
+// Getting raw-text lookup
+$response = Whois::create()->lookupAsn("AS32934");
+print $response->getText();
+
+// Getting parsed ASN info
+$info = Whois::create()->loadAsnInfo("AS32934");
+foreach ($info->getRoutes() as $route) {
+    print_r([
+        'route IPv4' => $route->getRoute(),
+        'route IPv6' => $route->getRoute6(),
+        'description' => $route->getDescr(),
+    ]);   
+}
+
 ```
 
-
-## Advanced usage
-
-#### Сommon client powered by memcached
+#### Cache responses
+Some TLD hosts are very limited for requests. Use cache if in your case requests are frequently repeating.
 ```php
 <?php
 
@@ -92,83 +160,3 @@ $loader = new MemcachedLoader(new SocketLoader(), $m);
 $whois = Whois::create($loader);
 ```
 
-
-#### Complete domain info loading
-
-```php
-<?php
-
-use Iodev\Whois\Whois;
-use Iodev\Whois\Exceptions\ConnectionException;
-use Iodev\Whois\Exceptions\ServerMismatchException;
-
-$whois = Whois::create();
-try {
-    $info = $whois->loadDomainInfo("google.com");
-    if (!$info) {
-        echo "Null if domain available";
-        exit;
-    }
-    echo $info->getDomainName() . " expires at: " . date("d.m.Y H:i:s", $info->getExpirationDate());
-} catch (ConnectionException $e) {
-    echo "Disconnect or connection timeout";
-} catch (ServerMismatchException $e) {
-    echo "TLD server (.com for google.com) not found in current server hosts";
-}
-```
-
-
-#### Original WHOIS answer via lookup
-
-```php
-<?php
-
-use Iodev\Whois\Whois;
-
-$response = Whois::create()->lookupDomain("google.com");
-echo $response->getText();
-```
-
-#### Original WHOIS answer via domain info
-
-
-```php
-<?php
-
-use Iodev\Whois\Whois;
-
-$info = Whois::create()->loadDomainInfo("google.com");
-$resp = $info->getResponse();
-
-echo "WHOIS response for '{$resp->getDomain()}':\n{$resp->getText()}";
-```
-
-
-#### Сustom whois hosts
-
-```php
-<?php
-
-use Iodev\Whois\Whois;
-use Iodev\Whois\Modules\Tld\Server;
-use Iodev\Whois\Modules\Tld\Parser;
-
-$whois = Whois::create();
-
-// Define custom whois host
-$customServer = new Server(".co", "whois.nic.co", false, Parser::create());
-
-// Or define the same via assoc way
-$customServer = Server::fromData([
-    "zone" => ".co",
-    "host" => "whois.nic.co",
-]);
-
-// Append to existing provider
-$whois->getTldModule()->addServers([$customServer]);
-
-// Now you can load info
-$info = $whois->loadDomainInfo("google.co");
-
-var_dump($info);
-```
