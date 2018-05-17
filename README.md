@@ -10,21 +10,20 @@ PHP WHOIS client implementation. Sends queries directly to WHOIS services (via p
  * Raw and parsed domain lookup
  * Raw and parsed ASN routes lookup
  * Direct queries to TLD/ASN hosts
- * Extending or customizing default hosts
+ * Extending and customizing of default hosts, parsers, etc.
 
 ## Installation
 
-#### Requirements
+##### Requirements:
 * PHP >= __5.4__ (compatible with __7.*__ up to __nightly__)
 * intl
 * mbstring
 
-#### Composer
-CLI:
+##### Composer CLI:
 ````
 composer require io-developer/php-whois
 ````
-Or _composer.json_:
+##### Or composer.json:
 ````
 "require": {
     "io-developer/php-whois": "^3.0.0"
@@ -92,7 +91,7 @@ try {
 }
 ```
 
-##### Сustomize TLD hosts:
+##### TLD hosts customization:
 ```php
 <?php
 
@@ -144,8 +143,8 @@ foreach ($info->getRoutes() as $route) {
 
 ```
 
-### Cached responses
-Some TLD hosts are very limited for requests. Use cache if in your case requests are frequently repeating.
+### Response caching
+Some TLD hosts are very limited for frequent requests. Use cache if in your case requests are repeating.
 ```php
 <?php
 
