@@ -73,6 +73,7 @@ class TldModule extends Module
      */
     public function matchServers($domain, $quiet = false)
     {
+        $domainAscii = DomainHelper::toAscii($domain);
         $servers = [];
         $maxlen = 0;
         foreach ($this->servers as $server) {
@@ -80,7 +81,7 @@ class TldModule extends Module
             if (strlen($zone) < $maxlen) {
                 break;
             }
-            if ($server->isDomainZone($domain)) {
+            if ($server->isDomainZone($domainAscii)) {
                 $servers[] = $server;
                 $maxlen = max($maxlen, strlen($zone));
             }
