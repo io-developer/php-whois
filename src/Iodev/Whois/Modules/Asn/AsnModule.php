@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois\Modules\Asn;
 
+use Iodev\Whois\Config;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Modules\Module;
@@ -16,15 +17,8 @@ class AsnModule extends Module
      */
     public static function create(ILoader $loader = null, $servers = null)
     {
-        if (!isset($servers)) {
-            $parser = new AsnParser();
-            $servers = [
-                new AsnServer("whois.ripe.net", $parser),
-                new AsnServer("whois.radb.net", $parser),
-            ];
-        }
         $m = new self($loader);
-        $m->setServers($servers);
+        $m->setServers($servers ?: AsnServer::fromDataList(Config::load("module.asn.servers")));
         return $m;
     }
 
