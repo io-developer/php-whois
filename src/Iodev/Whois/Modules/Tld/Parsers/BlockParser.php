@@ -33,6 +33,15 @@ class BlockParser extends CommonTldParser
     protected $registrarSubsets = [];
 
     /** @var array */
+    protected $registrarReservedSubsets = [];
+
+    /** @var array */
+    protected $registrarReservedKeys = [];
+
+    /** @var array */
+    protected $contactSubsets = [];
+
+    /** @var array */
     protected $contactOrgKeys = [];
 
     /** @var array */
@@ -131,17 +140,10 @@ class BlockParser extends CommonTldParser
             return null;
         }
 
-        $contactSubsets = [
-            ["nic-hdl" => '$id'],
-            ["nic-hdl-br" => '$id'],
-            ["contact" => '$id'],
-            ["norid handle" => '$id'],
-        ];
-
         if ($data["owner"]) {
             $group = GroupHelper::findGroupHasSubsetOf(
                 $groups,
-                $this->renderSubsets($contactSubsets, ['$id' => $data["owner"]])
+                $this->renderSubsets($this->contactSubsets, ['$id' => $data["owner"]])
             );
             $ownerOrg = GroupHelper::matchFirst($group, $this->contactOrgKeys);
             $data["owner"] = $ownerOrg
@@ -152,24 +154,14 @@ class BlockParser extends CommonTldParser
             $data["owner"] = $data["owner"][0];
         }
 
-        $regGroup = GroupHelper::findGroupHasSubsetOf($groups, [
-            ["nsset" => "", "billing-c" => ""],
-            ["nsset" => "", "tech-c" => ""],
-            ["billing-c" => ""],
-            ["tech-c" => ""],
-        ]);
-        if ($regGroup && !empty($regGroup["billing-c"])) {
-            $regId = $regGroup["billing-c"];
-            $regId = is_array($regId) ? reset($regId) : $regId;
-        } elseif ($regGroup && !empty($regGroup["tech-c"])) {
-            $regId = $regGroup["tech-c"];
-            $regId = is_array($regId) ? reset($regId) : $regId;
-        }
+        $regGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->registrarReservedSubsets);
+        $regId = GroupHelper::matchFirst($regGroup, $this->registrarReservedKeys);
+        $regId = is_array($regId) ? reset($regId) : $regId;
 
         if (!empty($regId) && (empty($registrar) || $regGroup != $primaryGroup)) {
             $regGroup = GroupHelper::findGroupHasSubsetOf(
                 $groups,
-                $this->renderSubsets($contactSubsets, ['$id' => $regId])
+                $this->renderSubsets($this->contactSubsets, ['$id' => $regId])
             );
             $registrarOrg = GroupHelper::matchFirst($regGroup, $this->contactOrgKeys);
             $data["registrar"] = ($registrarOrg && $registrarOrg != $data["owner"])

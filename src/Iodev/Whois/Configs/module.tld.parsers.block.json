@@ -184,6 +184,22 @@
     {"registrar created": ""},
     {"registar created": ""}
   ],
+  "registrarReservedSubsets": [
+    {"nsset": "", "billing-c": ""},
+    {"nsset": "", "tech-c": ""},
+    {"billing-c": ""},
+    {"tech-c": ""}
+  ],
+  "registrarReservedKeys": [
+    "billing-c",
+    "tech-c"
+  ],
+  "contactSubsets": [
+    {"nic-hdl": "$id"},
+    {"nic-hdl-br": "$id"},
+    {"contact": "$id"},
+    {"norid handle": "$id"}
+  ],
   "contactOrgKeys": [
     "organisation",
     "organization",
