@@ -4,26 +4,31 @@
 [![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-8892BF.svg)](https://secure.php.net/)
 [![Packagist](https://img.shields.io/packagist/v/io-developer/php-whois.svg)](https://packagist.org/packages/io-developer/php-whois)
 
-PHP WHOIS client implementation. Sends queries directly to WHOIS services (via port 43).
+PHP WHOIS client implementation. Sends the queries directly to the WHOIS services.
 
 ## Use case
  * Raw and parsed domain lookup
  * Raw and parsed ASN routes lookup
  * Direct queries to TLD/ASN hosts
- * Extending and customizing of default hosts, parsers, etc.
+ * Extending and customizing the default hosts, parsers, etc.
 
 ## Installation
 
-##### Requirements:
+##### System requirements:
 * PHP >= __5.4__ (compatible with __7.*__ up to __nightly__)
-* intl
-* mbstring
+* php-intl
+* php-mbstring
+* php-memcached + Memcached server (both optional)
+* Allowed port 43 in firewall
 
-##### Composer CLI:
+##### Project requirements:
+* PSR-4 autoloader
+
+##### Composer:
 ````
 composer require io-developer/php-whois
 ````
-##### Or composer.json:
+or composer.json:
 ````
 "require": {
     "io-developer/php-whois": "^3.0.0"
@@ -32,7 +37,6 @@ composer require io-developer/php-whois
 
 
 ## Usage
-Ensure your project support PSR class autoloading.
 
 ### Domain lookup
 
@@ -159,3 +163,6 @@ $loader = new MemcachedLoader(new SocketLoader(), $m);
 $whois = Whois::create($loader);
 ```
 
+## Contributing
+
+The project is open for pull requests, issues and feedback. Please read the CODE_OF_CONDUCT.md
