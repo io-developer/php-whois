@@ -2,6 +2,8 @@
 
 namespace Iodev\Whois\Modules\Asn;
 
+use Iodev\Whois\Helpers\ParserHelper;
+
 class AsnParser
 {
     /**
@@ -37,7 +39,7 @@ class AsnParser
     public static function parseBlock($block)
     {
         $dict = [];
-        foreach (preg_split('~(\r\n|\r|\n)~ui', $block) as $line) {
+        foreach (ParserHelper::splitLines($block) as $line) {
             $kv = explode(':', $line, 2);
             if (count($kv) == 2) {
                 list($k, $v) = $kv;

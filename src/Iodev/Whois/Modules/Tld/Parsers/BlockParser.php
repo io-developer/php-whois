@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
+use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Helpers\GroupHelper;
 use Iodev\Whois\Modules\Tld\DomainResponse;
@@ -230,7 +231,7 @@ class BlockParser extends CommonTldParser
     {
         $groups = [];
         $group = [];
-        $lines = preg_split('~\r\n|\r|\n~ui', $text);
+        $lines = ParserHelper::splitLines($text);
         $lines[] = '';
         foreach ($lines as $line) {
             $line = trim($line, "%#*;= \t\n\r\0\x0B");
