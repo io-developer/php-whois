@@ -2,6 +2,6 @@
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
-class TestCommonParser extends \Iodev\Whois\Modules\Tld\Parsers\CommonTldParser
+class TestCommonParser extends \Iodev\Whois\Modules\Tld\Parsers\CommonParser
 {
 }

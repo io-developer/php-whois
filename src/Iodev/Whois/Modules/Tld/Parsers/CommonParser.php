@@ -7,7 +7,7 @@ use Iodev\Whois\Modules\Tld\DomainResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Helpers\GroupHelper;
 
-class CommonTldParser extends TldParser
+class CommonParser extends TldParser
 {
     /** @var bool */
     protected $isFlat = false;

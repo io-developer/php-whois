@@ -7,7 +7,7 @@ use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Helpers\GroupHelper;
 use Iodev\Whois\Modules\Tld\DomainResponse;
 
-class BlockParser extends CommonTldParser
+class BlockParser extends CommonParser
 {
     /** @var string */
     protected $headerKey = 'HEADER';
