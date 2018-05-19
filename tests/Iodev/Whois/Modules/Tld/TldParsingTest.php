@@ -635,7 +635,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
     {
         self::assertDataItems([
             [ "free.it", ".it/free.txt", null ],
-            // [ "google.it", ".it/google.it.txt", ".it/google.it.json" ],
+            [ "google.it", ".it/google.it.txt", ".it/google.it.json" ],
         ]);
     }
 
@@ -916,7 +916,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
     {
         self::assertDataItems([
             [ "free.pl", ".pl/free.txt", null ],
-            // [ "google.pl", ".pl/google.pl.txt", ".pl/google.pl.json" ],
+            [ "google.pl", ".pl/google.pl.txt", ".pl/google.pl.json" ],
         ]);
     }
 
@@ -1174,7 +1174,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
     {
         self::assertDataItems([
             [ "free.uk", ".uk/free.txt", null ],
-            // [ "google.co.uk", ".uk/google.co.uk.txt", ".uk/google.co.uk.json" ],
+            [ "google.co.uk", ".uk/google.co.uk.txt", ".uk/google.co.uk.json" ],
         ]);
     }
 
