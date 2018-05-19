@@ -9,6 +9,7 @@ abstract class TldParser
     const COMMON = 'common';
     const COMMON_FLAT = 'commonFlat';
     const BLOCK = 'block';
+    const INDENT = 'indent';
 
     /**
      * @param string $type
@@ -21,6 +22,7 @@ abstract class TldParser
             self::COMMON => '\Iodev\Whois\Modules\Tld\Parsers\CommonParser',
             self::COMMON_FLAT => '\Iodev\Whois\Modules\Tld\Parsers\CommonParser',
             self::BLOCK => '\Iodev\Whois\Modules\Tld\Parsers\BlockParser',
+            self::INDENT => '\Iodev\Whois\Modules\Tld\Parsers\IndentParser',
         ];
         return self::createByClass($d[$type], $type);
     }
