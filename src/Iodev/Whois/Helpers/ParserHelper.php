@@ -89,9 +89,10 @@ class ParserHelper
 
     /**
      * @param array $nodes
+     * @param int $maxKeyLength
      * @return array
      */
-    public static function nodesToDict($nodes)
+    public static function nodesToDict($nodes, $maxKeyLength = 32)
     {
         $dict = [];
         foreach ($nodes as $node) {
@@ -104,13 +105,16 @@ class ParserHelper
                 $v = trim($kv[1]);
                 if (empty($v)) {
                     $v = self::nodesToDict($node['children']);
-                } else {
+                } elseif (strlen($k) <= $maxKeyLength) {
                     $v = array_merge([$v], $node['children']);
                     $v = array_map('trim', $v);
                     $v = array_filter($v, 'strlen');
                     $v = empty($v) ? [''] : $v;
+                } else {
+                    $kv = [$node['line']];
                 }
-            } elseif (count($kv) == 1) {
+            }
+            if (count($kv) == 1) {
                 $k = trim($kv[0]);
                 $v = self::nodesToDict($node['children']);
                 if (empty($v)) {
