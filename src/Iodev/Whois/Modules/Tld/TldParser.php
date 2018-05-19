@@ -19,10 +19,10 @@ abstract class TldParser
     {
         $type = $type ? $type : self::COMMON;
         $d = [
-            self::COMMON => '\Iodev\Whois\Modules\Tld\Parsers\CommonParser',
-            self::COMMON_FLAT => '\Iodev\Whois\Modules\Tld\Parsers\CommonParser',
-            self::BLOCK => '\Iodev\Whois\Modules\Tld\Parsers\BlockParser',
-            self::INDENT => '\Iodev\Whois\Modules\Tld\Parsers\IndentParser',
+            self::COMMON => __NAMESPACE__.'\Parsers\CommonParser',
+            self::COMMON_FLAT => __NAMESPACE__.'\Parsers\CommonParser',
+            self::BLOCK => __NAMESPACE__.'\Parsers\BlockParser',
+            self::INDENT => __NAMESPACE__.'\Parsers\IndentParser',
         ];
         return self::createByClass($d[$type], $type);
     }
@@ -52,7 +52,7 @@ abstract class TldParser
             $type = self::COMMON;
             $extra = ['isFlat' => true];
         }
-        $config = Config::load("module.tld.parsers.$type");
+        $config = Config::load("module.tld.parser.$type");
         return empty($extra) ? $config : array_merge($config, $extra);
     }
 
