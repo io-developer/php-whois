@@ -518,7 +518,6 @@
   {"zone": ".marketing", "host": "whois.donuts.co"},
   {"zone": ".mc", "host": "whois.ripe.net"},
   {"zone": ".md", "host": "whois.nic.md"},
-  {"zone": ".me", "host": "whois.meregistry.net"},
   {"zone": ".me", "host": "whois.nic.me"},
   {"zone": ".med.ec", "host": "whois.lac.net"},
   {"zone": ".media", "host": "whois.donuts.co"},
