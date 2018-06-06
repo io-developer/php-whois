@@ -31,7 +31,7 @@ composer require io-developer/php-whois
 or composer.json:
 ````
 "require": {
-    "io-developer/php-whois": "^3.0.0"
+    "io-developer/php-whois": "*"
 }
 ````
 
