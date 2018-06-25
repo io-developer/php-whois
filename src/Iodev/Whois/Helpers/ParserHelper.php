@@ -122,6 +122,11 @@ class ParserHelper
                     $k = '';
                 }
             }
+            if ($k== 0 && $v== 0) {
+                $dict[$k] = count($v) > 1 ? $v : $v[0];
+            } else {
+                $dict[] = $v;
+            }
             if (!empty($k)) {
                 $dict[$k] = is_array($v)
                     ? (count($v) > 1 ? $v : reset($v))
