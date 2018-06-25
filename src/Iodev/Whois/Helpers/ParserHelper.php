@@ -123,7 +123,7 @@ class ParserHelper
                 }
             }
             if (!empty($k)) {
-                $dict[$k] = count($v) > 1 ? $v : $v[0];
+                $dict[$k] = count($v) > 1 ? $v : reset($v);
             } else {
                 $dict[] = $v;
             }
