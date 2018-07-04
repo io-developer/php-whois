@@ -80,6 +80,7 @@ print_r([
 use Iodev\Whois\Whois;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
+use Iodev\Whois\Exceptions\WhoisException;
 
 try {
     $info = Whois::create()->loadDomainInfo("google.com");
@@ -92,6 +93,8 @@ try {
     print "Disconnect or connection timeout";
 } catch (ServerMismatchException $e) {
     print "TLD server (.com for google.com) not found in current server hosts";
+} catch (WhoisException $e) {
+    print "Whois server responded with error '{$e->getMessage()}'";
 }
 ```
 
