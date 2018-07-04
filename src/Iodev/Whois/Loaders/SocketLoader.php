@@ -3,6 +3,7 @@
 namespace Iodev\Whois\Loaders;
 
 use Iodev\Whois\Exceptions\ConnectionException;
+use Iodev\Whois\Exceptions\WhoisException;
 
 class SocketLoader implements ILoader
 {
@@ -11,6 +12,7 @@ class SocketLoader implements ILoader
      * @param string $query
      * @return string
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function loadText($whoisHost, $query)
     {
@@ -31,6 +33,20 @@ class SocketLoader implements ILoader
         }
         fclose($handle);
         $textUtf8 = iconv('windows-1250', 'utf-8', $text);
-        return $textUtf8 ? $textUtf8 : $text;
+
+        return $this->validateResponse($textUtf8 ?: $text);
+    }
+
+    /**
+     * @param $text
+     * @return mixed
+     * @throws WhoisException
+     */
+    private function validateResponse($text)
+    {
+        if (preg_match('~^WHOIS\s+.*?LIMIT\s+EXCEEDED~ui', $text, $m)) {
+            throw new WhoisException($m[0]);
+        }
+        return $text;
     }
 }

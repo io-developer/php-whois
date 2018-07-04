@@ -4,6 +4,7 @@ namespace Iodev\Whois;
 
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
+use Iodev\Whois\Exceptions\WhoisException;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\SocketLoader;
 use Iodev\Whois\Modules\Asn\AsnInfo;
@@ -71,6 +72,7 @@ class Whois
      * @return bool
      * @throws ServerMismatchException
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function isDomainAvailable($domain)
     {
@@ -82,6 +84,7 @@ class Whois
      * @return DomainResponse
      * @throws ServerMismatchException
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function lookupDomain($domain)
     {
@@ -93,6 +96,7 @@ class Whois
      * @return DomainInfo
      * @throws ServerMismatchException
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function loadDomainInfo($domain)
     {
@@ -103,6 +107,7 @@ class Whois
      * @param string $asn
      * @return Response
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function lookupAsn($asn)
     {
@@ -113,6 +118,7 @@ class Whois
      * @param string $asn
      * @return AsnInfo
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function loadAsnInfo($asn)
     {

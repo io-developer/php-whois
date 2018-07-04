@@ -4,6 +4,7 @@ namespace Iodev\Whois\Loaders;
 
 use Memcached;
 use Iodev\Whois\Exceptions\ConnectionException;
+use Iodev\Whois\Exceptions\WhoisException;
 
 class MemcachedLoader implements ILoader
 {
@@ -32,6 +33,7 @@ class MemcachedLoader implements ILoader
      * @param string $query
      * @return string
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function loadText($whoisHost, $query)
     {

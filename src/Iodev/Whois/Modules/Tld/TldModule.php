@@ -5,6 +5,7 @@ namespace Iodev\Whois\Modules\Tld;
 use Iodev\Whois\Config;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
+use Iodev\Whois\Exceptions\WhoisException;
 use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Modules\Module;
@@ -97,6 +98,7 @@ class TldModule extends Module
      * @return bool
      * @throws ServerMismatchException
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function isDomainAvailable($domain)
     {
@@ -109,6 +111,7 @@ class TldModule extends Module
      * @return DomainResponse
      * @throws ServerMismatchException
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function lookupDomain($domain, TldServer $server = null)
     {
@@ -123,6 +126,7 @@ class TldModule extends Module
      * @return DomainInfo
      * @throws ServerMismatchException
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function loadDomainInfo($domain, TldServer $server = null)
     {
@@ -138,6 +142,7 @@ class TldModule extends Module
      * @param string $host
      * @return DomainResponse
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function loadResponse(TldServer $server, $domain, $strict = false, $host = null)
     {
@@ -152,6 +157,7 @@ class TldModule extends Module
      * @param TldServer[] $servers
      * @return array
      * @throws ConnectionException
+     * @throws WhoisException
      */
     private function loadDomainData($domain, $servers)
     {
@@ -176,6 +182,7 @@ class TldModule extends Module
      * @param $host
      * @param $lastError
      * @throws ConnectionException
+     * @throws WhoisException
      */
     private function loadParsedTo(&$outResponse, &$outInfo, $server, $domain, $strict = false, $host = null, $lastError = null)
     {

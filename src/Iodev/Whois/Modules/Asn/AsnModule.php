@@ -4,6 +4,7 @@ namespace Iodev\Whois\Modules\Asn;
 
 use Iodev\Whois\Config;
 use Iodev\Whois\Exceptions\ConnectionException;
+use Iodev\Whois\Exceptions\WhoisException;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Modules\Module;
 use Iodev\Whois\Modules\ModuleType;
@@ -65,6 +66,7 @@ class AsnModule extends Module
      * @param AsnServer $server
      * @return AsnResponse
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function lookupAsn($asn, AsnServer $server = null)
     {
@@ -80,6 +82,7 @@ class AsnModule extends Module
      * @param AsnServer $server
      * @return AsnInfo
      * @throws ConnectionException
+     * @throws WhoisException
      */
     public function loadAsnInfo($asn, AsnServer $server = null)
     {
@@ -95,6 +98,7 @@ class AsnModule extends Module
      * @param string $asn
      * @return array
      * @throws ConnectionException
+     * @throws WhoisException
      */
     private function loadData($asn)
     {
@@ -123,6 +127,7 @@ class AsnModule extends Module
      * @param AsnServer $server
      * @return AsnResponse
      * @throws ConnectionException
+     * @throws WhoisException
      */
     private function loadResponse($asn, AsnServer $server)
     {

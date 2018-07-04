@@ -3,6 +3,7 @@
 namespace Iodev\Whois\Loaders;
 
 use Iodev\Whois\Exceptions\ConnectionException;
+use Iodev\Whois\Exceptions\WhoisException;
 
 interface ILoader
 {
@@ -11,6 +12,7 @@ interface ILoader
      * @param string $query
      * @return string
      * @throws ConnectionException
+     * @throws WhoisException
      */
     function loadText($whoisHost, $query);
 }
