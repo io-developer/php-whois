@@ -309,6 +309,7 @@
   {"zone": ".fr", "host": "whois.nic.fr", "parserType": "block"},
   {"zone": ".frl", "host": "whois.nic.frl"},
   {"zone": ".frogans", "host": "whois-frogans.nic.fr"},
+  {"zone": ".fun", "host": "whois.nic.fun"},
   {"zone": ".fund", "host": "whois.donuts.co"},
   {"zone": ".furniture", "host": "whois.donuts.co"},
   {"zone": ".futbol", "host": "whois.unitedtld.com"},
