@@ -746,6 +746,7 @@
   {"zone": ".sg", "host": "whois.nic.net.sg"},
   {"zone": ".sg", "host": "whois.sgnic.sg"},
   {"zone": ".sh", "host": "whois.nic.sh"},
+  {"zone": ".shop", "host": "whois.nic.shop"},
   {"zone": ".sh.cn", "host": "whois.cnnic.net.cn"},
   {"zone": ".shiksha", "host": "whois.afilias.net"},
   {"zone": ".shoes", "host": "whois.donuts.co"},
