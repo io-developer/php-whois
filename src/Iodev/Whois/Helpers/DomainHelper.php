@@ -72,7 +72,7 @@ class DomainHelper
      */
     public static function belongsToZone($domain, $zone)
     {
-        $pos = mb_strpos($domain, $zone);
+        $pos = mb_strrpos($domain, $zone);
         return ($pos !== false && $pos == (mb_strlen($domain) - mb_strlen($zone)));
     }
 }
