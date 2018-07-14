@@ -65,7 +65,7 @@ class TldModule extends Module
             $rootZone = array_pop($parts);
             $subZone1 = $parts ? array_pop($parts) : '';
             $subZone2 = $parts ? array_pop($parts) : '';
-            $weightMap[$server->getId()] = sprintf('%038s.%024s.%012s-%07d', $rootZone, $subZone1, $subZone2, 100000 - $index);
+            $weightMap[$server->getId()] = sprintf('%16s.%16s.%32s.%13s', $subZone2, $subZone1, $rootZone, 1000000 - $index);
         };
         usort($servers, function(TldServer $a, TldServer $b) use ($weightMap) {
             return strcmp($weightMap[$b->getId()], $weightMap[$a->getId()]);
@@ -84,15 +84,10 @@ class TldModule extends Module
     {
         $domainAscii = DomainHelper::toAscii($domain);
         $servers = [];
-        $maxlen = 0;
         foreach ($this->servers as $server) {
-            $zone = $server->getZone();
-            if (strlen($zone) < $maxlen) {
-                break;
-            }
-            if ($server->isDomainZone($domainAscii)) {
+            $matchedCount = $server->matchDomainZone($domainAscii);
+            if ($matchedCount) {
                 $servers[] = $server;
-                $maxlen = max($maxlen, strlen($zone));
             }
         }
         if (!$quiet && empty($servers)) {

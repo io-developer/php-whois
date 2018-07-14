@@ -52,7 +52,7 @@ class TldServer
     }
 
     /**
-     * @param string $zone
+     * @param string $zone  Must starts from '.'
      * @param string $host
      * @param bool $centralized
      * @param TldParser $parser
@@ -66,6 +66,10 @@ class TldServer
         if (empty($this->zone)) {
             throw new InvalidArgumentException("Zone must be specified");
         }
+        $this->zone = ($this->zone[0] == '.') ? $this->zone : ".{$this->zone}";
+        $this->inverseZoneParts = array_reverse(explode('.', $this->zone));
+        array_pop($this->inverseZoneParts);
+
         $this->host = strval($host);
         if (empty($this->host)) {
             throw new InvalidArgumentException("Host must be specified");
@@ -80,6 +84,9 @@ class TldServer
 
     /** @var string */
     private $zone;
+
+    /** @var string[] */
+    private $inverseZoneParts;
 
     /** @var bool */
     private $centralized;
@@ -124,9 +131,21 @@ class TldServer
      */
     public function matchDomainZone($domain)
     {
-        $zone = $this->zone;
-        $pos = mb_strrpos($domain, $zone);
-        return (int)($pos !== false && $pos == (mb_strlen($domain) - mb_strlen($zone)));
+        $domainParts = explode('.', $domain);
+        $domainCount = count($domainParts);
+        $zoneCount = count($this->inverseZoneParts);
+        if (count($domainParts) < $zoneCount) {
+            return 0;
+        }
+        $i = -1;
+        while (++$i < $zoneCount) {
+            $zonePart = $this->inverseZoneParts[$i];
+            $domainPart = $domainParts[$domainCount - $i - 1];
+            if ($zonePart != $domainPart && $zonePart != '*') {
+                return 0;
+            }
+        }
+        return $zoneCount;
     }
 
     /**
