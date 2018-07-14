@@ -10,6 +10,9 @@ use Iodev\Whois\Helpers\DomainHelper;
  */
 class TldServer
 {
+    /** @var int */
+    private static $counter = 0;
+
     /**
      * @param array $data
      * @param TldParser $defaultParser
@@ -58,6 +61,7 @@ class TldServer
      */
     public function __construct($zone, $host, $centralized, TldParser $parser, $queryFormat = null)
     {
+        $this->uid = ++self::$counter;
         $this->zone = strval($zone);
         if (empty($this->zone)) {
             throw new InvalidArgumentException("Zone must be specified");
@@ -70,6 +74,9 @@ class TldServer
         $this->parser = $parser;
         $this->queryFormat = !empty($queryFormat) ? strval($queryFormat) : "%s\r\n";
     }
+
+    /** @var string */
+    private $uid;
 
     /** @var string */
     private $zone;
@@ -85,6 +92,14 @@ class TldServer
 
     /** @var string */
     private $queryFormat;
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->uid;
+    }
 
     /**
      * @return bool

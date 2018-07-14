@@ -59,10 +59,18 @@ class TldModule extends Module
      */
     public function setServers($servers)
     {
-        $this->servers = $servers;
-        usort($this->servers, function(TldServer $a, TldServer $b) {
-            return strlen($b->getZone()) - strlen($a->getZone());
+        $weightMap = [];
+        foreach ($servers as $index => $server) {
+            $parts = explode('.', $server->getZone());
+            $rootZone = array_pop($parts);
+            $subZone1 = $parts ? array_pop($parts) : '';
+            $subZone2 = $parts ? array_pop($parts) : '';
+            $weightMap[$server->getId()] = sprintf('%038s.%024s.%012s-%07d', $rootZone, $subZone1, $subZone2, 100000 - $index);
+        };
+        usort($servers, function(TldServer $a, TldServer $b) use ($weightMap) {
+            return strcmp($weightMap[$b->getId()], $weightMap[$a->getId()]);
         });
+        $this->servers = $servers;
         return $this;
     }
 
