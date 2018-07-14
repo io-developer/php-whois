@@ -8,10 +8,14 @@ class IndentParser extends BlockParser
 {
     /**
      * @param string $line
+     * @param string[] $commentChars
      * @return bool
      */
-    public static function validateLine($line)
+    public static function validateLine($line, $commentChars = ['%'])
     {
+        if ($line && in_array($line[0], $commentChars)) {
+            return false;
+        }
         $trimmed = trim($line);
         if (strlen($line) == strlen($trimmed)) {
             return !preg_match('~^\*.*\*$~ui', $trimmed);
