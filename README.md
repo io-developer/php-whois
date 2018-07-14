@@ -126,6 +126,39 @@ $info = $whois->loadDomainInfo("google.custom");
 var_dump($info);
 ```
 
+##### TLD default/fallback servers:
+```php
+<?php
+
+use Iodev\Whois\Whois;
+use Iodev\Whois\Modules\Tld\TldServer;
+
+$whois = Whois::create();
+
+// Add default servers
+$matchedServers = $whois->getTldModule()
+    ->addServers(TldServer::fromDataList([
+        ['zone' => '.*.net', 'host' => 'localhost'],
+        ['zone' => '.uk.*', 'host' => 'localhost'],
+        ['zone' => '.*', 'host' => 'localhost'],
+    ]))
+    ->matchServers('some.uk.net');
+
+foreach ($matchedServers as $s) {
+    echo "{$s->getZone()}  {$s->getHost()}\n";
+}
+
+// Matched servers + custom defaults:
+//
+// .uk.net  whois.centralnic.com
+// .uk.net  whois.centralnic.net
+// .uk.*  localhost
+// .*.net  localhost
+// .net  whois.crsnic.net
+// .net  whois.verisign-grs.com
+// .*  localhost
+```
+
 ### ASN lookup
 
 ##### How to get summary using ASN number:
