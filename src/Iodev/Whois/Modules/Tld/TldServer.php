@@ -100,7 +100,18 @@ class TldServer
      */
     public function isDomainZone($domain)
     {
-        return DomainHelper::belongsToZone($domain, $this->zone);
+        return $this->matchDomainZone($domain) > 0;
+    }
+
+    /**
+     * @param string $domain
+     * @return int
+     */
+    public function matchDomainZone($domain)
+    {
+        $zone = $this->zone;
+        $pos = mb_strrpos($domain, $zone);
+        return (int)($pos !== false && $pos == (mb_strlen($domain) - mb_strlen($zone)));
     }
 
     /**

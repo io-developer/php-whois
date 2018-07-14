@@ -64,15 +64,4 @@ class DomainHelper
         }
         return rtrim(preg_replace('~\s*\.\s*~ui', '.', $domain), ".-\t ");
     }
-
-    /**
-     * @param string $domain
-     * @param string $zone
-     * @return bool
-     */
-    public static function belongsToZone($domain, $zone)
-    {
-        $pos = mb_strrpos($domain, $zone);
-        return ($pos !== false && $pos == (mb_strlen($domain) - mb_strlen($zone)));
-    }
 }
