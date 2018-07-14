@@ -234,7 +234,7 @@
   {"zone": ".equipment", "host": "whois.donuts.co"},
   {"zone": ".esq", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".estate", "host": "whois.donuts.co"},
-  {"zone": ".eu", "host": "whois.eu"},
+  {"zone": ".eu", "host": "whois.eu", "parserType": "indent"},
   {"zone": ".eu.com", "host": "whois.centralnic.com"},
   {"zone": ".eu.com", "host": "whois.centralnic.net"},
   {"zone": ".eu.lv", "host": "whois.biz"},

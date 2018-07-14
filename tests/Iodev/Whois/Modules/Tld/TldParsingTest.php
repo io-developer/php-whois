@@ -428,6 +428,14 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
         ]);
     }
 
+    public function test_EU()
+    {
+        self::assertDataItems([
+            [ "dsfasdfasdfsdafasfasfas.eu", ".eu/free.txt", null ],
+            [ "google.eu", ".eu/google.eu.txt", ".eu/google.eu.json" ],
+        ]);
+    }
+
     public function test_FI()
     {
         self::assertDataItems([
