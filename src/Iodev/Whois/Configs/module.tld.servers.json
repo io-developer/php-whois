@@ -749,7 +749,7 @@
   {"zone": ".xn--hxt814e", "host": "whois.nic.xn--hxt814e"},
   {"zone": ".xn--i1b6b1a6a2e", "host": "whois.publicinterestregistry.net"},
   {"zone": ".xn--io0a7i", "host": "whois.ngtld.cn"},
-  {"zone": ".xn--j1amh", "host": "whois.dotukr.com"},
+  {"zone": ".xn--j1amh", "host": "whois.dotukr.com", "parserType": "commonFlat"},
   {"zone": ".xn--j6w193g", "host": "whois.hkirc.hk"},
   {"zone": ".xn--kprw13d", "host": "whois.twnic.net.tw"},
   {"zone": ".xn--kpry57d", "host": "whois.twnic.net.tw"},

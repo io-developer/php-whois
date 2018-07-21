@@ -3,6 +3,8 @@
     "domain",
     "domainname",
     "domain name",
+    "Domain Name (PUNYCODE)",
+    "Domain Name (UTF8)",
     "complete domain name",
     "Dominio",
     "query"
@@ -119,7 +121,8 @@
     "status",
     "state",
     "ren-status",
-    "epp status"
+    "epp status",
+    "registry status"
   ],
   "notRegisteredStatesDict": {
     "not registered": 1,
@@ -133,6 +136,8 @@
     {"domain": "$domain"},
     {"domainname": "$domain"},
     {"domain name": "$domain"},
+    {"Domain Name (PUNYCODE)": "$domain"},
+    {"Domain Name (UTF8)": "$domain"},
     {"complete domain name": "$domain"},
     {"Dominio": "$domain"},
     {"query": "$domain"}

@@ -3,6 +3,8 @@
     "domain",
     "domainname",
     "domain name",
+    "Domain Name (PUNYCODE)",
+    "Domain Name (UTF8)",
     "complete domain name",
     "Dominio",
     "query"
@@ -19,6 +21,7 @@
     "name server (db)",
     "nserver",
     "name server handle",
+    "Domain servers in listed order",
     "hostname",
     "host name",
     "dns",
@@ -108,7 +111,8 @@
     "status",
     "state",
     "ren-status",
-    "epp status"
+    "epp status",
+    "registry status"
   ],
   "notRegisteredStatesDict": {
     "not registered": 1,
