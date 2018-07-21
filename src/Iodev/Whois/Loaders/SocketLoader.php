@@ -4,6 +4,7 @@ namespace Iodev\Whois\Loaders;
 
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\WhoisException;
+use Iodev\Whois\Helpers\TextHelper;
 
 class SocketLoader implements ILoader
 {
@@ -16,7 +17,10 @@ class SocketLoader implements ILoader
      */
     public function loadText($whoisHost, $query)
     {
-        $handle = fsockopen($whoisHost, 43);
+        if (!gethostbynamel($whoisHost)) {
+            throw new ConnectionException("Host is unreachable: $whoisHost");
+        }
+        $handle = @fsockopen($whoisHost, 43);
         if (!$handle) {
             throw new ConnectionException("Socket cannot be open on port 43");
         }
@@ -32,13 +36,14 @@ class SocketLoader implements ILoader
             $text .= $chunk;
         }
         fclose($handle);
-        $textUtf8 = iconv('windows-1250', 'utf-8', $text);
 
-        return $this->validateResponse($textUtf8 ?: $text);
+        file_put_contents("$query.txt", $text);
+
+        return $this->validateResponse(TextHelper::toUtf8($text));
     }
 
     /**
-     * @param $text
+     * @param string $text
      * @return mixed
      * @throws WhoisException
      */
