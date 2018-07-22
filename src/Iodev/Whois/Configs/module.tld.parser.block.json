@@ -1,4 +1,5 @@
 {
+  "headerKey": "__HEADER__",
   "domainKeys": [
     "domain",
     "domainname",
@@ -130,7 +131,6 @@
     "available": 1,
     "free": 1
   },
-  "headerKey": "__HEADER__",
   "domainSubsets": [
     {"__HEADER__": "domain", "name": "$domain"},
     {"domain": "$domain"},

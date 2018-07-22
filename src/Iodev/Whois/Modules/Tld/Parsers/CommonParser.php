@@ -9,6 +9,9 @@ use Iodev\Whois\Helpers\GroupHelper;
 
 class CommonParser extends TldParser
 {
+    /** @var string */
+    protected $headerKey = 'HEADER';
+
     /** @var bool */
     protected $isFlat = false;
 
@@ -140,13 +143,37 @@ class CommonParser extends TldParser
     protected function groupFromText($text, $prevEmptyGroupText = '')
     {
         $group = [];
-        preg_match_all('/^[ \t]*([^%#\r\n:]+):[ \t]*(.*?)\s*$/mui', $text, $m);
-        foreach ($m[1] as $index => $key) {
-            $key = trim($key);
-            if ($key != 'http' && $key != 'https') {
-                $group = array_merge_recursive($group, [$key => $m[2][$index]]);
+        $header = null;
+        foreach (preg_split('~\r\n|[\r\n]~u', $text) as $line) {
+            if (isset($header) && ltrim($line, '%#*') !== $line) {
+                continue;
+            }
+            $split = explode(':', ltrim($line, "%#*:;= \t\n\r\0\x0B"), 2);
+            $k = isset($split[0]) ? trim($split[0], ". \t\n\r\0\x0B") : '';
+            $v = isset($split[1]) ? trim($split[1]) : '';
+            if (strlen($k) && strlen($v)) {
+                $group = array_merge_recursive($group, [ $k => ltrim($v, ".") ]);
+                continue;
+            }
+            if (!isset($header)) {
+                $k = trim($k, "%#*:;=[] \t\0\x0B");
+                $header = strlen($k) ? $k : null;
             }
         }
+        $headerAlt = trim($prevEmptyGroupText, "%#*:;=[]. \t\n\r\0\x0B");
+        $header = isset($header) ? $header : $headerAlt;
+        $header = ($headerAlt && strlen($headerAlt) < strlen($header)) ? $headerAlt : $header;
+        $group = !empty($header)
+            ? array_merge_recursive($group, [$this->headerKey => $header])
+            : $group;
+
+        if (count($group) == 1 && GroupHelper::matchFirst($group, $this->domainKeys)) {
+            $group[$this->headerKey] = "domain";
+        }
+        if (count($group) == 1 && GroupHelper::matchFirst($group, $this->nameServersKeys)) {
+            $group[$this->headerKey] = "nameservers";
+        }
+
         return $group;
     }
 
