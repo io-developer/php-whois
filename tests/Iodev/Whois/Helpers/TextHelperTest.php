@@ -3,12 +3,8 @@
 namespace Iodev\Whois\Helpers;
 
 use InvalidArgumentException;
-use Iodev\Whois\Exceptions\ConnectionException;
-use Iodev\Whois\Exceptions\ServerMismatchException;
-use Iodev\Whois\Loaders\FakeSocketLoader;
-use Iodev\Whois\Whois;
 
-class TldParsingTest extends \PHPUnit_Framework_TestCase
+class TextHelperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param $filename
