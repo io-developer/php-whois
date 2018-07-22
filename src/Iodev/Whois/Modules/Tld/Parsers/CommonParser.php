@@ -105,11 +105,16 @@ class CommonParser extends TldParser
      */
     protected function groupFrom(DomainResponse $response)
     {
+        $groups = $this->groupsFromText($response->getText());
         if ($this->isFlat) {
-            return $this->groupFromText($response->getText());
+            $finalGroup = [];
+            foreach ($groups as $group) {
+                $finalGroup = array_merge_recursive($finalGroup, $group);
+            }
+            return $finalGroup;
         }
         return GroupHelper::findDomainGroup(
-            $this->groupsFromText($response->getText()),
+            $groups,
             $response->getDomain(),
             $this->domainKeys
         );
@@ -122,59 +127,58 @@ class CommonParser extends TldParser
     protected function groupsFromText($text)
     {
         $groups = [];
-        $prevEmptyGroupText = '';
-        $splits = preg_split('/([\s\t]*\r?\n){2,}/', $text);
-        foreach ($splits as $groupText) {
-            $group = $this->groupFromText($groupText, $prevEmptyGroupText);
+        $group = [];
+        $headerLines = [];
+        $lines = ParserHelper::splitLines($text);
+        $lines[] = '';
+        foreach ($lines as $line) {
+            $trimChars = " \t\n\r\0\x0B";
+            $isComment = mb_strlen($line) != mb_strlen(ltrim($line, "%#;:"));
+            $line = ltrim(rtrim($line, "%#*=$trimChars"), "%#*=;$trimChars");
+            $headerLine = trim($line, ':[]');
+            $headerLines[] = $headerLine;
+            $kv = $isComment ? [] : explode(':', $line, 2);
+            if (count($kv) == 2) {
+                $k = trim($kv[0], ".:$trimChars");
+                $v = trim($kv[1], ":$trimChars");
+                $group = array_merge_recursive($group, [$k => ltrim($v, ".")]);
+                continue;
+            }
+            if (empty($group[$this->headerKey]) && count($group) > 0) {
+                $group[$this->headerKey] = $this->findBestHeader($headerLines);
+            }
             if (count($group) > 1) {
-                $groups[] = $group;
-                $prevEmptyGroupText = '';
-            } else {
-                $prevEmptyGroupText = $groupText;
+                $groups[] = array_filter($group);
+                $group = [];
+                $headerLines = [$headerLine];
             }
         }
         return $groups;
     }
 
     /**
-     * @param string $text
-     * @param string $prevEmptyGroupText
-     * @return array
+     * @param string[] $lines
+     * @return int|null|string
      */
-    protected function groupFromText($text, $prevEmptyGroupText = '')
+    protected function findBestHeader($lines)
     {
-        $group = [];
-        $header = null;
-        foreach (preg_split('~\r\n|[\r\n]~u', $text) as $line) {
-            if (isset($header) && ltrim($line, '%#*') !== $line) {
+        $map = [];
+        $empty = 1;
+        foreach ($lines as $line) {
+            if (empty($line)) {
+                $empty++;
                 continue;
             }
-            $split = explode(':', ltrim($line, "%#*:;= \t\n\r\0\x0B"), 2);
-            $k = isset($split[0]) ? trim($split[0], ". \t\n\r\0\x0B") : '';
-            $v = isset($split[1]) ? trim($split[1]) : '';
-            if (strlen($k) && strlen($v)) {
-                $group = array_merge_recursive($group, [ $k => ltrim($v, ".") ]);
-                continue;
-            }
-            if (!isset($header)) {
-                $k = trim($k, "%#*:;=[] \t\0\x0B");
-                $header = strlen($k) ? $k : null;
+            if ($empty > 0) {
+                $empty = 0;
+                $map[$line] = mb_strlen($line) + count(preg_split('~\s+~ui', $line));
             }
         }
-        $headerAlt = trim($prevEmptyGroupText, "%#*:;=[]. \t\n\r\0\x0B");
-        $header = isset($header) ? $header : $headerAlt;
-        $header = ($headerAlt && strlen($headerAlt) < strlen($header)) ? $headerAlt : $header;
-        $group = !empty($header)
-            ? array_merge_recursive($group, [$this->headerKey => $header])
-            : $group;
-
-        if (count($group) == 1 && GroupHelper::matchFirst($group, $this->domainKeys)) {
-            $group[$this->headerKey] = "domain";
+        $header = '';
+        if (!empty($map)) {
+            asort($map, SORT_NUMERIC);
+            $header = key($map);
         }
-        if (count($group) == 1 && GroupHelper::matchFirst($group, $this->nameServersKeys)) {
-            $group[$this->headerKey] = "nameservers";
-        }
-
-        return $group;
+        return $header;
     }
 }

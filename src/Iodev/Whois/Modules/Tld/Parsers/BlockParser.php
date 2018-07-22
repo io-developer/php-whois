@@ -205,48 +205,4 @@ class BlockParser extends CommonParser
         });
         return $subsets;
     }
-
-    /**
-     * @param string $text
-     * @return array
-     */
-    protected function groupsFromText($text)
-    {
-        $groups = parent::groupsFromText($text);
-        if (count($groups) < 2) {
-            $altGroups = $this->altGroupsFromText($text);
-            $groups = count($altGroups) > 1 ? $altGroups : $groups;
-        }
-        return $groups;
-    }
-
-    /**
-     * @param string $text
-     * @return array
-     */
-    protected function altGroupsFromText($text)
-    {
-        $groups = [];
-        $group = [];
-        $lines = ParserHelper::splitLines($text);
-        $lines[] = '';
-        foreach ($lines as $line) {
-            $line = trim($line, "%#*;= \t\n\r\0\x0B");
-            $kv = explode(':', $line, 2);
-            if (count($kv) == 2) {
-                $k = trim($kv[0], ".: \t\n\r\0\x0B");
-                $v = trim($kv[1], ": \t\n\r\0\x0B");
-                $group = array_merge_recursive($group, [ $k => ltrim($v, ".") ]);
-                continue;
-            }
-            if (!empty($group)) {
-                $groups[] = $group;
-                $group = [];
-            }
-            if (!isset($group[$this->headerKey])) {
-                $group[$this->headerKey] = $line;
-            }
-        }
-        return $groups;
-    }
 }
