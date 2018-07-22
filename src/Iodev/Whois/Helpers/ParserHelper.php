@@ -154,4 +154,22 @@ class ParserHelper
         $dict[$header] = $k;
         return $dict;
     }
+
+    /**
+     * @param string[]|string $rawstates
+     * @param bool $removeExtra
+     * @return string[]
+     */
+    public static function parseStates($rawstates, $removeExtra = true)
+    {
+        $states = [];
+        $rawstates = is_array($rawstates) ? $rawstates : [ strval($rawstates) ];
+        foreach ($rawstates as $rawstate) {
+            if (preg_match('/^\s*(.+)\s*/ui', $rawstate, $m)) {
+                $state = mb_strtolower($m[1]);
+                $states[] = $removeExtra ? trim(preg_replace('~\(.+?\)|http.+~ui', '', $state)) : $state;
+            }
+        }
+        return (count($states) == 1) ? array_filter(array_map('trim', explode(',', $states[0]))) : $states;
+    }
 }

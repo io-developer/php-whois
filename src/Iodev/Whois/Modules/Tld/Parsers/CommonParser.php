@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
+use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Modules\Tld\DomainResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
@@ -75,7 +76,7 @@ class CommonParser extends TldParser
             "expirationDate" => GroupHelper::getUnixtime($group, $this->expirationDateKeys),
             "owner" => GroupHelper::matchFirst($group, $this->ownerKeys),
             "registrar" => GroupHelper::matchFirst($group, $this->registrarKeys),
-            "states" => $this->parseStates(GroupHelper::matchFirst($group, $this->statesKeys)),
+            "states" => ParserHelper::parseStates(GroupHelper::matchFirst($group, $this->statesKeys)),
         ];
         if (empty($data["domainName"])) {
             return null;
@@ -175,45 +176,5 @@ class CommonParser extends TldParser
         }
 
         return $group;
-    }
-
-    /**
-     * @param string[]|string $rawstates
-     * @param bool $removeExtra
-     * @return string[]
-     */
-    protected function parseStates($rawstates, $removeExtra = true)
-    {
-        $states = [];
-        $rawstates = is_array($rawstates) ? $rawstates : [ strval($rawstates) ];
-        foreach ($rawstates as $rawstate) {
-            if (preg_match('/^\s*(.+)\s*/ui', $rawstate, $m)) {
-                $state = mb_strtolower($m[1]);
-                $states[] = $removeExtra
-                    ? trim(preg_replace('~\(.+?\)|http.+~ui', '', $state))
-                    : $state;
-            }
-        }
-        if (count($states) == 1) {
-            return $this->splitJoinedStates($states[0]);
-        }
-        return $states;
-    }
-
-    /**
-     * @param string $stateStr
-     * @return string[]
-     */
-    protected function splitJoinedStates($stateStr)
-    {
-        $splits = [];
-        $rawsplits = explode(",", $stateStr);
-        foreach ($rawsplits as $rawsplit) {
-            $state = trim($rawsplit);
-            if (!empty($state)) {
-                $splits[] = $state;
-            }
-        }
-        return $splits;
     }
 }

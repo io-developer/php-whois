@@ -70,10 +70,10 @@ class BlockParser extends CommonParser
         $primaryGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->primarySubsets, $params));
         $primaryGroup = empty($primaryGroup) ? $domainGroup : $primaryGroup;
 
-        $states = $this->parseStates(GroupHelper::matchFirst($primaryGroup, $this->statesKeys));
+        $states = ParserHelper::parseStates(GroupHelper::matchFirst($primaryGroup, $this->statesKeys));
         if (empty($states)) {
             $statesGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->statesSubsets, $params));
-            $states = $this->parseStates(GroupHelper::matchFirst($statesGroup, $this->statesKeys));
+            $states = ParserHelper::parseStates(GroupHelper::matchFirst($statesGroup, $this->statesKeys));
         }
         $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
         if (!empty($this->notRegisteredStatesDict[$firstState])) {
