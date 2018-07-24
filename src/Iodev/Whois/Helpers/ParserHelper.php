@@ -15,6 +15,68 @@ class ParserHelper
 
     /**
      * @param string[] $lines
+     * @param string $header
+     * @return array
+     */
+    public static function linesToGroups($lines, $header = '$header')
+    {
+        $groups = [];
+        $group = [];
+        $headerLines = [];
+        $lines[] = '';
+        foreach ($lines as $line) {
+            $trimChars = " \t\n\r\0\x0B";
+            $isComment = mb_strlen($line) != mb_strlen(ltrim($line, "%#;:"));
+            $line = ltrim(rtrim($line, "%#*=$trimChars"), "%#*=;$trimChars");
+            $headerLine = trim($line, ':[]');
+            $headerLines[] = $headerLine;
+            $kv = $isComment ? [] : explode(':', $line, 2);
+            if (count($kv) == 2) {
+                $k = trim($kv[0], ".:$trimChars");
+                $v = trim($kv[1], ":$trimChars");
+                $group = array_merge_recursive($group, [$k => ltrim($v, ".")]);
+                continue;
+            }
+            if (empty($group[$header]) && count($group) > 0) {
+                $group[$header] = self::linesToBestHeader($headerLines);
+            }
+            if (count($group) > 1) {
+                $groups[] = array_filter($group);
+                $group = [];
+                $headerLines = [$headerLine];
+            }
+        }
+        return $groups;
+    }
+
+    /**
+     * @param string[] $lines
+     * @return int|null|string
+     */
+    public static function linesToBestHeader($lines)
+    {
+        $map = [];
+        $empty = 1;
+        foreach ($lines as $line) {
+            if (empty($line)) {
+                $empty++;
+                continue;
+            }
+            if ($empty > 0) {
+                $empty = 0;
+                $map[$line] = mb_strlen($line) + count(preg_split('~\s+~ui', $line));
+            }
+        }
+        $header = '';
+        if (!empty($map)) {
+            asort($map, SORT_NUMERIC);
+            $header = key($map);
+        }
+        return $header;
+    }
+
+    /**
+     * @param string[] $lines
      * @param callable $validateStoplineFn
      * @return array
      */
