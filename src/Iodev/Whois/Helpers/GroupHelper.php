@@ -114,6 +114,21 @@ class GroupHelper
     }
 
     /**
+     * @param array $subsets
+     * @param array $params
+     * @return array
+     */
+    public static function renderSubsets($subsets, $params)
+    {
+        array_walk_recursive($subsets, function(&$val) use ($params) {
+            if (isset($params[$val])) {
+                $val = $params[$val];
+            }
+        });
+        return $subsets;
+    }
+
+    /**
      * @param array $groups
      * @param array $subsets
      * @param bool $ignoreCase

@@ -57,7 +57,7 @@ class BlockParser extends CommonParser
             '$domain' => $response->getDomain(),
         ];
 
-        $domainGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->domainSubsets, $params));
+        $domainGroup = GroupHelper::findGroupHasSubsetOf($groups, GroupHelper::renderSubsets($this->domainSubsets, $params));
         $domain = GroupHelper::getAsciiServer($domainGroup, $this->domainKeys);
         if (empty($domain) && !empty($domainGroup[$this->headerKey])) {
             $domain = GroupHelper::getAsciiServer($domainGroup, ['name']);
@@ -67,12 +67,12 @@ class BlockParser extends CommonParser
         }
 
         // States
-        $primaryGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->primarySubsets, $params));
+        $primaryGroup = GroupHelper::findGroupHasSubsetOf($groups, GroupHelper::renderSubsets($this->primarySubsets, $params));
         $primaryGroup = empty($primaryGroup) ? $domainGroup : $primaryGroup;
 
         $states = ParserHelper::parseStates(GroupHelper::matchFirst($primaryGroup, $this->statesKeys));
         if (empty($states)) {
-            $statesGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->statesSubsets, $params));
+            $statesGroup = GroupHelper::findGroupHasSubsetOf($groups, GroupHelper::renderSubsets($this->statesSubsets, $params));
             $states = ParserHelper::parseStates(GroupHelper::matchFirst($statesGroup, $this->statesKeys));
         }
         $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
@@ -81,11 +81,11 @@ class BlockParser extends CommonParser
         }
 
         // NameServers
-        $nsGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->nameServersSubsets, $params));
+        $nsGroup = GroupHelper::findGroupHasSubsetOf($groups, GroupHelper::renderSubsets($this->nameServersSubsets, $params));
         $nameServers = GroupHelper::getAsciiServersComplex($nsGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
 
         // Sparsed ns
-        $nsGroups = GroupHelper::findGroupsHasSubsetOf($groups, $this->renderSubsets($this->nameServersSparsedSubsets, $params));
+        $nsGroups = GroupHelper::findGroupsHasSubsetOf($groups, GroupHelper::renderSubsets($this->nameServersSparsedSubsets, $params));
         foreach ($nsGroups as $nsGroup) {
             $list = GroupHelper::getAsciiServersComplex($nsGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
             $nameServers = array_merge($nameServers, $list);
@@ -96,11 +96,11 @@ class BlockParser extends CommonParser
             $nameServers = GroupHelper::getAsciiServersComplex($primaryGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
         }
 
-        $ownerGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->ownerSubsets, $params));
+        $ownerGroup = GroupHelper::findGroupHasSubsetOf($groups, GroupHelper::renderSubsets($this->ownerSubsets, $params));
 
         $registrar = GroupHelper::matchFirst($primaryGroup, $this->registrarKeys);
         if (empty($registrar)) {
-            $registrarGroup = GroupHelper::findGroupHasSubsetOf($groups, $this->renderSubsets($this->registrarSubsets, $params));
+            $registrarGroup = GroupHelper::findGroupHasSubsetOf($groups, GroupHelper::renderSubsets($this->registrarSubsets, $params));
             $registrar = GroupHelper::matchFirst($registrarGroup, $this->registrarGroupKeys);
         }
         if (empty($registrar) && !empty($registrarGroup[$this->headerKey])) {
@@ -141,7 +141,7 @@ class BlockParser extends CommonParser
         if ($data["owner"]) {
             $group = GroupHelper::findGroupHasSubsetOf(
                 $groups,
-                $this->renderSubsets($this->contactSubsets, ['$id' => $data["owner"]])
+                GroupHelper::renderSubsets($this->contactSubsets, ['$id' => $data["owner"]])
             );
             $ownerOrg = GroupHelper::matchFirst($group, $this->contactOrgKeys);
             $data["owner"] = $ownerOrg
@@ -159,7 +159,7 @@ class BlockParser extends CommonParser
         if (!empty($regId) && (empty($registrar) || $regGroup != $primaryGroup)) {
             $regGroup = GroupHelper::findGroupHasSubsetOf(
                 $groups,
-                $this->renderSubsets($this->contactSubsets, ['$id' => $regId])
+                GroupHelper::renderSubsets($this->contactSubsets, ['$id' => $regId])
             );
             $registrarOrg = GroupHelper::matchFirst($regGroup, $this->contactOrgKeys);
             $data["registrar"] = ($registrarOrg && $registrarOrg != $data["owner"])
@@ -189,20 +189,5 @@ class BlockParser extends CommonParser
         }
 
         return new DomainInfo($response, $data);
-    }
-
-    /**
-     * @param array $subsets
-     * @param array $params
-     * @return array
-     */
-    private function renderSubsets($subsets, $params)
-    {
-        array_walk_recursive($subsets, function(&$val) use ($params) {
-            if (isset($params[$val])) {
-                $val = $params[$val];
-            }
-        });
-        return $subsets;
     }
 }
