@@ -136,28 +136,18 @@ class GroupHelper
      */
     public static function findGroupHasSubsetOf($groups, $subsets, $ignoreCase = true)
     {
-        $preparedGroups = [];
-        foreach ($groups as $group) {
-            $preparedGroups[] = $ignoreCase ? self::toLowerCase($group) : $group;
-        }
-        $subsets = $ignoreCase ? self::toLowerCase($subsets) : $subsets;
-        foreach ($subsets as $subset) {
-            foreach ($preparedGroups as $index => $group) {
-                if (self::hasSubset($group, $subset)) {
-                    return $groups[$index];
-                }
-            }
-        }
-        return null;
+        $foundGroups = self::findGroupsHasSubsetOf($groups, $subsets, $ignoreCase, true);
+        return empty($foundGroups) ? null : $foundGroups[0];
     }
 
     /**
      * @param array $groups
      * @param array $subsets
      * @param bool $ignoreCase
+     * @param bool $stopnOnFirst
      * @return array
      */
-    public static function findGroupsHasSubsetOf($groups, $subsets, $ignoreCase = true)
+    public static function findGroupsHasSubsetOf($groups, $subsets, $ignoreCase = true, $stopnOnFirst = false)
     {
         $foundGroups = [];
         $preparedGroups = [];
@@ -169,6 +159,9 @@ class GroupHelper
             foreach ($preparedGroups as $index => $group) {
                 if (self::hasSubset($group, $subset)) {
                     $foundGroups[] = $groups[$index];
+                    if ($stopnOnFirst) {
+                        break;
+                    }
                 }
             }
         }
@@ -228,13 +221,30 @@ class GroupHelper
      */
     public static function findDomainGroup($groups, $domain, $domainKeys)
     {
+        $foundGroups = self::findDomainGroups($groups, $domain, $domainKeys, true);
+        return empty($foundGroups) ? null : $foundGroups[0];
+    }
+
+    /**
+     * @param array $groups
+     * @param string $domain
+     * @param string[] $domainKeys
+     * @param bool $stopOnFirst
+     * @return array
+     */
+    public static function findDomainGroups($groups, $domain, $domainKeys, $stopOnFirst = false)
+    {
+        $foundGroups = [];
         foreach ($groups as $group) {
             $foundDomain = self::getAsciiServer($group, $domainKeys);
             if ($foundDomain && DomainHelper::compareNames($foundDomain, $domain)) {
-                return $group;
+                $foundGroups[] = $group;
+                if ($stopOnFirst) {
+                    break;
+                }
             }
         }
-        return null;
+        return $foundGroups;
     }
 
     /**

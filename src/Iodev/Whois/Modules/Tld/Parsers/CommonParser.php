@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
+use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Modules\Tld\DomainResponse;
@@ -106,18 +107,14 @@ class CommonParser extends TldParser
     protected function groupFrom(DomainResponse $response)
     {
         $groups = $this->groupsFromText($response->getText());
+        $filter = GroupFilter::create($groups);
         if ($this->isFlat) {
-            $finalGroup = [];
-            foreach ($groups as $group) {
-                $finalGroup = array_merge_recursive($finalGroup, $group);
-            }
-            return $finalGroup;
+            return $filter->mergeGroups()->getFirstGroup();
         }
-        return GroupHelper::findDomainGroup(
-            $groups,
-            $response->getDomain(),
-            $this->domainKeys
-        );
+        return GroupFilter::create($groups)
+            ->setDomainKeys($this->domainKeys)
+            ->filterIsDomain($response->getDomain(), true)
+            ->getFirstGroup();
     }
 
     /**
