@@ -5,9 +5,10 @@ namespace Iodev\Whois\Helpers;
 class GroupFilter
 {
     /**
+     * @param array $groups
      * @return GroupFilter
      */
-    public static function create($groups)
+    public static function create($groups = [])
     {
         $m = new self();
         $m->setGroups($groups);
@@ -21,11 +22,22 @@ class GroupFilter
     /** @var array */
     private $groups = [];
 
-    /** @var array */
-    private $subsetParams = [];
+    /** @var string */
+    private $headerKey = '$header';
 
     /** @var array */
     private $domainKeys = [];
+
+    /** @var array */
+    private $subsetParams = [];
+
+    /**
+     * @return GroupFilter
+     */
+    public function cloneMe()
+    {
+        return clone $this;
+    }
 
     /**
      * @return array
@@ -50,6 +62,44 @@ class GroupFilter
     public function setGroups($groups)
     {
         $this->groups = $groups;
+        return $this;
+    }
+
+    /**
+     * @param array $group
+     * @return $this
+     */
+    public function setOneGroup($group)
+    {
+        $this->groups = $group ? [ $group ] : [];
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function useFirstGroup()
+    {
+        return $this->setOneGroup($this->getFirstGroup());
+    }
+
+    /**
+     * @param array $group
+     * @return $this
+     */
+    public function useFirstGroupOr($group)
+    {
+        $first = $this->getFirstGroup();
+        return $this->setOneGroup(empty($first) ? $group : $first);
+    }
+
+    /**
+     * @param string $key
+     * @return $this
+     */
+    public function setHeaderKey($key)
+    {
+        $this->headerKey = $key;
         return $this;
     }
 
@@ -89,12 +139,12 @@ class GroupFilter
     /**
      * @param string $domain
      * @param bool $matchFirst
-     * @return $this
+     * @return GroupFilter
      */
     public function filterIsDomain($domain, $matchFirst = false)
     {
-        $this->groups = GroupHelper::findDomainGroups($this->groups, $domain, $this->domainKeys, $matchFirst);
-        return $this;
+        $groups = GroupHelper::findDomainGroups($this->groups, $domain, $this->domainKeys, $matchFirst);
+        return $this->cloneMe()->setGroups($groups);
     }
 
     /**
@@ -105,8 +155,8 @@ class GroupFilter
     public function filterHasSubsetOf($subsets, $matchFirst = false)
     {
         $subsets = GroupHelper::renderSubsets($subsets, $this->subsetParams);
-        $this->groups = GroupHelper::findGroupsHasSubsetOf($this->groups, $subsets, true, $matchFirst);
-        return $this;
+        $groups = GroupHelper::findGroupsHasSubsetOf($this->groups, $subsets, true, $matchFirst);
+        return $this->cloneMe()->setGroups($groups);
     }
 
     /**
@@ -120,7 +170,9 @@ class GroupFilter
         foreach ($subsetKeys as $k) {
             $subsets[] = [ $k => '' ];
         }
-        $this->groups = GroupHelper::findGroupsHasSubsetOf($this->groups, $subsets, true, $matchFirst);
-        return $this;
+        $groups = GroupHelper::findGroupsHasSubsetOf($this->groups, $subsets, true, $matchFirst);
+        return $this->cloneMe()->setGroups($groups);
     }
+
+
 }
