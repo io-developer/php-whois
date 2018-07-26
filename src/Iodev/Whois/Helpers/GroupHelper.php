@@ -50,8 +50,22 @@ class GroupHelper
      */
     public static function matchFirst($group, $keys, $ignoreCase = true)
     {
+        $matches = self::match($group, $keys, $ignoreCase, true);
+        return empty($matches) ? "" : reset($matches);
+    }
+
+    /**
+     * @param array $group
+     * @param string[] $keys
+     * @param bool $ignoreCase
+     * @param bool $firstOnly
+     * @return string|string[]
+     */
+    public static function match($group, $keys, $ignoreCase = true, $firstOnly = false)
+    {
+        $matches = [];
         if (empty($group)) {
-            return "";
+            return [];
         }
         if ($ignoreCase) {
             $group = self::toLowerCase($group, true);
@@ -60,19 +74,23 @@ class GroupHelper
             if (is_array($k)) {
                 $vals = self::matchAll($group, $k, $ignoreCase);
                 if (count($vals) > 1) {
-                    return $vals;
+                    $matches[] = $vals;
                 } elseif (count($vals) == 1) {
-                    return $vals[0];
+                    $matches[] = $vals[0];
                 } else {
-                    return "";
+                    $matches[] = "";
+                }
+            } else {
+                $k = $ignoreCase ? mb_strtolower($k) : $k;
+                if (isset($group[$k])) {
+                    $matches[] = $group[$k];
                 }
             }
-            $k = $ignoreCase ? mb_strtolower($k) : $k;
-            if (isset($group[$k])) {
-                return $group[$k];
+            if ($firstOnly && count($matches)) {
+                return $matches;
             }
         }
-        return "";
+        return [];
     }
 
     /**
@@ -270,7 +288,7 @@ class GroupHelper
         $raws = is_array($raws) ? $raws : [ $raws ];
         $servers = [];
         foreach ($raws as $raw) {
-            $s = trim(preg_replace('~\[.*?\]~ui', '', DomainHelper::toAscii($raw)));
+            $s = DomainHelper::toAscii($raw);
             if (!empty($s)) {
                 $servers[] = $s;
             }
@@ -287,9 +305,7 @@ class GroupHelper
     public static function getAsciiServersComplex($group, $keys, $keysGroups = null)
     {
         $servers = self::getAsciiServers($group, $keys);
-        if (!empty($servers) || empty($keysGroups)) {
-            return $servers;
-        }
+        $keysGroups = $keysGroups ? $keysGroups : [];
         foreach ($keysGroups as $keysGroup) {
             foreach ($keysGroup as $key) {
                 $servers = array_merge($servers, self::getAsciiServers($group, [ $key ]));
