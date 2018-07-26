@@ -58,6 +58,8 @@ class DomainHelper
      */
     private static function correct($domain)
     {
+        // Remove "[description or ip]"
+        $domain = trim(preg_replace('~\[.*?\]~ui', '', $domain));
         // Fix for .UZ whois response
         while (preg_match('~\bnot\.defined\.?\b~ui', $domain)) {
             $domain = preg_replace('~\bnot\.defined\.?\b~ui', '', $domain);
