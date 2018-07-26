@@ -45,6 +45,16 @@ class GroupSelector
     }
 
     /**
+     * @param array $items
+     * @return $this
+     */
+    public function selectItems($items)
+    {
+        $this->items = array_merge($this->items, $items);
+        return $this;
+    }
+
+    /**
      * @param string[] $keys
      * @return $this
      */
@@ -80,9 +90,27 @@ class GroupSelector
     /**
      * @return $this
      */
+    public function removeEmpty()
+    {
+        $this->items = array_filter($this->items);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function removeDuplicates()
+    {
+        $this->items = array_unique($this->items);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function handleAsciiServer()
     {
-        $this->items = array_filter(array_map('\Iodev\Whois\Helpers\DomainHelper::toAscii', $this->items));
+        $this->items = array_map('\Iodev\Whois\Helpers\DomainHelper::toAscii', $this->items);
         return $this;
     }
 

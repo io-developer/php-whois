@@ -74,17 +74,21 @@ class CommonParser extends TldParser
             "domainName" => $sel->clean()
                 ->selectKeys($this->domainKeys)
                 ->handleAsciiServer()
+                ->removeEmpty()
                 ->getFirst(),
 
             "whoisServer" => $sel->clean()
                 ->selectKeys($this->whoisServerKeys)
                 ->handleAsciiServer()
+                ->removeEmpty()
                 ->getFirst(),
 
             "nameServers" => $sel->clean()
                 ->selectKeys($this->nameServersKeys)
                 ->selectKeyGroups($this->nameServersKeysGroups)
                 ->handleAsciiServer()
+                ->removeEmpty()
+                ->removeDuplicates()
                 ->getAll(),
 
             "creationDate" => $sel->clean()
