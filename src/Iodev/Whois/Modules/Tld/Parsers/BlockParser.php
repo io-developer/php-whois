@@ -52,13 +52,16 @@ class BlockParser extends CommonParser
      */
     public function parseResponse(DomainResponse $response)
     {
-        $filter = GroupFilter::create()
-            ->setGroups($this->groupsFromText($response->getText()))
+        $groups = $this->groupsFromText($response->getText());
+        $filter = GroupFilter::create($groups)
+            ->useIgnoreCase(true)
             ->setHeaderKey($this->headerKey)
             ->setDomainKeys($this->domainKeys)
             ->setSubsetParams([ '$domain' => $response->getDomain() ]);
 
-        $domainGroup = $filter->filterHasSubsetOf($this->domainSubsets, true)
+        $domainGroup = $filter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetOf($this->domainSubsets)
             ->getFirstGroup();
 
         $domain = GroupHelper::getAsciiServer($domainGroup, $this->domainKeys);
@@ -70,13 +73,17 @@ class BlockParser extends CommonParser
         }
 
         // States
-        $primaryGroup = $filter->filterHasSubsetOf($this->primarySubsets, true)
+        $primaryGroup = $filter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetOf($this->primarySubsets)
             ->useFirstGroupOr($domainGroup)
             ->getFirstGroup();
 
         $states = ParserHelper::parseStates(GroupHelper::matchFirst($primaryGroup, $this->statesKeys));
         if (empty($states)) {
-            $statesGroup = $filter->filterHasSubsetOf($this->statesSubsets, true)
+            $statesGroup = $filter->cloneMe()
+                ->useMatchFirstOnly(true)
+                ->filterHasSubsetOf($this->statesSubsets)
                 ->getFirstGroup();
 
             $states = ParserHelper::parseStates(GroupHelper::matchFirst($statesGroup, $this->statesKeys));
@@ -87,31 +94,37 @@ class BlockParser extends CommonParser
         }
 
         // NameServers
-        $nsGroup = $filter->filterHasSubsetOf($this->nameServersSubsets, true)
+        $nsGroup = $filter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetOf($this->nameServersSubsets)
             ->getFirstGroup();
 
         $nameServers = GroupHelper::getAsciiServersComplex($nsGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
 
         // Sparsed ns
-        $nsGroups = $filter->filterHasSubsetOf($this->nameServersSparsedSubsets)
+        $nsGroups = $filter->cloneMe()
+            ->filterHasSubsetOf($this->nameServersSparsedSubsets)
             ->getGroups();
 
         foreach ($nsGroups as $nsGroup) {
             $list = GroupHelper::getAsciiServersComplex($nsGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
             $nameServers = array_merge($nameServers, $list);
         }
-        $nameServers = array_unique($nameServers);
-
         if (empty($nameServers)) {
             $nameServers = GroupHelper::getAsciiServersComplex($primaryGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
         }
+        $nameServers = array_unique($nameServers);
 
-        $ownerGroup = $filter->filterHasSubsetOf($this->ownerSubsets, true)
+        $ownerGroup = $filter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetOf($this->ownerSubsets)
             ->getFirstGroup();
 
         $registrar = GroupHelper::matchFirst($primaryGroup, $this->registrarKeys);
         if (empty($registrar)) {
-            $registrarGroup = $filter->filterHasSubsetOf($this->registrarSubsets, true)
+            $registrarGroup = $filter->cloneMe()
+                ->useMatchFirstOnly(true)
+                ->filterHasSubsetOf($this->registrarSubsets)
                 ->getFirstGroup();
 
             $registrar = GroupHelper::matchFirst($registrarGroup, $this->registrarGroupKeys);
@@ -154,7 +167,8 @@ class BlockParser extends CommonParser
         if ($data["owner"]) {
             $group = $filter->cloneMe()
                 ->setSubsetParams(['$id' => $data["owner"]])
-                ->filterHasSubsetOf($this->contactSubsets, true)
+                ->useMatchFirstOnly(true)
+                ->filterHasSubsetOf($this->contactSubsets)
                 ->getFirstGroup();
 
             $ownerOrg = GroupHelper::matchFirst($group, $this->contactOrgKeys);
@@ -164,7 +178,9 @@ class BlockParser extends CommonParser
             $data["owner"] = $data["owner"][0];
         }
 
-        $regGroup = $filter->filterHasSubsetOf($this->registrarReservedSubsets, true)
+        $regGroup = $filter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetOf($this->registrarReservedSubsets)
             ->getFirstGroup();
 
         $regId = GroupHelper::matchFirst($regGroup, $this->registrarReservedKeys);
@@ -173,7 +189,8 @@ class BlockParser extends CommonParser
         if (!empty($regId) && (empty($registrar) || $regGroup != $primaryGroup)) {
             $regGroup = $filter->cloneMe()
                 ->setSubsetParams(['$id' => $regId])
-                ->filterHasSubsetOf($this->contactSubsets, true)
+                ->useMatchFirstOnly(true)
+                ->filterHasSubsetOf($this->contactSubsets)
                 ->getFirstGroup();
 
             $registrarOrg = GroupHelper::matchFirst($regGroup, $this->contactOrgKeys);
@@ -186,14 +203,18 @@ class BlockParser extends CommonParser
         }
 
         if (empty($data["creationDate"])) {
-            $group = $filter->filterHasSubsetKeyOf($this->creationDateKeys, true)
+            $group = $filter->cloneMe()
+                ->useMatchFirstOnly(true)
+                ->filterHasSubsetKeyOf($this->creationDateKeys)
                 ->getFirstGroup();
 
             $data["creationDate"] = GroupHelper::getUnixtime($group, $this->creationDateKeys);
         }
 
         if (empty($data["expirationDate"])) {
-            $group = $filter->filterHasSubsetKeyOf($this->expirationDateKeys, true)
+            $group = $filter->cloneMe()
+                ->useMatchFirstOnly(true)
+                ->filterHasSubsetKeyOf($this->expirationDateKeys)
                 ->getFirstGroup();
 
             $data["expirationDate"] = GroupHelper::getUnixtime($group, $this->expirationDateKeys);
