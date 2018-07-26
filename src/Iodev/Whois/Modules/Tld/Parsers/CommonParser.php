@@ -7,7 +7,6 @@ use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Modules\Tld\DomainResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
-use Iodev\Whois\Helpers\GroupHelper;
 
 class CommonParser extends TldParser
 {
@@ -65,19 +64,51 @@ class CommonParser extends TldParser
      */
     public function parseResponse(DomainResponse $response)
     {
-        $group = $this->groupFrom($response);
-        if (!$group) {
+        $filter = $this->filterFrom($response);
+        if ($filter->isEmptyGroups()) {
             return null;
         }
+
+        $sel = $filter->toSelector();
         $data = [
-            "domainName" => GroupHelper::getAsciiServer($group, $this->domainKeys),
-            "whoisServer" => GroupHelper::getAsciiServer($group, $this->whoisServerKeys),
-            "nameServers" => GroupHelper::getAsciiServersComplex($group, $this->nameServersKeys, $this->nameServersKeysGroups),
-            "creationDate" => GroupHelper::getUnixtime($group, $this->creationDateKeys),
-            "expirationDate" => GroupHelper::getUnixtime($group, $this->expirationDateKeys),
-            "owner" => GroupHelper::matchFirst($group, $this->ownerKeys),
-            "registrar" => GroupHelper::matchFirst($group, $this->registrarKeys),
-            "states" => ParserHelper::parseStates(GroupHelper::matchFirst($group, $this->statesKeys)),
+            "domainName" => $sel->clean()
+                ->selectKeys($this->domainKeys)
+                ->handleAsciiServer()
+                ->getFirst(),
+
+            "whoisServer" => $sel->clean()
+                ->selectKeys($this->whoisServerKeys)
+                ->handleAsciiServer()
+                ->getFirst(),
+
+            "nameServers" => $sel->clean()
+                ->selectKeys($this->nameServersKeys)
+                ->selectKeyGroups($this->nameServersKeysGroups)
+                ->handleAsciiServer()
+                ->getAll(),
+
+            "creationDate" => $sel->clean()
+                ->selectKeys($this->creationDateKeys)
+                ->handleUnixTime()
+                ->getFirst(),
+
+            "expirationDate" => $sel->clean()
+                ->selectKeys($this->expirationDateKeys)
+                ->handleUnixTime()
+                ->getFirst(),
+
+            "owner" => $sel->clean()
+                ->selectKeys($this->ownerKeys)
+                ->getFirst(),
+
+            "registrar" => $sel->clean()
+                ->selectKeys($this->registrarKeys)
+                ->getFirst(),
+
+            "states" => $sel->clean()
+                ->selectKeys($this->statesKeys)
+                ->handleStates()
+                ->getAll(),
         ];
         if (empty($data["domainName"])) {
             return null;
@@ -102,19 +133,20 @@ class CommonParser extends TldParser
 
     /**
      * @param DomainResponse $response
-     * @return array
+     * @return GroupFilter
      */
-    protected function groupFrom(DomainResponse $response)
+    protected function filterFrom(DomainResponse $response)
     {
         $groups = $this->groupsFromText($response->getText());
-        $filter = GroupFilter::create($groups);
+        $filter = GroupFilter::create($groups)
+            ->useIgnoreCase(true)
+            ->useMatchFirstOnly(true);
+
         if ($this->isFlat) {
-            return $filter->mergeGroups()->getFirstGroup();
+            return $filter->mergeGroups();
         }
-        return GroupFilter::create($groups)
-            ->setDomainKeys($this->domainKeys)
-            ->filterIsDomain($response->getDomain(), true)
-            ->getFirstGroup();
+        return $filter->filterIsDomain($response->getDomain(), $this->domainKeys)
+            ->useFirstGroup();
     }
 
     /**
