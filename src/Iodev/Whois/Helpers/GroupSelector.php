@@ -36,11 +36,12 @@ class GroupSelector
     }
 
     /**
-     * @return mixed|null
+     * @param mixed $default
+     * @return mixed
      */
-    public function getFirst()
+    public function getFirst($default = null)
     {
-        return empty($this->items) ? null : reset($this->items);
+        return empty($this->items) ? $default : reset($this->items);
     }
 
     /**

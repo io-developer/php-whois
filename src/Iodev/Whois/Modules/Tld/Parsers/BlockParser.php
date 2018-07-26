@@ -3,9 +3,7 @@
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Helpers\GroupFilter;
-use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\DomainInfo;
-use Iodev\Whois\Helpers\GroupHelper;
 use Iodev\Whois\Modules\Tld\DomainResponse;
 
 class BlockParser extends CommonParser
@@ -53,106 +51,173 @@ class BlockParser extends CommonParser
     public function parseResponse(DomainResponse $response)
     {
         $groups = $this->groupsFromText($response->getText());
-        $filter = GroupFilter::create($groups)
+        $rootFilter = GroupFilter::create($groups)
             ->useIgnoreCase(true)
             ->setHeaderKey($this->headerKey)
             ->setDomainKeys($this->domainKeys)
             ->setSubsetParams([ '$domain' => $response->getDomain() ]);
 
-        $domainGroup = $filter->cloneMe()
+        $domainFilter = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetOf($this->domainSubsets)
-            ->getFirstGroup();
+            ->filterHasSubsetOf($this->domainSubsets);
 
-        $domain = GroupHelper::getAsciiServer($domainGroup, $this->domainKeys);
+        $domainGroup = $domainFilter->getFirstGroup();
+
+        $domain = $domainFilter->toSelector()
+            ->selectKeys($this->domainKeys)
+            ->mapAsciiServer()
+            ->removeEmpty()
+            ->getFirst();
+
         if (empty($domain) && !empty($domainGroup[$this->headerKey])) {
-            $domain = GroupHelper::getAsciiServer($domainGroup, ['name']);
+            $domain = $domainFilter->toSelector()
+                ->selectKeys([ 'name' ])
+                ->mapAsciiServer()
+                ->removeEmpty()
+                ->getFirst();
         }
         if (empty($domain)) {
             return null;
         }
 
         // States
-        $primaryGroup = $filter->cloneMe()
+        $primaryFilter = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
             ->filterHasSubsetOf($this->primarySubsets)
-            ->useFirstGroupOr($domainGroup)
-            ->getFirstGroup();
+            ->useFirstGroupOr($domainGroup);
 
-        $states = ParserHelper::parseStates(GroupHelper::matchFirst($primaryGroup, $this->statesKeys));
+        $states = $primaryFilter->toSelector()
+            ->selectKeys($this->statesKeys)
+            ->mapStates()
+            ->getAll();
+
         if (empty($states)) {
-            $statesGroup = $filter->cloneMe()
+            $states = $rootFilter->cloneMe()
                 ->useMatchFirstOnly(true)
                 ->filterHasSubsetOf($this->statesSubsets)
-                ->getFirstGroup();
-
-            $states = ParserHelper::parseStates(GroupHelper::matchFirst($statesGroup, $this->statesKeys));
+                ->toSelector()
+                ->selectKeys($this->statesKeys)
+                ->mapStates()
+                ->getAll();
         }
-        $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
+
+        $firstState = empty($states) ? '' : reset($states);
+        $firstState = mb_strtolower(trim($firstState));
         if (!empty($this->notRegisteredStatesDict[$firstState])) {
             return null;
         }
 
         // NameServers
-        $nsGroup = $filter->cloneMe()
+        $nameServers = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
             ->filterHasSubsetOf($this->nameServersSubsets)
-            ->getFirstGroup();
+            ->useFirstGroup()
+            ->toSelector()
+            ->selectKeys($this->nameServersKeys)
+            ->selectKeyGroups($this->nameServersKeysGroups)
+            ->mapAsciiServer()
+            ->removeEmpty()
+            ->getAll();
 
-        $nameServers = GroupHelper::getAsciiServersComplex($nsGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
-
-        // Sparsed ns
-        $nsGroups = $filter->cloneMe()
+        // Sparsed NameServers
+        $nameServers = $rootFilter->cloneMe()
             ->filterHasSubsetOf($this->nameServersSparsedSubsets)
-            ->getGroups();
+            ->toSelector()
+            ->useMatchFirstOnly(true)
+            ->selectItems($nameServers)
+            ->selectKeys($this->nameServersKeys)
+            ->selectKeyGroups($this->nameServersKeysGroups)
+            ->mapAsciiServer()
+            ->removeEmpty()
+            ->removeDuplicates()
+            ->getAll();
 
-        foreach ($nsGroups as $nsGroup) {
-            $list = GroupHelper::getAsciiServersComplex($nsGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
-            $nameServers = array_merge($nameServers, $list);
-        }
         if (empty($nameServers)) {
-            $nameServers = GroupHelper::getAsciiServersComplex($primaryGroup, $this->nameServersKeys, $this->nameServersKeysGroups);
+            $nameServers = $primaryFilter->toSelector()
+                ->useMatchFirstOnly(true)
+                ->selectKeys($this->nameServersKeys)
+                ->selectKeyGroups($this->nameServersKeysGroups)
+                ->mapAsciiServer()
+                ->removeEmpty()
+                ->removeDuplicates()
+                ->getAll();
         }
-        $nameServers = array_unique($nameServers);
 
-        $ownerGroup = $filter->cloneMe()
+        // Registrar
+        $registrar = $primaryFilter->toSelector()
+            ->useMatchFirstOnly(true)
+            ->selectKeys($this->registrarKeys)
+            ->getFirst();
+
+        if (empty($registrar)) {
+            $registrarFilter = $rootFilter->cloneMe()
+                ->useMatchFirstOnly(true)
+                ->filterHasSubsetOf($this->registrarSubsets);
+
+            $registrar = $registrarFilter->toSelector()
+                ->selectKeys($this->registrarGroupKeys)
+                ->getFirst();
+        }
+        if (empty($registrar) && !empty($registrarFilter)) {
+            $registrar = $registrarFilter->filterHasHeader()
+                ->toSelector()
+                ->selectKeys([ 'name' ])
+                ->getFirst();
+        }
+        if (empty($registrar)) {
+            $registrar = $primaryFilter->toSelector()
+                ->selectKeys($this->registrarKeys)
+                ->getFirst();
+        }
+
+        // Owner
+        $owner = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
             ->filterHasSubsetOf($this->ownerSubsets)
-            ->getFirstGroup();
+            ->toSelector()
+            ->selectKeys($this->ownerKeys)
+            ->getFirst();
 
-        $registrar = GroupHelper::matchFirst($primaryGroup, $this->registrarKeys);
-        if (empty($registrar)) {
-            $registrarGroup = $filter->cloneMe()
-                ->useMatchFirstOnly(true)
-                ->filterHasSubsetOf($this->registrarSubsets)
-                ->getFirstGroup();
-
-            $registrar = GroupHelper::matchFirst($registrarGroup, $this->registrarGroupKeys);
+        if (empty($owner)) {
+            $owner = $primaryFilter->toSelector()
+                ->selectKeys($this->ownerKeys)
+                ->getFirst();
         }
-        if (empty($registrar) && !empty($registrarGroup[$this->headerKey])) {
-            $registrar = GroupHelper::matchFirst($registrarGroup, ['name']);
+
+        if (!empty($owner)) {
+            $owner = $rootFilter->cloneMe()
+                ->setSubsetParams(['$id' => $owner])
+                ->useMatchFirstOnly(true)
+                ->filterHasSubsetOf($this->contactSubsets)
+                ->toSelector()
+                ->selectKeys($this->contactOrgKeys)
+                ->selectItems([ $owner ])
+                ->removeEmpty()
+                ->getFirst();
         }
 
         $data = [
             "domainName" => $domain,
-            "whoisServer" => GroupHelper::getAsciiServer($primaryGroup, $this->whoisServerKeys),
-            "creationDate" => GroupHelper::getUnixtime($primaryGroup, $this->creationDateKeys),
-            "expirationDate" => GroupHelper::getUnixtime($primaryGroup, $this->expirationDateKeys),
-            "nameServers" => $nameServers,
-            "owner" => GroupHelper::matchFirst($ownerGroup, $this->ownerKeys),
-            "registrar" => $registrar,
             "states" => $states,
-        ];
-        if (empty($data['owner'])) {
-            $data['owner'] = GroupHelper::matchFirst($primaryGroup, $this->ownerKeys);
-        }
-        if (empty($data['registrar'])) {
-            $data['registrar'] = GroupHelper::matchFirst($primaryGroup, $this->registrarKeys);
-        }
+            "nameServers" => $nameServers,
+            "registrar" => $registrar,
+            "owner" => $owner,
 
-        if (is_array($data["owner"])) {
-            $data["owner"] = $data["owner"][0];
-        }
+            "whoisServer" => $primaryFilter->toSelector()
+                ->selectKeys($this->whoisServerKeys)
+                ->mapAsciiServer()
+                ->getFirst(),
+
+            "creationDate" => $primaryFilter->toSelector()
+                ->selectKeys($this->creationDateKeys)
+                ->mapUnixTime()
+                ->getFirst(),
+
+            "expirationDate" => $primaryFilter->toSelector()
+                ->selectKeys($this->expirationDateKeys)
+                ->mapUnixTime()
+                ->getFirst(),
+        ];
 
         if (empty($states)
             && empty($data["nameServers"])
@@ -164,36 +229,23 @@ class BlockParser extends CommonParser
             return null;
         }
 
-        if ($data["owner"]) {
-            $group = $filter->cloneMe()
-                ->setSubsetParams(['$id' => $data["owner"]])
-                ->useMatchFirstOnly(true)
-                ->filterHasSubsetOf($this->contactSubsets)
-                ->getFirstGroup();
-
-            $ownerOrg = GroupHelper::matchFirst($group, $this->contactOrgKeys);
-            $data["owner"] = $ownerOrg ? $ownerOrg : $data["owner"];
-        }
-        if (is_array($data["owner"])) {
-            $data["owner"] = $data["owner"][0];
-        }
-
-        $regGroup = $filter->cloneMe()
+        $regFilter = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetOf($this->registrarReservedSubsets)
-            ->getFirstGroup();
+            ->filterHasSubsetOf($this->registrarReservedSubsets);
 
-        $regId = GroupHelper::matchFirst($regGroup, $this->registrarReservedKeys);
-        $regId = is_array($regId) ? reset($regId) : $regId;
+        $regId = $regFilter->toSelector()
+            ->selectKeys($this->registrarReservedKeys)
+            ->getFirst();
 
-        if (!empty($regId) && (empty($registrar) || $regGroup != $primaryGroup)) {
-            $regGroup = $filter->cloneMe()
+        if (!empty($regId) && (empty($registrar) || $regFilter->getFirstGroup() != $primaryFilter->getFirstGroup())) {
+            $registrarOrg = $rootFilter->cloneMe()
                 ->setSubsetParams(['$id' => $regId])
                 ->useMatchFirstOnly(true)
                 ->filterHasSubsetOf($this->contactSubsets)
-                ->getFirstGroup();
+                ->toSelector()
+                ->selectKeys($this->contactOrgKeys)
+                ->getFirst();
 
-            $registrarOrg = GroupHelper::matchFirst($regGroup, $this->contactOrgKeys);
             $data["registrar"] = ($registrarOrg && $registrarOrg != $data["owner"])
                 ? $registrarOrg
                 : $data["registrar"];
@@ -203,21 +255,23 @@ class BlockParser extends CommonParser
         }
 
         if (empty($data["creationDate"])) {
-            $group = $filter->cloneMe()
+            $data["creationDate"] = $rootFilter->cloneMe()
                 ->useMatchFirstOnly(true)
                 ->filterHasSubsetKeyOf($this->creationDateKeys)
-                ->getFirstGroup();
-
-            $data["creationDate"] = GroupHelper::getUnixtime($group, $this->creationDateKeys);
+                ->toSelector()
+                ->selectKeys($this->creationDateKeys)
+                ->mapUnixTime()
+                ->getFirst();
         }
 
         if (empty($data["expirationDate"])) {
-            $group = $filter->cloneMe()
+            $data["expirationDate"] = $rootFilter->cloneMe()
                 ->useMatchFirstOnly(true)
                 ->filterHasSubsetKeyOf($this->expirationDateKeys)
-                ->getFirstGroup();
-
-            $data["expirationDate"] = GroupHelper::getUnixtime($group, $this->expirationDateKeys);
+                ->toSelector()
+                ->selectKeys($this->expirationDateKeys)
+                ->mapUnixTime()
+                ->getFirst();
         }
 
         return new DomainInfo($response, $data);
