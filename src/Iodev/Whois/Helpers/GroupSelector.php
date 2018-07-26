@@ -20,6 +20,14 @@ class GroupSelector
     private $items = [];
 
     /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->items);
+    }
+
+    /**
      * @return array
      */
     public function getAll()
@@ -108,7 +116,7 @@ class GroupSelector
     /**
      * @return $this
      */
-    public function handleAsciiServer()
+    public function mapAsciiServer()
     {
         $this->items = array_map('\Iodev\Whois\Helpers\DomainHelper::toAscii', $this->items);
         return $this;
@@ -117,7 +125,7 @@ class GroupSelector
     /**
      * @return $this
      */
-    public function handleUnixTime()
+    public function mapUnixTime()
     {
         $this->items = array_map('\Iodev\Whois\Helpers\DateHelper::parseDate', $this->items);
         return $this;
@@ -127,7 +135,7 @@ class GroupSelector
      * @param bool $removeExtra
      * @return $this
      */
-    public function handleStates($removeExtra = true)
+    public function mapStates($removeExtra = true)
     {
         $states = [];
         foreach ($this->items as $item) {

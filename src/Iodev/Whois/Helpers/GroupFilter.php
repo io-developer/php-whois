@@ -69,6 +69,20 @@ class GroupFilter
     }
 
     /**
+     * @return $this
+     */
+    public function filterHasHeader()
+    {
+        $groups = GroupHelper::findGroupsHasSubsetOf(
+            $this->groups,
+            [ $this->headerKey => '' ],
+            $this->ignoreCase,
+            $this->matchFirstOnly
+        );
+        return $this->setGroups($groups);
+    }
+
+    /**
      * @return GroupSelector
      */
     public function toSelector()

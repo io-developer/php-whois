@@ -73,32 +73,32 @@ class CommonParser extends TldParser
         $data = [
             "domainName" => $sel->clean()
                 ->selectKeys($this->domainKeys)
-                ->handleAsciiServer()
+                ->mapAsciiServer()
                 ->removeEmpty()
                 ->getFirst(),
 
             "whoisServer" => $sel->clean()
                 ->selectKeys($this->whoisServerKeys)
-                ->handleAsciiServer()
+                ->mapAsciiServer()
                 ->removeEmpty()
                 ->getFirst(),
 
             "nameServers" => $sel->clean()
                 ->selectKeys($this->nameServersKeys)
                 ->selectKeyGroups($this->nameServersKeysGroups)
-                ->handleAsciiServer()
+                ->mapAsciiServer()
                 ->removeEmpty()
                 ->removeDuplicates()
                 ->getAll(),
 
             "creationDate" => $sel->clean()
                 ->selectKeys($this->creationDateKeys)
-                ->handleUnixTime()
+                ->mapUnixTime()
                 ->getFirst(),
 
             "expirationDate" => $sel->clean()
                 ->selectKeys($this->expirationDateKeys)
-                ->handleUnixTime()
+                ->mapUnixTime()
                 ->getFirst(),
 
             "owner" => $sel->clean()
@@ -111,7 +111,7 @@ class CommonParser extends TldParser
 
             "states" => $sel->clean()
                 ->selectKeys($this->statesKeys)
-                ->handleStates()
+                ->mapStates()
                 ->getAll(),
         ];
         if (empty($data["domainName"])) {
