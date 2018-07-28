@@ -6,6 +6,7 @@ use Iodev\Whois\Config;
 
 abstract class TldParser
 {
+    const AUTO = 'auto';
     const COMMON = 'common';
     const COMMON_FLAT = 'commonFlat';
     const BLOCK = 'block';
@@ -17,8 +18,9 @@ abstract class TldParser
      */
     public static function create($type = null)
     {
-        $type = $type ? $type : self::COMMON;
+        $type = $type ? $type : self::AUTO;
         $d = [
+            self::AUTO => __NAMESPACE__.'\Parsers\AutoParser',
             self::COMMON => __NAMESPACE__.'\Parsers\CommonParser',
             self::COMMON_FLAT => __NAMESPACE__.'\Parsers\CommonParser',
             self::BLOCK => __NAMESPACE__.'\Parsers\BlockParser',
@@ -34,7 +36,7 @@ abstract class TldParser
      */
     public static function createByClass($className, $configType = null)
     {
-        $configType = empty($configType) ? self::COMMON : $configType;
+        $configType = empty($configType) ? self::AUTO : $configType;
 
         /* @var $p TldParser */
         $p = new $className();
