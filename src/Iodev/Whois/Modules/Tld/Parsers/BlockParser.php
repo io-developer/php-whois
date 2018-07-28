@@ -66,40 +66,74 @@ class BlockParser extends CommonParser
             ->filterHasSubsetOf($this->primarySubsets)
             ->useFirstGroupOr($domainFilter->getFirstGroup());
 
-        // Domain
+        $info = new DomainInfo($response, [
+            "domainName" => $this->parseDomain($domainFilter),
+            "states" => $this->parseStates($rootFilter, $primaryFilter),
+            "nameServers" => $this->parseNameServers($rootFilter, $primaryFilter),
+            "owner" => $this->parseOwner($rootFilter, $primaryFilter),
+            "registrar" => $this->parseRegistrar($rootFilter, $primaryFilter),
+            "creationDate" => $this->parseCreationDate($rootFilter, $primaryFilter),
+            "expirationDate" => $this->parseExpirationDate($rootFilter, $primaryFilter),
+            "whoisServer" => $this->parseWhoisServer($rootFilter, $primaryFilter),
+        ]);
+        return $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
+    }
+
+    /**
+     * @param GroupFilter $domainFilter
+     * @return string
+     */
+    protected function parseDomain(GroupFilter $domainFilter)
+    {
         $domain = $domainFilter->toSelector()
             ->selectKeys($this->domainKeys)
             ->mapAsciiServer()
             ->removeEmpty()
-            ->getFirst();
+            ->getFirst('');
 
-        if (empty($domain)) {
-            $domain = $domainFilter->cloneMe()
-                ->filterHasHeader()
-                ->toSelector()
-                ->selectKeys([ 'name' ])
-                ->mapAsciiServer()
-                ->removeEmpty()
-                ->getFirst();
+        if (!empty($domain)) {
+            return $domain;
         }
+        return $domainFilter->cloneMe()
+            ->filterHasHeader()
+            ->toSelector()
+            ->selectKeys([ 'name' ])
+            ->mapAsciiServer()
+            ->removeEmpty()
+            ->getFirst('');
+    }
 
-        // States
+    /**
+     * @param GroupFilter $rootFilter
+     * @param GroupFilter $primaryFilter
+     * @return array
+     */
+    protected function parseStates(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    {
         $states = $primaryFilter->toSelector()
             ->selectKeys($this->statesKeys)
             ->mapStates()
             ->getAll();
 
-        if (empty($states)) {
-            $states = $rootFilter->cloneMe()
-                ->useMatchFirstOnly(true)
-                ->filterHasSubsetOf($this->statesSubsets)
-                ->toSelector()
-                ->selectKeys($this->statesKeys)
-                ->mapStates()
-                ->getAll();
+        if (!empty($states)) {
+            return $states;
         }
+        return $rootFilter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetOf($this->statesSubsets)
+            ->toSelector()
+            ->selectKeys($this->statesKeys)
+            ->mapStates()
+            ->getAll();
+    }
 
-        // NameServers
+    /**
+     * @param GroupFilter $rootFilter
+     * @param GroupFilter $primaryFilter
+     * @return array
+     */
+    protected function parseNameServers(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    {
         $nameServers = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
             ->filterHasSubsetOf($this->nameServersSubsets)
@@ -111,7 +145,6 @@ class BlockParser extends CommonParser
             ->removeEmpty()
             ->getAll();
 
-        // Sparsed NameServers
         $nameServers = $rootFilter->cloneMe()
             ->filterHasSubsetOf($this->nameServersSparsedSubsets)
             ->toSelector()
@@ -124,31 +157,38 @@ class BlockParser extends CommonParser
             ->removeDuplicates()
             ->getAll();
 
-        if (empty($nameServers)) {
-            $nameServers = $primaryFilter->toSelector()
-                ->useMatchFirstOnly(true)
-                ->selectKeys($this->nameServersKeys)
-                ->selectKeyGroups($this->nameServersKeysGroups)
-                ->mapAsciiServer()
-                ->removeEmpty()
-                ->removeDuplicates()
-                ->getAll();
+        if (!empty($nameServers)) {
+            return $nameServers;
         }
+        return $primaryFilter->toSelector()
+            ->useMatchFirstOnly(true)
+            ->selectKeys($this->nameServersKeys)
+            ->selectKeyGroups($this->nameServersKeysGroups)
+            ->mapAsciiServer()
+            ->removeEmpty()
+            ->removeDuplicates()
+            ->getAll();
+    }
 
-        // Owner
+    /**
+     * @param GroupFilter $rootFilter
+     * @param GroupFilter $primaryFilter
+     * @return string
+     */
+    protected function parseOwner(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    {
         $owner = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
             ->filterHasSubsetOf($this->ownerSubsets)
             ->toSelector()
             ->selectKeys($this->ownerKeys)
-            ->getFirst();
+            ->getFirst('');
 
         if (empty($owner)) {
             $owner = $primaryFilter->toSelector()
                 ->selectKeys($this->ownerKeys)
-                ->getFirst();
+                ->getFirst('');
         }
-
         if (!empty($owner)) {
             $owner = $rootFilter->cloneMe()
                 ->setSubsetParams(['$id' => $owner])
@@ -158,10 +198,18 @@ class BlockParser extends CommonParser
                 ->selectKeys($this->contactOrgKeys)
                 ->selectItems([ $owner ])
                 ->removeEmpty()
-                ->getFirst();
+                ->getFirst('');
         }
+        return $owner;
+    }
 
-        // Registrar
+    /**
+     * @param GroupFilter $rootFilter
+     * @param GroupFilter $primaryFilter
+     * @return string
+     */
+    protected function parseRegistrar(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    {
         $registrar = $primaryFilter->toSelector()
             ->useMatchFirstOnly(true)
             ->selectKeys($this->registrarKeys)
@@ -205,59 +253,73 @@ class BlockParser extends CommonParser
                 ->selectKeys($this->contactOrgKeys)
                 ->getFirst();
 
+            $owner = $this->parseOwner($rootFilter, $primaryFilter);
             $registrar = ($registrarOrg && $registrarOrg != $owner)
                 ? $registrarOrg
                 : $registrar;
         }
 
-        // creationDate
+        return $registrar;
+    }
+
+    /**
+     * @param GroupFilter $rootFilter
+     * @param GroupFilter $primaryFilter
+     * @return int
+     */
+    protected function parseCreationDate(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    {
         $creationDate = $primaryFilter->toSelector()
             ->selectKeys($this->creationDateKeys)
             ->mapUnixTime()
-            ->getFirst();
+            ->getFirst(0);
 
-        if (empty($creationDate)) {
-            $creationDate = $rootFilter->cloneMe()
-                ->useMatchFirstOnly(true)
-                ->filterHasSubsetKeyOf($this->creationDateKeys)
-                ->toSelector()
-                ->selectKeys($this->creationDateKeys)
-                ->mapUnixTime()
-                ->getFirst();
+        if (!empty($creationDate)) {
+            return $creationDate;
         }
+        return $rootFilter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetKeyOf($this->creationDateKeys)
+            ->toSelector()
+            ->selectKeys($this->creationDateKeys)
+            ->mapUnixTime()
+            ->getFirst(0);
+    }
 
-        // expirationDate
+    /**
+     * @param GroupFilter $rootFilter
+     * @param GroupFilter $primaryFilter
+     * @return int
+     */
+    protected function parseExpirationDate(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    {
         $expirationDate = $primaryFilter->toSelector()
             ->selectKeys($this->expirationDateKeys)
             ->mapUnixTime()
             ->getFirst();
 
-        if (empty($expirationDate)) {
-            $expirationDate = $rootFilter->cloneMe()
-                ->useMatchFirstOnly(true)
-                ->filterHasSubsetKeyOf($this->expirationDateKeys)
-                ->toSelector()
-                ->selectKeys($this->expirationDateKeys)
-                ->mapUnixTime()
-                ->getFirst();
+        if (!empty($expirationDate)) {
+            return $expirationDate;
         }
+        return $rootFilter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetKeyOf($this->expirationDateKeys)
+            ->toSelector()
+            ->selectKeys($this->expirationDateKeys)
+            ->mapUnixTime()
+            ->getFirst();
+    }
 
-        // whoisServer
-        $whoisServer = $primaryFilter->toSelector()
+    /**
+     * @param GroupFilter $rootFilter
+     * @param GroupFilter $primaryFilter
+     * @return mixed
+     */
+    protected function parseWhoisServer(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    {
+        return $primaryFilter->toSelector()
             ->selectKeys($this->whoisServerKeys)
             ->mapAsciiServer()
-            ->getFirst();
-
-        $info = new DomainInfo($response, [
-            "domainName" => $domain,
-            "states" => $states,
-            "nameServers" => $nameServers,
-            "owner" => $owner,
-            "registrar" => $registrar,
-            "creationDate" => $creationDate,
-            "expirationDate" => $expirationDate,
-            "whoisServer" => $whoisServer,
-        ]);
-        return $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
+            ->getFirst('');
     }
 }
