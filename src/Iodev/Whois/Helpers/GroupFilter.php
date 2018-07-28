@@ -75,7 +75,7 @@ class GroupFilter
     {
         $groups = GroupHelper::findGroupsHasSubsetOf(
             $this->groups,
-            [ $this->headerKey => '' ],
+            [[ $this->headerKey => '' ]],
             $this->ignoreCase,
             $this->matchFirstOnly
         );
