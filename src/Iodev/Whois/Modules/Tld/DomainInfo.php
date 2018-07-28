@@ -119,4 +119,42 @@ class DomainInfo
     {
         return isset($this->data[$key]) ? $this->data[$key] : $default;
     }
+
+    /**
+     * @param array|null $keys
+     * @return bool
+     */
+    public function isEmpty($keys = null)
+    {
+        $empty = true;
+        $keys = $keys ? $keys : array_keys($this->data);
+        foreach ($keys as $key) {
+            $empty = $empty && empty($this->data[$key]);
+        }
+        return $empty;
+    }
+
+    /**
+     * @param array $badFirstStatesDict
+     * @return bool
+     */
+    public function isValuable($badFirstStatesDict = [])
+    {
+        $states = $this->getStates();
+        $firstState = empty($states) ? '' : reset($states);
+        $firstState = mb_strtolower(trim($firstState));
+        if (!empty($badFirstStatesDict[$firstState])) {
+            return false;
+        }
+        $primaryKeys = ['domainName'];
+        $secondaryKeys = [
+            "states",
+            "nameServers",
+            "owner",
+            "creationDate",
+            "expirationDate",
+            "registrar",
+        ];
+        return !$this->isEmpty($primaryKeys) && !$this->isEmpty($secondaryKeys);
+    }
 }
