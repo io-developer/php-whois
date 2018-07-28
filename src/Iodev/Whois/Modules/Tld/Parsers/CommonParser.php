@@ -64,12 +64,7 @@ class CommonParser extends TldParser
      */
     public function parseResponse(DomainResponse $response)
     {
-        $filter = $this->filterFrom($response);
-        if ($filter->isEmptyGroups()) {
-            return null;
-        }
-
-        $sel = $filter->toSelector();
+        $sel = $this->filterFrom($response)->toSelector();
         $data = [
             "domainName" => $sel->clean()
                 ->selectKeys($this->domainKeys)
@@ -114,25 +109,8 @@ class CommonParser extends TldParser
                 ->mapStates()
                 ->getAll(),
         ];
-        if (empty($data["domainName"])) {
-            return null;
-        }
-        $states = $data["states"];
-        $firstState = !empty($states) ? mb_strtolower(trim($states[0])) : "";
-        if (!empty($this->notRegisteredStatesDict[$firstState])) {
-            return null;
-        }
-        if (empty($states)
-            && empty($data["nameServers"])
-            && empty($data["owner"])
-            && empty($data["creationDate"])
-            && empty($data["expirationDate"])
-            && empty($data["registrar"])
-        ) {
-            return null;
-        }
-        $data["owner"] = is_array($data["owner"]) ? reset($data["owner"]) : $data["owner"];
-        return new DomainInfo($response, $data);
+        $info = new DomainInfo($response, $data);
+        return $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
     }
 
     /**
