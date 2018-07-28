@@ -70,13 +70,13 @@ class CommonParser extends TldParser
                 ->selectKeys($this->domainKeys)
                 ->mapAsciiServer()
                 ->removeEmpty()
-                ->getFirst(),
+                ->getFirst(''),
 
             "whoisServer" => $sel->clean()
                 ->selectKeys($this->whoisServerKeys)
                 ->mapAsciiServer()
                 ->removeEmpty()
-                ->getFirst(),
+                ->getFirst(''),
 
             "nameServers" => $sel->clean()
                 ->selectKeys($this->nameServersKeys)
@@ -89,20 +89,20 @@ class CommonParser extends TldParser
             "creationDate" => $sel->clean()
                 ->selectKeys($this->creationDateKeys)
                 ->mapUnixTime()
-                ->getFirst(),
+                ->getFirst(''),
 
             "expirationDate" => $sel->clean()
                 ->selectKeys($this->expirationDateKeys)
                 ->mapUnixTime()
-                ->getFirst(),
+                ->getFirst(''),
 
             "owner" => $sel->clean()
                 ->selectKeys($this->ownerKeys)
-                ->getFirst(),
+                ->getFirst(''),
 
             "registrar" => $sel->clean()
                 ->selectKeys($this->registrarKeys)
-                ->getFirst(),
+                ->getFirst(''),
 
             "states" => $sel->clean()
                 ->selectKeys($this->statesKeys)
