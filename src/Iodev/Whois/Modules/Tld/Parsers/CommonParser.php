@@ -107,6 +107,7 @@ class CommonParser extends TldParser
             "states" => $sel->clean()
                 ->selectKeys($this->statesKeys)
                 ->mapStates()
+                ->removeDuplicates()
                 ->getAll(),
         ];
         $info = new DomainInfo($response, $data);

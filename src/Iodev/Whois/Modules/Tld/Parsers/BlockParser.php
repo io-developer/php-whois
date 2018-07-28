@@ -113,6 +113,7 @@ class BlockParser extends CommonParser
         $states = $primaryFilter->toSelector()
             ->selectKeys($this->statesKeys)
             ->mapStates()
+            ->removeDuplicates()
             ->getAll();
 
         if (!empty($states)) {
@@ -124,6 +125,7 @@ class BlockParser extends CommonParser
             ->toSelector()
             ->selectKeys($this->statesKeys)
             ->mapStates()
+            ->removeDuplicates()
             ->getAll();
     }
 
