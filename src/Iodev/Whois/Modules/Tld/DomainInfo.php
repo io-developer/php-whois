@@ -157,4 +157,29 @@ class DomainInfo
         ];
         return !$this->isEmpty($primaryKeys) && !$this->isEmpty($secondaryKeys);
     }
+
+    /**
+     * @return int
+     */
+    public function calcValuation()
+    {
+        $weights = [
+            'domainName' => 100,
+            'nameServers' => 10,
+            'creationDate' => 6,
+            'expirationDate' => 6,
+            'states' => 5,
+            'owner' => 4,
+            'registrar' => 3,
+            'whoisServer' => 2,
+        ];
+        $sum = 0;
+        foreach ($this->data as $k => $v) {
+            if (!empty($v) && !empty($weights[$k])) {
+                $w = $weights[$k];
+                $sum += is_array($v) ? $w * count($v) : $w;
+            }
+        }
+        return $sum;
+    }
 }
