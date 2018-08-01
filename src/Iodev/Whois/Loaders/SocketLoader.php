@@ -37,8 +37,6 @@ class SocketLoader implements ILoader
         }
         fclose($handle);
 
-        file_put_contents("$query.txt", $text);
-
         return $this->validateResponse(TextHelper::toUtf8($text));
     }
 
