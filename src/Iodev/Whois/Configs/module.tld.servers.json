@@ -141,7 +141,6 @@
   {"zone": ".college", "host": "whois.centralnic.com"},
   {"zone": ".college", "host": "whois.nic.college"},
   {"zone": ".cologne", "host": "whois-fe1.pdt.cologne.tango.knipp.de"},
-  {"zone": ".com", "host": "whois.crsnic.net"},
   {"zone": ".com", "host": "whois.verisign-grs.com"},
   {"zone": ".*.com", "host": "whois.centralnic.com"},
   {"zone": ".*.com", "host": "whois.centralnic.net"},
