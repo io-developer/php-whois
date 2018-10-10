@@ -118,6 +118,7 @@
   "notRegisteredStatesDict": {
     "not registered": 1,
     "no object found": 1,
+    "not allowed": 1,
     "available": 1,
     "free": 1
   }
