@@ -13,15 +13,17 @@ class DomainInfo
     /**
      * @param DomainResponse $response
      * @param array $data
+     * @param string $parserType
      * @throws InvalidArgumentException
      */
-    public function __construct(DomainResponse $response, $data = [])
+    public function __construct(DomainResponse $response, $data = [], $parserType = '')
     {
         if (!is_array($data)) {
             throw new InvalidArgumentException("Data must be an array");
         }
         $this->response = $response;
         $this->data = $data;
+        $this->parserType = $parserType;
     }
 
     /** @var DomainResponse */
@@ -30,12 +32,23 @@ class DomainInfo
     /** @var array */
     private $data;
 
+    /** @var string */
+    private $parserType;
+
     /**
      * @return DomainResponse
      */
     public function getResponse()
     {
         return $this->response;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParserType()
+    {
+        return $this->parserType;
     }
 
     /**

@@ -84,7 +84,7 @@ class BlockParser extends CommonParser
             "creationDate" => $this->parseCreationDate($rootFilter, $primaryFilter),
             "expirationDate" => $this->parseExpirationDate($rootFilter, $primaryFilter),
             "whoisServer" => $this->parseWhoisServer($rootFilter, $primaryFilter),
-        ]);
+        ], $this->getType());
         return $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
     }
 
