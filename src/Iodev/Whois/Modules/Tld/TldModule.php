@@ -36,12 +36,23 @@ class TldModule extends Module
     /** @var TldServer[] */
     private $servers = [];
 
+    /** @var TldServer[] */
+    private $lastUsedServers = [];
+
     /**
      * @return TldServer[]
      */
     public function getServers()
     {
         return $this->servers;
+    }
+
+    /**
+     * @return TldServer[]
+     */
+    public function getLastUsedServers()
+    {
+        return $this->lastUsedServers;
     }
 
     /**
@@ -164,10 +175,12 @@ class TldModule extends Module
      */
     private function loadDomainData($domain, $servers)
     {
+        $this->lastUsedServers = [];
         $domain = DomainHelper::toAscii($domain);
         $response = null;
         $info = null;
         foreach ($servers as $server) {
+            $this->lastUsedServers[] = $server;
             $this->loadParsedTo($response, $info, $server, $domain);
             if ($info) {
                 break;
