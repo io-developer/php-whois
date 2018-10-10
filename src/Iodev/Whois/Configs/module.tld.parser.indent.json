@@ -125,7 +125,8 @@
     "status",
     "state",
     "ren-status",
-    "epp status"
+    "epp status",
+    "flags"
   ],
   "notRegisteredStatesDict": {
     "not registered": 1,
@@ -148,6 +149,10 @@
   "statesSubsets": [
     {"domain status": ""},
     {"registration status": ""}
+  ],
+  "secondaryStatesSubsets": [
+    {"__HEADER__": "Flags"},
+    {"flags": ""}
   ],
   "nameServersSubsets": [
     {"__HEADER__": "NameServers"},

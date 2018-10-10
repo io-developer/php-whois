@@ -2,10 +2,14 @@
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
+use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Helpers\ParserHelper;
 
 class IndentParser extends BlockParser
 {
+    /** @var array */
+    protected $secondaryStatesSubsets = [];
+
     /**
      * @param string $line
      * @param string[] $commentChars
@@ -74,5 +78,23 @@ class IndentParser extends BlockParser
             $groups[] = ParserHelper::dictToGroup($dict, $this->headerKey);
         }
         return $groups;
+    }
+
+    /**
+     * @param GroupFilter $rootFilter
+     * @param GroupFilter $primaryFilter
+     * @return array
+     */
+    protected function parseStates(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    {
+        return $rootFilter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetOf($this->secondaryStatesSubsets)
+            ->toSelector()
+            ->selectItems(parent::parseStates($rootFilter, $primaryFilter))
+            ->selectKeys($this->statesKeys)
+            ->mapStates()
+            ->removeDuplicates()
+            ->getAll();
     }
 }

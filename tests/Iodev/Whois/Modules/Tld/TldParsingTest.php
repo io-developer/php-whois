@@ -205,7 +205,8 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
     {
         self::assertDataItems([
             [ "free.be", ".be/free.txt", null ],
-            // [ "google.be", ".be/google.be.txt", ".be/google.be.json" ],
+            [ "google.be", ".be/google.be.txt", ".be/google.be.json" ],
+            [ "youtu.be", ".be/youtu.be.txt", ".be/youtu.be.json" ],
         ]);
     }
 
