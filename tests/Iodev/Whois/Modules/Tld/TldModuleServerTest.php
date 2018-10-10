@@ -131,6 +131,18 @@ class TldModuleServerTest extends \PHPUnit_Framework_TestCase
         self::assertEquals(".com", $servers[0]->getZone(), "Invalid matched zone");
     }
 
+    public function testMatchServersCollisiondWildcard()
+    {
+        $this->mod->addServers([
+            self::createServer(".com"),
+            self::createServer(".*.com"),
+        ]);
+        $servers = $this->mod->matchServers("domain.com");
+
+        self::assertEquals(1, count($servers), "Count of matched servers not equals");
+        self::assertEquals(".com", $servers[0]->getZone(), "Invalid matched zone");
+    }
+
     public function testMatchServersCollisionMissingZone()
     {
         $this->mod->addServers([

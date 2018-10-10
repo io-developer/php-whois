@@ -132,6 +132,7 @@ class TldServer
     public function matchDomainZone($domain)
     {
         $domainParts = explode('.', $domain);
+        array_shift($domainParts);
         $domainCount = count($domainParts);
         $zoneCount = count($this->inverseZoneParts);
         if (count($domainParts) < $zoneCount) {
