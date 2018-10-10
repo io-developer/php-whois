@@ -59,6 +59,11 @@ abstract class TldParser
     }
 
     /**
+     * @return string
+     */
+    abstract public function getType();
+
+    /**
      * @param array $cfg
      * @return $this
      */

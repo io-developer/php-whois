@@ -22,6 +22,14 @@ class AutoParser extends TldParser
     private $parsers = [];
 
     /**
+     * @return string
+     */
+    public function getType()
+    {
+        return TldParser::AUTO;
+    }
+
+    /**
      * @param array $cfg
      * @return $this
      */

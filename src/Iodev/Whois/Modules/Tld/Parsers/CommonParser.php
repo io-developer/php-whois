@@ -47,6 +47,14 @@ class CommonParser extends TldParser
     protected $notRegisteredStatesDict = [ "not registered" => 1 ];
 
     /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->isFlat ? TldParser::COMMON_FLAT : TldParser::COMMON;
+    }
+
+    /**
      * @param array $cfg
      * @return $this
      */

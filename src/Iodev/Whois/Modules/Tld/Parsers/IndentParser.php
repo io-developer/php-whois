@@ -4,11 +4,20 @@ namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Helpers\ParserHelper;
+use Iodev\Whois\Modules\Tld\TldParser;
 
 class IndentParser extends BlockParser
 {
     /** @var array */
     protected $secondaryStatesSubsets = [];
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return TldParser::INDENT;
+    }
 
     /**
      * @param string $line

@@ -5,6 +5,7 @@ namespace Iodev\Whois\Modules\Tld\Parsers;
 use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Modules\Tld\DomainResponse;
+use Iodev\Whois\Modules\Tld\TldParser;
 
 class BlockParser extends CommonParser
 {
@@ -43,6 +44,14 @@ class BlockParser extends CommonParser
 
     /** @var array */
     protected $registrarGroupKeys = [];
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return TldParser::BLOCK;
+    }
 
     /**
      * @param DomainResponse $response
