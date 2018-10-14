@@ -327,7 +327,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
     {
         self::assertDataItems([
             [ "free.cm", ".cm/free.txt", null ],
-            // [ "google.cm", ".cm/google.cm.txt", ".cm/google.cm.json" ],
+            [ "google.cm", ".cm/google.cm.txt", ".cm/google.cm.json" ],
         ]);
     }
 
