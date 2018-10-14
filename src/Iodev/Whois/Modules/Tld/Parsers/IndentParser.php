@@ -8,6 +8,9 @@ use Iodev\Whois\Modules\Tld\TldParser;
 
 class IndentParser extends BlockParser
 {
+    /** @var bool */
+    protected $isAutofix = false;
+
     /** @var array */
     protected $secondaryStatesSubsets = [];
 
@@ -16,7 +19,7 @@ class IndentParser extends BlockParser
      */
     public function getType()
     {
-        return TldParser::INDENT;
+        return $this->isAutofix ? TldParser::INDENT_AUTOFIX : TldParser::INDENT;
     }
 
     /**
@@ -78,6 +81,7 @@ class IndentParser extends BlockParser
     {
         $groups = [];
         $lines = ParserHelper::splitLines($text);
+        $lines = $this->isAutofix ? ParserHelper::autofixTldLines($lines) : $lines;
         $lines = array_filter($lines, [__CLASS__, 'validateLine']);
         $blocks = ParserHelper::linesToSpacedBlocks($lines, [__CLASS__, 'validateStopline']);
         //$blocks = array_filter($blocks, [__CLASS__, 'validateBlock']);

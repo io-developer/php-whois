@@ -15,6 +15,7 @@ class AutoParser extends TldParser
             TldParser::create(TldParser::COMMON_FLAT),
             TldParser::create(TldParser::BLOCK),
             TldParser::create(TldParser::INDENT),
+            TldParser::create(TldParser::INDENT_AUTOFIX),
         ];
     }
 

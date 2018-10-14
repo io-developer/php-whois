@@ -234,4 +234,33 @@ class ParserHelper
         }
         return (count($states) == 1) ? array_filter(array_map('trim', explode(',', $states[0]))) : $states;
     }
+
+    /**
+     * @param string[] $lines
+     * @return string[]
+     */
+    public static function autofixTldLines($lines)
+    {
+        $emptyBefore = false;
+        $kvBefore = false;
+        $needIndent = false;
+        $outLines = [];
+        foreach ($lines as $line) {
+            if ($emptyBefore && preg_match('~^\w+(\s+\w+){0,2}$~', trim(rtrim($line, ':')))) {
+                $line = trim(rtrim($line, ':')) . ':';
+            }
+            $isHeader = preg_match('~^\w+(\s+\w+){0,2}:$~', $line);
+            if ($isHeader) {
+                $outLines[] = '';
+            }
+            $needIndent = $needIndent || $isHeader;
+            if (!empty($line) || !$kvBefore) {
+                $indent = ($needIndent && !$isHeader && !empty($line)) ? '    ' : '';
+                $outLines[] = $indent . $line;
+            }
+            $emptyBefore = empty($line);
+            $kvBefore = preg_match('~^\w+(\s+\w+){0,2}:\s*\S+~', $line);
+        }
+        return $outLines;
+    }
 }

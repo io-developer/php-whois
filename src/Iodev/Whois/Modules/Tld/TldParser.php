@@ -11,6 +11,7 @@ abstract class TldParser
     const COMMON_FLAT = 'commonFlat';
     const BLOCK = 'block';
     const INDENT = 'indent';
+    const INDENT_AUTOFIX = 'indentAutofix';
 
     /**
      * @param string $type
@@ -25,6 +26,7 @@ abstract class TldParser
             self::COMMON_FLAT => __NAMESPACE__.'\Parsers\CommonParser',
             self::BLOCK => __NAMESPACE__.'\Parsers\BlockParser',
             self::INDENT => __NAMESPACE__.'\Parsers\IndentParser',
+            self::INDENT_AUTOFIX => __NAMESPACE__.'\Parsers\IndentParser',
         ];
         return self::createByClass($d[$type], $type);
     }
@@ -53,6 +55,10 @@ abstract class TldParser
         if ($type == self::COMMON_FLAT) {
             $type = self::COMMON;
             $extra = ['isFlat' => true];
+        }
+        if ($type == self::INDENT_AUTOFIX) {
+            $type = self::INDENT;
+            $extra = ['isAutofix' => true];
         }
         $config = Config::load("module.tld.parser.$type");
         return empty($extra) ? $config : array_merge($config, $extra);
