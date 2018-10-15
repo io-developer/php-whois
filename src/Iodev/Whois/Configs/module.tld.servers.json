@@ -630,6 +630,7 @@
   {"zone": ".tc", "host": "whois.adamsnames.tc"},
   {"zone": ".tc", "host": "whois.meridiantld.net"},
   {"zone": ".technology", "host": "whois.donuts.co"},
+  {"zone": ".tech", "host": "whois.nic.tech"},
   {"zone": ".tel", "host": "whois.nic.tel"},
   {"zone": ".tennis", "host": "whois.donuts.co"},
   {"zone": ".tf", "host": "whois.nic.tf"},
