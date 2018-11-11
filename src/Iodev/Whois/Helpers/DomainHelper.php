@@ -51,15 +51,34 @@ class DomainHelper
         }
         return $cor;
     }
-    
+
+    /**
+     * @param string $domain
+     * @return string
+     */
+    public static function filterAscii($domain)
+    {
+        $domain = self::correct($domain);
+        // Pick first part before space
+        $domain = explode(" ", $domain)[0];
+        // Must contain dot if short
+        if (!strpos($domain, '.') && strlen($domain) < 10) {
+            return "";
+        }
+        // All symbols must be valid
+        if (preg_match('~[^-.\da-z]+~ui', $domain)) {
+            return "";
+        }
+        return $domain;
+    }
+
     /**
      * @param string $domain
      * @return string
      */
     private static function correct($domain)
     {
-        // Remove "[description or ip]"
-        $domain = trim(preg_replace('~\[.*?\]~ui', '', $domain));
+        $domain = trim($domain);
         // Fix for .UZ whois response
         while (preg_match('~\bnot\.defined\.?\b~ui', $domain)) {
             $domain = preg_replace('~\bnot\.defined\.?\b~ui', '', $domain);

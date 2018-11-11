@@ -4,8 +4,8 @@
   "nameServers": [
     "ns1.google.com",
     "ns2.google.com",
-    "ns3.google.com - 216.239.36.10",
-    "ns4.google.com - 216.239.38.10"
+    "ns3.google.com",
+    "ns4.google.com"
   ],
   "creationDate": "2008-03-10T12:31:19",
   "expirationDate": "2018-03-10T12:31:19",

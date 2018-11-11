@@ -119,7 +119,9 @@ class GroupSelector
      */
     public function mapAsciiServer()
     {
-        $this->items = array_map('\Iodev\Whois\Helpers\DomainHelper::toAscii', $this->items);
+        foreach ($this->items as &$item) {
+            $item = DomainHelper::filterAscii(DomainHelper::toAscii($item));
+        }
         return $this;
     }
 
