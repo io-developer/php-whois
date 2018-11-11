@@ -621,6 +621,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "free.io", ".io/free.txt", null ],
             [ "github.io", ".io/github.io.txt", ".io/github.io.json" ],
             [ "google.io", ".io/google.io.txt", ".io/google.io.json" ],
+            [ "codepen.io", ".io/codepen.io.txt", ".io/codepen.io.json" ],
         ]);
     }
 
