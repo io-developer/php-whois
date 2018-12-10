@@ -895,7 +895,11 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
     {
         self::assertDataItems([
             [ "free.nz", ".nz/free.txt", null ],
-            // [ "google.co.nz", ".nz/google.co.nz.txt", ".nz/google.co.nz.json" ],
+            [ "progressbuilders.co.nz.nz", ".nz/free_progressbuilders.co.nz.nz.txt", null ],
+            [ "secuirty-services.co.nz", ".nz/free_secuirty-services.co.nz.txt", null ],
+            [ "google.co.nz", ".nz/google.co.nz.txt", ".nz/google.co.nz.json" ],
+            [ "payrollmatters.co.nz", ".nz/payrollmatters.co.nz.txt", ".nz/payrollmatters.co.nz.json" ],
+            [ "smarttech.nz", ".nz/smarttech.nz.txt", ".nz/smarttech.nz.json" ],
         ]);
     }
 

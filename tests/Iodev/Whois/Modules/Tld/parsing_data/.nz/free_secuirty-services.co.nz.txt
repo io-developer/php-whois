@@ -29,27 +29,9 @@
 % The WHOIS service is provided by NZRS Limited.
 %
 version: 8.0
-query_datetime: 2018-12-11T05:21:47+13:00
-domain_name: google.co.nz
-query_status: 200 Active
-domain_datelastmodified: 2018-01-15T23:40:15+13:00
-domain_delegaterequested: yes
-domain_signed: no
+query_datetime: 2018-12-10T13:27:04+13:00
+domain_name: secuirty-services.co.nz
+query_status: 220 Available
 %
-registrar_name: MarkMonitor
-registrar_address1: 3540 East Longwing Lane, Suite 300
-registrar_city: Meridian,
-registrar_province: Idaho
-registrar_postalcode: 83646
-registrar_country: US (UNITED STATES)
-registrar_phone: +1 208 3895740
-registrar_fax: +1 208 3895771
-registrar_email: ccops@markmonitor.com
-%
-ns_name_01: ns2.google.com
-ns_name_02: ns4.google.com
-ns_name_03: ns1.google.com
-ns_name_04: ns3.google.com
-%
-% Additional information may be available at https://www.dnc.org.nz/whois/search?domain_name=google.co.nz
+% Additional information may be available at https://www.dnc.org.nz/whois/search?domain_name=secuirty-services.co.nz
 %
