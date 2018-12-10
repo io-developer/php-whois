@@ -227,7 +227,7 @@ class ParserHelper
         $states = [];
         $rawstates = is_array($rawstates) ? $rawstates : [ strval($rawstates) ];
         foreach ($rawstates as $rawstate) {
-            if (preg_match('/^\s*([a-z]{2,}.*)\s*/ui', $rawstate, $m)) {
+            if (preg_match('/^\s*((\d{3}\s+)?[a-z]{2,}.*)\s*/ui', $rawstate, $m)) {
                 $state = mb_strtolower($m[1]);
                 $state = $removeExtra ? trim(preg_replace('~\(.+?\)|http.+~ui', '', $state)) : $state;
                 if (!empty($state)) {

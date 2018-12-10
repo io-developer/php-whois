@@ -3,6 +3,7 @@
   "domainKeys": [
     "domain",
     "domainname",
+    "domain_name",
     "domain name",
     "complete domain name",
     "Dominio",
@@ -11,12 +12,14 @@
   "whoisServerKeys": [
     "whois",
     "whoisserver",
+    "whois_server",
     "whois server",
     "registrar whois server"
   ],
   "nameServersKeys": [
     "nameserver",
     "nameservers",
+    "name_server",
     "name server",
     "name server (db)",
     "name servers",
@@ -26,12 +29,14 @@
     "host name",
     "dns",
     ["primary server", "secondary server", "third server", "fourth server"],
-    ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"]
+    ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"],
+    ["ns_name_01", "ns_name_02", "ns_name_03", "ns_name_04"]
   ],
   "nameServersKeysGroups": [
     ["ns 1", "ns 2", "ns 3", "ns 4"],
     ["primary server", "secondary server", "third server", "fourth server"],
-    ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"]
+    ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"],
+    ["ns_name_01", "ns_name_02", "ns_name_03", "ns_name_04"]
   ],
   "creationDateKeys": [
     "creationdate",
@@ -108,6 +113,7 @@
   ],
   "registrarKeys": [
     "registrar",
+    "registrar_name",
     "registrar-name",
     "registrar name",
     "current registrar",
@@ -126,20 +132,25 @@
     "state",
     "ren-status",
     "epp status",
-    "flags"
+    "flags",
+    "query_status"
   ],
   "notRegisteredStatesDict": {
     "not registered": 1,
     "no object found": 1,
     "not allowed": 1,
     "available": 1,
-    "free": 1
+    "free": 1,
+    "220 available": 1,
+    "510 domain is not managed by this register": 1,
+    "440 request denied": 1
   },
   "domainSubsets": [
     {"__HEADER__": "domain", "name": "$domain"},
     {"__HEADER__": "Domain Information"},
     {"domain": "$domain"},
     {"domainname": "$domain"},
+    {"domain_name": "$domain"},
     {"domain name": "$domain"},
     {"complete domain name": "$domain"},
     {"Dominio": "$domain"},
@@ -162,6 +173,7 @@
     {"__HEADER__": "Name servers"},
     {"__HEADER__": "Nameserver in listed order"},
     {"nameserver": ""},
+    {"ns_name_01": ""},
     {"nserver": ""},
     {"Name Server Handle": ""},
     {"Hostname": ""},
@@ -197,6 +209,7 @@
     {"Contact": "Billing", "Organization": ""},
     {"current registrar": ""},
     {"current registar": ""},
+    {"registrar_name": ""},
     {"registrar created": ""},
     {"registar created": ""}
   ],
@@ -233,6 +246,7 @@
   "registrarGroupKeys": [
     "registrar",
     "registrar-name",
+    "registrar_name",
     "registrar name",
     "current registrar",
     "current registar",

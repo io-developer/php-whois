@@ -3,6 +3,7 @@
   "domainKeys": [
     "domain",
     "domainname",
+    "domain_name",
     "domain name",
     "Domain Name (PUNYCODE)",
     "Domain Name (UTF8)",
@@ -13,11 +14,13 @@
   "whoisServerKeys": [
     "whois",
     "whoisserver",
+    "whois_server",
     "whois server",
     "registrar whois server"
   ],
   "nameServersKeys": [
     "nameserver",
+    "name_server",
     "name server",
     "name server (db)",
     "nserver",
@@ -27,12 +30,14 @@
     "host name",
     "dns",
     ["primary server", "secondary server", "third server", "fourth server"],
-    ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"]
+    ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"],
+    ["ns_name_01", "ns_name_02", "ns_name_03", "ns_name_04"]
   ],
   "nameServersKeysGroups": [
     ["ns 1", "ns 2", "ns 3", "ns 4"],
     ["primary server", "secondary server", "third server", "fourth server"],
-    ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"]
+    ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"],
+    ["ns_name_01", "ns_name_02", "ns_name_03", "ns_name_04"]
   ],
   "creationDateKeys": [
     "creationdate",
@@ -97,6 +102,7 @@
   ],
   "registrarKeys": [
     "registrar",
+    "registrar_name",
     "registrar-name",
     "registrar name",
     "current registrar",
@@ -113,13 +119,17 @@
     "state",
     "ren-status",
     "epp status",
-    "registry status"
+    "registry status",
+    "query_status"
   ],
   "notRegisteredStatesDict": {
     "not registered": 1,
     "no object found": 1,
     "not allowed": 1,
     "available": 1,
-    "free": 1
+    "free": 1,
+    "220 available": 1,
+    "510 domain is not managed by this register": 1,
+    "440 request denied": 1
   }
 }
