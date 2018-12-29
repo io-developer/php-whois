@@ -67,6 +67,7 @@
   {"zone": ".bj", "host": "www.nic.bj"},
   {"zone": ".black", "host": "whois.afilias.net"},
   {"zone": ".blackfriday", "host": "whois.uniregistry.net"},
+  {"zone": ".blog", "host": "whois.nic.blog"},
   {"zone": ".blue", "host": "whois.afilias.net"},
   {"zone": ".bmw", "host": "whois.ksregistry.net"},
   {"zone": ".bn", "host": "whois.bn"},
