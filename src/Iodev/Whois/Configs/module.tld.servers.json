@@ -594,6 +594,7 @@
   {"zone": ".shop", "host": "whois.nic.shop"},
   {"zone": ".si", "host": "whois.arnes.si", "parserType": "block"},
   {"zone": ".singles", "host": "whois.donuts.co"},
+  {"zone": ".site", "host": "reg.com/whois"},
   {"zone": ".sk", "host": "whois.sk-nic.sk", "parserType": "block"},
   {"zone": ".sky", "host": "whois.nic.sky"},
   {"zone": ".sl", "host": "whois.nic.sl"},
