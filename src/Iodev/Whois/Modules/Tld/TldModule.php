@@ -179,12 +179,16 @@ class TldModule extends Module
         $domain = DomainHelper::toAscii($domain);
         $response = null;
         $info = null;
+        $lastError = null;
         foreach ($servers as $server) {
             $this->lastUsedServers[] = $server;
-            $this->loadParsedTo($response, $info, $server, $domain);
+            $this->loadParsedTo($response, $info, $server, $domain, false, null, $lastError);
             if ($info) {
                 break;
             }
+        }
+        if (!$response && !$info) {
+            throw $lastError ? $lastError : new WhoisException("No response");
         }
         return [ $response, $info ];
     }
@@ -200,7 +204,7 @@ class TldModule extends Module
      * @throws ConnectionException
      * @throws WhoisException
      */
-    private function loadParsedTo(&$outResponse, &$outInfo, $server, $domain, $strict = false, $host = null, $lastError = null)
+    private function loadParsedTo(&$outResponse, &$outInfo, $server, $domain, $strict = false, $host = null, &$lastError = null)
     {
         try {
             $outResponse = $this->loadResponse($server, $domain, $strict, $host);
