@@ -8,6 +8,32 @@ use Iodev\Whois\Helpers\TextHelper;
 
 class SocketLoader implements ILoader
 {
+    public function __construct($timeout = 60)
+    {
+        $this->setTimeout($timeout);
+    }
+
+    /** @var int */
+    private $timeout;
+
+    /**
+     * @return int
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
+    }
+
+    /**
+     * @param int $seconds
+     * @return $this
+     */
+    public function setTimeout($seconds)
+    {
+        $this->timeout = max(0, (int)$seconds);
+        return $this;
+    }
+
     /**
      * @param string $whoisHost
      * @param string $query
@@ -20,9 +46,11 @@ class SocketLoader implements ILoader
         if (!gethostbynamel($whoisHost)) {
             throw new ConnectionException("Host is unreachable: $whoisHost");
         }
-        $handle = @fsockopen($whoisHost, 43);
+        $errno = null;
+        $errstr = null;
+        $handle = @fsockopen($whoisHost, 43, $errno, $errstr, $this->timeout);
         if (!$handle) {
-            throw new ConnectionException("Socket cannot be open on port 43");
+            throw new ConnectionException($errstr, $errno);
         }
         if (false === fwrite($handle, $query)) {
             throw new ConnectionException("Query cannot be written");
