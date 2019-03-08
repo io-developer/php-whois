@@ -11,11 +11,13 @@ PHP WHOIS client implementation. Sends the queries directly to the WHOIS service
  * Raw and parsed ASN routes lookup
  * Direct queries to TLD/ASN hosts
  * Extending and customizing the default hosts, parsers, etc.
+ * Proxying via CurlLoader
 
 ## Installation
 
 ##### System requirements:
-* PHP >= __5.4__ (compatible with __7.*__ up to __nightly__)
+* PHP >= __5.4__ (compatible with __7.*__ up to __7.3__)
+* php-curl
 * php-intl
 * php-mbstring
 * php-memcached + Memcached server (both optional)
