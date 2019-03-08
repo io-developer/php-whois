@@ -11,10 +11,14 @@ class CurlLoader implements ILoader
     public function __construct($timeout = 60)
     {
         $this->setTimeout($timeout);
+        $this->options = [];
     }
 
     /** @var int */
     private $timeout;
+
+    /** @var array */
+    private $options;
 
     /**
      * @return int
@@ -31,6 +35,34 @@ class CurlLoader implements ILoader
     public function setTimeout($seconds)
     {
         $this->timeout = max(0, (int)$seconds);
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $opts
+     * @return $this
+     */
+    public function setOptions(array $opts)
+    {
+        $this->options = $opts;
+        return $this;
+    }
+
+    /**
+     * @param array $opts
+     * @return $this
+     */
+    public function replaceOptions(array $opts)
+    {
+        $this->options = array_replace($this->options, $opts);
         return $this;
     }
 
@@ -57,13 +89,13 @@ class CurlLoader implements ILoader
         if (!$curl) {
             throw new ConnectionException('Curl not created');
         }
-        curl_setopt_array($curl, [
+        curl_setopt_array($curl, array_replace($this->options, [
             CURLOPT_TIMEOUT => $this->timeout,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PROTOCOLS => CURLPROTO_TELNET,
             CURLOPT_URL => "telnet://$whoisHost:43",
             CURLOPT_INFILE => $input,
-        ]);
+        ]));
 
         $result = curl_exec($curl);
         $errstr = curl_error($curl);
