@@ -99,6 +99,27 @@ try {
 }
 ```
 
+##### Proxy with SOCKS5:
+```php
+<?php
+
+use Iodev\Whois\Loaders\CurlLoader;
+use Iodev\Whois\Whois;
+
+$loader = new CurlLoader();
+$loader->replaceOptions([
+    CURLOPT_PROXYTYPE => CURLPROXY_SOCKS5,
+    CURLOPT_PROXY => "127.0.0.1:1080",
+    //CURLOPT_PROXYUSERPWD => "user:pass",
+]);
+$whois = Whois::create($loader);
+
+var_dump([
+    'ya.ru' => $whois->loadDomainInfo('ya.ru'),
+    'google.de' => $whois->loadDomainInfo('google.de'),
+]);
+```
+
 ##### TLD hosts customization:
 ```php
 <?php
