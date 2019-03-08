@@ -47,24 +47,24 @@ or composer.json:
 use Iodev\Whois\Whois;
 
 // Creating default configured client
-Whois::create();
+$whois = Whois::create();
 
 // Checking availability
-if (Whois::create()->isDomainAvailable("google.com")) {
+if ($whois->isDomainAvailable("google.com")) {
     print "Bingo! Domain is available! :)";
 }
 
 // Supports Unicode (converts to punycode)
-if (Whois::create()->isDomainAvailable("почта.рф")) {
+if ($whois->isDomainAvailable("почта.рф")) {
     print "Bingo! Domain is available! :)";
 }
 
 // Getting raw-text lookup
-$response = Whois::create()->lookupDomain("google.com");
+$response = $whois->lookupDomain("google.com");
 print $response->getText();
 
 // Getting parsed domain info
-$info = Whois::create()->loadDomainInfo("google.com");
+$info = $whois->loadDomainInfo("google.com");
 print_r([
     'Domain created' => date("Y-m-d", $info->getCreationDate()),
     'Domain expires' => date("Y-m-d", $info->getExpirationDate()),
@@ -83,7 +83,8 @@ use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Exceptions\WhoisException;
 
 try {
-    $info = Whois::create()->loadDomainInfo("google.com");
+    $whois = Whois::create();
+    $info = $whois->loadDomainInfo("google.com");
     if (!$info) {
         print "Null if domain available";
         exit;
@@ -167,12 +168,14 @@ foreach ($matchedServers as $s) {
 
 use Iodev\Whois\Whois;
 
+$whois = Whois::create();
+
 // Getting raw-text lookup
-$response = Whois::create()->lookupAsn("AS32934");
+$response = $whois->lookupAsn("AS32934");
 print $response->getText();
 
 // Getting parsed ASN info
-$info = Whois::create()->loadAsnInfo("AS32934");
+$info = $whois->loadAsnInfo("AS32934");
 foreach ($info->getRoutes() as $route) {
     print_r([
         'route IPv4' => $route->getRoute(),
@@ -197,6 +200,7 @@ $m->addServer('127.0.0.1', 11211);
 $loader = new MemcachedLoader(new SocketLoader(), $m);
 
 $whois = Whois::create($loader);
+// do something...
 ```
 
 ## Contributing
