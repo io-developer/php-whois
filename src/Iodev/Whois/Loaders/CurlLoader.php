@@ -78,7 +78,7 @@ class CurlLoader implements ILoader
         if (!gethostbynamel($whoisHost)) {
             throw new ConnectionException("Host is unreachable: $whoisHost");
         }
-        $input = fopen('php://memory','r+');
+        $input = fopen('php://temp','r+');
         if (!$input) {
             throw new ConnectionException('Query stream not created');
         }
