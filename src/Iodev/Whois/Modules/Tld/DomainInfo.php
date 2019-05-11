@@ -178,10 +178,10 @@ class DomainInfo
     {
         $weights = [
             'domainName' => 100,
-            'nameServers' => 10,
+            'nameServers' => 20,
             'creationDate' => 6,
             'expirationDate' => 6,
-            'states' => 5,
+            'states' => 4,
             'owner' => 4,
             'registrar' => 3,
             'whoisServer' => 2,
