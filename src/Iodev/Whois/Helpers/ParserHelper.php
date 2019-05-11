@@ -185,9 +185,10 @@ class ParserHelper
                 }
             }
             if (!empty($k)) {
-                $dict[$k] = is_array($v)
+                $v = is_array($v)
                     ? (count($v) > 1 ? $v : reset($v))
                     : $v;
+                $dict = array_merge_recursive($dict, [$k => $v]);
             } else {
                 $dict[] = $v;
             }
@@ -252,6 +253,10 @@ class ParserHelper
             if ($emptyBefore && preg_match('~^\w+(\s+\w+){0,2}$~', trim(rtrim($line, ':')))) {
                 $line = trim(rtrim($line, ':')) . ':';
             }
+            // .jp style
+            if (preg_match('~([a-z]\.)?\s*\[(.+?)\]\s+(.*)$~', $line, $m)) {
+                $line = sprintf('%s: %s', $m[2], $m[3]);
+            }
             $isHeader = preg_match('~^\w+(\s+\w+){0,2}:$~', $line);
             if ($isHeader) {
                 $outLines[] = '';
@@ -264,6 +269,25 @@ class ParserHelper
             $emptyBefore = empty($line);
             $kvBefore = preg_match('~^\w+(\s+\w+){0,2}:\s*\S+~', $line);
         }
-        return $outLines;
+        return self::removeEmptyIndents($outLines);
+    }
+
+    /**
+     * @param string[] $lines
+     * @return string[]
+     */
+    public static function removeEmptyIndents($lines)
+    {
+        $prevIndented = false;
+        $outLines = [];
+        foreach (array_reverse($lines) as $line) {
+            $isIndented = $line[0] === ' ' || $line[0] === '\t';
+            if (empty($line) && $prevIndented) {
+                continue;
+            }
+            $prevIndented = $isIndented;
+            $outLines[] = $line;
+        }
+        return array_reverse($outLines);
     }
 }

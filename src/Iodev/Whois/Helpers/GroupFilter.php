@@ -93,7 +93,7 @@ class GroupFilter
             foreach ($group as $k => &$v) {
                 if (is_array($v)) {
                     foreach ($v as &$subVal) {
-                        if (!empty($extraDict[(string)$subVal])) {
+                        if (is_string($subVal) && !empty($extraDict[(string)$subVal])) {
                             $subVal = null;
                         }
                     }
