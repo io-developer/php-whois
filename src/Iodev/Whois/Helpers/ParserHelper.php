@@ -282,14 +282,16 @@ class ParserHelper
     {
         $prevPad = 0;
         $outLines = [];
-        foreach (array_reverse($lines) as $line) {
-            $pad = empty($line) ? 0 : self::calcIndent($line, $biasIndentFn);
-            if (empty($line) && $prevPad == $pad) {
-                continue;
+        foreach ($lines as $index => $line) {
+            if (empty($line)) {
+                $nextLine = isset($lines[$index + 1]) ? $lines[$index + 1] : '';
+                if (!empty($nextLine) && $prevPad > 0 && $prevPad == self::calcIndent($nextLine, $biasIndentFn)) {
+                    continue;
+                }
             }
-            $prevPad = $pad;
+            $prevPad = empty($line) ? 0 : self::calcIndent($line, $biasIndentFn);
             $outLines[] = $line;
         }
-        return array_reverse($outLines);
+        return $outLines;
     }
 }
