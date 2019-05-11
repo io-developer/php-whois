@@ -83,6 +83,29 @@ class GroupFilter
     }
 
     /**
+     * Replaces special empty values by NULL
+     * @param array $extraDict
+     * @return $this
+     */
+    public function handleEmpty($extraDict = [])
+    {
+        foreach ($this->groups as $index => &$group) {
+            foreach ($group as $k => &$v) {
+                if (is_array($v)) {
+                    foreach ($v as &$subVal) {
+                        if (!empty($extraDict[(string)$subVal])) {
+                            $subVal = null;
+                        }
+                    }
+                } elseif (!empty($extraDict[(string)$v])) {
+                    $v = null;
+                }
+            }
+        }
+        return $this;
+    }
+
+    /**
      * @return GroupSelector
      */
     public function toSelector()

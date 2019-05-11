@@ -46,6 +46,12 @@ class CommonParser extends TldParser
     /** @var array */
     protected $notRegisteredStatesDict = [ "not registered" => 1 ];
 
+    /** @var string */
+    protected $emptyValuesDict = [
+        "" => 1,
+        "not.defined." => 1,
+    ];
+
     /**
      * @return string
      */
@@ -131,7 +137,8 @@ class CommonParser extends TldParser
         $groups = $this->groupsFromText($response->getText());
         $filter = GroupFilter::create($groups)
             ->useIgnoreCase(true)
-            ->useMatchFirstOnly(true);
+            ->useMatchFirstOnly(true)
+            ->handleEmpty($this->emptyValuesDict);
 
         if ($this->isFlat) {
             return $filter->mergeGroups();

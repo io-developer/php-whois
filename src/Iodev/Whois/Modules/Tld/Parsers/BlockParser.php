@@ -62,6 +62,7 @@ class BlockParser extends CommonParser
         $groups = $this->groupsFromText($response->getText());
         $rootFilter = GroupFilter::create($groups)
             ->useIgnoreCase(true)
+            ->handleEmpty($this->emptyValuesDict)
             ->setHeaderKey($this->headerKey)
             ->setDomainKeys($this->domainKeys)
             ->setSubsetParams([ '$domain' => $response->getDomain() ]);
