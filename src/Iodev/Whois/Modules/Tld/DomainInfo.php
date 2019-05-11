@@ -195,7 +195,7 @@ class DomainInfo
         }
         // Correct weight for bad NS
         foreach ($this->getval('nameServers', []) as $k => $v) {
-            if (!is_int($k) || !is_string($v) || !preg_match('~^([-\pL\d].)+[-\pL\d]S~ui', $v)) {
+            if (!is_int($k) || !is_string($v) || preg_match('~^([-\pL\d]\.)+[-\pL\d]$~ui', $v) === false) {
                 $sum -= 10;
             }
         }
