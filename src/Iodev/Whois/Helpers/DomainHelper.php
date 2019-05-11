@@ -61,10 +61,6 @@ class DomainHelper
         $domain = self::correct($domain);
         // Pick first part before space
         $domain = explode(" ", $domain)[0];
-        // Must contain dot if short
-        if (!strpos($domain, '.') && strlen($domain) < 10) {
-            return "";
-        }
         // All symbols must be valid
         if (preg_match('~[^-.\da-z]+~ui', $domain)) {
             return "";
