@@ -1,4 +1,6 @@
 [
+  {"zone": ".", "host": "whois.iana.org"},
+
   {"zone": ".abogado", "host": "whois.nic.abogado"},
   {"zone": ".ac", "host": "whois.nic.ac"},
   {"zone": ".academy", "host": "whois.donuts.co"},
@@ -567,6 +569,7 @@
   {"zone": ".ru", "host": "whois.nic.ru"},
   {"zone": ".ru", "host": "whois.ripn.net"},
   {"zone": ".ruhr", "host": "whois.nic.ruhr"},
+  {"zone": ".run", "host": "whois.nic.run"},
   {"zone": ".rw", "host": "whois.ricta.org.rw"},
   {"zone": ".sa", "host": "saudinic.net.sa"},
   {"zone": ".sa", "host": "whois.nic.net.sa"},
