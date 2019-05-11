@@ -70,7 +70,8 @@ class IndentParser extends BlockParser
     public static function biasIndent($line)
     {
         $trimmed = rtrim($line);
-        return ($trimmed[strlen($trimmed) - 1] == ':') ? -1 : 0;
+        $len = strlen($trimmed);
+        return ($len > 0 && $trimmed[$len - 1] == ':') ? -1 : 0;
     }
 
     /**
@@ -81,7 +82,10 @@ class IndentParser extends BlockParser
     {
         $groups = [];
         $lines = ParserHelper::splitLines($text);
-        $lines = $this->isAutofix ? ParserHelper::autofixTldLines($lines) : $lines;
+        if ($this->isAutofix) {
+            $lines = ParserHelper::autofixTldLines($lines);
+            $lines = ParserHelper::removeInnerEmpties($lines, [__CLASS__, 'biasIndent']);
+        }
         $lines = array_filter($lines, [__CLASS__, 'validateLine']);
         $blocks = ParserHelper::linesToSpacedBlocks($lines, [__CLASS__, 'validateStopline']);
         //$blocks = array_filter($blocks, [__CLASS__, 'validateBlock']);
@@ -107,6 +111,7 @@ class IndentParser extends BlockParser
             ->selectItems(parent::parseStates($rootFilter, $primaryFilter))
             ->selectKeys($this->statesKeys)
             ->mapStates()
+            ->removeEmpty()
             ->removeDuplicates()
             ->getAll();
     }

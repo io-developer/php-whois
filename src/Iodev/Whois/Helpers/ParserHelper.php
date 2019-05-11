@@ -269,23 +269,25 @@ class ParserHelper
             $emptyBefore = empty($line);
             $kvBefore = preg_match('~^\w+(\s+\w+){0,2}:\s*\S+~', $line);
         }
-        return self::removeEmptyIndents($outLines);
+        return $outLines;
     }
 
     /**
+     * Removes unnecessary empty lines inside block
      * @param string[] $lines
+     * @param callable|null $biasIndentFn
      * @return string[]
      */
-    public static function removeEmptyIndents($lines)
+    public static function removeInnerEmpties($lines, $biasIndentFn = null)
     {
-        $prevIndented = false;
+        $prevPad = 0;
         $outLines = [];
         foreach (array_reverse($lines) as $line) {
-            $isIndented = $line[0] === ' ' || $line[0] === '\t';
-            if (empty($line) && $prevIndented) {
+            $pad = empty($line) ? 0 : self::calcIndent($line, $biasIndentFn);
+            if (empty($line) && $prevPad == $pad) {
                 continue;
             }
-            $prevIndented = $isIndented;
+            $prevPad = $pad;
             $outLines[] = $line;
         }
         return array_reverse($outLines);

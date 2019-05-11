@@ -117,10 +117,26 @@ class GroupSelector
     /**
      * @return $this
      */
+    public function mapDomain()
+    {
+        foreach ($this->items as &$item) {
+            $item = DomainHelper::filterAscii(DomainHelper::toAscii(is_string($item) ? $item : ''));
+        }
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function mapAsciiServer()
     {
         foreach ($this->items as &$item) {
-            $item = DomainHelper::filterAscii(DomainHelper::toAscii($item));
+            $item = DomainHelper::filterAscii(DomainHelper::toAscii(is_string($item) ? $item : ''));
+            if ($item && !preg_match('~^([-\pL\d]+\.)+[-\pL\d]+$~ui', $item)) {
+                if (!preg_match('~^[a-z\d]+-norid$~ui', $item)) {
+                    $item = '';
+                }
+            }
         }
         return $this;
     }
@@ -142,7 +158,11 @@ class GroupSelector
     {
         $states = [];
         foreach ($this->items as $item) {
-            $states = array_merge($states, ParserHelper::parseStates($item, $removeExtra));
+            foreach (ParserHelper::parseStates($item, $removeExtra) as $k => $state) {
+                if (is_int($k) && is_string($state)) {
+                    $states[] = $state;
+                }
+            }
         }
         $this->items = $states;
         return $this;

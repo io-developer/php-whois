@@ -97,7 +97,7 @@ class BlockParser extends CommonParser
     {
         $domain = $domainFilter->toSelector()
             ->selectKeys($this->domainKeys)
-            ->mapAsciiServer()
+            ->mapDomain()
             ->removeEmpty()
             ->getFirst('');
 
@@ -108,7 +108,7 @@ class BlockParser extends CommonParser
             ->filterHasHeader()
             ->toSelector()
             ->selectKeys([ 'name' ])
-            ->mapAsciiServer()
+            ->mapDomain()
             ->removeEmpty()
             ->getFirst('');
     }
@@ -123,6 +123,7 @@ class BlockParser extends CommonParser
         $states = $primaryFilter->toSelector()
             ->selectKeys($this->statesKeys)
             ->mapStates()
+            ->removeEmpty()
             ->removeDuplicates()
             ->getAll();
 
@@ -135,6 +136,7 @@ class BlockParser extends CommonParser
             ->toSelector()
             ->selectKeys($this->statesKeys)
             ->mapStates()
+            ->removeEmpty()
             ->removeDuplicates()
             ->getAll();
     }

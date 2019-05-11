@@ -193,18 +193,6 @@ class DomainInfo
                 $sum += is_array($v) ? $w * count($v) : $w;
             }
         }
-        // Correct weight for bad NS
-        foreach ($this->getval('nameServers', []) as $k => $v) {
-            if (!is_int($k) || !is_string($v) || preg_match('~^([-\pL\d]\.)+[-\pL\d]$~ui', $v) === false) {
-                $sum -= 10;
-            }
-        }
-        // Correct weight for bad states
-        foreach ($this->getval('states', []) as $k => $v) {
-            if (!is_int($k) || !is_string($v) || count(explode(' ', $v)) > 2) {
-                $sum -= 5;
-            }
-        }
         return $sum;
     }
 }

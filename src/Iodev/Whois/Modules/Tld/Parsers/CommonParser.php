@@ -82,7 +82,7 @@ class CommonParser extends TldParser
         $data = [
             "domainName" => $sel->clean()
                 ->selectKeys($this->domainKeys)
-                ->mapAsciiServer()
+                ->mapDomain()
                 ->removeEmpty()
                 ->getFirst(''),
 
@@ -121,6 +121,7 @@ class CommonParser extends TldParser
             "states" => $sel->clean()
                 ->selectKeys($this->statesKeys)
                 ->mapStates()
+                ->removeEmpty()
                 ->removeDuplicates()
                 ->getAll(),
         ];
