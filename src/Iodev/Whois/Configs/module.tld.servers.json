@@ -652,7 +652,7 @@
   {"zone": ".tl", "host": "whois.domains.tl"},
   {"zone": ".tl", "host": "whois.nic.tl"},
   {"zone": ".tm", "host": "whois.nic.tm", "parserType": "commonFlat"},
-  {"zone": ".tn", "host": "whois.ati.tn", "parserType": "block"},
+  {"zone": ".tn", "host": "whois.ati.tn"},
   {"zone": ".to", "host": "monarch.tonic.to"},
   {"zone": ".to", "host": "whois.tonic.to"},
   {"zone": ".today", "host": "whois.donuts.co"},

@@ -1142,6 +1142,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
     {
         self::assertDataItems([
             [ "free.tn", ".tn/free.txt", null ],
+            [ "ati.tn", ".tn/ati.tn.txt", ".tn/ati.tn.json" ],
             [ "google.com.tn", ".tn/google.com.tn.txt", ".tn/google.com.tn.json" ],
         ]);
     }
