@@ -30,11 +30,9 @@ class ParserHelper
             $line = ltrim(rtrim($line, "%#*=$trimChars"), "%#*=;$trimChars");
             $headerLine = trim($line, ':[]');
             $headerLines[] = $headerLine;
-            $kv = $isComment ? [] : explode(':', $line, 2);
+            $kv = $isComment ? [] : self::lineToKeyVal($line, ":$trimChars");
             if (count($kv) == 2) {
-                $k = trim($kv[0], ".:$trimChars");
-                $v = trim($kv[1], ":$trimChars");
-                $group = array_merge_recursive($group, [$k => ltrim($v, ".")]);
+                $group = array_merge_recursive($group, [$kv[0] => ltrim($kv[1], ".")]);
                 continue;
             }
             if (empty($group[$header]) && count($group) > 0) {
@@ -47,6 +45,25 @@ class ParserHelper
             }
         }
         return $groups;
+    }
+
+    /**
+     * @param string $line
+     * @param string $trimChars
+     * @return string[]
+     */
+    public static function lineToKeyVal($line, $trimChars = " \t\n\r\0\x0B")
+    {
+        $kv = explode(':', $line, 2);
+        if (count($kv) > 0) {
+            $kv[0] = trim($kv[0], $trimChars);
+            $kv[0] = preg_replace('~^\.{2,}~u', '', $kv[0]);
+            $kv[0] = preg_replace('~\.{2,}$~u', '', $kv[0]);
+        }
+        if (count($kv) > 1) {
+            $kv[1] = trim($kv[1], $trimChars);
+        }
+        return $kv;
     }
 
     /**
@@ -161,10 +178,9 @@ class ParserHelper
             $node = is_array($node) ? $node : ['line' => $node, 'children' => []];
             $k = '';
             $v = '';
-            $kv = explode(':', $node['line'], 2);
+            $kv = self::lineToKeyVal($node['line']);
             if (count($kv) == 2) {
-                $k = trim($kv[0]);
-                $v = trim($kv[1]);
+                list ($k, $v) = $kv;
                 if (empty($v)) {
                     $v = self::nodesToDict($node['children']);
                 } elseif (strlen($k) <= $maxKeyLength) {

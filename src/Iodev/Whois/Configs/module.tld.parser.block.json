@@ -185,9 +185,12 @@
   ],
   "ownerSubsets": [
     {"__HEADER__": "Registrant"},
+    {"__HEADER__": "Owner Contact"},
     {"__HEADER__": "Tech-C", "Organisation": ""},
     {"__HEADER__": "holder"},
     {"__HEADER__": "Organization Using Domain Name"},
+    {"__HEADER__": "Administrativ contact"},
+    {"__HEADER__": "Technical contact"},
     {"__HEADER__": "TITULAR", "Organizacion": ""},
     {"Contact": "Registrant", "Organization": ""}
   ],
