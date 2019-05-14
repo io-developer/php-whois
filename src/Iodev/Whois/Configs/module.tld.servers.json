@@ -1,5 +1,5 @@
 [
-  {"zone": ".", "host": "whois.iana.org"},
+  {"zone": ".", "host": "whois.iana.org", "centralized": true},
 
   {"zone": ".abogado", "host": "whois.nic.abogado"},
   {"zone": ".ac", "host": "whois.nic.ac"},
