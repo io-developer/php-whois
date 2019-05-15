@@ -10,6 +10,12 @@ use Iodev\Whois\Modules\Tld\TldParser;
 class BlockParser extends CommonParser
 {
     /** @var array */
+    protected $reservedDomainKeys = [ "Reserved name" ];
+
+    /** @var array */
+    protected $reservedDomainSubsets = [];
+
+    /** @var array */
     protected $domainSubsets = [];
 
     /** @var array */
@@ -67,6 +73,14 @@ class BlockParser extends CommonParser
             ->setDomainKeys($this->domainKeys)
             ->setSubsetParams([ '$domain' => $response->getDomain() ]);
 
+        $reserved = $rootFilter->cloneMe()
+            ->filterHasSubsetOf($this->reservedDomainSubsets)
+            ->toSelector()
+            ->selectKeys($this->reservedDomainKeys)
+            ->getFirst();
+
+        $isReserved = !empty($reserved);
+
         $domainFilter = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
             ->filterHasSubsetOf($this->domainSubsets);
@@ -77,16 +91,17 @@ class BlockParser extends CommonParser
             ->useFirstGroupOr($domainFilter->getFirstGroup());
 
         $info = new DomainInfo($response, [
-            "domainName" => $this->parseDomain($domainFilter),
+            "domainName" => $this->parseDomain($domainFilter) ?: ($isReserved ? $response->getDomain() : ''),
             "states" => $this->parseStates($rootFilter, $primaryFilter),
             "nameServers" => $this->parseNameServers($rootFilter, $primaryFilter),
-            "owner" => $this->parseOwner($rootFilter, $primaryFilter),
+            "owner" => $this->parseOwner($rootFilter, $primaryFilter) ?: ($isReserved ? $reserved : ''),
             "registrar" => $this->parseRegistrar($rootFilter, $primaryFilter),
             "creationDate" => $this->parseCreationDate($rootFilter, $primaryFilter),
             "expirationDate" => $this->parseExpirationDate($rootFilter, $primaryFilter),
             "whoisServer" => $this->parseWhoisServer($rootFilter, $primaryFilter),
         ], $this->getType());
-        return $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
+
+        return $isReserved || $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
     }
 
     /**

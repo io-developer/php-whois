@@ -1,5 +1,8 @@
 {
   "headerKey": "__HEADER__",
+  "reservedDomainKeys": [
+    "reserved name"
+  ],
   "domainKeys": [
     "domain",
     "domainname",
@@ -23,6 +26,7 @@
     "name server",
     "name server (db)",
     "name servers",
+    "DNS servers",
     "nserver",
     "name server handle",
     "Domain servers in listed order",
@@ -147,6 +151,9 @@
     "510 domain is not managed by this register": 1,
     "440 request denied": 1
   },
+  "reservedDomainSubsets": [
+    {"reserved name": ""}
+  ],
   "domainSubsets": [
     {"__HEADER__": "domain", "name": "$domain"},
     {"__HEADER__": "Domain Information"},
