@@ -86,11 +86,11 @@ class GroupHelper
                     $matches[] = $group[$k];
                 }
             }
-            if ($firstOnly && count($matches)) {
+            if ($firstOnly && count($matches) > 0) {
                 return $matches;
             }
         }
-        return [];
+        return $matches;
     }
 
     /**
