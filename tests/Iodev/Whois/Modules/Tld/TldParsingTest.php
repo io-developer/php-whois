@@ -139,7 +139,8 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
 
             // .AM
             [ "free.am", ".am/free.txt", null ],
-            // [ "google.am", ".am/google.am.txt", ".am/google.am.json" ],
+            [ "google.am", ".am/google.am.txt", ".am/google.am.json" ],
+            [ "google.com.am", ".am/google.com.am.txt", ".am/google.com.am.json" ],
 
             // .AO
             [ "free.ao", ".ao/free.txt", null ],
