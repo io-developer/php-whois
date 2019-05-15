@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
+use Iodev\Whois\Helpers\DateHelper;
 use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Modules\Tld\DomainInfo;
 use Iodev\Whois\Modules\Tld\DomainResponse;
@@ -100,6 +101,12 @@ class BlockParser extends CommonParser
             "expirationDate" => $this->parseExpirationDate($rootFilter, $primaryFilter),
             "whoisServer" => $this->parseWhoisServer($rootFilter, $primaryFilter),
         ], $this->getType());
+
+        if ($response->getDomain() == 'google.as') {
+            var_dump([
+                '$groups' => $groups,
+            ]);
+        }
 
         return $isReserved || $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
     }
@@ -298,21 +305,38 @@ class BlockParser extends CommonParser
      */
     protected function parseCreationDate(GroupFilter $rootFilter, GroupFilter $primaryFilter)
     {
-        $creationDate = $primaryFilter->toSelector()
+        $time = $primaryFilter->toSelector()
             ->selectKeys($this->creationDateKeys)
             ->mapUnixTime()
             ->getFirst(0);
 
-        if (!empty($creationDate)) {
-            return $creationDate;
+        if (!empty($time)) {
+            return $time;
         }
-        return $rootFilter->cloneMe()
+
+        $sel = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
             ->filterHasSubsetKeyOf($this->creationDateKeys)
             ->toSelector()
-            ->selectKeys($this->creationDateKeys)
+            ->selectKeys($this->creationDateKeys);
+
+        $time = $sel->cloneMe()
             ->mapUnixTime()
             ->getFirst(0);
+
+        if (!empty($time)) {
+            return $time;
+        }
+
+        foreach ($sel->getAll() as $str) {
+            if (preg_match('~registered\s+on\b~ui', $str)) {
+                $time = DateHelper::parseDateInText($str);
+                if (!empty($time)) {
+                    return $time;
+                }
+            }
+        }
+        return 0;
     }
 
     /**
@@ -322,21 +346,38 @@ class BlockParser extends CommonParser
      */
     protected function parseExpirationDate(GroupFilter $rootFilter, GroupFilter $primaryFilter)
     {
-        $expirationDate = $primaryFilter->toSelector()
+        $time = $primaryFilter->toSelector()
             ->selectKeys($this->expirationDateKeys)
             ->mapUnixTime()
             ->getFirst();
 
-        if (!empty($expirationDate)) {
-            return $expirationDate;
+        if (!empty($time)) {
+            return $time;
         }
-        return $rootFilter->cloneMe()
+
+        $sel = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
             ->filterHasSubsetKeyOf($this->expirationDateKeys)
             ->toSelector()
-            ->selectKeys($this->expirationDateKeys)
+            ->selectKeys($this->expirationDateKeys);
+
+        $time = $sel->cloneMe()
             ->mapUnixTime()
-            ->getFirst();
+            ->getFirst(0);
+
+        if (!empty($time)) {
+            return $time;
+        }
+
+        foreach ($sel->getAll() as $str) {
+            if (preg_match('~registry\s+fee\s+due\s+on\b~ui', $str)) {
+                $time = DateHelper::parseDateInText($str);
+                if (!empty($time)) {
+                    return $time;
+                }
+            }
+        }
+        return 0;
     }
 
     /**

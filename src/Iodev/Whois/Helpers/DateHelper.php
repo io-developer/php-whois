@@ -40,6 +40,22 @@ class DateHelper
     }
 
     /**
+     * @param string $text
+     * @return int
+     */
+    public static function parseDateInText($text)
+    {
+        if (preg_match('~\b(\d{1,2})(nd|th|st)?[-\s]+([a-z]+)[-\s]+(\d{4})\b~ui', $text, $m)) {
+            return strtotime("{$m[1]} {$m[3]} {$m[4]} 00:00");
+        }
+        if (preg_match('~\b(\d{1,2})(nd|th|st)?[-\s]+([a-z]+)\b~ui', $text, $m)) {
+            $y = date('Y');
+            return strtotime("{$m[1]} {$m[3]} $y 00:00");
+        }
+        return 0;
+    }
+
+    /**
      * @param $mon
      * @return string
      */

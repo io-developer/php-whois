@@ -58,7 +58,8 @@
     "registered date",
     "record created",
     "activation",
-    "Fecha de registro"
+    "Fecha de registro",
+    "Relevant dates"
   ],
   "expirationDateKeys": [
     "expirationdate",
@@ -78,7 +79,8 @@
     "renewal",
     "valid until",
     "validity",
-    "Fecha de vencimiento"
+    "Fecha de vencimiento",
+    "Relevant dates"
   ],
   "ownerKeys": [
     "owner orgname",
