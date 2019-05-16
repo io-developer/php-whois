@@ -259,7 +259,7 @@ class ParserHelper
         $kvBefore = false;
         $needIndent = false;
         $outLines = [];
-        foreach ($lines as $line) {
+        foreach ($lines as $i => $line) {
             if ($emptyBefore && preg_match('~^\w+(\s+\w+){0,2}$~', trim(rtrim($line, ':')))) {
                 $line = trim(rtrim($line, ':')) . ':';
             }
@@ -273,8 +273,16 @@ class ParserHelper
             }
             $needIndent = $needIndent || $isHeader;
             if (!empty($line) || !$kvBefore) {
-                $indent = ($needIndent && !$isHeader && !empty($line)) ? '    ' : '';
-                $outLines[] = $indent . $line;
+                if ($needIndent && !$isHeader && !empty($line)) {
+                    $indent = '    ';
+                    $nextLinePad = empty($lines[$i + 1]) || strlen(trim($lines[$i + 1])) == 0 ? 0 : self::calcIndent($lines[$i + 1]);
+                    if ($nextLinePad <= 2 && self::calcIndent($lines[$i]) == 0) {
+                        $indent .= str_repeat(' ', $nextLinePad);
+                    }
+                    $outLines[] = $indent . $line;
+                } else {
+                    $outLines[] = $line;
+                }
             }
             $emptyBefore = empty($line);
             $kvBefore = preg_match('~^\w+(\s+\w+){0,2}:\s*\S+~', $line);

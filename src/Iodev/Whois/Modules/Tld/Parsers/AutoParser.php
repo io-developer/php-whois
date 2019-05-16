@@ -14,8 +14,8 @@ class AutoParser extends TldParser
             TldParser::create(TldParser::COMMON),
             TldParser::create(TldParser::COMMON_FLAT),
             TldParser::create(TldParser::BLOCK),
-            TldParser::create(TldParser::INDENT),
             TldParser::create(TldParser::INDENT_AUTOFIX),
+            TldParser::create(TldParser::INDENT),
         ];
     }
 
@@ -45,18 +45,19 @@ class AutoParser extends TldParser
      */
     public function parseResponse(DomainResponse $response)
     {
-        $items = [];
+        $bestInfo = null;
+        $bestVal = 0;
         foreach ($this->parsers as $parser) {
             $info = $parser->parseResponse($response);
-            if ($info) {
-                $items[] = $info;
+            if (!$info) {
+                continue;
+            }
+            $val = $info->calcValuation();
+            if ($val > $bestVal) {
+                $bestVal = $val;
+                $bestInfo = $info;
             }
         }
-        if (count($items) > 1) {
-            usort($items, function(DomainInfo $a, DomainInfo $b) {
-                return $b->calcValuation() - $a->calcValuation();
-            });
-        }
-        return empty($items) ? null : reset($items);
+        return $bestInfo;
     }
 }
