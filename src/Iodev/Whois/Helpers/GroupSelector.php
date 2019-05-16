@@ -120,7 +120,11 @@ class GroupSelector
     public function mapDomain()
     {
         foreach ($this->items as &$item) {
-            $item = DomainHelper::filterAscii(DomainHelper::toAscii(is_string($item) ? $item : ''));
+            if ($item && preg_match('~([-\pL\d]+\.)+[-\pL\d]+~ui', $item, $m)) {
+                $item = DomainHelper::filterAscii(DomainHelper::toAscii($m[0]));
+            } else {
+                $item = '';
+            }
         }
         return $this;
     }
