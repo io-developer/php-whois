@@ -224,6 +224,7 @@
     {"__HEADER__": "Billing Contact"},
     {"__HEADER__": "CONTACTO FINANCIERO", "Organizacion": ""},
     {"__HEADER__": "Details", "Registrar": ""},
+    {"registrar": ""},
     {"Contact": "Billing", "Organization": ""},
     {"current registrar": ""},
     {"current registar": ""},

@@ -54,16 +54,10 @@ class ParserHelper
      */
     public static function lineToKeyVal($line, $trimChars = " \t\n\r\0\x0B")
     {
-        $kv = explode(':', $line, 2);
-        if (count($kv) > 0) {
-            $kv[0] = trim($kv[0], $trimChars);
-            $kv[0] = preg_replace('~^\.{2,}~u', '', $kv[0]);
-            $kv[0] = preg_replace('~\.{2,}$~u', '', $kv[0]);
+        if (preg_match('~^\s*(\.{2,})?\s*(.+?)\s*(\.{2,})?\s*:(?![\\/:])(?<!::)(.*)$~ui', $line, $m)) {
+            return [trim($m[2], $trimChars), trim($m[4], $trimChars)];
         }
-        if (count($kv) > 1) {
-            $kv[1] = trim($kv[1], $trimChars);
-        }
-        return $kv;
+        return [trim($line, $trimChars)];
     }
 
     /**
