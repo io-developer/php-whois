@@ -139,9 +139,10 @@ class GroupHelper
     public static function renderSubsets($subsets, $params)
     {
         array_walk_recursive($subsets, function(&$val) use ($params) {
-            if (isset($params[$val])) {
-                $val = $params[$val];
-            }
+            $val = preg_replace_callback('~\\$[a-z\d]+~ui', function($m) use ($params) {
+                $arg = $m[0];
+                return isset($params[$arg]) ? $params[$arg] : $arg;
+            }, $val);
         });
         return $subsets;
     }
