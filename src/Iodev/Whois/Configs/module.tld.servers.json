@@ -337,7 +337,7 @@
   {"zone": ".immo", "host": "whois.donuts.co"},
   {"zone": ".immobilien", "host": "whois.unitedtld.com"},
   {"zone": ".in", "host": "whois.registry.in"},
-  {"zone": ".in", "host": "whois.registry.in"},
+  {"zone": ".in", "host": "whois.neustar.in"},
   {"zone": ".industries", "host": "whois.donuts.co"},
   {"zone": ".infiniti", "host": "whois.nic.gmo"},
   {"zone": ".info", "host": "whois.afilias.info"},
