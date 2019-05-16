@@ -94,6 +94,7 @@ class IndentParser extends BlockParser
             $dict = ParserHelper::nodesToDict($nodes);
             $groups[] = ParserHelper::dictToGroup($dict, $this->headerKey);
         }
+        $groups = ParserHelper::joinParentlessGroups($groups);
         return $groups;
     }
 

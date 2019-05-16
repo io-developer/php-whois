@@ -229,6 +229,26 @@ class ParserHelper
     }
 
     /**
+     * @param array $groups
+     * @return array
+     */
+    public static function joinParentlessGroups($groups) {
+        $lastGroup = null;
+        foreach ($groups as &$group) {
+            if (count($group) == 1 && is_string(key($group)) && reset($group) === false) {
+                $lastGroup = &$group;
+                unset($group);
+            } elseif (isset($lastGroup) && count($group) > 0 && is_string(key($group)) && reset($group)) {
+                $lastGroup[key($lastGroup)] = $group;
+                unset($lastGroup);
+            }
+        }
+        unset($lastGroup);
+        unset($group);
+        return $groups;
+    }
+
+    /**
      * @param string[]|string $rawstates
      * @param bool $removeExtra
      * @return string[]
