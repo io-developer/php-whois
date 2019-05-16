@@ -165,7 +165,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
 
             // .BG
             [ "free.bg", ".bg/free.txt", null ],
-            // [ "google.bg", ".bg/google.bg.txt", ".bg/google.bg.json" ],
+            [ "google.bg", ".bg/google.bg.txt", ".bg/google.bg.json" ],
 
             // .BI
             [ "free.bi", ".bi/free.txt", null ],
