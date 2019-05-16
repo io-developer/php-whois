@@ -102,12 +102,6 @@ class BlockParser extends CommonParser
             "whoisServer" => $this->parseWhoisServer($rootFilter, $primaryFilter),
         ], $this->getType());
 
-        if ($response->getDomain() == 'google.as') {
-            var_dump([
-                '$groups' => $groups,
-            ]);
-        }
-
         return $isReserved || $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
     }
 
