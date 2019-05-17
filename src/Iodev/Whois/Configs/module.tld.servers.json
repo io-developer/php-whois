@@ -253,7 +253,7 @@
   {"zone": ".football", "host": "whois.donuts.co"},
   {"zone": ".forsale", "host": "whois.unitedtld.com"},
   {"zone": ".foundation", "host": "whois.donuts.co"},
-  {"zone": ".fr", "host": "whois.nic.fr", "parserType": "block"},
+  {"zone": ".fr", "host": "whois.nic.fr", "parserType": "block", "parserOptions": {"inversedDateMMDD": true} },
   {"zone": ".frl", "host": "whois.nic.frl"},
   {"zone": ".frogans", "host": "whois-frogans.nic.fr"},
   {"zone": ".fun", "host": "whois.nic.fun"},

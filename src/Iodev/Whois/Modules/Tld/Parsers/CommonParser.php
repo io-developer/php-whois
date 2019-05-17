@@ -102,12 +102,12 @@ class CommonParser extends TldParser
 
             "creationDate" => $sel->clean()
                 ->selectKeys($this->creationDateKeys)
-                ->mapUnixTime()
+                ->mapUnixTime($this->getOption('inversedDateMMDD', false))
                 ->getFirst(''),
 
             "expirationDate" => $sel->clean()
                 ->selectKeys($this->expirationDateKeys)
-                ->mapUnixTime()
+                ->mapUnixTime($this->getOption('inversedDateMMDD', false))
                 ->getFirst(''),
 
             "owner" => $sel->clean()

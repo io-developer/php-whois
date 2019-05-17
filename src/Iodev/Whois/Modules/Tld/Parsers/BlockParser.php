@@ -301,7 +301,7 @@ class BlockParser extends CommonParser
     {
         $time = $primaryFilter->toSelector()
             ->selectKeys($this->creationDateKeys)
-            ->mapUnixTime()
+            ->mapUnixTime($this->getOption('inversedDateMMDD', false))
             ->getFirst(0);
 
         if (!empty($time)) {
@@ -315,7 +315,7 @@ class BlockParser extends CommonParser
             ->selectKeys($this->creationDateKeys);
 
         $time = $sel->cloneMe()
-            ->mapUnixTime()
+            ->mapUnixTime($this->getOption('inversedDateMMDD', false))
             ->getFirst(0);
 
         if (!empty($time)) {
@@ -342,7 +342,7 @@ class BlockParser extends CommonParser
     {
         $time = $primaryFilter->toSelector()
             ->selectKeys($this->expirationDateKeys)
-            ->mapUnixTime()
+            ->mapUnixTime($this->getOption('inversedDateMMDD', false))
             ->getFirst();
 
         if (!empty($time)) {
@@ -356,7 +356,7 @@ class BlockParser extends CommonParser
             ->selectKeys($this->expirationDateKeys);
 
         $time = $sel->cloneMe()
-            ->mapUnixTime()
+            ->mapUnixTime($this->getOption('inversedDateMMDD', false))
             ->getFirst(0);
 
         if (!empty($time)) {

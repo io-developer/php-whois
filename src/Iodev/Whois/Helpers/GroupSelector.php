@@ -146,11 +146,14 @@ class GroupSelector
     }
 
     /**
+     * @param bool $inverseMMDD
      * @return $this
      */
-    public function mapUnixTime()
+    public function mapUnixTime($inverseMMDD = false)
     {
-        $this->items = array_map('\Iodev\Whois\Helpers\DateHelper::parseDate', $this->items);
+        $this->items = array_map(function($item) use ($inverseMMDD) {
+            return DateHelper::parseDate($item, $inverseMMDD);
+        }, $this->items);
         return $this;
     }
 
