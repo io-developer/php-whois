@@ -65,6 +65,39 @@ abstract class TldParser
     }
 
     /**
+     * @var array
+     */
+    protected $options = [];
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $def
+     * @return mixed
+     */
+    public function getOption($key, $def = null)
+    {
+        return array_key_exists($key, $this->options) ? $this->options[$key] : $def;
+    }
+
+    /**
+     * @param array $options
+     * @return $this
+     */
+    public function setOptions($options)
+    {
+        $this->options = is_array($options) ? $options : [];
+        return $this;
+    }
+
+    /**
      * @return string
      */
     abstract public function getType();

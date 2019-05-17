@@ -20,18 +20,25 @@ class TldServer
      */
     public static function fromData($data, TldParser $defaultParser = null)
     {
+        $opts = isset($data['parserOptions']) ? $data['parserOptions'] : [];
+
         /* @var $parser TldParser */
         $parser = $defaultParser;
         if (isset($data['parserClass'])) {
-            $parser = TldParser::createByClass($data['parserClass'], isset($data['parserType']) ? $data['parserType'] : null);
+            $parser = TldParser::createByClass(
+                $data['parserClass'],
+                isset($data['parserType']) ? $data['parserType'] : null
+            )->setOptions($opts);
         } elseif (isset($data['parserType'])) {
-            $parser = TldParser::create($data['parserType']);
+            $parser = TldParser::create($data['parserType'])->setOptions($opts);
         }
+        $parser = $parser ?: TldParser::create()->setOptions($opts);
+
         return new TldServer(
             isset($data['zone']) ? $data['zone'] : '',
             isset($data['host']) ? $data['host'] : '',
             !empty($data['centralized']),
-            $parser ? $parser : TldParser::create(),
+            $parser,
             isset($data['queryFormat']) ? $data['queryFormat'] : null
         );
     }
@@ -52,12 +59,12 @@ class TldServer
     }
 
     /**
-     * @param string $zone  Must starts from '.'
+     * @param string $zone Must starts from '.'
      * @param string $host
      * @param bool $centralized
      * @param TldParser $parser
      * @param string $queryFormat
-     * @throws InvalidArgumentException
+     * @param bool $inversedDateMMDD
      */
     public function __construct($zone, $host, $centralized, TldParser $parser, $queryFormat = null)
     {

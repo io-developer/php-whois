@@ -48,7 +48,7 @@ class AutoParser extends TldParser
         $bestInfo = null;
         $bestVal = 0;
         foreach ($this->parsers as $parser) {
-            $info = $parser->parseResponse($response);
+            $info = $parser->setOptions($this->options)->parseResponse($response);
             if (!$info) {
                 continue;
             }
