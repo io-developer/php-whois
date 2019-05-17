@@ -52,6 +52,10 @@ class BlockParser extends CommonParser
     /** @var array */
     protected $registrarGroupKeys = [];
 
+
+    /** @var string */
+    protected $matchedDomain = '';
+
     /**
      * @return string
      */
@@ -101,7 +105,6 @@ class BlockParser extends CommonParser
             "expirationDate" => $this->parseExpirationDate($rootFilter, $primaryFilter),
             "whoisServer" => $this->parseWhoisServer($rootFilter, $primaryFilter),
         ], $this->getType());
-
         return $isReserved || $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
     }
 
@@ -111,22 +114,25 @@ class BlockParser extends CommonParser
      */
     protected function parseDomain(GroupFilter $domainFilter)
     {
-        $domain = $domainFilter->toSelector()
+        $sel = $domainFilter
+            ->toSelector()
             ->selectKeys($this->domainKeys)
-            ->mapDomain()
-            ->removeEmpty()
-            ->getFirst('');
+            ->removeEmpty();
+        $this->matchedDomain = $sel->getFirst('');
 
+        $domain = $sel->mapDomain()->removeEmpty()->getFirst('');
         if (!empty($domain)) {
             return $domain;
         }
-        return $domainFilter->cloneMe()
+
+        $sel = $domainFilter->cloneMe()
             ->filterHasHeader()
             ->toSelector()
             ->selectKeys([ 'name' ])
-            ->mapDomain()
-            ->removeEmpty()
-            ->getFirst('');
+            ->removeEmpty();
+        $this->matchedDomain = $sel->getFirst('');
+
+        return $sel->mapDomain()->removeEmpty()->getFirst('');
     }
 
     /**
@@ -146,10 +152,16 @@ class BlockParser extends CommonParser
         if (!empty($states)) {
             return $states;
         }
+
+        $extraStates = [];
+        if ($this->matchedDomain && preg_match('~is\s+(.+)$~', $this->matchedDomain, $m)) {
+            $extraStates = [ $m[1] ];
+        }
         return $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
             ->filterHasSubsetOf($this->statesSubsets)
             ->toSelector()
+            ->selectItems($extraStates)
             ->selectKeys($this->statesKeys)
             ->mapStates()
             ->removeEmpty()
