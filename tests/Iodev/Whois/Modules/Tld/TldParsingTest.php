@@ -177,7 +177,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
 
             // .BN
             [ "free.bn", ".bn/free.txt", null ],
-            // [ "google.com.bn", ".bn/google.com.bn.txt", ".bn/google.com.bn.json" ],
+            [ "google.com.bn", ".bn/google.com.bn.txt", ".bn/google.com.bn.json" ],
 
             // .BO
             [ "free.bo", ".bo/free.txt", null ],
@@ -210,7 +210,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
 
             // .CF
             [ "free.cf", ".cf/free.txt", null ],
-            // [ "google.cf", ".cf/google.cf.txt", ".cf/google.cf.json" ],
+            [ "google.cf", ".cf/google.cf.txt", ".cf/google.cf.json" ],
 
             // .CI
             [ "free.ci", ".ci/free.txt", null ],
