@@ -167,7 +167,7 @@
   {"zone": ".cuisinella", "host": "whois.nic.cuisinella"},
   {"zone": ".cx", "host": "whois.nic.cx"},
   {"zone": ".cymru", "host": "whois.nic.cymru"},
-  {"zone": ".cz", "host": "whois.nic.cz", "parserType": "block"},
+  {"zone": ".cz", "host": "whois.nic.cz"},
   {"zone": ".dad", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".dance", "host": "whois.unitedtld.com"},
   {"zone": ".dating", "host": "whois.donuts.co"},
