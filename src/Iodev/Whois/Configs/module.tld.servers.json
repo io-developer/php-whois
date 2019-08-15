@@ -465,7 +465,6 @@
   {"zone": ".na", "host": "whois.na-nic.com.na"},
   {"zone": ".nagoya", "host": "whois.gmoregistry.net"},
   {"zone": ".name", "host": "whois.nic.name"},
-  {"zone": ".name", "host": "whois.namecheap.com"},  
   {"zone": ".navy", "host": "whois.rightside.co"},
   {"zone": ".nc", "host": "whois.nc"},
   {"zone": ".net", "host": "whois.crsnic.net"},
