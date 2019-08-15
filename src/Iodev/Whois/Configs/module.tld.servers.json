@@ -26,6 +26,7 @@
   {"zone": ".android", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".ao", "host": "whois.reg.it.ao", "parserType": "block"},
   {"zone": ".apartments", "host": "whois.donuts.co"},
+  {"zone": ".app", "host": "whois.nic.google"},  
   {"zone": ".aquarelle", "host": "whois-aquarelle.nic.fr"},
   {"zone": ".archi", "host": "whois.ksregistry.net"},
   {"zone": ".army", "host": "whois.rightside.co"},
