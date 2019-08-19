@@ -39,7 +39,6 @@ class TldServer
      * @param bool $centralized
      * @param TldParser $parser
      * @param string $queryFormat
-     * @param bool $inversedDateMMDD
      */
     public function __construct($zone, $host, $centralized, TldParser $parser, $queryFormat = null)
     {
