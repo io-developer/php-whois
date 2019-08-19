@@ -4,8 +4,9 @@ namespace Iodev\Whois;
 
 use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Loaders\SocketLoader;
+use PHPUnit\Framework\TestCase;
 
-class WhoisTest extends \PHPUnit_Framework_TestCase
+class WhoisTest extends TestCase
 {
     /** @var Whois */
     private $whois;
@@ -25,7 +26,8 @@ class WhoisTest extends \PHPUnit_Framework_TestCase
 
     public function testConstruct()
     {
-        new Whois(new SocketLoader());
+        $instance = new Whois(new SocketLoader());
+        $this->assertInstanceOf(Whois::class, $instance);
     }
 
     public function testGetLoader()

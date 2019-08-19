@@ -2,7 +2,9 @@
 
 namespace Iodev\Whois\Modules\Tld;
 
-class DomainInfoTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class DomainInfoTest extends TestCase
 {
     private static function createInfo($data = [])
     {
@@ -17,7 +19,8 @@ class DomainInfoTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructEmptyData()
     {
-        new DomainInfo(self::getResponse(), []);
+        $instance = new DomainInfo(self::getResponse(), []);
+        $this->assertInstanceOf(DomainInfo::class, $instance);
     }
 
     public function testGetResponse()
