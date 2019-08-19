@@ -3,11 +3,11 @@
 namespace Iodev\Whois\Modules\Asn;
 
 use InvalidArgumentException;
-use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Whois;
+use PHPUnit\Framework\TestCase;
 
-class AsnParsingTest extends \PHPUnit_Framework_TestCase
+class AsnParsingTest extends TestCase
 {
     /**
      * @param $filename

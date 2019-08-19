@@ -7,8 +7,9 @@ use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Whois;
+use PHPUnit\Framework\TestCase;
 
-class TldParsingTest extends \PHPUnit_Framework_TestCase
+class TldParsingTest extends TestCase
 {
     /**
      * @param $filename

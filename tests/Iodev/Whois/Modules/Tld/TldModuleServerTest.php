@@ -3,8 +3,9 @@
 namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Loaders\FakeSocketLoader;
+use PHPUnit\Framework\TestCase;
 
-class TldModuleServerTest extends \PHPUnit_Framework_TestCase
+class TldModuleServerTest extends TestCase
 {
     /**
      * @param $zone
@@ -19,12 +20,12 @@ class TldModuleServerTest extends \PHPUnit_Framework_TestCase
     private $mod;
 
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mod = new TldModule(new FakeSocketLoader());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 

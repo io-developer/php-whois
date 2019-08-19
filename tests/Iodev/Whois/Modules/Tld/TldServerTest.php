@@ -2,7 +2,9 @@
 
 namespace Iodev\Whois\Modules\Tld;
 
-class TldServerTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class TldServerTest extends TestCase
 {
     private static function getServerClass()
     {
@@ -22,22 +24,19 @@ class TldServerTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructValid()
     {
-        new TldServer(".abc", "some.host.com", false, self::getParser());
+        $instance = new TldServer(".abc", "some.host.com", false, self::getParser());
+        $this->assertInstanceOf(TldServer::class, $instance);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testConstructEmptyZone()
     {
+        $this->expectException('\InvalidArgumentException');
         new TldServer("", "some.host.com", false, self::getParser());
     }
 
-    /**
-    * @expectedException \InvalidArgumentException
-    */
     public function testConstructEmptyHost()
     {
+        $this->expectException('\InvalidArgumentException');
         new TldServer(".abc", "", false, self::getParser());
     }
 
@@ -159,27 +158,21 @@ class TldServerTest extends \PHPUnit_Framework_TestCase
         self::assertInstanceOf(self::getParserClass(), $s->getParser());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testFromDataMissingZone()
     {
+        $this->expectException('\InvalidArgumentException');
         TldServer::fromData([ "host" => "some.host" ], self::getParser());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testFromDataMissingHost()
     {
+        $this->expectException('\InvalidArgumentException');
         TldServer::fromData([ "zone" => ".abc" ], self::getParser());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testFromDataMissingAll()
     {
+        $this->expectException('\InvalidArgumentException');
         TldServer::fromData([], self::getParser());
     }
 

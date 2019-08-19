@@ -3,8 +3,9 @@
 namespace Iodev\Whois\Helpers;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 
-class TextHelperTest extends \PHPUnit_Framework_TestCase
+class TextHelperTest extends TestCase
 {
     /**
      * @param $filename
