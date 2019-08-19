@@ -3,7 +3,7 @@
 namespace Iodev\Whois\Modules\Tld;
 
 use InvalidArgumentException;
-use Iodev\Whois\Helpers\DomainHelper;
+use Iodev\Whois\WhoisFactory;
 
 /**
  * Immutable data object
@@ -20,27 +20,7 @@ class TldServer
      */
     public static function fromData($data, TldParser $defaultParser = null)
     {
-        $opts = isset($data['parserOptions']) ? $data['parserOptions'] : [];
-
-        /* @var $parser TldParser */
-        $parser = $defaultParser;
-        if (isset($data['parserClass'])) {
-            $parser = TldParser::createByClass(
-                $data['parserClass'],
-                isset($data['parserType']) ? $data['parserType'] : null
-            )->setOptions($opts);
-        } elseif (isset($data['parserType'])) {
-            $parser = TldParser::create($data['parserType'])->setOptions($opts);
-        }
-        $parser = $parser ?: TldParser::create()->setOptions($opts);
-
-        return new TldServer(
-            isset($data['zone']) ? $data['zone'] : '',
-            isset($data['host']) ? $data['host'] : '',
-            !empty($data['centralized']),
-            $parser,
-            isset($data['queryFormat']) ? $data['queryFormat'] : null
-        );
+        return WhoisFactory::getInstance()->createTldSever($data, $defaultParser);
     }
 
     /**
@@ -50,12 +30,7 @@ class TldServer
      */
     public static function fromDataList($dataList, TldParser $defaultParser = null)
     {
-        $defaultParser = $defaultParser ? $defaultParser : TldParser::create();
-        $servers = [];
-        foreach ($dataList as $data) {
-            $servers[] = self::fromData($data, $defaultParser);
-        }
-        return $servers;
+        return WhoisFactory::getInstance()->createTldSevers($dataList, $defaultParser);
     }
 
     /**
