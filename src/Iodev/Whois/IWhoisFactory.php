@@ -6,14 +6,16 @@ use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Modules\Asn\AsnModule;
 use Iodev\Whois\Modules\Asn\AsnServer;
 use Iodev\Whois\Modules\Tld\TldModule;
+use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Modules\Tld\TldServer;
 
 interface IWhoisFactory
 {
     /**
+     * @param ILoader|null $loader
      * @return Whois
      */
-    function createWhois(): Whois;
+    function createWhois(ILoader $loader = null): Whois;
 
     /**
      * @return ILoader
@@ -33,4 +35,21 @@ interface IWhoisFactory
      * @return TldModule
      */
     function createTldModule(ILoader $loader = null, $servers = null): TldModule;
+
+    /**
+     * @return TldServer[]
+     */
+    public function createTldSevers(): array;
+
+    /**
+     * @param array $config
+     * @return TldServer
+     */
+    public function createTldSever(array $config): TldServer;
+
+    /**
+     * @param array $config
+     * @return TldParser
+     */
+    public function createTldSeverParser(array $config): TldParser;
 }
