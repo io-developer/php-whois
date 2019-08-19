@@ -68,37 +68,43 @@ class WhoisFactory implements IWhoisFactory
     }
 
     /**
+     * @param array|null $configs
+     * @param TldParser|null $defaultParser
      * @return TldServer[]
      */
-    public function createTldSevers(): array
+    public function createTldSevers($configs = null, TldParser $defaultParser = null): array
     {
+        $configs = is_array($configs) ? $configs : Config::load("module.tld.servers");
+        $defaultParser = $defaultParser ?: TldParser::create();
         $servers = [];
-        foreach (Config::load("module.tld.servers") as $config) {
-            $servers[] = $this->createTldSever($config);
+        foreach ($configs as $config) {
+            $servers[] = $this->createTldSever($config, $defaultParser);
         }
         return $servers;
     }
 
     /**
      * @param array $config
+     * @param TldParser|null $defaultParser
      * @return TldServer
      */
-    public function createTldSever(array $config): TldServer
+    public function createTldSever(array $config, TldParser $defaultParser = null): TldServer
     {
         return new TldServer(
             $config['zone'] ?? '',
             $config['host'] ?? '',
             !empty($config['centralized']),
-            $this->createTldSeverParser($config),
+            $this->createTldSeverParser($config, $defaultParser),
             $config['queryFormat'] ?? null
         );
     }
 
     /**
      * @param array $config
+     * @param TldParser|null $defaultParser
      * @return TldParser
      */
-    public function createTldSeverParser(array $config): TldParser
+    public function createTldSeverParser(array $config, TldParser $defaultParser = null): TldParser
     {
         $options = $config['parserOptions'] ?? [];
         if (isset($config['parserClass'])) {
@@ -110,6 +116,6 @@ class WhoisFactory implements IWhoisFactory
         if (isset($config['parserType'])) {
             return TldParser::create($config['parserType'])->setOptions($options);
         }
-        return TldParser::create()->setOptions($options);
+        return $defaultParser ?: TldParser::create()->setOptions($options);
     }
 }

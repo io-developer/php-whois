@@ -19,15 +19,7 @@ class Whois
      */
     public static function create()
     {
-        return static::createFactory()->createWhois();
-    }
-
-    /**
-     * @return IWhoisFactory
-     */
-    public static function createFactory()
-    {
-        return new WhoisFactory();
+        return WhoisFactory::getInstance()->createWhois();
     }
 
     /**
@@ -65,10 +57,7 @@ class Whois
      */
     public function getFactory(): IWhoisFactory
     {
-        if (!$this->factory) {
-            $this->factory = static::createFactory();
-        }
-        return $this->factory;
+        return $this->factory ?: WhoisFactory::getInstance();
     }
 
     /**

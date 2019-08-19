@@ -37,19 +37,23 @@ interface IWhoisFactory
     function createTldModule(ILoader $loader = null, $servers = null): TldModule;
 
     /**
+     * @param array|null $configs
+     * @param TldParser|null $defaultParser
      * @return TldServer[]
      */
-    public function createTldSevers(): array;
+    public function createTldSevers($configs = null, TldParser $defaultParser = null): array;
 
     /**
      * @param array $config
+     * @param TldParser|null $defaultParser
      * @return TldServer
      */
-    public function createTldSever(array $config): TldServer;
+    public function createTldSever(array $config, TldParser $defaultParser = null): TldServer;
 
     /**
      * @param array $config
+     * @param TldParser|null $defaultParser
      * @return TldParser
      */
-    public function createTldSeverParser(array $config): TldParser;
+    public function createTldSeverParser(array $config, TldParser $defaultParser = null): TldParser;
 }
