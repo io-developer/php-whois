@@ -8,17 +8,6 @@ use Iodev\Whois\Modules\Tld\TldParser;
 
 class AutoParser extends TldParser
 {
-    public function __construct()
-    {
-        $this->parsers = [
-            TldParser::create(TldParser::COMMON),
-            TldParser::create(TldParser::COMMON_FLAT),
-            TldParser::create(TldParser::BLOCK),
-            TldParser::create(TldParser::INDENT_AUTOFIX),
-            TldParser::create(TldParser::INDENT),
-        ];
-    }
-
     /** @var TldParser[] */
     private $parsers = [];
 
@@ -36,6 +25,36 @@ class AutoParser extends TldParser
      */
     public function setConfig($cfg)
     {
+        return $this;
+    }
+
+    /**
+     * @return TldParser[]
+     */
+    public function getParsers()
+    {
+        return $this->parsers;
+    }
+
+    /**
+     * @param TldParser[] $parsers
+     * @return $this
+     */
+    public function setParsers(array $parsers)
+    {
+        foreach ($parsers as $parser) {
+            $this->addParser($parser);
+        }
+        return $this;
+    }
+
+    /**
+     * @param TldParser $parser
+     * @return $this
+     */
+    public function addParser(TldParser $parser)
+    {
+        $this->parsers[] = $parser;
         return $this;
     }
 

@@ -1,3 +1,9 @@
 {
-  "empty": "config"
+  "parserTypes": [
+    "common",
+    "commonFlat",
+    "block",
+    "indentAutofix",
+    "indent"
+  ]
 }

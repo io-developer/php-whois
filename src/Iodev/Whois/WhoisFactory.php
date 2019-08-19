@@ -6,6 +6,10 @@ use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\SocketLoader;
 use Iodev\Whois\Modules\Asn\AsnModule;
 use Iodev\Whois\Modules\Asn\AsnServer;
+use Iodev\Whois\Modules\Tld\Parsers\AutoParser;
+use Iodev\Whois\Modules\Tld\Parsers\BlockParser;
+use Iodev\Whois\Modules\Tld\Parsers\CommonParser;
+use Iodev\Whois\Modules\Tld\Parsers\IndentParser;
 use Iodev\Whois\Modules\Tld\TldModule;
 use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Modules\Tld\TldServer;
@@ -75,7 +79,7 @@ class WhoisFactory implements IWhoisFactory
     public function createTldSevers($configs = null, TldParser $defaultParser = null): array
     {
         $configs = is_array($configs) ? $configs : Config::load("module.tld.servers");
-        $defaultParser = $defaultParser ?: TldParser::create();
+        $defaultParser = $defaultParser ?: $this->createTldParser();
         $servers = [];
         foreach ($configs as $config) {
             $servers[] = $this->createTldSever($config, $defaultParser);
@@ -108,14 +112,82 @@ class WhoisFactory implements IWhoisFactory
     {
         $options = $config['parserOptions'] ?? [];
         if (isset($config['parserClass'])) {
-            return TldParser::createByClass(
+            return $this->createTldParserByClass(
                 $config['parserClass'],
                 $config['parserType'] ?? null
             )->setOptions($options);
         }
         if (isset($config['parserType'])) {
-            return TldParser::create($config['parserType'])->setOptions($options);
+            return $this->createTldParser($config['parserType'])->setOptions($options);
         }
-        return $defaultParser ?: TldParser::create()->setOptions($options);
+        return $defaultParser ?: $this->createTldParser()->setOptions($options);
+    }
+
+    /**
+     * @param string $type
+     * @return TldParser
+     */
+    public function createTldParser($type = null)
+    {
+        $type = $type ? $type : TldParser::AUTO;
+        $d = [
+            TldParser::AUTO => AutoParser::class,
+            TldParser::COMMON => CommonParser::class,
+            TldParser::COMMON_FLAT => CommonParser::class,
+            TldParser::BLOCK => BlockParser::class,
+            TldParser::INDENT => IndentParser::class,
+            TldParser::INDENT_AUTOFIX => IndentParser::class,
+        ];
+        return $this->createTldParserByClass($d[$type], $type);
+    }
+
+    /**
+     * @param string $className
+     * @param string $configType
+     * @return TldParser
+     */
+    public function createTldParserByClass($className, $configType = null)
+    {
+        $configType = empty($configType) ? TldParser::AUTO : $configType;
+        $config = $this->getTldParserConfigByType($configType);
+
+        /* @var $parser TldParser */
+        $parser = new $className();
+        $parser->setConfig($config);
+        if ($parser->getType() == TldParser::AUTO) {
+            $this->setupTldAutoParser($parser, $config);
+        }
+
+        return $parser;
+    }
+
+    /**
+     * @param AutoParser $parser
+     * @param array $config
+     */
+    protected function setupTldAutoParser(AutoParser $parser, $config = [])
+    {
+        /* @var $autoParser AutoParser */
+        foreach ($config['parserTypes'] ?? [] as $type) {
+            $parser->addParser($this->createTldParser($type));
+        }
+    }
+
+    /**
+     * @param string $type
+     * @return array
+     */
+    public function getTldParserConfigByType($type)
+    {
+        if ($type == TldParser::COMMON_FLAT) {
+            $type = TldParser::COMMON;
+            $extra = ['isFlat' => true];
+        }
+        if ($type == TldParser::INDENT_AUTOFIX) {
+            $type = TldParser::INDENT;
+            $extra = ['isAutofix' => true];
+        }
+        $config = Config::load("module.tld.parser.$type");
+        return empty($extra) ? $config : array_merge($config, $extra);
     }
 }
