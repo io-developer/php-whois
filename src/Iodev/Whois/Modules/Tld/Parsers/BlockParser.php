@@ -95,7 +95,7 @@ class BlockParser extends CommonParser
             ->filterHasSubsetOf($this->primarySubsets)
             ->useFirstGroupOr($domainFilter->getFirstGroup());
 
-        $info = new DomainInfo($response, [
+        $data = [
             "domainName" => $this->parseDomain($domainFilter) ?: ($isReserved ? $response->getDomain() : ''),
             "states" => $this->parseStates($rootFilter, $primaryFilter),
             "nameServers" => $this->parseNameServers($rootFilter, $primaryFilter),
@@ -104,7 +104,15 @@ class BlockParser extends CommonParser
             "creationDate" => $this->parseCreationDate($rootFilter, $primaryFilter),
             "expirationDate" => $this->parseExpirationDate($rootFilter, $primaryFilter),
             "whoisServer" => $this->parseWhoisServer($rootFilter, $primaryFilter),
-        ], $this->getType());
+        ];
+
+        $info = $this->createDomainInfo($response, $data, [
+            'groups' => $groups,
+            'rootFilter' => $rootFilter,
+            'domainFilter' => $domainFilter,
+            'primaryFilter' => $primaryFilter,
+            'reserved' => $reserved,
+        ]);
         return $isReserved || $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
     }
 
