@@ -46,10 +46,10 @@ or composer.json:
 ```php
 <?php
 
-use Iodev\Whois\Whois;
+use Iodev\Whois\WhoisFactory;
 
 // Creating default configured client
-$whois = Whois::create();
+$whois = WhoisFactory::getInstance()->createWhois();
 
 // Checking availability
 if ($whois->isDomainAvailable("google.com")) {
@@ -79,13 +79,13 @@ print_r([
 ```php
 <?php
 
-use Iodev\Whois\Whois;
+use Iodev\Whois\WhoisFactory;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Exceptions\WhoisException;
 
 try {
-    $whois = Whois::create();
+    $whois = WhoisFactory::getInstance()->createWhois();
     $info = $whois->loadDomainInfo("google.com");
     if (!$info) {
         print "Null if domain available";
@@ -106,7 +106,7 @@ try {
 <?php
 
 use Iodev\Whois\Loaders\CurlLoader;
-use Iodev\Whois\Whois;
+use Iodev\Whois\WhoisFactory;
 
 $loader = new CurlLoader();
 $loader->replaceOptions([
@@ -114,7 +114,7 @@ $loader->replaceOptions([
     CURLOPT_PROXY => "127.0.0.1:1080",
     //CURLOPT_PROXYUSERPWD => "user:pass",
 ]);
-$whois = Whois::create($loader);
+$whois = WhoisFactory::getInstance()->createWhois($loader);
 
 var_dump([
     'ya.ru' => $whois->loadDomainInfo('ya.ru'),
@@ -126,11 +126,11 @@ var_dump([
 ```php
 <?php
 
-use Iodev\Whois\Whois;
+use Iodev\Whois\WhoisFactory;
 use Iodev\Whois\Modules\Tld\TldServer;
 use Iodev\Whois\Modules\Tld\TldParser;
 
-$whois = Whois::create();
+$whois = WhoisFactory::getInstance()->createWhois();
 
 // Define custom whois host
 $customServer = new TldServer(".custom", "whois.nic.custom", false, TldParser::create());
@@ -154,10 +154,10 @@ var_dump($info);
 ```php
 <?php
 
-use Iodev\Whois\Whois;
+use Iodev\Whois\WhoisFactory;
 use Iodev\Whois\Modules\Tld\TldServer;
 
-$whois = Whois::create();
+$whois = WhoisFactory::getInstance()->createWhois();
 
 // Add default servers
 $matchedServers = $whois->getTldModule()
@@ -189,9 +189,9 @@ foreach ($matchedServers as $s) {
 ```php
 <?php
 
-use Iodev\Whois\Whois;
+use Iodev\Whois\WhoisFactory;
 
-$whois = Whois::create();
+$whois = WhoisFactory::getInstance()->createWhois();
 
 // Getting raw-text lookup
 $response = $whois->lookupAsn("AS32934");
@@ -214,7 +214,7 @@ Some TLD hosts are very limited for frequent requests. Use cache if in your case
 ```php
 <?php
 
-use Iodev\Whois\Whois;
+use Iodev\Whois\WhoisFactory;
 use Iodev\Whois\Loaders\SocketLoader;
 use Iodev\Whois\Loaders\MemcachedLoader;
 
@@ -222,7 +222,7 @@ $m = new Memcached();
 $m->addServer('127.0.0.1', 11211);
 $loader = new MemcachedLoader(new SocketLoader(), $m);
 
-$whois = Whois::create($loader);
+$whois = WhoisFactory::getInstance()->createWhois($loader);
 // do something...
 ```
 
