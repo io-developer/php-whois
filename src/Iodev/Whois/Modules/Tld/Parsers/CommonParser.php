@@ -125,8 +125,20 @@ class CommonParser extends TldParser
                 ->removeDuplicates()
                 ->getAll(),
         ];
-        $info = new DomainInfo($response, $data, $this->getType());
+        $info = $this->createDomainInfo($response, $data, [
+            'selector' => $sel,
+        ]);
         return $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
+    }
+
+    /**
+     * @param DomainResponse $response
+     * @param array $data
+     * @param array $options
+     * @return DomainInfo
+     */
+    protected function createDomainInfo(DomainResponse $response, array $data, $options = []) {
+        return new DomainInfo($response, $data, $this->getType());
     }
 
     /**
