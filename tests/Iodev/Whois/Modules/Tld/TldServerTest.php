@@ -2,6 +2,7 @@
 
 namespace Iodev\Whois\Modules\Tld;
 
+use Iodev\Whois\WhoisFactory;
 use PHPUnit\Framework\TestCase;
 
 class TldServerTest extends TestCase
@@ -13,7 +14,7 @@ class TldServerTest extends TestCase
 
     private static function getParser()
     {
-        return TldParser::createByClass(self::getParserClass());
+        return WhoisFactory::getInstance()->createTldParserByClass(self::getParserClass());
     }
 
     private static function getParserClass()
