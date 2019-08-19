@@ -2,12 +2,14 @@
 
 namespace Iodev\Whois;
 
-class ResponseTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ResponseTest extends TestCase
 {
     /** @var Response */
     private $resp;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->resp = new Response("domain.some", "Test content", "whois.host.abc");
     }

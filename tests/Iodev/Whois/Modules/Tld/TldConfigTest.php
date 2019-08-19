@@ -3,8 +3,9 @@
 namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Config;
+use PHPUnit\Framework\TestCase;
 
-class TldConfigTest extends \PHPUnit_Framework_TestCase
+class TldConfigTest extends TestCase
 {
     public function testUnnecessarySubzones()
     {
