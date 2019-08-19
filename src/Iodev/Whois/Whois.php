@@ -6,7 +6,6 @@ use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Exceptions\WhoisException;
 use Iodev\Whois\Loaders\ILoader;
-use Iodev\Whois\Loaders\SocketLoader;
 use Iodev\Whois\Modules\Asn\AsnInfo;
 use Iodev\Whois\Modules\Asn\AsnModule;
 use Iodev\Whois\Modules\Tld\DomainInfo;
@@ -16,12 +15,19 @@ use Iodev\Whois\Modules\Tld\TldModule;
 class Whois
 {
     /**
-     * @param ILoader $loader
      * @return Whois
      */
-    public static function create(ILoader $loader = null)
+    public static function create()
     {
-        return new Whois($loader ?: new SocketLoader());
+        return static::createFactory()->createWhois();
+    }
+
+    /**
+     * @return IWhoisFactory
+     */
+    public static function createFactory()
+    {
+        return new WhoisFactory();
     }
 
     /**
@@ -32,6 +38,9 @@ class Whois
         $this->loader = $loader;
     }
 
+    /** @var IWhoisFactory */
+    private $factory;
+
     /** @var ILoader */
     private $loader;
 
@@ -40,6 +49,27 @@ class Whois
 
     /** @var AsnModule */
     private $asnModule;
+
+    /**
+     * @param IWhoisFactory $factory
+     * @return $this
+     */
+    public function setFactory(IWhoisFactory $factory)
+    {
+        $this->factory = $factory;
+        return $this;
+    }
+
+    /**
+     * @return IWhoisFactory
+     */
+    public function getFactory(): IWhoisFactory
+    {
+        if (!$this->factory) {
+            $this->factory = static::createFactory();
+        }
+        return $this->factory;
+    }
 
     /**
      * @return ILoader
@@ -54,7 +84,7 @@ class Whois
      */
     public function getTldModule()
     {
-        $this->tldModule = $this->tldModule ?: TldModule::create($this->loader);
+        $this->tldModule = $this->tldModule ?: $this->getFactory()->createTldModule($this->loader);
         return $this->tldModule;
     }
 
@@ -63,7 +93,7 @@ class Whois
      */
     public function getAsnModule()
     {
-        $this->asnModule = $this->asnModule ?: AsnModule::create($this->loader);
+        $this->asnModule = $this->asnModule ?: $this->getFactory()->createAsnModule($this->loader);
         return $this->asnModule;
     }
 
