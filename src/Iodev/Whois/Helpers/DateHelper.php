@@ -35,10 +35,6 @@ class DateHelper
         } elseif (preg_match('/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+\(GMT([-+]\d+:\d{2})\)$/ui', $s, $m)) {
             $s = "{$m[1]}T{$m[2]}{$m[3]}";
         }
-        // Fix timezone parsing for PHP 5.4
-        if (version_compare(PHP_VERSION, '5.5.0', '<')) {
-            $s = str_replace('WAT', '+0100', $s);
-        }
         return (int)strtotime($s);
     }
 

@@ -16,7 +16,7 @@ PHP WHOIS client implementation. Sends the queries directly to the WHOIS service
 ## Installation
 
 ##### System requirements:
-* PHP >= __5.4__ (compatible with __7.*__ up to __7.3__)
+* PHP >= __7.2__ (previous major version supports __5.4+__)
 * php-curl
 * php-intl
 * php-mbstring
@@ -33,7 +33,7 @@ composer require io-developer/php-whois
 or composer.json:
 ````
 "require": {
-    "io-developer/php-whois": "*"
+    "io-developer/php-whois": "^4.0"
 }
 ````
 
