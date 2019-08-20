@@ -5,6 +5,7 @@ namespace Iodev\Whois;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\SocketLoader;
 use Iodev\Whois\Modules\Asn\AsnModule;
+use Iodev\Whois\Modules\Asn\AsnParser;
 use Iodev\Whois\Modules\Asn\AsnServer;
 use Iodev\Whois\Modules\Tld\Parsers\AutoParser;
 use Iodev\Whois\Modules\Tld\Parsers\BlockParser;
@@ -55,7 +56,7 @@ class WhoisFactory implements IWhoisFactory
     public function createAsnModule(ILoader $loader = null, $servers = null): AsnModule
     {
         $m = new AsnModule($loader);
-        $m->setServers($servers ?: AsnServer::fromDataList(Config::load("module.asn.servers")));
+        $m->setServers($servers ?: $this->createAsnSevers(Config::load("module.asn.servers")));
         return $m;
     }
 
@@ -190,4 +191,47 @@ class WhoisFactory implements IWhoisFactory
         $config = Config::load("module.tld.parser.$type");
         return empty($extra) ? $config : array_merge($config, $extra);
     }
+
+    /**
+     * @param array $configs
+     * @param AsnParser $defaultParser
+     * @return AsnServer[]
+     */
+    public function createAsnSevers($configs, AsnParser $defaultParser = null): array
+    {
+        $defaultParser = $defaultParser ?: AsnParser::create();
+        $servers = [];
+        foreach ($configs as $config) {
+            $servers[] = $this->createAsnSever($config, $defaultParser);
+        }
+        return $servers;
+    }
+
+    /**
+     * @param array $config
+     * @param AsnParser $defaultParser
+     * @return AsnServer
+     */
+    public function createAsnSever($config, AsnParser $defaultParser = null)
+    {
+        return new AsnServer(
+            $config['host'] ?? '',
+            $this->createAsnSeverParser($config, $defaultParser),
+            $config['queryFormat'] ?? null
+        );
+    }
+
+    /**
+     * @param array $config
+     * @param AsnParser|null $defaultParser
+     * @return AsnParser
+     */
+    public function createAsnSeverParser(array $config, AsnParser $defaultParser = null): AsnParser
+    {
+        if (isset($config['parserClass'])) {
+            return AsnParser::createByClass($config['parserClass']);
+        }
+        return $defaultParser ?: AsnParser::create();
+    }
+
 }
