@@ -2,7 +2,6 @@
 
 namespace Iodev\Whois\Modules\Tld;
 
-use Iodev\Whois\Config;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Exceptions\WhoisException;
@@ -13,18 +12,6 @@ use Iodev\Whois\Modules\ModuleType;
 
 class TldModule extends Module
 {
-    /**
-     * @param ILoader $loader
-     * @param array $servers
-     * @return self
-     */
-    public static function create(ILoader $loader = null, $servers = null)
-    {
-        $m = new self($loader);
-        $m->setServers($servers ?: TldServer::fromDataList(Config::load("module.tld.servers")));
-        return $m;
-    }
-
     /**
      * @param ILoader $loader
      */

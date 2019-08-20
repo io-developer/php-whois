@@ -2,7 +2,6 @@
 
 namespace Iodev\Whois\Modules\Asn;
 
-use Iodev\Whois\Config;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\WhoisException;
 use Iodev\Whois\Loaders\ILoader;
@@ -11,18 +10,6 @@ use Iodev\Whois\Modules\ModuleType;
 
 class AsnModule extends Module
 {
-    /**
-     * @param ILoader $loader
-     * @param AsnServer[] $servers
-     * @return self
-     */
-    public static function create(ILoader $loader = null, $servers = null)
-    {
-        $m = new self($loader);
-        $m->setServers($servers ?: AsnServer::fromDataList(Config::load("module.asn.servers")));
-        return $m;
-    }
-
     /**
      * @param ILoader $loader
      */
