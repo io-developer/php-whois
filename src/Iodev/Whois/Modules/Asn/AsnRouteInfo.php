@@ -29,7 +29,7 @@ class AsnRouteInfo
      */
     public function getRoute()
     {
-        return $this->getval("route", "");
+        return $this->get("route", "");
     }
 
     /**
@@ -37,7 +37,7 @@ class AsnRouteInfo
      */
     public function getRoute6()
     {
-        return $this->getval("route6", "");
+        return $this->get("route6", "");
     }
 
     /**
@@ -45,7 +45,7 @@ class AsnRouteInfo
      */
     public function getDescr()
     {
-        return $this->getval("descr", "");
+        return $this->get("descr", "");
     }
 
     /**
@@ -53,7 +53,7 @@ class AsnRouteInfo
      */
     public function getOrigin()
     {
-        return $this->getval("origin", "");
+        return $this->get("origin", "");
     }
 
     /**
@@ -61,7 +61,7 @@ class AsnRouteInfo
      */
     public function getMntBy()
     {
-        return $this->getval("mnt-by", "");
+        return $this->get("mnt-by", "");
     }
 
     /**
@@ -69,7 +69,7 @@ class AsnRouteInfo
      */
     public function getChanged()
     {
-        return $this->getval("changed", "");
+        return $this->get("changed", "");
     }
 
     /**
@@ -77,7 +77,7 @@ class AsnRouteInfo
      */
     public function getSource()
     {
-        return $this->getval("source", "");
+        return $this->get("source", "");
     }
 
     /**
@@ -85,8 +85,16 @@ class AsnRouteInfo
      * @param mixed $default
      * @return mixed
      */
-    private function getval($key, $default = "")
+    public function get($key, $default = "")
     {
-        return isset($this->data[$key]) ? $this->data[$key] : $default;
+        return $this->data[$key] ?? $default;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData(): array
+    {
+        return $this->data;
     }
 }
