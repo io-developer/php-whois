@@ -7,6 +7,14 @@ use Iodev\Whois\DataObject;
 
 /**
  * Immutable data object
+ *
+ * @property string route
+ * @property string route6
+ * @property string descr
+ * @property string origin
+ * @property string mntBy
+ * @property string changed
+ * @property string source
  */
 class AsnRouteInfo extends DataObject
 {
@@ -33,12 +41,17 @@ class AsnRouteInfo extends DataObject
         "source" => "",
     ];
 
+    /** @var array */
+    protected $dataAlias = [
+        "mntBy" => "mnt-by",
+    ];
+
     /**
      * @return string
      */
     public function getRoute()
     {
-        return $this->get("route", "");
+        return $this->route;
     }
 
     /**
@@ -46,7 +59,7 @@ class AsnRouteInfo extends DataObject
      */
     public function getRoute6()
     {
-        return $this->get("route6", "");
+        return $this->route6;
     }
 
     /**
@@ -54,7 +67,7 @@ class AsnRouteInfo extends DataObject
      */
     public function getDescr()
     {
-        return $this->get("descr", "");
+        return $this->descr;
     }
 
     /**
@@ -62,7 +75,7 @@ class AsnRouteInfo extends DataObject
      */
     public function getOrigin()
     {
-        return $this->get("origin", "");
+        return $this->origin;
     }
 
     /**
@@ -70,7 +83,7 @@ class AsnRouteInfo extends DataObject
      */
     public function getMntBy()
     {
-        return $this->get("mnt-by", "");
+        return $this->mntBy;
     }
 
     /**
@@ -78,7 +91,7 @@ class AsnRouteInfo extends DataObject
      */
     public function getChanged()
     {
-        return $this->get("changed", "");
+        return $this->changed;
     }
 
     /**
@@ -86,6 +99,6 @@ class AsnRouteInfo extends DataObject
      */
     public function getSource()
     {
-        return $this->get("source", "");
+        return $this->source;
     }
 }
