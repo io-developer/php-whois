@@ -2,9 +2,6 @@
 
 namespace Iodev\Whois\Modules\Tld;
 
-use Iodev\Whois\Config;
-use Iodev\Whois\WhoisFactory;
-
 abstract class TldParser
 {
     const AUTO = 'auto';
@@ -13,15 +10,6 @@ abstract class TldParser
     const BLOCK = 'block';
     const INDENT = 'indent';
     const INDENT_AUTOFIX = 'indentAutofix';
-
-    /**
-     * @param string $type
-     * @return TldParser
-     */
-    public static function create($type = null)
-    {
-        return WhoisFactory::getInstance()->createTldParser($type);
-    }
 
     /**
      * @var array
