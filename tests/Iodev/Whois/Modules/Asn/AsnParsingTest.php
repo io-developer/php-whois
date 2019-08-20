@@ -84,37 +84,37 @@ class AsnParsingTest extends TestCase
             $expectedRoute = $expectedRoutes[$index];
             self::assertEquals(
                 $expectedRoute["route"],
-                $actualRoute->getRoute(),
+                $actualRoute->route,
                 "Route ($index) 'route' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
                 $expectedRoute["route6"],
-                $actualRoute->getRoute6(),
+                $actualRoute->route6,
                 "Route ($index) 'route6' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
                 $expectedRoute["descr"],
-                $actualRoute->getDescr(),
+                $actualRoute->descr,
                 "Route ($index) 'descr' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
                 $expectedRoute["origin"],
-                $actualRoute->getOrigin(),
+                $actualRoute->origin,
                 "Route ($index) 'origin' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
                 $expectedRoute["mntBy"],
-                $actualRoute->getMntBy(),
+                $actualRoute->mntBy,
                 "Route ($index) 'mntBy' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
                 $expectedRoute["changed"],
-                $actualRoute->getChanged(),
+                $actualRoute->changed,
                 "Route ($index) 'changed' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
                 $expectedRoute["source"],
-                $actualRoute->getSource(),
+                $actualRoute->source,
                 "Route ($index) 'source' mismatch ($srcTextFilename)"
             );
         }
