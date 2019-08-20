@@ -8,6 +8,15 @@ use Iodev\Whois\Helpers\DomainHelper;
 
 /**
  * Immutable data object
+ *
+ * @property string domainName
+ * @property string whoisServer
+ * @property string[] nameServers
+ * @property int creationDate
+ * @property int expirationDate
+ * @property string[] states
+ * @property string owner
+ * @property string registrar
  */
 class DomainInfo extends DataObject
 {
@@ -66,7 +75,7 @@ class DomainInfo extends DataObject
      */
     public function getDomainName()
     {
-        return $this->get("domainName", "");
+        return $this->domainName;
     }
 
     /**
@@ -74,7 +83,7 @@ class DomainInfo extends DataObject
      */
     public function getDomainNameUnicode()
     {
-        return DomainHelper::toUnicode($this->getDomainName());
+        return DomainHelper::toUnicode($this->domainName);
     }
 
     /**
@@ -82,7 +91,7 @@ class DomainInfo extends DataObject
      */
     public function getWhoisServer()
     {
-        return $this->get("whoisServer", "");
+        return $this->whoisServer;
     }
 
     /**
@@ -90,7 +99,7 @@ class DomainInfo extends DataObject
      */
     public function getNameServers()
     {
-        return $this->get("nameServers", []);
+        return $this->nameServers;
     }
 
     /**
@@ -98,7 +107,7 @@ class DomainInfo extends DataObject
      */
     public function getCreationDate()
     {
-        return $this->get("creationDate", 0);
+        return $this->creationDate;
     }
 
     /**
@@ -106,7 +115,7 @@ class DomainInfo extends DataObject
      */
     public function getExpirationDate()
     {
-        return $this->get("expirationDate", 0);
+        return $this->expirationDate;
     }
 
     /**
@@ -114,7 +123,7 @@ class DomainInfo extends DataObject
      */
     public function getStates()
     {
-        return $this->get("states", []);
+        return $this->states;
     }
 
     /**
@@ -122,7 +131,7 @@ class DomainInfo extends DataObject
      */
     public function getOwner()
     {
-        return $this->get("owner", "");
+        return $this->owner;
     }
 
     /**
@@ -130,7 +139,7 @@ class DomainInfo extends DataObject
      */
     public function getRegistrar()
     {
-        return $this->get("registrar", "");
+        return $this->registrar;
     }
 
     /**
