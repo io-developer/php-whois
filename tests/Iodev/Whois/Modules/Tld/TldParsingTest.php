@@ -75,42 +75,42 @@ class TldParsingTest extends TestCase
 
         $this->assertEquals(
             $expected["domainName"],
-            $info->getDomainName(),
+            $info->domainName,
             "Domain name mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             $expected["whoisServer"],
-            $info->getWhoisServer(),
+            $info->whoisServer,
             "Whois server mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             self::sort($expected["nameServers"]),
-            self::sort($info->getNameServers()),
+            self::sort($info->nameServers),
             "Name servers mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             strtotime($expected["creationDate"]),
-            $info->getCreationDate(),
+            $info->creationDate,
             "Creation date mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             strtotime($expected["expirationDate"]),
-            $info->getExpirationDate(),
+            $info->expirationDate,
             "expirationDate mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             self::sort($expected["states"]),
-            self::sort($info->getStates()),
+            self::sort($info->states),
             "States mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             $expected["owner"],
-            $info->getOwner(),
+            $info->owner,
             "Owner mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             $expected["registrar"],
-            $info->getRegistrar(),
+            $info->registrar,
             "Registrar mismatch ($srcTextFilename)"
         );
     }

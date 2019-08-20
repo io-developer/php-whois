@@ -73,73 +73,9 @@ class DomainInfo extends DataObject
     /**
      * @return string
      */
-    public function getDomainName()
-    {
-        return $this->domainName;
-    }
-
-    /**
-     * @return string
-     */
     public function getDomainNameUnicode()
     {
         return DomainHelper::toUnicode($this->domainName);
-    }
-
-    /**
-     * @return string
-     */
-    public function getWhoisServer()
-    {
-        return $this->whoisServer;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getNameServers()
-    {
-        return $this->nameServers;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * @return int
-     */
-    public function getExpirationDate()
-    {
-        return $this->expirationDate;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getStates()
-    {
-        return $this->states;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRegistrar()
-    {
-        return $this->registrar;
     }
 
     /**
@@ -162,7 +98,7 @@ class DomainInfo extends DataObject
      */
     public function isValuable($badFirstStatesDict = [])
     {
-        $states = $this->getStates();
+        $states = $this->states;
         $firstState = empty($states) ? '' : reset($states);
         $firstState = mb_strtolower(trim($firstState));
         if (!empty($badFirstStatesDict[$firstState])) {
