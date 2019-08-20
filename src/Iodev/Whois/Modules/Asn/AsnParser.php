@@ -7,30 +7,6 @@ use Iodev\Whois\Helpers\ParserHelper;
 class AsnParser
 {
     /**
-     * @return self
-     */
-    public static function create()
-    {
-        return new self();
-    }
-
-    /**
-     * @param string $className
-     * @return self
-     */
-    public static function createByClass($className)
-    {
-        return new $className();
-    }
-
-    /**
-     *
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * @param AsnResponse $response
      * @return AsnInfo|null
      */

@@ -199,7 +199,7 @@ class WhoisFactory implements IWhoisFactory
      */
     public function createAsnSevers($configs, AsnParser $defaultParser = null): array
     {
-        $defaultParser = $defaultParser ?: AsnParser::create();
+        $defaultParser = $defaultParser ?: $this->createAsnParser();
         $servers = [];
         foreach ($configs as $config) {
             $servers[] = $this->createAsnSever($config, $defaultParser);
@@ -229,9 +229,26 @@ class WhoisFactory implements IWhoisFactory
     public function createAsnSeverParser(array $config, AsnParser $defaultParser = null): AsnParser
     {
         if (isset($config['parserClass'])) {
-            return AsnParser::createByClass($config['parserClass']);
+            return $this->createAsnParserByClass($config['parserClass']);
         }
-        return $defaultParser ?: AsnParser::create();
+        return $defaultParser ?: $this->createAsnParser();
+    }
+
+    /**
+     * @return AsnParser
+     */
+    public function createAsnParser(): AsnParser
+    {
+        return new AsnParser();
+    }
+
+    /**
+     * @param string $className
+     * @return AsnParser
+     */
+    public function createAsnParserByClass($className): AsnParser
+    {
+        return new $className();
     }
 
 }
