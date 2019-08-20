@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class DomainInfoTest extends TestCase
 {
-    private static function createInfo($data = [])
+    private static function createInfo($data = []): DomainInfo
     {
         return new DomainInfo(self::getResponse(), $data);
     }
@@ -34,13 +34,13 @@ class DomainInfoTest extends TestCase
     public function testGetDomainName()
     {
         $i = self::createInfo([ "domainName" => "foo.bar" ]);
-        self::assertEquals("foo.bar", $i->getDomainName());
+        self::assertEquals("foo.bar", $i->domainName);
     }
 
     public function testGetDomainNameDefault()
     {
         $i = self::createInfo();
-        self::assertSame("", $i->getDomainName());
+        self::assertSame("", $i->domainName);
     }
 
 
@@ -66,90 +66,90 @@ class DomainInfoTest extends TestCase
     public function testGetWhoisServer()
     {
         $i = self::createInfo([ "whoisServer" => "whois.bar" ]);
-        self::assertEquals("whois.bar", $i->getWhoisServer());
+        self::assertEquals("whois.bar", $i->whoisServer);
     }
 
     public function testGetWhoisServerDefault()
     {
         $i = self::createInfo();
-        self::assertSame("", $i->getWhoisServer());
+        self::assertSame("", $i->whoisServer);
     }
 
 
     public function testGetNameServers()
     {
         $i = self::createInfo([ "nameServers" => [ "a.bar", "b.baz" ] ]);
-        self::assertEquals([ "a.bar", "b.baz" ], $i->getNameServers());
+        self::assertEquals([ "a.bar", "b.baz" ], $i->nameServers);
     }
 
     public function testGetNameServersDefault()
     {
         $i = self::createInfo();
-        self::assertSame([], $i->getNameServers());
+        self::assertSame([], $i->nameServers);
     }
 
 
     public function testGetCreationDate()
     {
         $i = self::createInfo([ "creationDate" => 123456789 ]);
-        self::assertEquals(123456789, $i->getCreationDate());
+        self::assertEquals(123456789, $i->creationDate);
     }
 
     public function testGetCreationDateDefault()
     {
         $i = self::createInfo();
-        self::assertSame(0, $i->getCreationDate());
+        self::assertSame(0, $i->creationDate);
     }
 
 
     public function testGetExpirationDate()
     {
         $i = self::createInfo([ "expirationDate" => 123456789 ]);
-        self::assertEquals(123456789, $i->getExpirationDate());
+        self::assertEquals(123456789, $i->expirationDate);
     }
 
     public function testGetExpirationDateDefault()
     {
         $i = self::createInfo();
-        self::assertSame(0, $i->getExpirationDate());
+        self::assertSame(0, $i->expirationDate);
     }
 
 
     public function testGetStates()
     {
         $i = self::createInfo([ "states" => [ "abc", "def", "ghi" ] ]);
-        self::assertEquals([ "abc", "def", "ghi" ], $i->getStates());
+        self::assertEquals([ "abc", "def", "ghi" ], $i->states);
     }
 
     public function testGetStatesDefault()
     {
         $i = self::createInfo();
-        self::assertSame([], $i->getStates());
+        self::assertSame([], $i->states);
     }
 
 
     public function testGetOwner()
     {
         $i = self::createInfo([ "owner" => "Some Company" ]);
-        self::assertEquals("Some Company", $i->getOwner());
+        self::assertEquals("Some Company", $i->owner);
     }
 
     public function testGetOwnerDefault()
     {
         $i = self::createInfo();
-        self::assertSame("", $i->getOwner());
+        self::assertSame("", $i->owner);
     }
 
 
     public function testGetRegistrar()
     {
         $i = self::createInfo([ "registrar" => "Some Registrar" ]);
-        self::assertEquals("Some Registrar", $i->getRegistrar());
+        self::assertEquals("Some Registrar", $i->registrar);
     }
 
     public function testGetRegistrarDefault()
     {
         $i = self::createInfo();
-        self::assertSame("", $i->getRegistrar());
+        self::assertSame("", $i->registrar);
     }
 }

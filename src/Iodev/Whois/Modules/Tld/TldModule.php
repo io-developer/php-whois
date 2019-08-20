@@ -207,10 +207,10 @@ class TldModule extends Module
             $outResponse = $tmpInfo ? $tmpResponse : $outResponse;
             $outInfo = $tmpInfo ?: $outInfo;
         }
-        if (!$outInfo || $host == $outInfo->getWhoisServer()) {
+        if (!$outInfo || $host == $outInfo->whoisServer) {
             return;
         }
-        $host = $outInfo->getWhoisServer();
+        $host = $outInfo->whoisServer;
         if ($host && $host != $server->getHost() && !$server->isCentralized()) {
             $this->loadParsedTo($tmpResponse, $tmpInfo, $server, $domain, false, $host, $lastError);
             $outResponse = $tmpInfo ? $tmpResponse : $outResponse;

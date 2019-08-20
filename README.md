@@ -68,9 +68,9 @@ print $response->getText();
 // Getting parsed domain info
 $info = $whois->loadDomainInfo("google.com");
 print_r([
-    'Domain created' => date("Y-m-d", $info->getCreationDate()),
-    'Domain expires' => date("Y-m-d", $info->getExpirationDate()),
-    'Domain owner' => $info->getOwner(),
+    'Domain created' => date("Y-m-d", $info->creationDate),
+    'Domain expires' => date("Y-m-d", $info->expirationDate),
+    'Domain owner' => $info->owner,
 ]);
 
 ```
@@ -91,7 +91,7 @@ try {
         print "Null if domain available";
         exit;
     }
-    print $info->getDomainName() . " expires at: " . date("d.m.Y H:i:s", $info->getExpirationDate());
+    print $info->domainName . " expires at: " . date("d.m.Y H:i:s", $info->expirationDate);
 } catch (ConnectionException $e) {
     print "Disconnect or connection timeout";
 } catch (ServerMismatchException $e) {
