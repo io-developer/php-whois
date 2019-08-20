@@ -15,12 +15,12 @@ use Iodev\Whois\Modules\Tld\TldModule;
 use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Modules\Tld\TldServer;
 
-class WhoisFactory implements IWhoisFactory
+class Factory implements IFactory
 {
     /**
-     * @return WhoisFactory
+     * @return Factory
      */
-    public static function getInstance(): WhoisFactory
+    public static function get(): Factory
     {
         static $instance;
         if (!$instance) {

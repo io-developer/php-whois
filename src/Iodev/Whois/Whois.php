@@ -19,7 +19,7 @@ class Whois
      */
     public static function create()
     {
-        return WhoisFactory::getInstance()->createWhois();
+        return Factory::get()->createWhois();
     }
 
     /**
@@ -30,7 +30,7 @@ class Whois
         $this->loader = $loader;
     }
 
-    /** @var IWhoisFactory */
+    /** @var IFactory */
     private $factory;
 
     /** @var ILoader */
@@ -43,21 +43,21 @@ class Whois
     private $asnModule;
 
     /**
-     * @param IWhoisFactory $factory
+     * @param IFactory $factory
      * @return $this
      */
-    public function setFactory(IWhoisFactory $factory)
+    public function setFactory(IFactory $factory)
     {
         $this->factory = $factory;
         return $this;
     }
 
     /**
-     * @return IWhoisFactory
+     * @return IFactory
      */
-    public function getFactory(): IWhoisFactory
+    public function getFactory(): IFactory
     {
-        return $this->factory ?: WhoisFactory::getInstance();
+        return $this->factory ?: Factory::get();
     }
 
     /**
