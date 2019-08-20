@@ -3,7 +3,7 @@
 namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Loaders\FakeSocketLoader;
-use Iodev\Whois\WhoisFactory;
+use Iodev\Whois\Factory;
 use PHPUnit\Framework\TestCase;
 
 class TldModuleServerTest extends TestCase
@@ -14,7 +14,7 @@ class TldModuleServerTest extends TestCase
      */
     private static function createServer($zone)
     {
-        $parser = WhoisFactory::getInstance()->createTldParser();
+        $parser = Factory::get()->createTldParser();
         return new TldServer($zone, "some.host.net", false, $parser);
     }
 

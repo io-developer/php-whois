@@ -3,7 +3,7 @@
 namespace Iodev\Whois\Modules\Tld;
 
 use InvalidArgumentException;
-use Iodev\Whois\WhoisFactory;
+use Iodev\Whois\Factory;
 
 /**
  * Immutable data object
@@ -20,7 +20,7 @@ class TldServer
      */
     public static function fromData($data, TldParser $defaultParser = null)
     {
-        return WhoisFactory::getInstance()->createTldSever($data, $defaultParser);
+        return Factory::get()->createTldSever($data, $defaultParser);
     }
 
     /**
@@ -30,7 +30,7 @@ class TldServer
      */
     public static function fromDataList($dataList, TldParser $defaultParser = null)
     {
-        return WhoisFactory::getInstance()->createTldSevers($dataList, $defaultParser);
+        return Factory::get()->createTldSevers($dataList, $defaultParser);
     }
 
     /**
