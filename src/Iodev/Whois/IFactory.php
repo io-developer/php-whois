@@ -9,7 +9,7 @@ use Iodev\Whois\Modules\Tld\TldModule;
 use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Modules\Tld\TldServer;
 
-interface IWhoisFactory
+interface IFactory
 {
     /**
      * @param ILoader|null $loader
