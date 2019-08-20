@@ -201,9 +201,9 @@ print $response->getText();
 $info = $whois->loadAsnInfo("AS32934");
 foreach ($info->getRoutes() as $route) {
     print_r([
-        'route IPv4' => $route->getRoute(),
-        'route IPv6' => $route->getRoute6(),
-        'description' => $route->getDescr(),
+        'route IPv4' => $route->route,
+        'route IPv6' => $route->route6,
+        'description' => $route->descr,
     ]);   
 }
 
