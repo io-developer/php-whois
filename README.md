@@ -128,12 +128,11 @@ var_dump([
 
 use Iodev\Whois\WhoisFactory;
 use Iodev\Whois\Modules\Tld\TldServer;
-use Iodev\Whois\Modules\Tld\TldParser;
 
 $whois = WhoisFactory::getInstance()->createWhois();
 
 // Define custom whois host
-$customServer = new TldServer(".custom", "whois.nic.custom", false, TldParser::create());
+$customServer = new TldServer(".custom", "whois.nic.custom", false, WhoisFactory::getInstance()->createTldParser());
 
 // Or define the same via assoc way
 $customServer = TldServer::fromData([
