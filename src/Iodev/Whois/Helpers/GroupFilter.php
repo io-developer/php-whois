@@ -7,17 +7,6 @@ class GroupFilter
     use GroupTrait;
 
     /**
-     * @param array $groups
-     * @return $this
-     */
-    public static function create($groups = [])
-    {
-        $m = new self();
-        $m->setGroups($groups);
-        return $m;
-    }
-
-    /**
      * @param string $domain
      * @param string[] $domainKeys
      * @return $this
@@ -110,10 +99,19 @@ class GroupFilter
      */
     public function toSelector()
     {
-        return GroupSelector::create($this->groups)
+        return $this->createSelector()
+            ->setGroups($this->groups)
             ->useIgnoreCase($this->ignoreCase)
             ->useMatchFirstOnly($this->matchFirstOnly)
             ->setHeaderKey($this->headerKey)
             ->setSubsetParams($this->subsetParams);
+    }
+
+    /**
+     * @return GroupSelector
+     */
+    protected function createSelector(): GroupSelector
+    {
+        return new GroupSelector();
     }
 }

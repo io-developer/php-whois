@@ -6,16 +6,6 @@ class GroupSelector
 {
     use GroupTrait;
 
-    /**
-     * @param array $groups
-     * @return $this
-     */
-    public static function create($groups = [])
-    {
-        $m = new self();
-        return $m->setGroups($groups);
-    }
-
     /** @var array */
     private $items = [];
 
