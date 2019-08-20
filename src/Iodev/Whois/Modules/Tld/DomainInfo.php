@@ -3,12 +3,13 @@
 namespace Iodev\Whois\Modules\Tld;
 
 use InvalidArgumentException;
+use Iodev\Whois\DataObject;
 use Iodev\Whois\Helpers\DomainHelper;
 
 /**
  * Immutable data object
  */
-class DomainInfo
+class DomainInfo extends DataObject
 {
     /**
      * @param DomainResponse $response
@@ -21,16 +22,25 @@ class DomainInfo
         if (!is_array($data)) {
             throw new InvalidArgumentException("Data must be an array");
         }
+        parent::__construct($data);
         $this->response = $response;
-        $this->data = $data;
         $this->parserType = $parserType;
     }
 
+    /** @var array */
+    protected $dataDefault = [
+        "domainName" => "",
+        "whoisServer" => "",
+        "nameServers" => [],
+        "creationDate" => 0,
+        "expirationDate" => 0,
+        "states" => [],
+        "owner" => "",
+        "registrar" => "",
+    ];
+
     /** @var DomainResponse */
     private $response;
-
-    /** @var array */
-    private $data;
 
     /** @var string */
     private $parserType;
@@ -122,25 +132,6 @@ class DomainInfo
     {
         return $this->get("registrar", "");
     }
-
-    /**
-     * @param $key
-     * @param mixed $default
-     * @return mixed
-     */
-    public function get($key, $default = "")
-    {
-        return isset($this->data[$key]) ? $this->data[$key] : $default;
-    }
-
-    /**
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
 
     /**
      * @param array|null $keys
