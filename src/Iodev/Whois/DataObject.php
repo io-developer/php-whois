@@ -13,10 +13,13 @@ class DataObject
     }
 
     /** @var array */
+    protected $data;
+
+    /** @var array */
     protected $dataDefault = [];
 
     /** @var array */
-    protected $data;
+    protected $dataAlias = [];
 
     /**
      * @param string $key
@@ -25,6 +28,7 @@ class DataObject
     public function __get($key)
     {
         $default = $this->dataDefault[$key] ?? null;
+        $key = $this->dataAlias[$key] ?? $key;
         return $this->get($key, $default);
     }
 
