@@ -15,14 +15,6 @@ use Iodev\Whois\Modules\Tld\TldModule;
 class Whois
 {
     /**
-     * @return Whois
-     */
-    public static function create()
-    {
-        return Factory::get()->createWhois();
-    }
-
-    /**
      * @param ILoader $loader
      */
     public function __construct(ILoader $loader)
