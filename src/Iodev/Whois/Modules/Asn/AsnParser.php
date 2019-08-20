@@ -24,19 +24,44 @@ class AsnParser
     }
 
     /**
+     *
+     */
+    public function __construct()
+    {
+    }
+
+    /**
+     * @param AsnResponse $response
+     * @return AsnInfo|null
+     */
+    public function parseResponse(AsnResponse $response)
+    {
+        $routes = [];
+        foreach ($this->parseBlocks($response->getText()) as $block) {
+            if (count($block) > 1) {
+                $routes[] = $this->createAsnRouteInfo($block);
+            }
+        }
+        if (count($routes) == 0) {
+            return null;
+        }
+        return $this->createAsnInfo($response, $routes);
+    }
+
+    /**
      * @param string $content
      * @return array
      */
-    public static function parseBlocks($content)
+    protected function parseBlocks($content): array
     {
-        return array_map([__CLASS__, 'parseBlock'], preg_split('~(\r\n|\r|\n){2,}~ui', $content));
+        return array_map([$this, 'parseBlock'], preg_split('~(\r\n|\r|\n){2,}~ui', $content));
     }
 
     /**
      * @param string $block
      * @return array
      */
-    public static function parseBlock($block)
+    protected function parseBlock($block): array
     {
         $dict = [];
         foreach (ParserHelper::splitLines($block) as $line) {
@@ -52,27 +77,21 @@ class AsnParser
     }
 
     /**
-     *
+     * @param array $block
+     * @return AsnRouteInfo
      */
-    public function __construct()
+    protected function createAsnRouteInfo(array $block): AsnRouteInfo
     {
+        return new AsnRouteInfo($block);
     }
 
     /**
      * @param AsnResponse $response
-     * @return AsnInfo|null
+     * @param array $routes
+     * @return AsnInfo
      */
-    public function parseResponse(AsnResponse $response)
+    protected function createAsnInfo(AsnResponse $response, array $routes): AsnInfo
     {
-        $routes = [];
-        foreach (self::parseBlocks($response->getText()) as $block) {
-            if (count($block) > 1) {
-                $routes[] = new AsnRouteInfo($block);
-            }
-        }
-        if (count($routes) == 0) {
-            return null;
-        }
         return new AsnInfo($response, $response->getAsn(), $routes);
     }
 }
