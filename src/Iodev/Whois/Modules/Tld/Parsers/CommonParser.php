@@ -137,8 +137,17 @@ class CommonParser extends TldParser
      * @param array $options
      * @return DomainInfo
      */
-    protected function createDomainInfo(DomainResponse $response, array $data, $options = []) {
+    protected function createDomainInfo(DomainResponse $response, array $data, $options = [])
+    {
         return new DomainInfo($response, $data, $this->getType());
+    }
+
+    /**
+     * @return GroupFilter
+     */
+    protected function createGroupFilter(): GroupFilter
+    {
+        return new GroupFilter();
     }
 
     /**
@@ -148,7 +157,8 @@ class CommonParser extends TldParser
     protected function filterFrom(DomainResponse $response)
     {
         $groups = $this->groupsFromText($response->getText());
-        $filter = GroupFilter::create($groups)
+        $filter = $this->createGroupFilter()
+            ->setGroups($groups)
             ->useIgnoreCase(true)
             ->useMatchFirstOnly(true)
             ->handleEmpty($this->emptyValuesDict);
