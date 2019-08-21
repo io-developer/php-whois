@@ -9,7 +9,7 @@ use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Modules\Asn\AsnInfo;
 use Iodev\Whois\Modules\Asn\AsnModule;
 use Iodev\Whois\Modules\Asn\AsnResponse;
-use Iodev\Whois\Modules\Tld\DomainInfo;
+use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldModule;
 
@@ -105,7 +105,7 @@ class Whois
 
     /**
      * @param string $domain
-     * @return DomainInfo
+     * @return TldInfo
      * @throws ServerMismatchException
      * @throws ConnectionException
      * @throws WhoisException

@@ -2,7 +2,7 @@
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
-use Iodev\Whois\Modules\Tld\DomainInfo;
+use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
 
@@ -60,7 +60,7 @@ class AutoParser extends TldParser
 
     /**
      * @param TldResponse $response
-     * @return DomainInfo
+     * @return TldInfo
      */
     public function parseResponse(TldResponse $response)
     {

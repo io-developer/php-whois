@@ -6,9 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class DomainInfoTest extends TestCase
 {
-    private static function createInfo($data = []): DomainInfo
+    private static function createInfo($data = []): TldInfo
     {
-        return new DomainInfo(self::getResponse(), $data);
+        return new TldInfo(self::getResponse(), $data);
     }
 
     private static function getResponse()
@@ -23,14 +23,14 @@ class DomainInfoTest extends TestCase
 
     public function testConstructEmptyData()
     {
-        $instance = new DomainInfo(self::getResponse(), []);
-        $this->assertInstanceOf(DomainInfo::class, $instance);
+        $instance = new TldInfo(self::getResponse(), []);
+        $this->assertInstanceOf(TldInfo::class, $instance);
     }
 
     public function testGetResponse()
     {
         $r = self::getResponse();
-        $i = new DomainInfo($r, []);
+        $i = new TldInfo($r, []);
         self::assertSame($r, $i->getResponse());
     }
 
