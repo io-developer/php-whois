@@ -22,7 +22,7 @@ class DomainResponse extends Response
     }
 
     /** @var string */
-    private $domain;
+    protected $domain;
 
     /**
      * @return string

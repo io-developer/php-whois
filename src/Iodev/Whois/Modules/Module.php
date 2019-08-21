@@ -17,10 +17,10 @@ abstract class Module
     }
 
     /** @var string */
-    private $type;
+    protected $type;
 
     /** @var ILoader */
-    private $loader;
+    protected $loader;
 
     /**
      * @return string

@@ -61,25 +61,25 @@ class TldServer
     }
 
     /** @var string */
-    private $uid;
+    protected $uid;
 
     /** @var string */
-    private $zone;
+    protected $zone;
 
     /** @var string[] */
-    private $inverseZoneParts;
+    protected $inverseZoneParts;
 
     /** @var bool */
-    private $centralized;
+    protected $centralized;
 
     /** @var string */
-    private $host;
+    protected $host;
     
     /** @var TldParser */
-    private $parser;
+    protected $parser;
 
     /** @var string */
-    private $queryFormat;
+    protected $queryFormat;
 
     /**
      * @return string
