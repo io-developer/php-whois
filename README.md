@@ -63,7 +63,7 @@ if ($whois->isDomainAvailable("почта.рф")) {
 
 // Getting raw-text lookup
 $response = $whois->lookupDomain("google.com");
-print $response->getText();
+print $response->text;
 
 // Getting parsed domain info
 $info = $whois->loadDomainInfo("google.com");
@@ -194,7 +194,7 @@ $whois = Factory::get()->createWhois();
 
 // Getting raw-text lookup
 $response = $whois->lookupAsn("AS32934");
-print $response->getText();
+print $response->text;
 
 // Getting parsed ASN info
 $info = $whois->loadAsnInfo("AS32934");
