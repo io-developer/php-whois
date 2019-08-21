@@ -4,7 +4,7 @@ namespace Iodev\Whois\Modules\Tld;
 
 use PHPUnit\Framework\TestCase;
 
-class DomainInfoTest extends TestCase
+class TldInfoTest extends TestCase
 {
     private static function createInfo($data = []): TldInfo
     {

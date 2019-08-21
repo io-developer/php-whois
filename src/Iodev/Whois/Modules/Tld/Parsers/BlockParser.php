@@ -97,6 +97,7 @@ class BlockParser extends CommonParser
             ->useFirstGroupOr($domainFilter->getFirstGroup());
 
         $data = [
+            "parserType" => $this->getType(),
             "domainName" => $this->parseDomain($domainFilter) ?: ($isReserved ? $response->domain : ''),
             "states" => $this->parseStates($rootFilter, $primaryFilter),
             "nameServers" => $this->parseNameServers($rootFilter, $primaryFilter),
