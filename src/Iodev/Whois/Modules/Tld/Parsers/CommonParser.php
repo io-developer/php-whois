@@ -5,7 +5,7 @@ namespace Iodev\Whois\Modules\Tld\Parsers;
 use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\DomainInfo;
-use Iodev\Whois\Modules\Tld\DomainResponse;
+use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
 
 class CommonParser extends TldParser
@@ -73,10 +73,10 @@ class CommonParser extends TldParser
     }
 
     /**
-     * @param DomainResponse $response
+     * @param TldResponse $response
      * @return DomainInfo
      */
-    public function parseResponse(DomainResponse $response)
+    public function parseResponse(TldResponse $response)
     {
         $sel = $this->filterFrom($response)->toSelector();
         $data = [
@@ -132,12 +132,12 @@ class CommonParser extends TldParser
     }
 
     /**
-     * @param DomainResponse $response
+     * @param TldResponse $response
      * @param array $data
      * @param array $options
      * @return DomainInfo
      */
-    protected function createDomainInfo(DomainResponse $response, array $data, $options = [])
+    protected function createDomainInfo(TldResponse $response, array $data, $options = [])
     {
         return new DomainInfo($response, $data, $this->getType());
     }
@@ -151,10 +151,10 @@ class CommonParser extends TldParser
     }
 
     /**
-     * @param DomainResponse $response
+     * @param TldResponse $response
      * @return GroupFilter
      */
-    protected function filterFrom(DomainResponse $response)
+    protected function filterFrom(TldResponse $response)
     {
         $groups = $this->groupsFromText($response->text);
         $filter = $this->createGroupFilter()

@@ -56,8 +56,8 @@ abstract class TldParser
     abstract public function setConfig($cfg);
 
     /**
-     * @param DomainResponse $response
+     * @param TldResponse $response
      * @return DomainInfo
      */
-    abstract public function parseResponse(DomainResponse $response);
+    abstract public function parseResponse(TldResponse $response);
 }

@@ -109,7 +109,7 @@ class TldModule extends Module
     /**
      * @param string $domain
      * @param TldServer $server
-     * @return DomainResponse
+     * @return TldResponse
      * @throws ServerMismatchException
      * @throws ConnectionException
      * @throws WhoisException
@@ -141,7 +141,7 @@ class TldModule extends Module
      * @param string $domain
      * @param bool $strict
      * @param string $host
-     * @return DomainResponse
+     * @return TldResponse
      * @throws ConnectionException
      * @throws WhoisException
      */
@@ -149,7 +149,7 @@ class TldModule extends Module
     {
         $host = $host ?: $server->getHost();
         $query = $server->buildDomainQuery($domain, $strict);
-        return new DomainResponse([
+        return new TldResponse([
             'domain' => $domain,
             'host' => $host,
             'query' => $query,
