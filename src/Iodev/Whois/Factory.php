@@ -49,26 +49,24 @@ class Factory implements IFactory
     }
 
     /**
-     * @param ILoader $loader
-     * @param AsnServer[] $servers
+     * @param Whois $ehois
      * @return AsnModule
      */
-    public function createAsnModule(ILoader $loader = null, $servers = null): AsnModule
+    public function createAsnModule(Whois $ehois): AsnModule
     {
-        $m = new AsnModule($loader);
-        $m->setServers($servers ?: $this->createAsnSevers(Config::load("module.asn.servers")));
+        $m = new AsnModule($ehois->getLoader());
+        $m->setServers($this->createAsnSevers());
         return $m;
     }
 
     /**
-     * @param ILoader $loader
-     * @param TldServer[] $servers
+     * @param Whois $ehois
      * @return TldModule
      */
-    public function createTldModule(ILoader $loader = null, $servers = null): TldModule
+    public function createTldModule(Whois $ehois): TldModule
     {
-        $m = new TldModule($loader);
-        $m->setServers($servers ?: $this->createTldSevers());
+        $m = new TldModule($ehois->getLoader());
+        $m->setServers($this->createTldSevers());
         return $m;
     }
 
@@ -193,12 +191,13 @@ class Factory implements IFactory
     }
 
     /**
-     * @param array $configs
+     * @param array $configs|null
      * @param AsnParser $defaultParser
      * @return AsnServer[]
      */
-    public function createAsnSevers($configs, AsnParser $defaultParser = null): array
+    public function createAsnSevers($configs = null, AsnParser $defaultParser = null): array
     {
+        $configs = is_array($configs) ? $configs : Config::load("module.asn.servers");
         $defaultParser = $defaultParser ?: $this->createAsnParser();
         $servers = [];
         foreach ($configs as $config) {

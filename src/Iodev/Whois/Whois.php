@@ -66,7 +66,7 @@ class Whois
      */
     public function getTldModule()
     {
-        $this->tldModule = $this->tldModule ?: $this->getFactory()->createTldModule($this->loader);
+        $this->tldModule = $this->tldModule ?: $this->getFactory()->createTldModule($this);
         return $this->tldModule;
     }
 
@@ -75,7 +75,7 @@ class Whois
      */
     public function getAsnModule()
     {
-        $this->asnModule = $this->asnModule ?: $this->getFactory()->createAsnModule($this->loader);
+        $this->asnModule = $this->asnModule ?: $this->getFactory()->createAsnModule($this);
         return $this->asnModule;
     }
 

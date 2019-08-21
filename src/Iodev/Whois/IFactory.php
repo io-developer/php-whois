@@ -12,48 +12,19 @@ use Iodev\Whois\Modules\Tld\TldServer;
 interface IFactory
 {
     /**
-     * @param ILoader|null $loader
-     * @return Whois
-     */
-    function createWhois(ILoader $loader = null): Whois;
-
-    /**
      * @return ILoader
      */
     function createLoader(): ILoader;
 
     /**
-     * @param ILoader $loader
-     * @param AsnServer[] $servers
+     * @param Whois $ehois
      * @return AsnModule
      */
-    function createAsnModule(ILoader $loader = null, $servers = null): AsnModule;
+    function createAsnModule(Whois $ehois): AsnModule;
 
     /**
-     * @param ILoader $loader
-     * @param TldServer[] $servers
+     * @param Whois $ehois
      * @return TldModule
      */
-    function createTldModule(ILoader $loader = null, $servers = null): TldModule;
-
-    /**
-     * @param array|null $configs
-     * @param TldParser|null $defaultParser
-     * @return TldServer[]
-     */
-    public function createTldSevers($configs = null, TldParser $defaultParser = null): array;
-
-    /**
-     * @param array $config
-     * @param TldParser|null $defaultParser
-     * @return TldServer
-     */
-    public function createTldSever(array $config, TldParser $defaultParser = null): TldServer;
-
-    /**
-     * @param array $config
-     * @param TldParser|null $defaultParser
-     * @return TldParser
-     */
-    public function createTldSeverParser(array $config, TldParser $defaultParser = null): TldParser;
+    function createTldModule(Whois $ehois): TldModule;
 }
