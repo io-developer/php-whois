@@ -4,7 +4,7 @@ namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Helpers\ParserHelper;
-use Iodev\Whois\Modules\Tld\DomainInfo;
+use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
 
@@ -74,7 +74,7 @@ class CommonParser extends TldParser
 
     /**
      * @param TldResponse $response
-     * @return DomainInfo
+     * @return TldInfo
      */
     public function parseResponse(TldResponse $response)
     {
@@ -135,11 +135,11 @@ class CommonParser extends TldParser
      * @param TldResponse $response
      * @param array $data
      * @param array $options
-     * @return DomainInfo
+     * @return TldInfo
      */
     protected function createDomainInfo(TldResponse $response, array $data, $options = [])
     {
-        return new DomainInfo($response, $data, $this->getType());
+        return new TldInfo($response, $data, $this->getType());
     }
 
     /**

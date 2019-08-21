@@ -57,7 +57,7 @@ abstract class TldParser
 
     /**
      * @param TldResponse $response
-     * @return DomainInfo
+     * @return TldInfo
      */
     abstract public function parseResponse(TldResponse $response);
 }
