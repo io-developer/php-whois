@@ -120,7 +120,11 @@ class AsnModule extends Module
     {
         $host = $server->getHost();
         $query = $server->buildQuery($asn);
-        $text = $this->getLoader()->loadText($host, $query);
-        return new AsnResponse($asn, $query, $text, $host);
+        return new AsnResponse([
+            'asn' => $asn,
+            'host' => $host,
+            'query' => $query,
+            'text' => $this->getLoader()->loadText($host, $query),
+        ]);
     }
 }

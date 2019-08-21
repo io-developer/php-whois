@@ -13,7 +13,7 @@ class AsnParser
     public function parseResponse(AsnResponse $response)
     {
         $routes = [];
-        foreach ($this->parseBlocks($response->getText()) as $block) {
+        foreach ($this->parseBlocks($response->text) as $block) {
             if (count($block) > 1) {
                 $routes[] = $this->createAsnRouteInfo($block);
             }
@@ -68,6 +68,6 @@ class AsnParser
      */
     protected function createAsnInfo(AsnResponse $response, array $routes): AsnInfo
     {
-        return new AsnInfo($response, $response->getAsn(), $routes);
+        return new AsnInfo($response, $response->asn, $routes);
     }
 }

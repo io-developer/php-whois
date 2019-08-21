@@ -156,7 +156,7 @@ class CommonParser extends TldParser
      */
     protected function filterFrom(DomainResponse $response)
     {
-        $groups = $this->groupsFromText($response->getText());
+        $groups = $this->groupsFromText($response->text);
         $filter = $this->createGroupFilter()
             ->setGroups($groups)
             ->useIgnoreCase(true)
@@ -166,7 +166,7 @@ class CommonParser extends TldParser
         if ($this->isFlat) {
             return $filter->mergeGroups();
         }
-        return $filter->filterIsDomain($response->getDomain(), $this->domainKeys)
+        return $filter->filterIsDomain($response->domain, $this->domainKeys)
             ->useFirstGroup();
     }
 

@@ -11,22 +11,26 @@ class ResponseTest extends TestCase
 
     public function setUp(): void
     {
-        $this->resp = new Response("domain.some", "Test content", "whois.host.abc");
+        $this->resp = new Response([
+            "query" => "domain.some",
+            "text" => "Test content",
+            "host" => "whois.host.abc",
+        ]);
     }
 
 
     public function testGetQuery()
     {
-        self::assertEquals("domain.some", $this->resp->getQuery());
+        self::assertEquals("domain.some", $this->resp->query);
     }
 
     public function testGetText()
     {
-        self::assertEquals("Test content", $this->resp->getText());
+        self::assertEquals("Test content", $this->resp->text);
     }
 
     public function testGetHost()
     {
-        self::assertEquals("whois.host.abc", $this->resp->getHost());
+        self::assertEquals("whois.host.abc", $this->resp->host);
     }
 }
