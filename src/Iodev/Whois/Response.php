@@ -20,13 +20,13 @@ class Response
     }
 
     /** @var string */
-    private $query;
+    protected $query;
     
     /** @var string */
-    private $text;
+    protected $text;
 
     /** @var string */
-    private $host;
+    protected $host;
 
     /**
      * @return string

@@ -21,10 +21,10 @@ class TldModule extends Module
     }
 
     /** @var TldServer[] */
-    private $servers = [];
+    protected $servers = [];
 
     /** @var TldServer[] */
-    private $lastUsedServers = [];
+    protected $lastUsedServers = [];
 
     /**
      * @return TldServer[]
@@ -160,7 +160,7 @@ class TldModule extends Module
      * @throws ConnectionException
      * @throws WhoisException
      */
-    private function loadDomainData($domain, $servers)
+    protected function loadDomainData($domain, $servers)
     {
         $this->lastUsedServers = [];
         $domain = DomainHelper::toAscii($domain);
@@ -191,7 +191,7 @@ class TldModule extends Module
      * @throws ConnectionException
      * @throws WhoisException
      */
-    private function loadParsedTo(&$outResponse, &$outInfo, $server, $domain, $strict = false, $host = null, &$lastError = null)
+    protected function loadParsedTo(&$outResponse, &$outInfo, $server, $domain, $strict = false, $host = null, &$lastError = null)
     {
         try {
             $outResponse = $this->loadResponse($server, $domain, $strict, $host);

@@ -2,6 +2,9 @@
 
 namespace Iodev\Whois;
 
+/**
+ * Immutable Data Object
+ */
 class DataObject
 {
     /**
