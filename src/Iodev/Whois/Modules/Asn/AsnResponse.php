@@ -2,18 +2,18 @@
 
 namespace Iodev\Whois\Modules\Asn;
 
-use Iodev\Whois\Response;
+use Iodev\Whois\DataObject;
 
 /**
  * @property string asn
  */
-class AsnResponse extends Response
+class AsnResponse extends DataObject
 {
-    public function __construct(array $data)
-    {
-        parent::__construct($data);
-        $this->dataDefault = array_merge($this->dataDefault, [
-            'asn' => '',
-        ]);
-    }
+    /** @var string */
+    protected $dataDefault = [
+        'query' => '',
+        'text' => '',
+        'host' => '',
+        'asn' => '',
+    ];
 }

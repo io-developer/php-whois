@@ -4,10 +4,7 @@ namespace Iodev\Whois;
 
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Modules\Asn\AsnModule;
-use Iodev\Whois\Modules\Asn\AsnServer;
 use Iodev\Whois\Modules\Tld\TldModule;
-use Iodev\Whois\Modules\Tld\TldParser;
-use Iodev\Whois\Modules\Tld\TldServer;
 
 interface IFactory
 {

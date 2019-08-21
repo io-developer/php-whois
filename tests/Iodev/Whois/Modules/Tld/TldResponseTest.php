@@ -1,23 +1,28 @@
 <?php
 
-namespace Iodev\Whois;
+namespace Iodev\Whois\Modules\Tld;
 
 use PHPUnit\Framework\TestCase;
 
-class ResponseTest extends TestCase
+class TldResponseTest extends TestCase
 {
-    /** @var Response */
+    /** @var DomainResponse */
     private $resp;
 
     public function setUp(): void
     {
-        $this->resp = new Response([
+        $this->resp = new DomainResponse([
+            "domain" => "domain.some",
+            "host" => "whois.host.abc",
             "query" => "domain.some",
             "text" => "Test content",
-            "host" => "whois.host.abc",
         ]);
     }
 
+    public function testGetDomain()
+    {
+        self::assertEquals("domain.some", $this->resp->domain);
+    }
 
     public function testGetQuery()
     {
