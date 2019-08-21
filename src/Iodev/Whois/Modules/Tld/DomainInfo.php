@@ -21,12 +21,12 @@ use Iodev\Whois\Helpers\DomainHelper;
 class DomainInfo extends DataObject
 {
     /**
-     * @param DomainResponse $response
+     * @param TldResponse $response
      * @param array $data
      * @param string $parserType
      * @throws InvalidArgumentException
      */
-    public function __construct(DomainResponse $response, $data = [], $parserType = '')
+    public function __construct(TldResponse $response, $data = [], $parserType = '')
     {
         if (!is_array($data)) {
             throw new InvalidArgumentException("Data must be an array");
@@ -48,14 +48,14 @@ class DomainInfo extends DataObject
         "registrar" => "",
     ];
 
-    /** @var DomainResponse */
+    /** @var TldResponse */
     protected $response;
 
     /** @var string */
     protected $parserType;
 
     /**
-     * @return DomainResponse
+     * @return TldResponse
      */
     public function getResponse()
     {
