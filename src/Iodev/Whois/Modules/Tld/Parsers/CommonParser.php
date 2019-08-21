@@ -80,6 +80,8 @@ class CommonParser extends TldParser
     {
         $sel = $this->filterFrom($response)->toSelector();
         $data = [
+            "parserType" => $this->getType(),
+
             "domainName" => $sel->clean()
                 ->selectKeys($this->domainKeys)
                 ->mapDomain()
@@ -139,7 +141,7 @@ class CommonParser extends TldParser
      */
     protected function createDomainInfo(TldResponse $response, array $data, $options = [])
     {
-        return new TldInfo($response, $data, $this->getType());
+        return new TldInfo($response, $data);
     }
 
     /**
