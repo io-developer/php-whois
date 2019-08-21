@@ -2,58 +2,38 @@
 
 namespace Iodev\Whois\Modules\Asn;
 
-use InvalidArgumentException;
+use Iodev\Whois\DataObject;
 
 /**
- * Immutable data object
+ * @property string asn
+ * @property AsnRouteInfo[] routes
  */
-class AsnInfo
+class AsnInfo extends DataObject
 {
     /**
      * @param AsnResponse $response
-     * @param string $asn
-     * @param AsnRouteInfo[] $routes
+     * @param array $data
      */
-    public function __construct(AsnResponse $response, $asn, $routes)
+    public function __construct(AsnResponse $response, array $data)
     {
-        if (!is_array($routes)) {
-            throw new InvalidArgumentException("Routes must be an array");
-        }
+        parent::__construct($data);
         $this->response = $response;
-        $this->asn = strval($asn);
-        $this->routes = $routes;
     }
 
     /** @var AsnResponse */
-    private $response;
+    protected $response;
 
-    /** @var string */
-    private $asn;
-
-    /** @var AsnRouteInfo[] */
-    private $routes;
+    /** @var array */
+    protected $dataDefault = [
+        "asn" => "",
+        "routes" => [],
+    ];
 
     /**
      * @return AsnResponse
      */
-    public function getResponse()
+    public function getResponse(): AsnResponse
     {
         return $this->response;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAsn()
-    {
-        return $this->asn;
-    }
-
-    /**
-     * @return AsnRouteInfo[]
-     */
-    public function getRoutes()
-    {
-        return $this->routes;
     }
 }
