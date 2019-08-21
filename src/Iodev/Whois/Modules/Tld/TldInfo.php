@@ -7,8 +7,6 @@ use Iodev\Whois\DataObject;
 use Iodev\Whois\Helpers\DomainHelper;
 
 /**
- * Immutable data object
- *
  * @property string domainName
  * @property string whoisServer
  * @property string[] nameServers
@@ -18,7 +16,7 @@ use Iodev\Whois\Helpers\DomainHelper;
  * @property string owner
  * @property string registrar
  */
-class DomainInfo extends DataObject
+class TldInfo extends DataObject
 {
     /**
      * @param TldResponse $response

@@ -4,7 +4,7 @@ namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Helpers\DateHelper;
 use Iodev\Whois\Helpers\GroupFilter;
-use Iodev\Whois\Modules\Tld\DomainInfo;
+use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
 
@@ -66,7 +66,7 @@ class BlockParser extends CommonParser
 
     /**
      * @param TldResponse $response
-     * @return DomainInfo
+     * @return TldInfo
      */
     public function parseResponse(TldResponse $response)
     {

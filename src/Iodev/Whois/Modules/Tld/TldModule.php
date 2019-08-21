@@ -124,7 +124,7 @@ class TldModule extends Module
     /**
      * @param string $domain
      * @param TldServer $server
-     * @return DomainInfo
+     * @return TldInfo
      * @throws ServerMismatchException
      * @throws ConnectionException
      * @throws WhoisException
@@ -186,7 +186,7 @@ class TldModule extends Module
 
     /**
      * @param $outResponse
-     * @param DomainInfo $outInfo
+     * @param TldInfo $outInfo
      * @param TldServer $server
      * @param $domain
      * @param $strict
