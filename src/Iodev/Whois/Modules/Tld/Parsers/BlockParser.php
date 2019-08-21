@@ -5,7 +5,7 @@ namespace Iodev\Whois\Modules\Tld\Parsers;
 use Iodev\Whois\Helpers\DateHelper;
 use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Modules\Tld\DomainInfo;
-use Iodev\Whois\Modules\Tld\DomainResponse;
+use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
 
 class BlockParser extends CommonParser
@@ -65,10 +65,10 @@ class BlockParser extends CommonParser
     }
 
     /**
-     * @param DomainResponse $response
+     * @param TldResponse $response
      * @return DomainInfo
      */
-    public function parseResponse(DomainResponse $response)
+    public function parseResponse(TldResponse $response)
     {
         $groups = $this->groupsFromText($response->text);
         $rootFilter = $this->createGroupFilter()

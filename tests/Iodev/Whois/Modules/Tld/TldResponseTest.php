@@ -6,12 +6,12 @@ use PHPUnit\Framework\TestCase;
 
 class TldResponseTest extends TestCase
 {
-    /** @var DomainResponse */
+    /** @var TldResponse */
     private $resp;
 
     public function setUp(): void
     {
-        $this->resp = new DomainResponse([
+        $this->resp = new TldResponse([
             "domain" => "domain.some",
             "host" => "whois.host.abc",
             "query" => "domain.some",

@@ -13,7 +13,7 @@ class DomainInfoTest extends TestCase
 
     private static function getResponse()
     {
-        return new DomainResponse([
+        return new TldResponse([
             "domain" => "domain.com",
             "query" => "domain.com",
             "text" => "Hello world",
