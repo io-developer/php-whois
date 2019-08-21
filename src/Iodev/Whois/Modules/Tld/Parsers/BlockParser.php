@@ -70,14 +70,14 @@ class BlockParser extends CommonParser
      */
     public function parseResponse(DomainResponse $response)
     {
-        $groups = $this->groupsFromText($response->getText());
+        $groups = $this->groupsFromText($response->text);
         $rootFilter = $this->createGroupFilter()
             ->setGroups($groups)
             ->useIgnoreCase(true)
             ->handleEmpty($this->emptyValuesDict)
             ->setHeaderKey($this->headerKey)
             ->setDomainKeys($this->domainKeys)
-            ->setSubsetParams([ '$domain' => $response->getDomain() ]);
+            ->setSubsetParams([ '$domain' => $response->domain ]);
 
         $reserved = $rootFilter->cloneMe()
             ->filterHasSubsetOf($this->reservedDomainSubsets)
@@ -97,7 +97,7 @@ class BlockParser extends CommonParser
             ->useFirstGroupOr($domainFilter->getFirstGroup());
 
         $data = [
-            "domainName" => $this->parseDomain($domainFilter) ?: ($isReserved ? $response->getDomain() : ''),
+            "domainName" => $this->parseDomain($domainFilter) ?: ($isReserved ? $response->domain : ''),
             "states" => $this->parseStates($rootFilter, $primaryFilter),
             "nameServers" => $this->parseNameServers($rootFilter, $primaryFilter),
             "owner" => $this->parseOwner($rootFilter, $primaryFilter) ?: ($isReserved ? $reserved : ''),

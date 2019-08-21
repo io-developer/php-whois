@@ -149,8 +149,12 @@ class TldModule extends Module
     {
         $host = $host ?: $server->getHost();
         $query = $server->buildDomainQuery($domain, $strict);
-        $text = $this->getLoader()->loadText($host, $query);
-        return new DomainResponse($domain, $query, $text, $host);
+        return new DomainResponse([
+            'domain' => $domain,
+            'host' => $host,
+            'query' => $query,
+            'text' => $this->getLoader()->loadText($host, $query),
+        ]);
     }
 
     /**

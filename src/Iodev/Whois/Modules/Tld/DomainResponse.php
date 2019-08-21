@@ -5,30 +5,15 @@ namespace Iodev\Whois\Modules\Tld;
 use Iodev\Whois\Response;
 
 /**
- * Immutable data object
+ * @property string domain
  */
 class DomainResponse extends Response
 {
-    /**
-     * @param string $domain
-     * @param string $query
-     * @param string $text
-     * @param string $host
-     */
-    public function __construct($domain, $query = "", $text = "", $host = "")
+    public function __construct(array $data)
     {
-        parent::__construct($query, $text, $host);
-        $this->domain = strval($domain);
-    }
-
-    /** @var string */
-    protected $domain;
-
-    /**
-     * @return string
-     */
-    public function getDomain()
-    {
-        return $this->domain;
+        parent::__construct($data);
+        $this->dataDefault = array_merge($this->dataDefault, [
+            'domain' => '',
+        ]);
     }
 }
