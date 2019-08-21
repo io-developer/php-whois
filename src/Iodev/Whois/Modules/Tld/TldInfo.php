@@ -7,6 +7,7 @@ use Iodev\Whois\DataObject;
 use Iodev\Whois\Helpers\DomainHelper;
 
 /**
+ * @property string parserType
  * @property string domainName
  * @property string whoisServer
  * @property string[] nameServers
@@ -21,21 +22,20 @@ class TldInfo extends DataObject
     /**
      * @param TldResponse $response
      * @param array $data
-     * @param string $parserType
      * @throws InvalidArgumentException
      */
-    public function __construct(TldResponse $response, $data = [], $parserType = '')
+    public function __construct(TldResponse $response, $data = [])
     {
         if (!is_array($data)) {
             throw new InvalidArgumentException("Data must be an array");
         }
         parent::__construct($data);
         $this->response = $response;
-        $this->parserType = $parserType;
     }
 
     /** @var array */
     protected $dataDefault = [
+        "parserType" => "",
         "domainName" => "",
         "whoisServer" => "",
         "nameServers" => [],
@@ -49,23 +49,12 @@ class TldInfo extends DataObject
     /** @var TldResponse */
     protected $response;
 
-    /** @var string */
-    protected $parserType;
-
     /**
      * @return TldResponse
      */
     public function getResponse()
     {
         return $this->response;
-    }
-
-    /**
-     * @return string
-     */
-    public function getParserType()
-    {
-        return $this->parserType;
     }
 
     /**
