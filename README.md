@@ -198,7 +198,7 @@ print $response->text;
 
 // Getting parsed ASN info
 $info = $whois->loadAsnInfo("AS32934");
-foreach ($info->getRoutes() as $route) {
+foreach ($info->routes as $route) {
     print_r([
         'route IPv4' => $route->route,
         'route IPv6' => $route->route6,
