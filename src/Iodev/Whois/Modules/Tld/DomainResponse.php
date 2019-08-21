@@ -2,18 +2,18 @@
 
 namespace Iodev\Whois\Modules\Tld;
 
-use Iodev\Whois\Response;
+use Iodev\Whois\DataObject;
 
 /**
  * @property string domain
  */
-class DomainResponse extends Response
+class DomainResponse extends DataObject
 {
-    public function __construct(array $data)
-    {
-        parent::__construct($data);
-        $this->dataDefault = array_merge($this->dataDefault, [
-            'domain' => '',
-        ]);
-    }
+    /** @var string */
+    protected $dataDefault = [
+        'query' => '',
+        'text' => '',
+        'host' => '',
+        'domain' => '',
+    ];
 }
