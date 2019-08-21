@@ -67,11 +67,11 @@ class AsnParsingTest extends TestCase
 
         self::assertEquals(
             $expected["asn"],
-            $info->getAsn(),
+            $info->asn,
             "ASN mismatch ($srcTextFilename)"
         );
 
-        $actualRoutes = $info->getRoutes();
+        $actualRoutes = $info->routes;
         $expectedRoutes = $expected['routes'];
 
         self::assertEquals(

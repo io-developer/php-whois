@@ -63,11 +63,14 @@ class AsnParser
 
     /**
      * @param AsnResponse $response
-     * @param array $routes
+     * @param AsnRouteInfo[] $routes
      * @return AsnInfo
      */
     protected function createAsnInfo(AsnResponse $response, array $routes): AsnInfo
     {
-        return new AsnInfo($response, $response->asn, $routes);
+        return new AsnInfo($response, [
+            'asn' => $response->asn,
+            'routes' => $routes,
+        ]);
     }
 }
