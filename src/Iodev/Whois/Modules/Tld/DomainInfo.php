@@ -49,10 +49,10 @@ class DomainInfo extends DataObject
     ];
 
     /** @var DomainResponse */
-    private $response;
+    protected $response;
 
     /** @var string */
-    private $parserType;
+    protected $parserType;
 
     /**
      * @return DomainResponse

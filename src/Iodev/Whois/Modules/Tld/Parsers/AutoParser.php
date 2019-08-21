@@ -9,7 +9,7 @@ use Iodev\Whois\Modules\Tld\TldParser;
 class AutoParser extends TldParser
 {
     /** @var TldParser[] */
-    private $parsers = [];
+    protected $parsers = [];
 
     /**
      * @return string
