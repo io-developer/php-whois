@@ -615,6 +615,7 @@
   {"zone": ".space", "host": "whois.nic.space"},
   {"zone": ".spiegel", "host": "whois.ksregistry.net"},
   {"zone": ".st", "host": "whois.nic.st"},
+  {"zone": ".store", "host": "whois.nic.store"},
   {"zone": ".study", "host": "whois.nic.study"},
   {"zone": ".style", "host": "whois.donuts.co"},
   {"zone": ".su", "host": "whois.ripn.net"},
