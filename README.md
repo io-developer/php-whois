@@ -1,7 +1,7 @@
 # PHP WHOIS
 
 [![Build Status](https://travis-ci.org/io-developer/php-whois.svg?branch=master)](https://travis-ci.org/io-developer/php-whois)
-[![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-8892BF.svg)](https://secure.php.net/)
+[![PHP version](https://img.shields.io/badge/php-%3E%3D7.2-8892BF.svg)](https://secure.php.net/)
 [![Packagist](https://img.shields.io/packagist/v/io-developer/php-whois.svg)](https://packagist.org/packages/io-developer/php-whois)
 
 PHP WHOIS client implementation. Sends the queries directly to the WHOIS services.
@@ -22,6 +22,7 @@ PHP WHOIS client implementation. Sends the queries directly to the WHOIS service
 * php-mbstring
 * php-memcached + Memcached server (both optional)
 * Allowed port 43 in firewall
+* Native whois
 
 ##### Project requirements:
 * PSR-4 autoloader
