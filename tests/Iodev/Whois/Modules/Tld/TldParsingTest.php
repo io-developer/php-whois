@@ -5,6 +5,7 @@ namespace Iodev\Whois\Modules\Tld;
 use InvalidArgumentException;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
+use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Whois;
 use PHPUnit\Framework\TestCase;
@@ -117,7 +118,37 @@ class TldParsingTest extends TestCase
 
     public function getTestData()
     {
-        return [
+        $resolveKeys = function($list) {
+            $result = [];
+            $mb_leftpad = function ($str, $minlen, $padder = ' ') {
+                while (mb_strlen($str) < $minlen) {
+                    $str = "{$padder}{$str}";
+                }
+                return $str;
+            };
+            foreach ($list as $index => $item) {
+                list ($domain) = $item;
+                $domainUnicode = DomainHelper::toUnicode($domain);
+                $domainUnicode = $domain == $domainUnicode ? '' : $domainUnicode;
+
+                $parts = explode('.', $domain);
+                $tld = mb_strtoupper(end($parts));
+                $tldUnicode = mb_strtoupper(DomainHelper::toUnicode($tld));
+                $tldUnicode = $tld == $tldUnicode ? '' : $tldUnicode;
+
+                $key = sprintf(
+                    '#%03d %s %s %s %s',
+                    $index,
+                    $mb_leftpad($tldUnicode ? ".$tldUnicode" : '', 8),
+                    $mb_leftpad(".$tld", 12),
+                    $mb_leftpad($domainUnicode, 24),
+                    $mb_leftpad($domain, 32)
+                );
+                $result[$key] = $item;
+            }
+            return $result;
+        };
+        return $resolveKeys([
             // .AC
             [ "free.ac", ".ac/free.txt", null ],
             [ "google.ac", ".ac/google.ac.txt", ".ac/google.ac.json" ],
@@ -749,6 +780,6 @@ class TldParsingTest extends TestCase
             // .XIN
             [ "free.xin", ".xin/free.txt", null ],
             [ "microsoft.xin", ".xin/microsoft.xin.txt", ".xin/microsoft.xin.json" ],
-        ];
+        ]);
     }
 }
