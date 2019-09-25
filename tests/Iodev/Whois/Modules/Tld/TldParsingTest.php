@@ -249,6 +249,7 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             // .DE
             [ "free.de", ".de/free.txt", null ],
             [ "google.de", ".de/google.de.txt", ".de/google.de.json" ],
+            [ "fäw.de", ".de/xn--fw-via.de.txt", ".de/xn--fw-via.de.json" ],
 
             // .DK
             [ "free.dk", ".dk/free.txt", null ],

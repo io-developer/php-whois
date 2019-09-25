@@ -175,7 +175,7 @@
   {"zone": ".datsun", "host": "whois.nic.gmo"},
   {"zone": ".day", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".dclk", "host": "domain-registry-whois.l.google.com"},
-  {"zone": ".de", "host": "whois.denic.de", "parserType": "block", "queryFormat": "-T dn,ace %s\r\n"},
+  {"zone": ".de", "host": "whois.denic.de", "queryFormat": "-T dn,ace %s\r\n"},
   {"zone": ".deals", "host": "whois.donuts.co"},
   {"zone": ".degree", "host": "whois.rightside.co"},
   {"zone": ".delivery", "host": "whois.donuts.co"},
