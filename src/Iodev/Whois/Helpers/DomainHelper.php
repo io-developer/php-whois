@@ -2,6 +2,8 @@
 
 namespace Iodev\Whois\Helpers;
 
+use Iodev\Whois\Factory;
+
 class DomainHelper
 {
     /**
@@ -26,12 +28,7 @@ class DomainHelper
             return "";
         }
         $cor = self::correct($domain);
-        if (function_exists("idn_to_ascii")) {
-            return defined('INTL_IDNA_VARIANT_UTS46')
-                ? idn_to_ascii($cor, 0, INTL_IDNA_VARIANT_UTS46)
-                : idn_to_ascii($cor);
-        }
-        return $cor;
+        return Factory::get()->createPunycode()->encode($cor);
     }
     
     /**
@@ -44,12 +41,7 @@ class DomainHelper
             return "";
         }
         $cor = self::correct($domain);
-        if (function_exists("idn_to_utf8")) {
-            return defined('INTL_IDNA_VARIANT_UTS46')
-                ? idn_to_utf8($cor, 0, INTL_IDNA_VARIANT_UTS46)
-                : idn_to_utf8($cor);
-        }
-        return $cor;
+        return Factory::get()->createPunycode()->decode($cor);
     }
 
     /**
