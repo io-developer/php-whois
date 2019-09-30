@@ -6,9 +6,9 @@ Required:
 * Docker-compose
 
 
-# Testing single PHP version
+### Testing single PHP version
 * cd to repository root
-* Run `docker-compose up --build`
+* Run `docker-compose -f docker-compose.tests.yml up --build`
 * See output like that:
 ```
 Building php-7.3
@@ -44,9 +44,9 @@ php-7.3_1  | OK (350 tests, 4155 assertions)
 php-whois_php-7.3_1 exited with code 0
 ```
 
-# Testing all PHP versions
+### Testing all PHP versions
 * cd to repository root
-* Run `docker-compose -f docker-compose.full.yml up --build`
+* Run `docker-compose -f docker-compose.tests.full.yml up --build`
 * See output like that:
 ```
 Building php-7.2

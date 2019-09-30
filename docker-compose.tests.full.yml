@@ -9,7 +9,7 @@ services:
       - "./composer.json:/workdir/composer.json:ro"
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-tests
       args:
         IMAGE: php:7.2-cli-alpine
         PACKAGES: git zip unzip icu-dev
@@ -23,7 +23,7 @@ services:
       - "./composer.json:/workdir/composer.json:ro"
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-tests
       args:
         IMAGE: php:7.3-cli-alpine
         PACKAGES: git zip unzip icu-dev
@@ -37,7 +37,7 @@ services:
       - "./composer.json:/workdir/composer.json:ro"
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-tests
       args:
         IMAGE: php:7.4-rc-cli-alpine
         PACKAGES: git zip unzip icu-dev
