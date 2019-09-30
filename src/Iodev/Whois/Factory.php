@@ -14,6 +14,9 @@ use Iodev\Whois\Modules\Tld\Parsers\IndentParser;
 use Iodev\Whois\Modules\Tld\TldModule;
 use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Modules\Tld\TldServer;
+use Iodev\Whois\Punycode\IntlPunycode;
+use Iodev\Whois\Punycode\IPunycode;
+use Iodev\Whois\Punycode\TruePunycode;
 
 class Factory implements IFactory
 {
@@ -27,6 +30,14 @@ class Factory implements IFactory
             $instance = new static();
         }
         return $instance;
+    }
+
+    public function createPunycode(): IPunycode
+    {
+        if (function_exists("idn_to_utf8") && function_exists("idn_to_ascii")) {
+            return new IntlPunycode();
+        }
+        return new TruePunycode();
     }
 
     /**

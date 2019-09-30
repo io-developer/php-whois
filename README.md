@@ -18,10 +18,12 @@ PHP WHOIS client implementation. Sends the queries directly to the WHOIS service
 ##### System requirements:
 * PHP >= __7.2__ (previous major version supports __5.4+__)
 * php-curl
-* php-intl
 * php-mbstring
-* php-memcached + Memcached server (both optional)
-* Allowed port 43 in firewall
+* Open port __43__ in firewall
+
+Optional:
+* php-intl
+* php-memcached + Memcached server
 
 ##### Project requirements:
 * PSR-4 autoloader

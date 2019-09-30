@@ -27,8 +27,8 @@
     "require" : {
         "php" : ">=7.2",
         "ext-curl": "*",
-        "ext-intl": "*",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "true/punycode": "^2.1"
     },
     "require-dev" : {
         "phpunit/phpunit": "^8.0"

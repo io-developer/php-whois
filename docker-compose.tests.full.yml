@@ -13,7 +13,21 @@ services:
       args:
         IMAGE: php:7.2-cli-alpine
         PACKAGES: git zip unzip icu-dev
+
+  php-7.2_intl:
+    volumes:
+      - php72_intl:/workdir
+      - "./src:/workdir/src:ro"
+      - "./tests:/workdir/tests:ro"
+      - "./composer.json:/workdir/composer.json:ro"
+    build:
+      context: .
+      dockerfile: Dockerfile-tests
+      args:
+        IMAGE: php:7.2-cli-alpine
+        PACKAGES: git zip unzip icu-dev
         PHPMODS: intl
+
 
   php-7.3:
     volumes:
@@ -27,7 +41,21 @@ services:
       args:
         IMAGE: php:7.3-cli-alpine
         PACKAGES: git zip unzip icu-dev
+
+  php-7.3_intl:
+    volumes:
+      - php73_intl:/workdir
+      - "./src:/workdir/src:ro"
+      - "./tests:/workdir/tests:ro"
+      - "./composer.json:/workdir/composer.json:ro"
+    build:
+      context: .
+      dockerfile: Dockerfile-tests
+      args:
+        IMAGE: php:7.3-cli-alpine
+        PACKAGES: git zip unzip icu-dev
         PHPMODS: intl
+
 
   php-7.4:
     volumes:
@@ -41,9 +69,25 @@ services:
       args:
         IMAGE: php:7.4-rc-cli-alpine
         PACKAGES: git zip unzip icu-dev
+
+  php-7.4_intl:
+    volumes:
+      - php74_intl:/workdir
+      - "./src:/workdir/src:ro"
+      - "./tests:/workdir/tests:ro"
+      - "./composer.json:/workdir/composer.json:ro"
+    build:
+      context: .
+      dockerfile: Dockerfile-tests
+      args:
+        IMAGE: php:7.4-rc-cli-alpine
+        PACKAGES: git zip unzip icu-dev
         PHPMODS: intl
 
 volumes:
   php72:
+  php72_intl:
   php73:
+  php73_intl:
   php74:
+  php74_intl:

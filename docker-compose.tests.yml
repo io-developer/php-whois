@@ -1,7 +1,7 @@
 version: '3'
 services:
 
-  php-7.3:
+  php-7.3_intl:
     volumes:
       - "./src:/workdir/src:ro"
       - "./tests:/workdir/tests:ro"
