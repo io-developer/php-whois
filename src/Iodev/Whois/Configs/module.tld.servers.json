@@ -334,6 +334,7 @@
   {"zone": ".immobilien", "host": "whois.unitedtld.com"},
   {"zone": ".in", "host": "whois.inregistry.in"},
   {"zone": ".in", "host": "whois.inregistry.net"},
+  {"zone": ".inc", "host": "whois.godaddy.com"},
   {"zone": ".industries", "host": "whois.donuts.co"},
   {"zone": ".infiniti", "host": "whois.nic.gmo"},
   {"zone": ".info", "host": "whois.afilias.info"},
