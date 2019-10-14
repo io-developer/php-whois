@@ -28,6 +28,7 @@
   {"zone": ".apartments", "host": "whois.donuts.co"},
   {"zone": ".app", "host": "whois.nic.google"},
   {"zone": ".aquarelle", "host": "whois-aquarelle.nic.fr"},
+  {"zone": ".ar", "host": "whois.nic.ar", "parserType": "block"},
   {"zone": ".archi", "host": "whois.ksregistry.net"},
   {"zone": ".army", "host": "whois.rightside.co"},
   {"zone": ".arpa", "host": "whois.iana.org"},
