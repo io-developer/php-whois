@@ -150,6 +150,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "free.as", ".as/free.txt", null ],
             [ "google.as", ".as/google.as.txt", ".as/google.as.json" ],
 
+            // .AR
+            [ "free.ar", ".ar/free.txt", null ],
+            [ "google.com.ar", ".ar/google.com.ar.txt", ".ar/google.com.ar.json" ],
+
             // .AT
             [ "free.at", ".at/free.txt", null ],
             [ "google.at", ".at/google.at.txt", ".at/google.at.json" ],
@@ -274,6 +278,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             // .EE
             [ "free.ee", ".ee/free.txt", null ],
             [ "google.ee", ".ee/google.ee.txt", ".ee/google.ee.json" ],
+
+            // .ES
+            [ "free.es", ".es/free.txt", null ],
+            [ "google.es", ".es/google.es.txt", ".es/google.es.json" ],
 
             // .EU
             [ "dsfasdfasdfsdafasfasfas.eu", ".eu/free.txt", null ],

@@ -1,4 +1,10 @@
 {
   "domainName": "google.es",
-  "owner": "Google LLC"
+  "owner": "Google LLC",
+  "whoisServer": null,
+  "nameServers": [],
+  "creationDate": null,
+  "expirationDate": null,
+  "states": [],
+  "registrar": null
 }
