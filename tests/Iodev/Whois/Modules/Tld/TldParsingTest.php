@@ -150,6 +150,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "free.as", ".as/free.txt", null ],
             [ "google.as", ".as/google.as.txt", ".as/google.as.json" ],
 
+            // .AR
+            [ "free.ar", ".ar/free.txt", null ],
+            [ "google.com.ar", ".ar/google.com.ar.txt", ".ar/google.com.ar.json" ],
+
             // .AT
             [ "free.at", ".at/free.txt", null ],
             [ "google.at", ".at/google.at.txt", ".at/google.at.json" ],
