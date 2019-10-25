@@ -534,6 +534,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "free.om", ".om/free.txt", null ],
             [ "google.com.om", ".om/google.com.om.txt", ".om/google.com.om.json" ],
 
+            // .PAGE
+            [ "free.page", ".page/free.txt", null ],
+            [ "microsoft.page", ".page/microsoft.page.txt", ".page/microsoft.page.json" ],
+
             // .PE
             [ "free.pe", ".pe/free.txt", null ],
             [ "google.com.pe", ".pe/google.com.pe.txt", ".pe/google.com.pe.json" ],

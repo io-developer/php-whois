@@ -505,6 +505,7 @@
   {"zone": ".org", "host": "whois.publicinterestregistry.net"},
   {"zone": ".organic", "host": "whois.afilias.net"},
   {"zone": ".ovh", "host": "whois-ovh.nic.fr"},
+  {"zone": ".page", "host": "whois.nic.google"},
   {"zone": ".paris", "host": "whois-paris.nic.fr"},
   {"zone": ".partners", "host": "whois.donuts.co"},
   {"zone": ".parts", "host": "whois.donuts.co"},
