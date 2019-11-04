@@ -716,6 +716,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             // .РФ
             [ "free.xn--p1ai", ".xn--p1ai/free.txt", null ],
             [ "xn--80a1acny.xn--p1ai", ".xn--p1ai/xn--80a1acny.xn--p1ai.txt", ".xn--p1ai/xn--80a1acny.xn--p1ai.json" ],
+
+            // .XIN
+            [ "free.xin", ".xin/free.txt", null ],
+            [ "microsoft.xin", ".xin/microsoft.xin.txt", ".xin/microsoft.xin.json" ],
         ];
     }
 }
