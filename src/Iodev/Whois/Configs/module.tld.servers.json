@@ -729,6 +729,7 @@
   {"zone": ".ws", "host": "whois.website.ws"},
   {"zone": ".wtc", "host": "whois.nic.wtc"},
   {"zone": ".wtf", "host": "whois.donuts.co"},
+  {"zone": ".xin", "host": "whois.nic.xin"},
   {"zone": ".xn--1qqw23a", "host": "whois.ngtld.cn"},
   {"zone": ".xn--3bst00m", "host": "whois.gtld.knet.cn"},
   {"zone": ".xn--3ds443g", "host": "whois.afilias-srs.net"},
