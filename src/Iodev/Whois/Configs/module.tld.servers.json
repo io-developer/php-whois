@@ -475,6 +475,7 @@
   {"zone": ".*.net", "host": "whois.centralnic.net"},
   {"zone": ".network", "host": "whois.donuts.co"},
   {"zone": ".new", "host": "domain-registry-whois.l.google.com"},
+  {"zone": ".news", "host": "whois.nic.news"},
   {"zone": ".nexus", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".nf", "host": "whois.nic.cx"},
   {"zone": ".nf", "host": "whois.nic.nf"},

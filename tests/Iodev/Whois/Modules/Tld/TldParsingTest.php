@@ -498,6 +498,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "speedtest.net", ".net/speedtest.net.txt", ".net/speedtest.net.json" ],
             [ "speedtest.net", ".net/speedtest.net_registrar_whois.txt", ".net/speedtest.net_registrar_whois.json" ],
 
+            // .NEWS
+            [ "free.news", ".news/free.txt", null ],
+            [ "google.news", ".news/google.news.txt", ".news/google.news.json" ],
+
             // .NF
             [ "free.nf", ".nf/free.txt", null ],
             [ "google.com.nf", ".nf/google.com.nf.txt", ".nf/google.com.nf.json" ],
