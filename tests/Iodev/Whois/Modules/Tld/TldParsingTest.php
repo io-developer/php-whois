@@ -162,6 +162,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "free.au", ".au/free.txt", null ],
             [ "google.com.au", ".au/google.com.au.txt", ".au/google.com.au.json" ],
 
+            // .BABY
+            [ "free.baby", ".baby/free.txt", null ],
+            [ "google.baby", ".baby/google.baby.txt", ".baby/google.baby.json" ],
+
             // .BE
             [ "free.be", ".be/free.txt", null ],
             [ "google.be", ".be/google.be.txt", ".be/google.be.json" ],
