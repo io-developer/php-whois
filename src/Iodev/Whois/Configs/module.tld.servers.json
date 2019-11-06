@@ -45,6 +45,7 @@
   {"zone": ".autos", "host": "whois.afilias-srs.net"},
   {"zone": ".aw", "host": "whois.nic.aw"},
   {"zone": ".ax", "host": "whois.ax"},
+  {"zone": ".baby", "host": "whois.nic.baby"},
   {"zone": ".band", "host": "whois.rightside.co"},
   {"zone": ".bank", "host": "whois.nic.bank"},
   {"zone": ".bar", "host": "whois.nic.bar"},
