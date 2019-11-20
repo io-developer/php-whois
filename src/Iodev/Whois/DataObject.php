@@ -5,7 +5,7 @@ namespace Iodev\Whois;
 /**
  * Immutable Data Object
  */
-class DataObject
+class DataObject implements \JsonSerializable
 {
     /**
      * @param array $data
@@ -51,5 +51,22 @@ class DataObject
     public function getData(): array
     {
         return $this->data;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $data = [];
+        foreach ($this->dataDefault as $key => $default) {
+            $data[$key] = $this->__get($key);
+        }
+        return $data;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 }
