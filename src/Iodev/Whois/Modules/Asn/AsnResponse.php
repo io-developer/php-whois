@@ -12,6 +12,8 @@ use Iodev\Whois\DataObject;
  */
 class AsnResponse extends DataObject
 {
+    use AsnResponseDeprected;
+
     /** @var string */
     protected $dataDefault = [
         'query' => '',
