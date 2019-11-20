@@ -19,6 +19,8 @@ use Iodev\Whois\Helpers\DomainHelper;
  */
 class TldInfo extends DataObject
 {
+    use TldInfoDeprecated;
+
     /**
      * @param TldResponse $response
      * @param array $data
