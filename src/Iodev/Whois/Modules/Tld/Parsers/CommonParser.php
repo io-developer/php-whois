@@ -78,7 +78,8 @@ class CommonParser extends TldParser
      */
     public function parseResponse(TldResponse $response)
     {
-        $sel = $this->filterFrom($response)->toSelector();
+        $rootFilter = $this->filterFrom($response);
+        $sel = $rootFilter->toSelector();
         $data = [
             "parserType" => $this->getType(),
 
@@ -128,7 +129,8 @@ class CommonParser extends TldParser
                 ->getAll(),
         ];
         $info = $this->createDomainInfo($response, $data, [
-            'selector' => $sel,
+            'groups' => $rootFilter->getGroups(),
+            'rootFilter' => $rootFilter,
         ]);
         return $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
     }
@@ -141,7 +143,7 @@ class CommonParser extends TldParser
      */
     protected function createDomainInfo(TldResponse $response, array $data, $options = [])
     {
-        return new TldInfo($response, $data);
+        return new TldInfo($response, $data, $options);
     }
 
     /**

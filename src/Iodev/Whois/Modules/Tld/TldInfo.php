@@ -24,15 +24,17 @@ class TldInfo extends DataObject
     /**
      * @param TldResponse $response
      * @param array $data
+     * @param array $extra
      * @throws InvalidArgumentException
      */
-    public function __construct(TldResponse $response, $data = [])
+    public function __construct(TldResponse $response, $data = [], $extra = [])
     {
         if (!is_array($data)) {
             throw new InvalidArgumentException("Data must be an array");
         }
         parent::__construct($data);
         $this->response = $response;
+        $this->extra = $extra;
     }
 
     /** @var array */
@@ -51,12 +53,33 @@ class TldInfo extends DataObject
     /** @var TldResponse */
     protected $response;
 
+    /** @var array */
+    protected $extra;
+
     /**
      * @return TldResponse
      */
     public function getResponse()
     {
         return $this->response;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExtra()
+    {
+        return $this->extra;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getExtraVal($key, $default = null)
+    {
+        return $this->extra[$key] ?? $default;
     }
 
     /**
