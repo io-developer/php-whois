@@ -358,6 +358,7 @@
   {"zone": ".io", "host": "whois.nic.io"},
   {"zone": ".iq", "host": "whois.cmc.iq"},
   {"zone": ".ir", "host": "whois.nic.ir"},
+  {"zone": ".ir", "host": "whois.nic.ir", "queryFormat": "-V Md5.2 %s\r\n"},
   {"zone": ".is", "host": "whois.isnic.is", "parserType": "block"},
   {"zone": ".it", "host": "whois.nic.it", "parserType": "indent"},
   {"zone": ".java", "host": "whois.nic.java"},
