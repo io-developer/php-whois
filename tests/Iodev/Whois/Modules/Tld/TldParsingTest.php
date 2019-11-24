@@ -391,6 +391,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "free.iq", ".iq/free.txt", null ],
             [ "google.iq", ".iq/google.iq.txt", ".iq/google.iq.json" ],
 
+            // .IR
+            [ "free.ir", ".ir/free.txt", null ],
+            [ "mhf.ir", ".ir/mhf.ir.txt", ".ir/mhf.ir.json" ],
+
             // .IS
             [ "free.is", ".is/free.txt", null ],
             [ "google.is", ".is/google.is.txt", ".is/google.is.json" ],
