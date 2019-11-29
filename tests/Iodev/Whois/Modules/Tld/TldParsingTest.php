@@ -183,6 +183,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "free.bj", ".bj/free.txt", null ],
             [ "google.bj", ".bj/google.bj.txt", ".bj/google.bj.json" ],
 
+            // .BM
+            [ "free.bm", ".bm/free.txt", null ],
+            [ "bermudanic.bm", ".bm/bermudanic.bm.txt", ".bm/bermudanic.bm.json" ],
+
             // .BN
             [ "free.bn", ".bn/free.txt", null ],
             [ "google.com.bn", ".bn/google.com.bn.txt", ".bn/google.com.bn.json" ],

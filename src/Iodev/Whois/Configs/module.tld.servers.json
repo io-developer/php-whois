@@ -74,6 +74,7 @@
   {"zone": ".blackfriday", "host": "whois.uniregistry.net"},
   {"zone": ".blog", "host": "whois.nic.blog"},
   {"zone": ".blue", "host": "whois.afilias.net"},
+  {"zone": ".bm", "host": "whois.afilias-srs.net"},
   {"zone": ".bmw", "host": "whois.nic.bmw"},
   {"zone": ".bn", "host": "whois.bn"},
   {"zone": ".bnpparibas", "host": "whois.afilias-srs.net"},
