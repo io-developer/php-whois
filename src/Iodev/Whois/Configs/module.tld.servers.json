@@ -411,6 +411,7 @@
   {"zone": ".lotte", "host": "whois.nic.lotte"},
   {"zone": ".lotto", "host": "whois.afilias.net"},
   {"zone": ".lt", "host": "whois.domreg.lt", "parserType": "commonFlat"},
+  {"zone": ".ltd", "host": "whois.nic.ltd"},
   {"zone": ".ltda", "host": "whois.afilias-srs.net"},
   {"zone": ".lu", "host": "whois.dns.lu"},
   {"zone": ".lu", "host": "whois.restena.lu"},
