@@ -721,6 +721,10 @@ class TldParsingTest extends \PHPUnit_Framework_TestCase
             [ "free.vg", ".vg/free.txt", null ],
             [ "google.vg", ".vg/google.vg.txt", ".vg/google.vg.json" ],
 
+            // .VIP
+            [ "free.vip", ".vip/free.txt", null ],
+            [ "google.vip", ".vip/google.vip.txt", ".vip/google.vip.json" ],
+
             // .VU
             [ "free.vu", ".vu/free.txt", null ],
             // [ "google.vu", ".vu/google.vu.txt", ".vu/google.vu.json" ],
