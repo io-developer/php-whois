@@ -711,6 +711,7 @@
   {"zone": ".viajes", "host": "whois.donuts.co"},
   {"zone": ".video", "host": "whois.rightside.co"},
   {"zone": ".villas", "host": "whois.donuts.co"},
+  {"zone": ".vip", "host": "whois.nic.vip"},
   {"zone": ".vision", "host": "whois.donuts.co"},
   {"zone": ".vlaanderen", "host": "whois.nic.vlaanderen"},
   {"zone": ".vodka", "host": "whois.nic.vodka"},
