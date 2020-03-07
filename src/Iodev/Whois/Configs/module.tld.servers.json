@@ -112,7 +112,7 @@
   {"zone": ".casa", "host": "whois.nic.casa"},
   {"zone": ".cash", "host": "whois.donuts.co"},
   {"zone": ".casino", "host": "whois.donuts.co"},
-  {"zone": ".cat", "host": "whois.cat"},
+  {"zone": ".cat", "host": "whois.nic.cat"},
   {"zone": ".catering", "host": "whois.donuts.co"},
   {"zone": ".cc", "host": "ccwhois.verisign-grs.com"},
   {"zone": ".cc", "host": "whois.nic.cc"},
