@@ -115,3 +115,10 @@ php-7.2_1  |
 php-7.2_1  | OK (350 tests, 4155 assertions)
 php-whois_php-7.2_1 exited with code 0
 ```
+
+### Teardown/cleanup
+* Run
+```
+docker-compose -f docker-compose.tests.yml down --volumes
+docker-compose -f docker-compose.tests.full.yml down --volumes
+```
