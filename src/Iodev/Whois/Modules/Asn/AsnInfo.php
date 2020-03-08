@@ -5,8 +5,8 @@ namespace Iodev\Whois\Modules\Asn;
 use Iodev\Whois\DataObject;
 
 /**
- * @property string asn
- * @property AsnRouteInfo[] routes
+ * @property string $asn
+ * @property AsnRouteInfo[] $routes
  */
 class AsnInfo extends DataObject
 {

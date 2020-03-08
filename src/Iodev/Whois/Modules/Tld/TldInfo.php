@@ -7,15 +7,15 @@ use Iodev\Whois\DataObject;
 use Iodev\Whois\Helpers\DomainHelper;
 
 /**
- * @property string parserType
- * @property string domainName
- * @property string whoisServer
- * @property string[] nameServers
- * @property int creationDate
- * @property int expirationDate
- * @property string[] states
- * @property string owner
- * @property string registrar
+ * @property string $parserType
+ * @property string $domainName
+ * @property string $whoisServer
+ * @property string[] $nameServers
+ * @property int $creationDate
+ * @property int $expirationDate
+ * @property string[] $states
+ * @property string $owner
+ * @property string $registrar
  */
 class TldInfo extends DataObject
 {
