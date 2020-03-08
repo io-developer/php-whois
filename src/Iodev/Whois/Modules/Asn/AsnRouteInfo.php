@@ -6,15 +6,13 @@ use InvalidArgumentException;
 use Iodev\Whois\DataObject;
 
 /**
- * Immutable data object
- *
- * @property string route
- * @property string route6
- * @property string descr
- * @property string origin
- * @property string mntBy
- * @property string changed
- * @property string source
+ * @property string $route
+ * @property string $route6
+ * @property string $descr
+ * @property string $origin
+ * @property string $mntBy
+ * @property string $changed
+ * @property string $source
  */
 class AsnRouteInfo extends DataObject
 {
