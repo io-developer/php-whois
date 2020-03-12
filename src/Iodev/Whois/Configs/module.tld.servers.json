@@ -332,6 +332,7 @@
   {"zone": ".ht", "host": "whois.nic.ht"},
   {"zone": ".hu", "host": "whois.nic.hu"},
   {"zone": ".ibm", "host": "whois.nic.ibm"},
+  {"zone": ".icu", "host": "whois.nic.icu"},
   {"zone": ".id", "host": "whois.pandi.or.id"},
   {"zone": ".*.id", "host": "whois.idnic.net.id"},
   {"zone": ".ie", "host": "whois.domainregistry.ie", "parserType": "block"},
