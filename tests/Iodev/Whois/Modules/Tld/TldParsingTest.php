@@ -333,6 +333,10 @@ class TldParsingTest extends TestCase
             [ "xn--sisministeri-icb5x.fi", ".fi/xn--sisministeri-icb5x.fi.txt", ".fi/xn--sisministeri-icb5x.fi.json" ],
             [ "sisäministeriö.fi", ".fi/xn--sisministeri-icb5x.fi.txt", ".fi/xn--sisministeri-icb5x.fi.json" ],
 
+            // .FILM
+            [ "free.film", ".film/free.txt", null ],
+            [ "google.film", ".film/google.film.txt", ".film/google.film.json" ],
+
             // .FJ
             [ "free.fj", ".fj/free.txt", null ],
             // [ "google.com.fj", ".fj/google.com.fj.txt", ".fj/google.com.fj.json" ],
