@@ -311,6 +311,10 @@ class TldParsingTest extends TestCase
             [ "free.dz", ".dz/free.txt", null ],
             [ "google.dz", ".dz/google.dz.txt", ".dz/google.dz.json" ],
 
+            // .EARTH
+            [ "free.earth", ".earth/free.txt", null ],
+            [ "google.earth", ".earth/google.earth.txt", ".earth/google.earth.json" ],
+
             // .EC
             [ "free.ec", ".ec/free.txt", null ],
             // [ "google.com.ec", ".ec/google.com.ec.txt", ".ec/google.com.ec.json" ],
