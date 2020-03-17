@@ -709,6 +709,10 @@ class TldParsingTest extends TestCase
             [ "free.to", ".to/free.txt", null ],
             // [ "google.to", ".to/google.to.txt", ".to/google.to.json" ],
 
+            // .TOURS
+            [ "free.tours", ".tours/free.txt", null ],
+            [ "microsoft.tours", ".tours/microsoft.tours.txt", ".tours/microsoft.tours.json" ],
+
             // .TR
             [ "free.tr", ".tr/free.txt", null ],
             // [ "google.com.tr", ".tr/google.com.tr.txt", ".tr/google.com.tr.json" ],

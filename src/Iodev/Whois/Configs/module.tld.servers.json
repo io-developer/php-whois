@@ -672,6 +672,7 @@
   {"zone": ".tools", "host": "whois.donuts.co"},
   {"zone": ".top", "host": "whois.nic.top"},
   {"zone": ".toshiba", "host": "whois.nic.toshiba"},
+  {"zone": ".tours", "host": "whois.nic.tours"},
   {"zone": ".town", "host": "whois.donuts.co"},
   {"zone": ".toys", "host": "whois.donuts.co"},
   {"zone": ".tp", "host": "whois.domains.tl"},
