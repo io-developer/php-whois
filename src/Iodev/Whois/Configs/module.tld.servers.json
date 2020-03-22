@@ -99,6 +99,7 @@
   {"zone": ".ca", "host": "whois.cira.ca"},
   {"zone": ".cab", "host": "whois.donuts.co"},
   {"zone": ".cal", "host": "domain-registry-whois.l.google.com"},
+  {"zone": ".cam", "host": "whois.nic.cam"},
   {"zone": ".camera", "host": "whois.donuts.co"},
   {"zone": ".camp", "host": "whois.donuts.co"},
   {"zone": ".cancerresearch", "host": "whois.nic.cancerresearch"},
