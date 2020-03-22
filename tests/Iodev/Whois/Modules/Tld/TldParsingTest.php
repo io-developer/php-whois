@@ -393,6 +393,10 @@ class TldParsingTest extends TestCase
             [ "free.hu", ".hu/free.txt", null ],
             [ "google.hu", ".hu/google.hu.txt", ".hu/google.hu.json" ],
 
+            // .ICU
+            [ "free.icu", ".icu/free.txt", null ],
+            [ "google.icu", ".icu/google.icu.txt", ".icu/google.icu.json" ],
+
             // .ID
             [ "free.id", ".id/free.txt", null ],
             [ "google.co.id", ".id/google.co.id.txt", ".id/google.co.id.json" ],
