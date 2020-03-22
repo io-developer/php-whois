@@ -240,6 +240,7 @@
   {"zone": ".feedback", "host": "whois.centralnic.com"},
   {"zone": ".fi", "host": "whois.fi", "parserType": "block"},
   {"zone": ".fi", "host": "whois.ficora.fi", "parserType": "block"},
+  {"zone": ".film", "host": "whois.nic.film"},
   {"zone": ".finance", "host": "whois.donuts.co"},
   {"zone": ".financial", "host": "whois.donuts.co"},
   {"zone": ".firmdale", "host": "whois.nic.firmdale"},
