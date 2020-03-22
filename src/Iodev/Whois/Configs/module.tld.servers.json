@@ -206,6 +206,7 @@
   {"zone": ".durban", "host": "durban-whois.registry.net.za"},
   {"zone": ".dvag", "host": "whois.nic.dvag"},
   {"zone": ".dz", "host": "whois.nic.dz"},
+  {"zone": ".earth", "host": "whois.nic.earth"},
   {"zone": ".eat", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".ec", "host": "whois.nic.ec"},
   {"zone": ".*.ec", "host": "whois.lac.net"},
