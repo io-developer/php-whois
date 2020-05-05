@@ -700,6 +700,10 @@ class TldParsingTest extends TestCase
             [ "free.st", ".st/free.txt", null ],
             [ "google.st", ".st/google.st.txt", ".st/google.st.json" ],
 
+            // .TEAM
+            [ "free.team", ".team/free.txt", null ],
+            [ "microsoft.team", ".team/microsoft.team.txt", ".team/microsoft.team.json" ],
+
             // .TG
             [ "free.tg", ".tg/free.txt", null ],
             [ "google.tg", ".tg/google.tg.txt", ".tg/google.tg.json" ],
