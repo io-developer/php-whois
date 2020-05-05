@@ -302,6 +302,7 @@
   {"zone": ".gratis", "host": "whois.donuts.co"},
   {"zone": ".green", "host": "whois.afilias.net"},
   {"zone": ".gripe", "host": "whois.donuts.co"},
+  {"zone": ".group", "host": "whois.nic.group"},
   {"zone": ".gs", "host": "whois.nic.gs"},
   {"zone": ".guide", "host": "whois.donuts.co"},
   {"zone": ".guitars", "host": "whois.uniregistry.net"},

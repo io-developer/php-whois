@@ -389,6 +389,10 @@ class TldParsingTest extends TestCase
             [ "free.gy", ".gy/free.txt", null ],
             [ "google.gy", ".gy/google.gy.txt", ".gy/google.gy.json" ],
 
+            // .GROUP
+            [ "free.group", ".group/free.txt", null ],
+            [ "nic.group", ".group/nic.group.txt", ".group/nic.group.json" ],
+
             // .HK
             [ "free.hk", ".hk/free.txt", null ],
             // [ "google.com.hk", ".hk/google.com.hk.txt", ".hk/google.com.hk.json" ],
