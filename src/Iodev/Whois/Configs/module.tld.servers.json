@@ -409,6 +409,7 @@
   {"zone": ".limo", "host": "whois.donuts.co"},
   {"zone": ".link", "host": "whois.uniregistry.net"},
   {"zone": ".live", "host": "whois.nic.live"},
+  {"zone": ".llc", "host": "whois.afilias.net"},
   {"zone": ".loans", "host": "whois.donuts.co"},
   {"zone": ".london", "host": "whois-lon.mm-registry.com"},
   {"zone": ".london", "host": "whois.nic.london"},
