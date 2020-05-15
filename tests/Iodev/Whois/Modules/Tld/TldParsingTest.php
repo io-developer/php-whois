@@ -281,6 +281,10 @@ class TldParsingTest extends TestCase
             [ "google.co", ".co/google.co.txt", ".co/google.co.json" ],
             [ "google.com.co", ".co/google.com.co.txt", ".co/google.com.co.json" ],
 
+            // .COLOGNE
+            [ "free.cologne", ".cologne/free.txt", null ],
+            [ "google.cologne", ".cologne/google.cologne.txt", ".cologne/google.cologne.json" ],
+
             // .COM
             [ "free.com", ".com/free.txt", null ],
             [ "google.com", ".com/google.com.txt", ".com/google.com.json" ],
@@ -472,6 +476,10 @@ class TldParsingTest extends TestCase
             // .KI
             [ "free.ki", ".ki/free.txt", null ],
             [ "google.ki", ".ki/google.ki.txt", ".ki/google.ki.json" ],
+
+            // .KOELN
+            [ "free.koeln", ".koeln/free.txt", null ],
+            [ "google.koeln", ".koeln/google.koeln.txt", ".koeln/google.koeln.json" ],
 
             // .KR
             [ "free.kr", ".kr/free.txt", null ],
