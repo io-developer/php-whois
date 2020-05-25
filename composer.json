@@ -1,5 +1,5 @@
 {
-    "name": "io-developer/php-whois",
+    "name": "dominik-jurecko/php-whois",
     "description": "PHP WHOIS provides parsed and raw whois lookup of domains and ASN routes. PHP 5.4+ and 7+ compatible ",
     "keywords": [
         "php",
