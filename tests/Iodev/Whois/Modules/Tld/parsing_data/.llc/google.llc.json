@@ -1,0 +1,20 @@
+{
+  "domainName": "google.llc",
+  "whoisServer": "whois.markmonitor.com",
+  "nameServers": [
+    "ns1.googledomains.com",
+    "ns2.googledomains.com",
+    "ns3.googledomains.com",
+    "ns4.googledomains.com"
+],
+  "creationDate": "2018-06-05T17:04:02Z",
+  "expirationDate": "2021-06-05T17:04:02Z",
+  "states": [
+    "clientdeleteprohibited",
+    "clienttransferprohibited",
+    "clientupdateprohibited",
+    "renewperiod"
+  ],
+  "owner": "Google LLC",
+  "registrar": "MarkMonitor Inc."
+}
