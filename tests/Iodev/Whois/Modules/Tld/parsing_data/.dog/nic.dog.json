@@ -1,0 +1,17 @@
+{
+  "domainName": "nic.dog",
+  "whoisServer": "whois.donuts.co",
+  "nameServers": [
+    "ns-1501.awsdns-59.org",
+    "ns-380.awsdns-47.com",
+    "ns-811.awsdns-37.net",
+    "ns-1597.awsdns-07.co.uk"
+  ],
+  "creationDate": "2014-11-11T19:35:18Z",
+  "expirationDate": "2020-11-11T19:35:18Z",
+  "states": [
+    "active"
+  ],
+  "owner": "Donuts Inc.",
+  "registrar": "Donuts Internal (9999)"
+}

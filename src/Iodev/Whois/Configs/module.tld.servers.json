@@ -200,6 +200,7 @@
   {"zone": ".dm", "host": "whois.nic.cx", "parserType": "commonFlat"},
   {"zone": ".dm", "host": "whois.nic.dm", "parserType": "commonFlat"},
   {"zone": ".do", "host": "whois.nic.do"},
+  {"zone": ".dog", "host": "whois.nic.dog"},
   {"zone": ".docs", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".domains", "host": "whois.donuts.co"},
   {"zone": ".doosan", "host": "whois.nic.doosan"},
