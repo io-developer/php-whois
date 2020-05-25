@@ -10,7 +10,7 @@
   "creationDate": "2014-11-11T19:35:18Z",
   "expirationDate": "2020-11-11T19:35:18Z",
   "states": [
-    "active"
+    "servertransferprohibited"
   ],
   "owner": "Donuts Inc.",
   "registrar": "Donuts Internal (9999)"
