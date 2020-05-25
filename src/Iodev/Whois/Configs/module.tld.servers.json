@@ -563,6 +563,7 @@
   {"zone": ".reise", "host": "whois.nic.reise"},
   {"zone": ".reisen", "host": "whois.donuts.co"},
   {"zone": ".reit", "host": "whois.nic.reit"},
+  {"zone": ".ren", "host": "whois.nic.ren"},
   {"zone": ".rentals", "host": "whois.donuts.co"},
   {"zone": ".repair", "host": "whois.donuts.co"},
   {"zone": ".report", "host": "whois.donuts.co"},
