@@ -618,6 +618,10 @@ class TldParsingTest extends TestCase
             [ "free.pl", ".pl/free.txt", null ],
             [ "google.pl", ".pl/google.pl.txt", ".pl/google.pl.json" ],
 
+            // .PLUS
+            [ "free.plus", ".plus/free.txt", null ],
+            [ "google.plus", ".plus/google.plus.txt", ".plus/google.plus.json" ],
+
             // .PR
             [ "free.pr", ".pr/free.txt", null ],
             [ "google.com.pr", ".pr/google.com.pr.txt", ".pr/google.com.pr.json" ],

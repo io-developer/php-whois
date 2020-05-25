@@ -531,6 +531,7 @@
   {"zone": ".pl", "host": "whois.dns.pl", "parserType": "indent"},
   {"zone": ".place", "host": "whois.donuts.co"},
   {"zone": ".plumbing", "host": "whois.donuts.co"},
+  {"zone": ".plus", "host": "whois.nic.plus"},
   {"zone": ".pm", "host": "whois.nic.pm"},
   {"zone": ".pohl", "host": "whois.nic.pohl"},
   {"zone": ".poker", "host": "whois.afilias.net"},
