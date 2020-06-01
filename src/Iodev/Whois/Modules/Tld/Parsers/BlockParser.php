@@ -52,6 +52,9 @@ class BlockParser extends CommonParser
     /** @var array */
     protected $registrarGroupKeys = [];
 
+    /** @var array */
+    protected $updatedDateExtraKeys = [ "changed" ];
+
 
     /** @var string */
     protected $matchedDomain = '';
@@ -372,11 +375,19 @@ class BlockParser extends CommonParser
 
     protected function parseUpdatedDate(GroupFilter $rootFilter, GroupFilter $primaryFilter): int
     {
-        return $this->parseDate(
-            $rootFilter,
-            $primaryFilter,
-            $this->updatedDateKeys
-        );
+        $ts = $this->parseDate($rootFilter, $primaryFilter, $this->updatedDateKeys);
+        if ($ts) {
+            return $ts;
+        }
+        return $primaryFilter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetKeyOf($this->updatedDateExtraKeys)
+            ->toSelector()
+            ->selectKeys($this->updatedDateExtraKeys)
+            ->mapUnixTime($this->getOption('inversedDateMMDD', false))
+            ->removeEmpty()
+            ->getFirst(0)
+        ;
     }
 
     protected function parseDate(

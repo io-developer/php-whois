@@ -81,6 +81,11 @@
     "Fecha de vencimiento"
   ],
   "updatedDateKeys": [
+    "Modified Date",
+    "Modification date",
+    "domain_datelastmodified",
+    "Last modified",
+    "Modified",
     "Updated Date",
     "updated-date",
     "Last Updated Date",
@@ -89,10 +94,11 @@
     "Last Update",
     "last-update",
     "Record last updated on",
-    "Modified Date",
-    "Last modified",
-    "Modified",
+    "Domain Last Updated Date",
+    "Last Updated On",
     "Updated",
+    "Changed date",
+    "Changed",
     "Derniere modification"
   ],
   "ownerKeys": [

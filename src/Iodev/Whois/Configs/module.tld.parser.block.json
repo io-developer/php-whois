@@ -89,6 +89,11 @@
     "Relevant dates"
   ],
   "updatedDateKeys": [
+    "Modified Date",
+    "Modification date",
+    "domain_datelastmodified",
+    "Last modified",
+    "Modified",
     "Updated Date",
     "updated-date",
     "Last Updated Date",
@@ -97,11 +102,13 @@
     "Last Update",
     "last-update",
     "Record last updated on",
-    "Modified Date",
-    "Last modified",
-    "Modified",
-    "Updated",
+    "Domain Last Updated Date",
+    "Changed date",
     "Derniere modification"
+  ],
+  "updatedDateExtraKeys": [
+    "Updated",
+    "Changed"
   ],
   "ownerKeys": [
     "owner orgname",
