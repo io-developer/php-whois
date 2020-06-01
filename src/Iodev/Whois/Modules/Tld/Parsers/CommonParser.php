@@ -108,6 +108,8 @@ class CommonParser extends TldParser
 
             "dnssec" => $sel->clean()
                 ->selectKeys($this->dnssecKeys)
+                ->removeEmpty()
+                ->sort(SORT_ASC)
                 ->getFirst(''),
 
             "creationDate" => $sel->clean()

@@ -104,6 +104,12 @@ class GroupSelector
         return $this;
     }
 
+    public function sort(int $flags = SORT_REGULAR): self
+    {
+        sort($this->items, $flags);
+        return $this;
+    }
+
     /**
      * @return $this
      */

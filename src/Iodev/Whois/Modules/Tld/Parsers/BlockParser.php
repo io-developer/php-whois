@@ -236,16 +236,22 @@ class BlockParser extends CommonParser
             ->useFirstGroup()
             ->toSelector()
             ->selectKeys($this->dnssecKeys)
+            ->removeEmpty()
+            ->sort(SORT_ASC)
             ->getFirst()
         ;
         if (empty($dnssec)) {
             $dnssec = $primaryFilter->toSelector()
                 ->selectKeys($this->dnssecKeys)
+                ->removeEmpty()
+                ->sort(SORT_ASC)
                 ->getFirst('');
         }
         if (empty($dnssec)) {
             $dnssec = $rootFilter->toSelector()
                 ->selectKeys($this->dnssecKeys)
+                ->removeEmpty()
+                ->sort(SORT_ASC)
                 ->getFirst('');
         }
         return $dnssec;
