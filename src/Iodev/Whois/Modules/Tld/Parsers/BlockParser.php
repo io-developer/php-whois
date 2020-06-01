@@ -101,6 +101,7 @@ class BlockParser extends CommonParser
             "domainName" => $this->parseDomain($domainFilter) ?: ($isReserved ? $response->domain : ''),
             "states" => $this->parseStates($rootFilter, $primaryFilter),
             "nameServers" => $this->parseNameServers($rootFilter, $primaryFilter),
+            "dnssec" => $this->parseDnssec($rootFilter, $primaryFilter),
             "owner" => $this->parseOwner($rootFilter, $primaryFilter) ?: ($isReserved ? $reserved : ''),
             "registrar" => $this->parseRegistrar($rootFilter, $primaryFilter),
             "creationDate" => $this->parseCreationDate($rootFilter, $primaryFilter),
@@ -220,6 +221,34 @@ class BlockParser extends CommonParser
             ->removeEmpty()
             ->removeDuplicates()
             ->getAll();
+    }
+
+    /**
+     * @param GroupFilter $rootFilter
+     * @param GroupFilter $primaryFilter
+     * @return string
+     */
+    protected function parseDnssec(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    {
+        $dnssec = $rootFilter->cloneMe()
+            ->useMatchFirstOnly(true)
+            ->filterHasSubsetOf($this->nameServersSubsets)
+            ->useFirstGroup()
+            ->toSelector()
+            ->selectKeys($this->dnssecKeys)
+            ->getFirst()
+        ;
+        if (empty($dnssec)) {
+            $dnssec = $primaryFilter->toSelector()
+                ->selectKeys($this->dnssecKeys)
+                ->getFirst('');
+        }
+        if (empty($dnssec)) {
+            $dnssec = $rootFilter->toSelector()
+                ->selectKeys($this->dnssecKeys)
+                ->getFirst('');
+        }
+        return $dnssec;
     }
 
     /**

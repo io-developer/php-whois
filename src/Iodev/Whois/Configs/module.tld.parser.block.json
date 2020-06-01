@@ -44,6 +44,9 @@
     ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"],
     ["ns_name_01", "ns_name_02", "ns_name_03", "ns_name_04"]
   ],
+  "dnssecKeys": [
+    "dnssec"
+  ],
   "creationDateKeys": [
     "creationdate",
     "creation date",

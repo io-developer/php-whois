@@ -29,6 +29,9 @@ class CommonParser extends TldParser
     protected $nameServersKeysGroups = [ [ "ns 1", "ns 2", "ns 3", "ns 4" ] ];
 
     /** @var array */
+    protected $dnssecKeys = [ "dnssec" ];
+
+    /** @var array */
     protected $creationDateKeys = [ "creation date" ];
 
     /** @var array */
@@ -102,6 +105,10 @@ class CommonParser extends TldParser
                 ->removeEmpty()
                 ->removeDuplicates()
                 ->getAll(),
+
+            "dnssec" => $sel->clean()
+                ->selectKeys($this->dnssecKeys)
+                ->getFirst(''),
 
             "creationDate" => $sel->clean()
                 ->selectKeys($this->creationDateKeys)
