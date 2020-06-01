@@ -11,6 +11,7 @@
   "dnssec": "signedDelegation",
   "creationDate": "2001-10-08T16:33:16Z",
   "expirationDate": "2018-10-08T16:33:16Z",
+  "updatedDate": "2017-10-08T22:24:48Z",
   "states": [
     "servertransferprohibited",
     "autorenewperiod"

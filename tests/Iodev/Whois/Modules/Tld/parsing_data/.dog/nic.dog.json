@@ -10,6 +10,7 @@
   "dnssec": "unsigned",
   "creationDate": "2014-11-11T19:35:18Z",
   "expirationDate": "2020-11-11T19:35:18Z",
+  "updatedDate": "2019-12-26T19:35:43Z",
   "states": [
     "servertransferprohibited"
   ],

@@ -9,6 +9,7 @@
   ],
   "creationDate": "1999-06-05 00:00:00",
   "expirationDate": "2018-06-05 00:00:00",
+  "updatedDate": "2017-05-08 21:27:18",
   "states": [
     "clientupdateprohibited",
     "clienttransferprohibited"

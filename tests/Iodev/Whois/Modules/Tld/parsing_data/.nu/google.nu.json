@@ -10,6 +10,7 @@
   "dnssec": "unsigned delegation",
   "creationDate": "1999-06-07T00:00:00",
   "expirationDate": "2018-06-07T00:00:00",
+  "updatedDate": "2017-05-06T00:00:00",
   "states": [
     "ok"
   ],

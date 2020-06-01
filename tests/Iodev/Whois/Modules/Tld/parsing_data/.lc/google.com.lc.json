@@ -10,6 +10,7 @@
   "dnssec": "unsigned",
   "creationDate": "2009-02-12T17:55:01Z",
   "expirationDate": "2018-02-12T17:55:01Z",
+  "updatedDate": "2017-01-11T10:26:06Z",
   "states": [
     "clientdeleteprohibited",
     "clienttransferprohibited",

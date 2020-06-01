@@ -8,6 +8,7 @@
   "dnssec": "unsigned delegation",
   "creationDate": "2018-01-05 10:46:30",
   "expirationDate": "2023-01-05 10:46:30",
+  "updatedDate": "",
   "states": [
     "registered"
   ],

@@ -5,6 +5,7 @@
   "dnssec": "unsigned",
   "creationDate": "2019-10-11T03:10:19Z",
   "expirationDate": "2029-10-11T03:10:19Z",
+  "updatedDate": "",
   "states": [
     "inactive"
   ],

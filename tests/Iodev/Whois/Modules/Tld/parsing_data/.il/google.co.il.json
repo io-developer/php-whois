@@ -10,6 +10,7 @@
   "dnssec": "unsigned",
   "creationDate": "",
   "expirationDate": "2018-06-05T00:00:00",
+  "updatedDate": "",
   "states": [
     "transfer locked"
   ],

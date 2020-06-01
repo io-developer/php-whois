@@ -10,6 +10,7 @@
   "dnssec": "false",
   "creationDate": "2010-02-25T01:04:59Z",
   "expirationDate": "2018-02-24T23:59:59Z",
+  "updatedDate": "2017-01-23T10:27:06Z",
   "states": [
     "clientdeleteprohibited",
     "clienttransferprohibited",
