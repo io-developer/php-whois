@@ -7,6 +7,7 @@
     "ns3-07.azure-dns.org",
     "ns4-07.azure-dns.info"
   ],
+  "dnssec": "unsigned",
   "creationDate": "2015-06-30T08:41:58-0700",
   "expirationDate": "2020-06-30T00:00:00-0700",
   "states": [

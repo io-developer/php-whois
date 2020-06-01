@@ -2,6 +2,7 @@
   "domainName": "google.xn--ses554g",
   "whoisServer": "whois.knetreg.cn",
   "nameServers": [],
+  "dnssec": "unsigned",
   "creationDate": "2019-10-11T03:10:19Z",
   "expirationDate": "2029-10-11T03:10:19Z",
   "states": [

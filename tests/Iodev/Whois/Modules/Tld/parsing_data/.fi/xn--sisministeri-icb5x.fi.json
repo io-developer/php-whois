@@ -5,12 +5,12 @@
     "ns1.inet.intermin.fi",
     "ns2.inet.intermin.fi"
   ],
+  "dnssec": "unsigned delegation",
   "creationDate": "2018-01-05 10:46:30",
   "expirationDate": "2023-01-05 10:46:30",
   "states": [
     "registered"
   ],
   "owner": "Sisäministeriö",
-  "registrar": "Valtion tieto- ja viestintäkeskus, Tuve-yksikkö",
-  "dnssec": "unsigned delegation"
+  "registrar": "Valtion tieto- ja viestintäkeskus, Tuve-yksikkö"
 }

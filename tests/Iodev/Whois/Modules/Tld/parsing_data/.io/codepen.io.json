@@ -5,6 +5,7 @@
     "albert.ns.cloudflare.com",
     "kristin.ns.cloudflare.com"
   ],
+  "dnssec": "Unsigned",
   "creationDate": "2012-02-26T02:22:09",
   "expirationDate": "2019-02-26T02:22:09",
   "states": [

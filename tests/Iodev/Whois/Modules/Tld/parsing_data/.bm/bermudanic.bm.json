@@ -5,6 +5,7 @@
     "dns1.gov.bm",
     "dns2.gov.bm"
   ],
+  "dnssec": "unsigned",
   "creationDate": "2003-01-07T00:00:00Z",
   "expirationDate": "2021-01-07T00:00:00Z",
   "states": [

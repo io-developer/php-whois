@@ -2,6 +2,7 @@
   "domainName": "google.koeln",
   "whoisServer": "",
   "nameServers": [],
+  "dnssec": "unsigned",
   "creationDate": "2014-07-07T16:17:23Z",
   "expirationDate": "2020-07-07T16:17:23Z",
   "states": [

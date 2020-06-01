@@ -7,6 +7,7 @@
     "ns3-05.azure-dns.org",
     "ns4-05.azure-dns.info"
   ],
+  "dnssec": "Unsigned Delegation",
   "creationDate": "2015-10-19T10:32:17Z",
   "expirationDate": "2020-10-19T00:00:00Z",
   "states": [

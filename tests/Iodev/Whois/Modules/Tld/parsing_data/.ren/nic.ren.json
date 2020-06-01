@@ -6,8 +6,9 @@
     "dns1.zdnscloud.info",
     "ins1.zdnscloud.com",
     "vns1.zdnscloud.biz"
-],
-"creationDate": "2014-03-28T10:11:06Z",
+  ],
+  "dnssec": "unsigned",
+  "creationDate": "2014-03-28T10:11:06Z",
   "expirationDate": "2025-03-28T10:11:06Z",
   "states": [
     "ok"

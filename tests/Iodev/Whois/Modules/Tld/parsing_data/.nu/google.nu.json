@@ -7,12 +7,12 @@
     "ns3.google.com",
     "ns4.google.com"
   ],
+  "dnssec": "unsigned delegation",
   "creationDate": "1999-06-07T00:00:00",
   "expirationDate": "2018-06-07T00:00:00",
   "states": [
     "ok"
   ],
   "owner": "mmr-142621",
-  "registrar": "MarkMonitor Inc.",
-  "dnssec": "unsigned delegation"
+  "registrar": "MarkMonitor Inc."
 }

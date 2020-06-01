@@ -8,6 +8,7 @@
     "ns-692.awsdns-22.net",
     "ns-1339.awsdns-39.org"
   ],
+  "dnssec": "unsigned",
   "creationDate": "2013-03-08T19:12:48Z",
   "expirationDate": "2018-03-08T19:12:48Z",
   "states": [

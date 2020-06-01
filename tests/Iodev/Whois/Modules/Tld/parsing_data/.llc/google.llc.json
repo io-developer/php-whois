@@ -6,7 +6,8 @@
     "ns2.googledomains.com",
     "ns3.googledomains.com",
     "ns4.googledomains.com"
-],
+  ],
+  "dnssec": "unsigned",
   "creationDate": "2018-06-05T17:04:02Z",
   "expirationDate": "2021-06-05T17:04:02Z",
   "states": [

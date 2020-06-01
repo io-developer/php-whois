@@ -7,6 +7,7 @@
     "ns-811.awsdns-37.net",
     "ns-1597.awsdns-07.co.uk"
   ],
+  "dnssec": "unsigned",
   "creationDate": "2014-07-28T22:03:02Z",
   "expirationDate": "2020-07-28T22:03:02Z",
   "states": [

@@ -5,6 +5,7 @@
     "ns1.myhostadmin.net",
     "ns2.myhostadmin.net"
   ],
+  "dnssec": "unsigned",
   "creationDate": "2016-03-17T18:38:40.0Z",
   "expirationDate": "2027-03-17T18:38:40.0Z",
   "states": [

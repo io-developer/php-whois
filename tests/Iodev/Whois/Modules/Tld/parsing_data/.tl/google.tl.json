@@ -5,6 +5,7 @@
     "ns1.google.com",
     "ns2.google.com"
   ],
+  "dnssec": "unsigned",
   "creationDate": "2003-05-23T12:00:00.0Z",
   "expirationDate": "2018-05-23T12:00:00.0Z",
   "states": [

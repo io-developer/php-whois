@@ -7,6 +7,7 @@
     "ns-372.awsdns-46.com",
     "ns-787.awsdns-34.net"
   ],
+  "dnssec": "unSigned",
   "creationDate": "1999-06-25T05:27:00.00Z",
   "expirationDate": "2022-06-25T05:27:00.00Z",
   "states": [

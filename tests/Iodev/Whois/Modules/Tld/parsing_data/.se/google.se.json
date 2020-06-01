@@ -7,6 +7,7 @@
     "ns3.google.com",
     "ns4.google.com"
   ],
+  "dnssec": "unsigned delegation",
   "creationDate": "2008-10-20T00:00:00",
   "expirationDate": "2018-10-20T00:00:00",
   "states": [
@@ -15,6 +16,5 @@
     "serverdeleteprohibited"
   ],
   "owner": "mmr8008-53808",
-  "registrar": "MarkMonitor Inc",
-  "dnssec": "unsigned delegation"
+  "registrar": "MarkMonitor Inc"
 }

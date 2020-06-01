@@ -8,6 +8,7 @@
     "ns1.yyz1.afilias-nst.info",
     "ns1.hkg1.afilias-nst.info"
   ],
+  "dnssec": "signedDelegation",
   "creationDate": "2001-10-08T16:33:16Z",
   "expirationDate": "2018-10-08T16:33:16Z",
   "states": [

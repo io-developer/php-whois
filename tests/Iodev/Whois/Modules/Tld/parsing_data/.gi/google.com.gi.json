@@ -7,6 +7,7 @@
     "ns3.google.com",
     "ns4.google.com"
   ],
+  "dnssec": "unsigned",
   "creationDate": "2003-03-21T05:00:00Z",
   "expirationDate": "2018-03-21T20:06:52Z",
   "states": [
