@@ -15,5 +15,6 @@
     "serverdeleteprohibited"
   ],
   "owner": "mmr8008-53808",
-  "registrar": "MarkMonitor Inc"
+  "registrar": "MarkMonitor Inc",
+  "dnssec": "unsigned delegation"
 }

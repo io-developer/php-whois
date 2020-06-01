@@ -13,5 +13,6 @@
     "ok"
   ],
   "owner": "mmr-142621",
-  "registrar": "MarkMonitor Inc."
+  "registrar": "MarkMonitor Inc.",
+  "dnssec": "unsigned delegation"
 }

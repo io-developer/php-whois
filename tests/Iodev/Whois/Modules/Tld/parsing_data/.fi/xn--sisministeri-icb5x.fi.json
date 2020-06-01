@@ -11,5 +11,6 @@
     "registered"
   ],
   "owner": "Sisäministeriö",
-  "registrar": "Valtion tieto- ja viestintäkeskus, Tuve-yksikkö"
+  "registrar": "Valtion tieto- ja viestintäkeskus, Tuve-yksikkö",
+  "dnssec": "unsigned delegation"
 }

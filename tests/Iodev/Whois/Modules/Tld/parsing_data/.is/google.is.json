@@ -9,5 +9,6 @@
   "expirationDate": "2018-05-22T00:00:00",
   "states": [],
   "owner": "Google Inc",
-  "registrar": "Markmonitor Tech Contact"
+  "registrar": "Markmonitor Tech Contact",
+  "dnssec": "unsigned delegation"
 }

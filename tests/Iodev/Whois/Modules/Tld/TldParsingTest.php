@@ -80,6 +80,7 @@ class TldParsingTest extends TestCase
             "states" => [],
             "owner" => "",
             "registrar" => "",
+            "dnssec" => "",
         ], $expected);
 
         $this->assertNotNull($info, "Loaded info should not be null ($srcTextFilename)");
@@ -124,6 +125,11 @@ class TldParsingTest extends TestCase
             $expected["registrar"],
             $info->registrar,
             "Registrar mismatch ($srcTextFilename)"
+        );
+        $this->assertEquals(
+            $expected["dnssec"],
+            $info->dnssec,
+            "DNSSEC mismatch ($srcTextFilename)"
         );
     }
 

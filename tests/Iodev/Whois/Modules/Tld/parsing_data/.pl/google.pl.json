@@ -11,5 +11,6 @@
   "expirationDate": "2018-09-18T14:00:00",
   "states": [],
   "owner": "",
-  "registrar": "Markmonitor, Inc."
+  "registrar": "Markmonitor, Inc.",
+  "dnssec": "Unsigned"
 }

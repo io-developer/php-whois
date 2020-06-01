@@ -13,5 +13,6 @@
     "registered"
   ],
   "owner": "Google Inc.",
-  "registrar": "MarkMonitor Inc."
+  "registrar": "MarkMonitor Inc.",
+  "dnssec": "unsigned delegation"
 }

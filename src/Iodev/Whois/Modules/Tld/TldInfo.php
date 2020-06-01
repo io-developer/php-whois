@@ -16,6 +16,7 @@ use Iodev\Whois\Helpers\DomainHelper;
  * @property string[] $states
  * @property string $owner
  * @property string $registrar
+ * @property string $dnssec
  */
 class TldInfo extends DataObject
 {
@@ -48,6 +49,7 @@ class TldInfo extends DataObject
         "states" => [],
         "owner" => "",
         "registrar" => "",
+        "dnssec" => "",
     ];
 
     /** @var TldResponse */
@@ -142,6 +144,7 @@ class TldInfo extends DataObject
             'owner' => 4,
             'registrar' => 3,
             'whoisServer' => 2,
+            'dnssec' => 2,
         ];
         $sum = 0;
         foreach ($this->data as $k => $v) {
