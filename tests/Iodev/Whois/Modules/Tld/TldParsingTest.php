@@ -71,6 +71,17 @@ class TldParsingTest extends TestCase
         $expected = json_decode(self::loadContent($expectedJsonFilename), true);
         $this->assertNotEmpty($expected, "Failed to load/parse expected json ($expectedJsonFilename)");
 
+        $expected = array_replace([
+            "domainName" => "",
+            "whoisServer" => "",
+            "nameServers" => [],
+            "creationDate" => "",
+            "expirationDate" => "",
+            "states" => [],
+            "owner" => "",
+            "registrar" => "",
+        ], $expected);
+
         $this->assertNotNull($info, "Loaded info should not be null ($srcTextFilename)");
         $this->assertFalse($tld->isDomainAvailable($domain), "Domain should not be available ($srcTextFilename)");
 
