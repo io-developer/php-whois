@@ -349,79 +349,58 @@ class BlockParser extends CommonParser
         return $registrar;
     }
 
-    /**
-     * @param GroupFilter $rootFilter
-     * @param GroupFilter $primaryFilter
-     * @return int
-     */
-    protected function parseCreationDate(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    protected function parseCreationDate(GroupFilter $rootFilter, GroupFilter $primaryFilter): int
     {
-        $time = $primaryFilter->toSelector()
-            ->selectKeys($this->creationDateKeys)
-            ->mapUnixTime($this->getOption('inversedDateMMDD', false))
-            ->getFirst(0);
-
-        if (!empty($time)) {
-            return $time;
-        }
-
-        $sel = $rootFilter->cloneMe()
-            ->useMatchFirstOnly(true)
-            ->filterHasSubsetKeyOf($this->creationDateKeys)
-            ->toSelector()
-            ->selectKeys($this->creationDateKeys);
-
-        $time = $sel->cloneMe()
-            ->mapUnixTime($this->getOption('inversedDateMMDD', false))
-            ->getFirst(0);
-
-        if (!empty($time)) {
-            return $time;
-        }
-
-        foreach ($sel->getAll() as $str) {
-            if (preg_match('~registered\s+on\b~ui', $str)) {
-                $time = DateHelper::parseDateInText($str);
-                if (!empty($time)) {
-                    return $time;
-                }
-            }
-        }
-        return 0;
+        return $this->parseDate(
+            $rootFilter,
+            $primaryFilter,
+            $this->creationDateKeys,
+            '~registered\s+on\b~ui'
+        );
     }
 
-    /**
-     * @param GroupFilter $rootFilter
-     * @param GroupFilter $primaryFilter
-     * @return int
-     */
-    protected function parseExpirationDate(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    protected function parseExpirationDate(GroupFilter $rootFilter, GroupFilter $primaryFilter): int
     {
-        $time = $primaryFilter->toSelector()
-            ->selectKeys($this->expirationDateKeys)
-            ->mapUnixTime($this->getOption('inversedDateMMDD', false))
-            ->getFirst();
+        return $this->parseDate(
+            $rootFilter,
+            $primaryFilter,
+            $this->expirationDateKeys,
+            '~registry\s+fee\s+due\s+on\b~ui'
+        );
+    }
 
+    protected function parseDate(
+        GroupFilter $rootFilter,
+        GroupFilter $primaryFilter,
+        array $keys,
+        string $fallbackRegex = ''
+    ): int {
+        $time = $primaryFilter->toSelector()
+            ->selectKeys($keys)
+            ->mapUnixTime($this->getOption('inversedDateMMDD', false))
+            ->getFirst(0)
+        ;
         if (!empty($time)) {
             return $time;
         }
-
         $sel = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetKeyOf($this->expirationDateKeys)
+            ->filterHasSubsetKeyOf($keys)
             ->toSelector()
-            ->selectKeys($this->expirationDateKeys);
-
+            ->selectKeys($keys)
+        ;
         $time = $sel->cloneMe()
             ->mapUnixTime($this->getOption('inversedDateMMDD', false))
-            ->getFirst(0);
-
+            ->getFirst(0)
+        ;
         if (!empty($time)) {
             return $time;
         }
-
+        if (empty($fallbackRegex)) {
+            return 0;
+        }
         foreach ($sel->getAll() as $str) {
-            if (preg_match('~registry\s+fee\s+due\s+on\b~ui', $str)) {
+            if (preg_match($fallbackRegex, $str)) {
                 $time = DateHelper::parseDateInText($str);
                 if (!empty($time)) {
                     return $time;
