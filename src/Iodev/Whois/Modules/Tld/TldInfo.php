@@ -13,6 +13,7 @@ use Iodev\Whois\Helpers\DomainHelper;
  * @property string[] $nameServers
  * @property int $creationDate
  * @property int $expirationDate
+ * @property int $updatedDate
  * @property string[] $states
  * @property string $owner
  * @property string $registrar
@@ -46,6 +47,7 @@ class TldInfo extends DataObject
         "nameServers" => [],
         "creationDate" => 0,
         "expirationDate" => 0,
+        "updatedDate" => 0,
         "states" => [],
         "owner" => "",
         "registrar" => "",
@@ -125,6 +127,7 @@ class TldInfo extends DataObject
             "owner",
             "creationDate",
             "expirationDate",
+            "updatedDate",
             "registrar",
         ];
         return !$this->isEmpty($primaryKeys) && !$this->isEmpty($secondaryKeys);
@@ -140,6 +143,7 @@ class TldInfo extends DataObject
             'nameServers' => 20,
             'creationDate' => 6,
             'expirationDate' => 6,
+            'updatedDate' => 6,
             'states' => 4,
             'owner' => 4,
             'registrar' => 3,

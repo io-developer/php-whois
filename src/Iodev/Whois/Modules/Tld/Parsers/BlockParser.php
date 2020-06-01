@@ -106,6 +106,7 @@ class BlockParser extends CommonParser
             "registrar" => $this->parseRegistrar($rootFilter, $primaryFilter),
             "creationDate" => $this->parseCreationDate($rootFilter, $primaryFilter),
             "expirationDate" => $this->parseExpirationDate($rootFilter, $primaryFilter),
+            "updatedDate" => $this->parseUpdatedDate($rootFilter, $primaryFilter),
             "whoisServer" => $this->parseWhoisServer($rootFilter, $primaryFilter),
         ];
 
@@ -366,6 +367,15 @@ class BlockParser extends CommonParser
             $primaryFilter,
             $this->expirationDateKeys,
             '~registry\s+fee\s+due\s+on\b~ui'
+        );
+    }
+
+    protected function parseUpdatedDate(GroupFilter $rootFilter, GroupFilter $primaryFilter): int
+    {
+        return $this->parseDate(
+            $rootFilter,
+            $primaryFilter,
+            $this->updatedDateKeys
         );
     }
 

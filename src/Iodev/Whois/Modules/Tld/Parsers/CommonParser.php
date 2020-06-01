@@ -38,6 +38,9 @@ class CommonParser extends TldParser
     protected $expirationDateKeys = [ "expiration date" ];
 
     /** @var array */
+    protected $updatedDateKeys = [ "updated date" ];
+
+    /** @var array */
     protected $ownerKeys = [ "owner-organization" ];
 
     /** @var array */
@@ -103,7 +106,7 @@ class CommonParser extends TldParser
                 ->selectKeyGroups($this->nameServersKeysGroups)
                 ->mapAsciiServer()
                 ->removeEmpty()
-                ->removeDuplicates()
+                ->removeDuplicates(11)
                 ->getAll(),
 
             "dnssec" => $sel->clean()
@@ -119,6 +122,11 @@ class CommonParser extends TldParser
 
             "expirationDate" => $sel->clean()
                 ->selectKeys($this->expirationDateKeys)
+                ->mapUnixTime($this->getOption('inversedDateMMDD', false))
+                ->getFirst(''),
+
+            "updatedDate" => $sel->clean()
+                ->selectKeys($this->updatedDateKeys)
                 ->mapUnixTime($this->getOption('inversedDateMMDD', false))
                 ->getFirst(''),
 

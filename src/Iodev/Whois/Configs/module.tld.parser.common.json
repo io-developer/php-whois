@@ -80,6 +80,21 @@
     "validity",
     "Fecha de vencimiento"
   ],
+  "updatedDateKeys": [
+    "Updated Date",
+    "updated-date",
+    "Last Updated Date",
+    "Last Updated",
+    "last-updated",
+    "Last Update",
+    "last-update",
+    "Record last updated on",
+    "Modified Date",
+    "Last modified",
+    "Modified",
+    "Updated",
+    "Derniere modification"
+  ],
   "ownerKeys": [
     "owner orgname",
     "owner-organization",

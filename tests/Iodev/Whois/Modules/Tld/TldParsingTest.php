@@ -77,6 +77,7 @@ class TldParsingTest extends TestCase
             "nameServers" => [],
             "creationDate" => "",
             "expirationDate" => "",
+            "updatedDate" => "",
             "states" => [],
             "owner" => "",
             "registrar" => "",
@@ -110,6 +111,11 @@ class TldParsingTest extends TestCase
             strtotime($expected["expirationDate"]),
             $info->expirationDate,
             "expirationDate mismatch ($srcTextFilename)"
+        );
+        $this->assertEquals(
+            strtotime($expected["updatedDate"]),
+            $info->updatedDate,
+            "updatedDate mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             self::sort($expected["states"]),
