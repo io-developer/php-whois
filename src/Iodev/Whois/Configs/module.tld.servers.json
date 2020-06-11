@@ -436,7 +436,7 @@
   {"zone": ".maison", "host": "whois.donuts.co"},
   {"zone": ".management", "host": "whois.donuts.co"},
   {"zone": ".mango", "host": "whois.mango.coreregistry.net"},
-  {"zone": ".market", "host": "whois.rightside.co"},
+  {"zone": ".market", "host": "whois.nic.market"},
   {"zone": ".marketing", "host": "whois.donuts.co"},
   {"zone": ".mc", "host": "whois.ripe.net"},
   {"zone": ".md", "host": "whois.nic.md"},
