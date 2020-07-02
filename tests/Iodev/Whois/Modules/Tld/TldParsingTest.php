@@ -209,9 +209,17 @@ class TldParsingTest extends TestCase
             [ "free.ar", ".ar/free.txt", null ],
             [ "google.com.ar", ".ar/google.com.ar.txt", ".ar/google.com.ar.json" ],
 
+            // .ARMY
+            [ "free.army", ".army/free.txt", null ],
+            [ "nic.army", ".army/nic.army.txt", ".army/nic.army.json" ],
+
             // .AT
             [ "free.at", ".at/free.txt", null ],
             [ "google.at", ".at/google.at.txt", ".at/google.at.json" ],
+
+            // .ATTORNEY
+            [ "free.attorney", ".attorney/free.txt", null ],
+            [ "nic.attorney", ".attorney/nic.attorney.txt", ".attorney/nic.attorney.json" ],
 
             // .AU
             [ "free.au", ".au/free.txt", null ],
@@ -220,6 +228,10 @@ class TldParsingTest extends TestCase
             // .BABY
             [ "free.baby", ".baby/free.txt", null ],
             [ "google.baby", ".baby/google.baby.txt", ".baby/google.baby.json" ],
+
+            // .BAND
+            [ "free.band", ".band/free.txt", null ],
+            [ "nic.band", ".band/nic.band.txt", ".band/nic.band.json" ],
 
             // .BE
             [ "free.be", ".be/free.txt", null ],
@@ -326,6 +338,14 @@ class TldParsingTest extends TestCase
             [ "google.de", ".de/google.de.txt", ".de/google.de.json" ],
             [ "fäw.de", ".de/xn--fw-via.de.txt", ".de/xn--fw-via.de.json" ],
 
+            // .DEGREE
+            [ "free.degree", ".degree/free.txt", null ],
+            [ "nic.degree", ".degree/nic.degree.txt", ".degree/nic.degree.json" ],
+
+            // .DENTIST
+            [ "free.dentist", ".dentist/free.txt", null ],
+            [ "nic.dentist", ".dentist/nic.dentist.txt", ".dentist/nic.dentist.json" ],
+
             // .DK
             [ "free.dk", ".dk/free.txt", null ],
             [ "google.dk", ".dk/google.dk.txt", ".dk/google.dk.json" ],
@@ -357,6 +377,10 @@ class TldParsingTest extends TestCase
             // .EE
             [ "free.ee", ".ee/free.txt", null ],
             [ "google.ee", ".ee/google.ee.txt", ".ee/google.ee.json" ],
+
+            // .ENGINEER
+            [ "free.engineer", ".engineer/free.txt", null ],
+            [ "nic.engineer", ".engineer/nic.engineer.txt", ".engineer/nic.engineer.json" ],
 
             // .ES
             [ "free.es", ".es/free.txt", null ],
@@ -407,6 +431,10 @@ class TldParsingTest extends TestCase
             // .GI
             [ "free.gi", ".gi/free.txt", null ],
             [ "google.com.gi", ".gi/google.com.gi.txt", ".gi/google.com.gi.json" ],
+
+            // .GIVES
+            [ "free.gives", ".gives/free.txt", null ],
+            [ "nic.gives", ".gives/nic.gives.txt", ".gives/nic.gives.json" ],
 
             // .GL
             [ "free.gl", ".gl/free.txt", null ],
@@ -524,6 +552,10 @@ class TldParsingTest extends TestCase
             [ "free.la", ".la/free.txt", null ],
             [ "google.la", ".la/google.la.txt", ".la/google.la.json" ],
 
+            // .LAWYER
+            [ "free.lawyer", ".lawyer/free.txt", null ],
+            [ "nic.lawyer", ".lawyer/nic.lawyer.txt", ".lawyer/nic.lawyer.json" ],
+
             // .LC
             [ "free.lc", ".lc/free.txt", null ],
             [ "google.com.lc", ".lc/google.com.lc.txt", ".lc/google.com.lc.json" ],
@@ -588,6 +620,10 @@ class TldParsingTest extends TestCase
             [ "free.mn", ".mn/free.txt", null ],
             [ "google.mn", ".mn/google.mn.txt", ".mn/google.mn.json" ],
 
+            // .MORTGAGE
+            [ "free.mortgage", ".mortgage/free.txt", null ],
+            [ "nic.mortgage", ".mortgage/nic.mortgage.txt", ".mortgage/nic.mortgage.json" ],
+
             // .MS
             [ "free.ms", ".ms/free.txt", null ],
             [ "google.ms", ".ms/google.ms.txt", ".ms/google.ms.json" ],
@@ -607,6 +643,10 @@ class TldParsingTest extends TestCase
             // .NA
             [ "free.na", ".na/free.txt", null ],
             [ "google.com.na", ".na/google.com.na.txt", ".na/google.com.na.json" ],
+
+            // .NAVY
+            [ "free.navy", ".navy/free.txt", null ],
+            [ "nic.navy", ".navy/nic.navy.txt", ".navy/nic.navy.json" ],
 
             // .NET
             [ "free.net", ".net/free.txt", null ],
@@ -681,9 +721,21 @@ class TldParsingTest extends TestCase
             [ "free.qa", ".qa/free.txt", null ],
             [ "google.com.qa", ".qa/google.com.qa.txt", ".qa/google.com.qa.json" ],
 
+            // .REHAB
+            [ "free.rehab", ".rehab/free.txt", null ],
+            [ "nic.rehab", ".rehab/nic.rehab.txt", ".rehab/nic.rehab.json" ],
+
             // .REN
             [ "free.ren", ".ren/free.txt", null ],
             [ "nic.ren", ".ren/nic.ren.txt", ".ren/nic.ren.json" ],
+
+            // .REPUBLICAN
+            [ "free.republican", ".republican/free.txt", null ],
+            [ "nic.republican", ".republican/nic.republican.txt", ".republican/nic.republican.json" ],
+
+            // .RIP
+            [ "free.rip", ".rip/free.txt", null ],
+            [ "nic.rip", ".rip/nic.rip.txt", ".rip/nic.rip.json" ],
 
             // .RO
             [ "free.ro", ".ro/free.txt", null ],
@@ -706,6 +758,10 @@ class TldParsingTest extends TestCase
             // .SA
             [ "free.sa", ".sa/free.txt", null ],
             // [ "google.com.sa", ".sa/google.com.sa.txt", ".sa/google.com.sa.json" ],
+
+            // .SALE
+            [ "free.sale", ".sale/free.txt", null ],
+            [ "nic.sale", ".sale/nic.sale.txt", ".sale/nic.sale.json" ],
 
             // .SB
             [ "free.sb", ".sb/free.txt", null ],
@@ -750,6 +806,10 @@ class TldParsingTest extends TestCase
             // .SO
             [ "free.so", ".so/free.txt", null ],
             [ "google.so", ".so/google.so.txt", ".so/google.so.json" ],
+
+            // .SOFTWARE
+            [ "free.software", ".software/free.txt", null ],
+            [ "nic.software", ".software/nic.software.txt", ".software/nic.software.json" ],
 
             // .ST
             [ "free.st", ".st/free.txt", null ],
@@ -832,9 +892,17 @@ class TldParsingTest extends TestCase
             [ "free.ve", ".ve/free.txt", null ],
             // [ "google.co.ve", ".ve/google.co.ve.txt", ".ve/google.co.ve.json" ],
 
+            // .VET
+            [ "free.vet", ".vet/free.txt", null ],
+            [ "nic.vet", ".vet/nic.vet.txt", ".vet/nic.vet.json" ],
+
             // .VG
             [ "free.vg", ".vg/free.txt", null ],
             [ "google.vg", ".vg/google.vg.txt", ".vg/google.vg.json" ],
+
+            // .VIDEO
+            [ "free.video", ".video/free.txt", null ],
+            [ "nic.video", ".video/nic.video.txt", ".video/nic.video.json" ],
 
             // .VIP
             [ "free.vip", ".vip/free.txt", null ],
