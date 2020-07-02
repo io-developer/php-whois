@@ -560,6 +560,10 @@ class TldParsingTest extends TestCase
             [ "free.ma", ".ma/free.txt", null ],
             [ "google.co.ma", ".ma/google.co.ma.txt", ".ma/google.co.ma.json" ],
 
+            // .MARKET
+            [ "free.market", ".market/free.txt", null ],
+            [ "nic.market", ".market/nic.market.txt", ".market/nic.market.json" ],
+
             // .MD
             [ "free.md", ".md/free.txt", null ],
             [ "google.md", ".md/google.md.txt", ".md/google.md.json" ],
