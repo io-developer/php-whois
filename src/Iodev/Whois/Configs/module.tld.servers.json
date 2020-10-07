@@ -272,6 +272,7 @@
   {"zone": ".gal", "host": "whois.gal.coreregistry.net"},
   {"zone": ".gallery", "host": "whois.donuts.co"},
   {"zone": ".garden", "host": "whois.nic.garden"},
+  {"zone": ".gay", "host": "whois.nic.gay"},
   {"zone": ".gb", "host": "whois.ripe.net"},
   {"zone": ".gbiz", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".gd", "host": "whois.nic.gd", "parserType": "commonFlat"},
