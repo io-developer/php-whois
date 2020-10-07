@@ -495,6 +495,10 @@ class TldParsingTest extends TestCase
             [ "free.je", ".je/free.txt", null ],
             // [ "google.je", ".je/google.je.txt", ".je/google.je.json" ],
 
+            // .JEWELRY
+            [ "free.jewelry", ".jewelry/free.txt", null ],
+            [ "microsoft.jewelry", ".jewelry/microsoft.jewelry.txt", ".jewelry/microsoft.jewelry.json" ],
+
             // .JP
             [ "free.jp", ".jp/free.txt", null ],
             [ "shop.jp", ".jp/shop.jp.txt", ".jp/shop.jp.json" ],
