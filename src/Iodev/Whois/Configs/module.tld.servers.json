@@ -637,6 +637,7 @@
   {"zone": ".space", "host": "whois.nic.space"},
   {"zone": ".st", "host": "whois.nic.st"},
   {"zone": ".store", "host": "whois.nic.store"},
+  {"zone": ".studio", "host": "whois.nic.studio"},
   {"zone": ".study", "host": "whois.nic.study"},
   {"zone": ".style", "host": "whois.donuts.co"},
   {"zone": ".su", "host": "whois.ripn.net"},
