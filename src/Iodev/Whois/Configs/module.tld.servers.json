@@ -374,6 +374,7 @@
   {"zone": ".jcb", "host": "whois.nic.gmo"},
   {"zone": ".je", "host": "whois.je"},
   {"zone": ".jetzt", "host": "whois.nic.jetzt"},
+  {"zone": ".jewelry", "host": "whois.nic.jewelry"},
   {"zone": ".jobs", "host": "jobswhois.verisign-grs.com"},
   {"zone": ".joburg", "host": "joburg-whois.registry.net.za"},
   {"zone": ".jp", "host": "whois.jprs.jp", "queryFormat": "%s/e\r\n"},
