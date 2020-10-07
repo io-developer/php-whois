@@ -553,6 +553,7 @@
   {"zone": ".prod", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".productions", "host": "whois.donuts.co"},
   {"zone": ".prof", "host": "domain-registry-whois.l.google.com"},
+  {"zone": ".promo", "host": "whois.afilias.net"},
   {"zone": ".properties", "host": "whois.donuts.co"},
   {"zone": ".property", "host": "whois.uniregistry.net"},
   {"zone": ".ps", "host": "whois.pnina.ps"},
