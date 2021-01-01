@@ -32,6 +32,7 @@
   {"zone": ".archi", "host": "whois.afilias.net"},
   {"zone": ".army", "host": "whois.nic.army"},
   {"zone": ".arpa", "host": "whois.iana.org"},
+  {"zone": ".art", "host": "whois.nic.art"},
   {"zone": ".as", "host": "whois.nic.as"},
   {"zone": ".asia", "host": "whois.nic.asia"},
   {"zone": ".associates", "host": "whois.donuts.co"},
