@@ -58,13 +58,16 @@ class SocketLoader implements ILoader
         if (!$handle) {
             throw new ConnectionException($errstr, $errno);
         }
+        
+        stream_set_timeout($handle, $this->timeout);
+        
         if (false === fwrite($handle, $query)) {
             throw new ConnectionException("Query cannot be written");
         }
         $text = "";
         while (!feof($handle)) {
             $chunk = fread($handle, 8192);
-            if (false === $chunk) {
+            if (false === $chunk || $chunk === '') {
                 throw new ConnectionException("Response chunk cannot be read");
             }
             $text .= $chunk;
