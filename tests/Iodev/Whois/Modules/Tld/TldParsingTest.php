@@ -47,6 +47,19 @@ class TldParsingTest extends TestCase
     }
 
     /**
+     * @param string $datestr
+     * @return int
+     */
+    private static function parseExpectedDate($datestr)
+    {
+        // replace %param by value
+        if (strpos($datestr, '%') !== false) {
+            $datestr = preg_replace('~^%Y(-\d\d-\d\dT\d\d:\d\d)$~', date('Y').'\1', $datestr);
+        }
+        return strtotime($datestr);
+    }
+
+    /**
      * @dataProvider getTestData
      *
      * @param string $domain
@@ -103,17 +116,17 @@ class TldParsingTest extends TestCase
             "Name servers mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
-            strtotime($expected["creationDate"]),
+            self::parseExpectedDate($expected["creationDate"]),
             $info->creationDate,
             "Creation date mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
-            strtotime($expected["expirationDate"]),
+            self::parseExpectedDate($expected["expirationDate"]),
             $info->expirationDate,
             "expirationDate mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
-            strtotime($expected["updatedDate"]),
+            self::parseExpectedDate($expected["updatedDate"]),
             $info->updatedDate,
             "updatedDate mismatch ($srcTextFilename)"
         );

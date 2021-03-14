@@ -8,7 +8,7 @@
     "ns4.google.com"
   ],
   "creationDate": "2000-08-02T00:00",
-  "expirationDate": "2020-08-02T00:00",
+  "expirationDate": "%Y-08-02T00:00",
   "updatedDate": "",
   "states": [
     "active",
