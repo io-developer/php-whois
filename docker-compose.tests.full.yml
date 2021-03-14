@@ -67,7 +67,7 @@ services:
       context: .
       dockerfile: Dockerfile-tests
       args:
-        IMAGE: php:7.4-rc-cli-alpine
+        IMAGE: php:7.4-cli-alpine
         PACKAGES: git zip unzip icu-dev
 
   php-7.4_intl:
@@ -80,9 +80,38 @@ services:
       context: .
       dockerfile: Dockerfile-tests
       args:
-        IMAGE: php:7.4-rc-cli-alpine
+        IMAGE: php:7.4-cli-alpine
         PACKAGES: git zip unzip icu-dev
         PHPMODS: intl
+
+
+  php-8.0:
+    volumes:
+      - php80:/workdir
+      - "./src:/workdir/src:ro"
+      - "./tests:/workdir/tests:ro"
+      - "./composer.json:/workdir/composer.json:ro"
+    build:
+      context: .
+      dockerfile: Dockerfile-tests
+      args:
+        IMAGE: php:8.0-cli-alpine
+        PACKAGES: git zip unzip icu-dev
+
+  php-8.0_intl:
+    volumes:
+      - php80_intl:/workdir
+      - "./src:/workdir/src:ro"
+      - "./tests:/workdir/tests:ro"
+      - "./composer.json:/workdir/composer.json:ro"
+    build:
+      context: .
+      dockerfile: Dockerfile-tests
+      args:
+        IMAGE: php:8.0-cli-alpine
+        PACKAGES: git zip unzip icu-dev
+        PHPMODS: intl
+
 
 volumes:
   php72:
@@ -91,3 +120,5 @@ volumes:
   php73_intl:
   php74:
   php74_intl:
+  php80:
+  php80_intl:
