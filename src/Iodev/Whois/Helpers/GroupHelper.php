@@ -121,7 +121,7 @@ class GroupHelper
     public static function renderSubsets($subsets, $params)
     {
         array_walk_recursive($subsets, function(&$val) use ($params) {
-            $val = preg_replace_callback('~\\$[a-z\d]+~ui', function($m) use ($params) {
+            $val = preg_replace_callback('~\\$[a-z][a-z\d]*\b~ui', function($m) use ($params) {
                 $arg = $m[0];
                 return isset($params[$arg]) ? $params[$arg] : $arg;
             }, $val);
@@ -138,16 +138,19 @@ class GroupHelper
      */
     public static function findGroupsHasSubsetOf($groups, $subsets, $ignoreCase = true, $stopnOnFirst = false)
     {
-        $foundGroups = [];
-        $preparedGroups = [];
-        foreach ($groups as $group) {
-            $preparedGroups[] = $ignoreCase ? self::toLowerCase($group) : $group;
+        $preparedGroups = $groups;
+        $preparedSubsets = $subsets;
+        if ($ignoreCase) {
+            foreach ($groups as $groupKey => $group) {
+                $preparedGroups[$groupKey] = self::toLowerCase($group);
+            }
+            $preparedSubsets = self::toLowerCase($subsets);
         }
-        $subsets = $ignoreCase ? self::toLowerCase($subsets) : $subsets;
-        foreach ($subsets as $subset) {
-            foreach ($preparedGroups as $index => $group) {
-                if (self::hasSubset($group, $subset)) {
-                    $foundGroups[] = $groups[$index];
+        $foundGroups = [];
+        foreach ($preparedSubsets as $preparedSubset) {
+            foreach ($preparedGroups as $groupKey => $preparedGroup) {
+                if (self::hasSubset($preparedGroup, $preparedSubset)) {
+                    $foundGroups[] = $groups[$groupKey];
                     if ($stopnOnFirst) {
                         break;
                     }
@@ -172,19 +175,37 @@ class GroupHelper
                 continue;
             }
             if (is_array($group[$k])) {
-                foreach ($group[$k] as $sub) {
-                    if (strval($sub) == strval($v)) {
+                foreach ($group[$k] as $groupSubval) {
+                    if (self::matchSubsetVal($groupSubval, $v)) {
                         $found = true;
                     }
                 }
             } else {
-                $found = (strval($group[$k]) == strval($v));
+                $found = self::matchSubsetVal($group[$k], $v);
             }
             if (empty($found)) {
                  return false;
             }
         }
         return true;
+    }
+
+    /**
+     * @param $groupVal
+     * @param $subsetVal
+     * @return bool
+     */
+    private static function matchSubsetVal($groupVal, $subsetVal)
+    {
+        $haystack = (string)$groupVal;
+        $needle = (string)$subsetVal;
+        if (strlen($needle) > 1 && $needle[0] === '~') {
+            $re = $needle;
+            $subj = (string)$groupVal;
+            $res = preg_match($re, $subj);
+            return (bool)$res;
+        }
+        return $haystack === $needle;
     }
 
     /**
