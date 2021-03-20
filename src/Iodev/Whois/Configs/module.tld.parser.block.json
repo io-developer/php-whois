@@ -191,7 +191,8 @@
     {"Domain Name (UTF8)": "$domain"},
     {"complete domain name": "$domain"},
     {"Dominio": "$domain"},
-    {"query": "$domain"}
+    {"query": "$domain"},
+    {"domain": "~\\b$domain\\b~ui"}
   ],
   "primarySubsets": [
     {"admin-c": "", "tech-c": "", "nserver": "", "status": ""}

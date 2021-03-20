@@ -131,7 +131,8 @@ class GroupSelector
     public function mapAsciiServer()
     {
         foreach ($this->items as &$item) {
-            $item = DomainHelper::filterAscii(DomainHelper::toAscii(is_string($item) ? $item : ''));
+            $raw = is_string($item) ? trim($item, '.') : '';
+            $item = DomainHelper::filterAscii(DomainHelper::toAscii($raw));
             if ($item && !preg_match('~^([-\pL\d]+\.)+[-\pL\d]+$~ui', $item)) {
                 if (!preg_match('~^[a-z\d]+-norid$~ui', $item)) {
                     $item = '';
