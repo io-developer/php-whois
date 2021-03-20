@@ -113,24 +113,6 @@ class GroupHelper
         return $vals;
     }
 
-
-    /**
-     * @param array $groups
-     * @param string[] $keys
-     * @param bool $ignoreCase
-     * @return string
-     */
-    public static function matchFirstIn($groups, $keys, $ignoreCase = true)
-    {
-        foreach ($groups as $group) {
-            $v = self::matchFirst($group, $keys, $ignoreCase);
-            if (!empty($v)) {
-                return $v;
-            }
-        }
-        return "";
-    }
-
     /**
      * @param array $subsets
      * @param array $params
@@ -145,18 +127,6 @@ class GroupHelper
             }, $val);
         });
         return $subsets;
-    }
-
-    /**
-     * @param array $groups
-     * @param array $subsets
-     * @param bool $ignoreCase
-     * @return array|null
-     */
-    public static function findGroupHasSubsetOf($groups, $subsets, $ignoreCase = true)
-    {
-        $foundGroups = self::findGroupsHasSubsetOf($groups, $subsets, $ignoreCase, true);
-        return empty($foundGroups) ? null : $foundGroups[0];
     }
 
     /**
@@ -189,21 +159,6 @@ class GroupHelper
 
     /**
      * @param array $group
-     * @param array $subsets
-     * @return bool
-     */
-    public static function hasSubsetOf($group, $subsets)
-    {
-        foreach ($subsets as $subset) {
-            if (self::hasSubset($group, $subset)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param array $group
      * @param array $subset
      * @return bool
      */
@@ -230,18 +185,6 @@ class GroupHelper
             }
         }
         return true;
-    }
-
-    /**
-     * @param array $groups
-     * @param string $domain
-     * @param string[] $domainKeys
-     * @return array
-     */
-    public static function findDomainGroup($groups, $domain, $domainKeys)
-    {
-        $foundGroups = self::findDomainGroups($groups, $domain, $domainKeys, true);
-        return empty($foundGroups) ? null : $foundGroups[0];
     }
 
     /**
