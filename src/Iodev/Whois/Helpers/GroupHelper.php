@@ -121,9 +121,14 @@ class GroupHelper
     public static function renderSubsets($subsets, $params)
     {
         array_walk_recursive($subsets, function(&$val) use ($params) {
-            $val = preg_replace_callback('~\\$[a-z][a-z\d]*\b~ui', function($m) use ($params) {
+            $origVal = (string)$val;
+            $val = preg_replace_callback('~\\$[a-z][a-z\d]*\b~ui', function($m) use ($origVal, $params) {
                 $arg = $m[0];
-                return isset($params[$arg]) ? $params[$arg] : $arg;
+                $newVal = isset($params[$arg]) ? $params[$arg] : $arg;
+                if (strlen($origVal) > 1 && $origVal[0] == '~') {
+                    $newVal = preg_quote($newVal);
+                }
+                return $newVal;
             }, $val);
         });
         return $subsets;
@@ -133,25 +138,47 @@ class GroupHelper
      * @param array $groups
      * @param array $subsets
      * @param bool $ignoreCase
-     * @param bool $stopnOnFirst
+     * @param bool $stopOnFirst
      * @return array
      */
-    public static function findGroupsHasSubsetOf($groups, $subsets, $ignoreCase = true, $stopnOnFirst = false)
+    public static function findGroupsHasSubsetOf($groups, $subsets, $ignoreCase = true, $stopOnFirst = false)
     {
-        $preparedGroups = $groups;
-        $preparedSubsets = $subsets;
-        if ($ignoreCase) {
-            foreach ($groups as $groupKey => $group) {
-                $preparedGroups[$groupKey] = self::toLowerCase($group);
+        $keyMatcher = function($needle, $subject) use ($ignoreCase) {
+            if ($needle === $subject) {
+                return true;
             }
-            $preparedSubsets = self::toLowerCase($subsets);
-        }
+            if (strlen($needle) > 1 && (string)$needle[0] === '~') {
+                return (bool)preg_match((string)$needle, $subject);
+            }
+            if ($ignoreCase) {
+                return mb_strtolower($needle) === mb_strtolower($subject);
+            }
+            return false;
+        };
+        $valMatcher = function($needle, $subject) use ($ignoreCase) {
+            if ($needle === $subject) {
+                return true;
+            }
+            $subject = (string)$subject;
+            $needle = (string)$needle;
+            if ($needle === $subject) {
+                return true;
+            }
+            if (strlen($needle) > 1 && $needle[0] === '~') {
+                $res = preg_match($needle, $subject);
+                return (bool)$res;
+            }
+            if ($ignoreCase) {
+                return mb_strtolower($needle) === mb_strtolower($subject);
+            }
+            return false;
+        };
         $foundGroups = [];
-        foreach ($preparedSubsets as $preparedSubset) {
-            foreach ($preparedGroups as $groupKey => $preparedGroup) {
-                if (self::hasSubset($preparedGroup, $preparedSubset)) {
-                    $foundGroups[] = $groups[$groupKey];
-                    if ($stopnOnFirst) {
+        foreach ($subsets as $subset) {
+            foreach ($groups as $group) {
+                if (self::matchGroupSubset($group, $subset, $keyMatcher, $valMatcher)) {
+                    $foundGroups[] = $group;
+                    if ($stopOnFirst) {
                         break;
                     }
                 }
@@ -163,49 +190,54 @@ class GroupHelper
     /**
      * @param array $group
      * @param array $subset
+     * @param callable $keyMatcher
+     * @param callable $valMatcher
      * @return bool
      */
-    public static function hasSubset($group, $subset)
+    public static function matchGroupSubset($group, $subset, $keyMatcher = null, $valMatcher = null)
     {
-        foreach ($subset as $k => $v) {
-            if (!isset($group[$k])) {
+        $keyMatcher = is_callable($keyMatcher) ? $keyMatcher : function($needle, $subject) {
+            return $needle === $subject;
+        };
+        $valMatcher = is_callable($valMatcher) ? $valMatcher : function($needle, $subject) {
+            return $needle == $subject;
+        };
+        foreach ($subset as $subsetKey => $subsetVal) {
+            $isKeyMatched = false;
+            $groupVal = null;
+            if (isset($group[$subsetKey])) {
+                $isKeyMatched = true;
+                $groupVal = $group[$subsetKey];
+            } else {
+                foreach ($group as $groupKey => $gv) {
+                    $isKeyMatched = $keyMatcher($subsetKey, $groupKey);
+                    if ($isKeyMatched) {
+                        $groupVal = $gv;
+                        break;
+                    }
+                }
+            }
+            if (!$isKeyMatched) {
                 return false;
             }
-            if (empty($v)) {
+            if (empty($subsetVal)) {
                 continue;
             }
-            if (is_array($group[$k])) {
-                foreach ($group[$k] as $groupSubval) {
-                    if (self::matchSubsetVal($groupSubval, $v)) {
+            if (is_array($groupVal)) {
+                foreach ($groupVal as $groupSubVal) {
+                    if ($valMatcher($subsetVal, $groupSubVal)) {
                         $found = true;
+                        break;
                     }
                 }
             } else {
-                $found = self::matchSubsetVal($group[$k], $v);
+                $found = $valMatcher($subsetVal, $groupVal);
             }
             if (empty($found)) {
-                 return false;
+                return false;
             }
         }
         return true;
-    }
-
-    /**
-     * @param $groupVal
-     * @param $subsetVal
-     * @return bool
-     */
-    private static function matchSubsetVal($groupVal, $subsetVal)
-    {
-        $haystack = (string)$groupVal;
-        $needle = (string)$subsetVal;
-        if (strlen($needle) > 1 && $needle[0] === '~') {
-            $re = $needle;
-            $subj = (string)$groupVal;
-            $res = preg_match($re, $subj);
-            return (bool)$res;
-        }
-        return $haystack === $needle;
     }
 
     /**
