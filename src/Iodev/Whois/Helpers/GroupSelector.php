@@ -60,7 +60,7 @@ class GroupSelector
     public function selectKeys($keys)
     {
         foreach ($this->groups as $group) {
-            $matches = GroupHelper::matchKeys($group, $keys, $this->ignoreCase, $this->matchFirstOnly);
+            $matches = GroupHelper::matchKeys($group, $keys, $this->matchFirstOnly);
             foreach ($matches as $match) {
                 if (is_array($match)) {
                     $this->items = array_merge($this->items, $match);

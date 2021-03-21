@@ -5,6 +5,24 @@ namespace Iodev\Whois\Helpers;
 class GroupHelper
 {
     /**
+     * @param bool $ignoreCase
+     * @return \Closure
+     */
+    public static function getMatcher($ignoreCase = true) {
+        return function($needle, $subject) use ($ignoreCase) {
+            $needle = (string)$needle;
+            $subject = (string)$subject;
+            if ($needle === $subject) {
+                return true;
+            }
+            if (strlen($needle) > 1 && $needle[0] === '~') {
+                return (bool)preg_match($needle, $subject);
+            }
+            return $ignoreCase && mb_strtolower($needle) === mb_strtolower($subject);
+        };
+    }
+
+    /**
      * @param array $group
      * @param bool $keysOnly
      * @return array
@@ -45,30 +63,34 @@ class GroupHelper
     /**
      * @param array $group
      * @param string[] $keys
-     * @param bool $ignoreCase
      * @param bool $firstOnly
-     * @return string|string[]
+     * @param callable $matcher
+     * @return string[]
      */
-    public static function matchKeys($group, $keys, $ignoreCase = true, $firstOnly = false)
+    public static function matchKeys($group, $keys, $firstOnly = false, $matcher = null)
     {
-        $matches = [];
         if (empty($group)) {
             return [];
         }
-        if ($ignoreCase) {
-            $group = self::toLowerCase($group, true);
-        }
-        foreach ($keys as $k) {
-            if (is_array($k)) {
-                self::matchSubKeys($group, $k, $matches, $ignoreCase);
+        $matcher = is_callable($matcher) ? $matcher : self::getMatcher();
+        $matches = [];
+        foreach ($keys as $key) {
+            if (is_array($key)) {
+                self::matchSubKeys($group, $key, $matches);
+            } elseif (isset($group[$key])) {
+                $matches[] = $group[$key];
             } else {
-                $k = $ignoreCase ? mb_strtolower($k) : $k;
-                if (isset($group[$k])) {
-                    $matches[] = $group[$k];
+                foreach ($group as $groupKey => $groupVal) {
+                    if ($matcher($key, $groupKey)) {
+                        $matches[] = $groupVal;
+                        if ($firstOnly) {
+                            break;
+                        }
+                    }
                 }
             }
             if ($firstOnly && count($matches) > 0) {
-                return $matches;
+                break;
             }
         }
         return $matches;
@@ -78,13 +100,13 @@ class GroupHelper
      * @param array $group
      * @param string[] $keys
      * @param array $outMatches
-     * @param bool $ignoreCase
+     * @param callable $matcher
      */
-    private static function matchSubKeys($group, $keys, &$outMatches = [], $ignoreCase = true)
+    private static function matchSubKeys($group, $keys, &$outMatches = [], $matcher = null)
     {
         $vals = [];
         foreach ($keys as $k) {
-            $v = self::matchKeys($group, [$k], $ignoreCase, true);
+            $v = self::matchKeys($group, [$k], true, $matcher);
             $v = empty($v) ? "" : reset($v);
             if (is_array($v)) {
                 $vals = array_merge($vals, $v);
@@ -131,36 +153,8 @@ class GroupHelper
      */
     public static function findGroupsHasSubsetOf($groups, $subsets, $ignoreCase = true, $stopOnFirst = false)
     {
-        $keyMatcher = function($needle, $subject) use ($ignoreCase) {
-            if ($needle === $subject) {
-                return true;
-            }
-            if (strlen($needle) > 1 && (string)$needle[0] === '~') {
-                return (bool)preg_match((string)$needle, $subject);
-            }
-            if ($ignoreCase) {
-                return mb_strtolower($needle) === mb_strtolower($subject);
-            }
-            return false;
-        };
-        $valMatcher = function($needle, $subject) use ($ignoreCase) {
-            if ($needle === $subject) {
-                return true;
-            }
-            $subject = (string)$subject;
-            $needle = (string)$needle;
-            if ($needle === $subject) {
-                return true;
-            }
-            if (strlen($needle) > 1 && $needle[0] === '~') {
-                $res = preg_match($needle, $subject);
-                return (bool)$res;
-            }
-            if ($ignoreCase) {
-                return mb_strtolower($needle) === mb_strtolower($subject);
-            }
-            return false;
-        };
+        $keyMatcher = self::getMatcher($ignoreCase);
+        $valMatcher = self::getMatcher($ignoreCase);
         $foundGroups = [];
         foreach ($subsets as $subset) {
             foreach ($groups as $group) {
@@ -184,12 +178,8 @@ class GroupHelper
      */
     public static function matchGroupSubset($group, $subset, $keyMatcher = null, $valMatcher = null)
     {
-        $keyMatcher = is_callable($keyMatcher) ? $keyMatcher : function($needle, $subject) {
-            return $needle === $subject;
-        };
-        $valMatcher = is_callable($valMatcher) ? $valMatcher : function($needle, $subject) {
-            return $needle == $subject;
-        };
+        $keyMatcher = is_callable($keyMatcher) ? $keyMatcher : self::getMatcher();
+        $valMatcher = is_callable($valMatcher) ? $valMatcher : self::getMatcher();
         foreach ($subset as $subsetKey => $subsetVal) {
             $isKeyMatched = false;
             $groupVal = null;
@@ -239,7 +229,13 @@ class GroupHelper
     {
         $foundGroups = [];
         foreach ($groups as $group) {
-            $foundDomain = self::getAsciiServer($group, $domainKeys);
+            $foundDomain = null;
+            foreach (self::matchKeys($group, $domainKeys, true) as $val) {
+                $foundDomain = DomainHelper::toAscii($val);
+                if (!empty($foundDomain)) {
+                    break;
+                }
+            }
             if ($foundDomain && DomainHelper::compareNames($foundDomain, $domain)) {
                 $foundGroups[] = $group;
                 if ($stopOnFirst) {
@@ -248,33 +244,5 @@ class GroupHelper
             }
         }
         return $foundGroups;
-    }
-
-    /**
-     * @param array $group
-     * @param string[] $keys
-     * @return string
-     */
-    public static function getAsciiServer($group, $keys)
-    {
-        $servers = self::getAsciiServers($group, $keys);
-        return empty($servers) ? "" : $servers[0];
-    }
-
-    /**
-     * @param array $group
-     * @param string[] $keys
-     * @return string[]
-     */
-    public static function getAsciiServers($group, $keys)
-    {
-        $servers = [];
-        foreach (self::matchKeys($group, $keys, true, true) as $raw) {
-            $s = DomainHelper::toAscii($raw);
-            if (!empty($s)) {
-                $servers[] = $s;
-            }
-        }
-        return $servers;
     }
 }
