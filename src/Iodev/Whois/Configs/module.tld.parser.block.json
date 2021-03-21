@@ -183,16 +183,7 @@
   ],
   "domainSubsets": [
     {"__HEADER__": "domain", "name": "$domain"},
-    {"domain": "$domain"},
-    {"domainname": "$domain"},
-    {"domain_name": "$domain"},
-    {"domain name": "$domain"},
-    {"Domain Name (PUNYCODE)": "$domain"},
-    {"Domain Name (UTF8)": "$domain"},
-    {"complete domain name": "$domain"},
-    {"Dominio": "$domain"},
-    {"query": "$domain"},
-    {"domain": "~\\b$domain\\b~ui"}
+    {"~^(complete\\s+)?(domain|domainname|domain[\\s_]+?name|dominio|query)\\b~ui": "~\\b$domain\\b~ui"}
   ],
   "primarySubsets": [
     {"admin-c": "", "tech-c": "", "nserver": "", "status": ""}
@@ -201,26 +192,11 @@
     {"domain status": ""}
   ],
   "nameServersSubsets": [
-    {"__HEADER__": "NameServers"},
-    {"__HEADER__": "Nameservers"},
-    {"__HEADER__": "Nameserver in listed order"},
-    {"__HEADER__": "Domain servers in listed order"},
-    {"nameserver": ""},
-    {"ns_name_01": ""},
-    {"nserver": ""},
-    {"Name Server Handle": ""},
-    {"Hostname": ""},
-    {"dns": ""}
+    {"__HEADER__": "~^((Domain\\s+)?(Name|DNS)\\s*Servers?)(\\s+in\\s+listed\\s+order)?$~ui"},
+    {"~^(nameserver|ns_name_\\d+|nserver|Name\\s+Server\\s+Handle|Domain\\s+Nameservers|Hostname|dns)$~ui": ""}
   ],
   "nameServersSparsedSubsets": [
-    {"primary server": ""},
-    {"primary server hostname": ""},
-    {"secondary server": ""},
-    {"secondary server hostname": ""},
-    {"third server": ""},
-    {"third server hostname": ""},
-    {"fourth server": ""},
-    {"fourth server hostname": ""}
+    {"~^(primary|secondary|third|fourth)\\s+server(\\s+hostname)?$~ui": ""}
   ],
   "ownerSubsets": [
     {"__HEADER__": "Registrant"},
@@ -241,27 +217,18 @@
     {"__HEADER__": "Billing Contact"},
     {"__HEADER__": "CONTACTO FINANCIERO", "Organizacion": ""},
     {"Contact": "Billing", "Organization": ""},
-    {"current registrar": ""},
-    {"current registar": ""},
-    {"registrar_name": ""},
-    {"registrar created": ""},
-    {"registar created": ""}
+    {"~^(current\\s+)?registr?ar(_name)?(\\s+created)?$~ui": ""}
   ],
   "registrarReservedSubsets": [
-    {"nsset": "", "billing-c": ""},
-    {"nsset": "", "tech-c": ""},
-    {"billing-c": ""},
-    {"tech-c": ""}
+    {"nsset": "", "~^(billing-c|tech-c)$~ui": ""},
+    {"~^(billing-c|tech-c)$~ui": ""}
   ],
   "registrarReservedKeys": [
     "billing-c",
     "tech-c"
   ],
   "contactSubsets": [
-    {"nic-hdl": "$id"},
-    {"nic-hdl-br": "$id"},
-    {"contact": "$id"},
-    {"norid handle": "$id"}
+    {"~^(nic-hdl(-br)?|contact|norid\\s+handle)$~ui": "$id"}
   ],
   "contactOrgKeys": [
     "organisation",

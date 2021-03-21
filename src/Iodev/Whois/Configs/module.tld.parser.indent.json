@@ -189,15 +189,7 @@
   "domainSubsets": [
     {"__HEADER__": "domain", "name": "$domain"},
     {"__HEADER__": "Domain Information"},
-    {"domain": "$domain"},
-    {"domainname": "$domain"},
-    {"domain_name": "$domain"},
-    {"domain name": "$domain"},
-    {"domain name": "$domain is active"},
-    {"complete domain name": "$domain"},
-    {"Dominio": "$domain"},
-    {"query": "$domain"},
-    {"domain": "~\\b$domain\\b~ui"}
+    {"~^(complete\\s+)?(domain|domainname|domain[\\s_]+?name|dominio|query)\\b~ui": "~\\b$domain\\b~ui"}
   ],
   "primarySubsets": [
     {"admin-c": "", "tech-c": "", "nserver": "", "status": ""}
@@ -211,32 +203,12 @@
     {"flags": ""}
   ],
   "nameServersSubsets": [
-    {"__HEADER__": "NameServers"},
-    {"__HEADER__": "Nameservers"},
-    {"__HEADER__": "Name servers"},
-    {"__HEADER__": "Nameserver in listed order"},
-    {"__HEADER__": "Domain servers in listed order"},
-    {"__HEADER__": "Domain Nameservers"},
-    {"__HEADER__": "DNS servers"},
-    {"__HEADER__": "NAME SERVER INFORMATION"},
-    {"__HEADER__": "Domain Information", "nameserver":  ""},
-    {"nameserver": ""},
-    {"ns_name_01": ""},
-    {"nserver": ""},
-    {"Name Server Handle": ""},
-    {"Domain Nameservers": ""},
-    {"Hostname": ""},
-    {"dns": ""}
+    {"__HEADER__": "~^((Domain\\s+)?(Name|DNS)\\s*Servers?)(\\s+in\\s+listed\\s+order)?$~ui"},
+    {"__HEADER__": "~(NAME\\s+SERVER|Domain)\\s+INFORMATION\\b~ui"},
+    {"~^(nameserver|ns_name_\\d+|nserver|Name\\s+Server\\s+Handle|Domain\\s+Nameservers|Hostname|dns)$~ui": ""}
   ],
   "nameServersSparsedSubsets": [
-    {"primary server": ""},
-    {"primary server hostname": ""},
-    {"secondary server": ""},
-    {"secondary server hostname": ""},
-    {"third server": ""},
-    {"third server hostname": ""},
-    {"fourth server": ""},
-    {"fourth server hostname": ""}
+    {"~^(primary|secondary|third|fourth)\\s+server(\\s+hostname)?$~ui": ""}
   ],
   "ownerSubsets": [
     {"__HEADER__": "Registrant"},
@@ -251,37 +223,25 @@
     {"Registrant": ""}
   ],
   "registrarSubsets": [
-    {"__HEADER__": "Registrar"},
-    {"__HEADER__": "Registrar Information"},
-    {"__HEADER__": "Zone-C", "Organisation": ""},
-    {"__HEADER__": "billing-c", "Organisation": ""},
-    {"__HEADER__": "billing-c", "person": ""},
+    {"__HEADER__": "~^Registrar(\\s+Information)?$~ui"},
+    {"__HEADER__": "^(Zone-C|billing-c)$", "~^Organisation|person$~ui": ""},
     {"__HEADER__": "Billing Contact"},
     {"__HEADER__": "CONTACTO FINANCIERO", "Organizacion": ""},
     {"__HEADER__": "Details", "Registrar": ""},
     {"registrar": ""},
     {"Contact": "Billing", "Organization": ""},
-    {"current registrar": ""},
-    {"current registar": ""},
-    {"registrar_name": ""},
-    {"registrar created": ""},
-    {"registar created": ""}
+    {"~^(current\\s+)?registr?ar(_name)?(\\s+created)?$~ui": ""}
   ],
   "registrarReservedSubsets": [
-    {"nsset": "", "billing-c": ""},
-    {"nsset": "", "tech-c": ""},
-    {"billing-c": ""},
-    {"tech-c": ""}
+    {"nsset": "", "~^(billing-c|tech-c)$~ui": ""},
+    {"~^(billing-c|tech-c)$~ui": ""}
   ],
   "registrarReservedKeys": [
     "billing-c",
     "tech-c"
   ],
   "contactSubsets": [
-    {"nic-hdl": "$id"},
-    {"nic-hdl-br": "$id"},
-    {"contact": "$id"},
-    {"norid handle": "$id"}
+    {"~^(nic-hdl(-br)?|contact|norid\\s+handle)$~ui": "$id"}
   ],
   "contactOrgKeys": [
     "organisation",
