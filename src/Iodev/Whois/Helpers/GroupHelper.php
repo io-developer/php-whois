@@ -46,22 +46,10 @@ class GroupHelper
      * @param array $group
      * @param string[] $keys
      * @param bool $ignoreCase
-     * @return string|string[]
-     */
-    public static function matchFirst($group, $keys, $ignoreCase = true)
-    {
-        $matches = self::match($group, $keys, $ignoreCase, true);
-        return empty($matches) ? "" : reset($matches);
-    }
-
-    /**
-     * @param array $group
-     * @param string[] $keys
-     * @param bool $ignoreCase
      * @param bool $firstOnly
      * @return string|string[]
      */
-    public static function match($group, $keys, $ignoreCase = true, $firstOnly = false)
+    public static function matchKeys($group, $keys, $ignoreCase = true, $firstOnly = false)
     {
         $matches = [];
         if (empty($group)) {
@@ -72,14 +60,7 @@ class GroupHelper
         }
         foreach ($keys as $k) {
             if (is_array($k)) {
-                $vals = self::matchAll($group, $k, $ignoreCase);
-                if (count($vals) > 1) {
-                    $matches[] = $vals;
-                } elseif (count($vals) == 1) {
-                    $matches[] = $vals[0];
-                } else {
-                    $matches[] = "";
-                }
+                self::matchSubKeys($group, $k, $matches, $ignoreCase);
             } else {
                 $k = $ignoreCase ? mb_strtolower($k) : $k;
                 if (isset($group[$k])) {
@@ -96,21 +77,28 @@ class GroupHelper
     /**
      * @param array $group
      * @param string[] $keys
+     * @param array $outMatches
      * @param bool $ignoreCase
-     * @return string[]
      */
-    private static function matchAll($group, $keys, $ignoreCase = true)
+    private static function matchSubKeys($group, $keys, &$outMatches = [], $ignoreCase = true)
     {
         $vals = [];
         foreach ($keys as $k) {
-            $v = self::matchFirst($group, [$k], $ignoreCase);
+            $v = self::matchKeys($group, [$k], $ignoreCase, true);
+            $v = empty($v) ? "" : reset($v);
             if (is_array($v)) {
                 $vals = array_merge($vals, $v);
             } elseif (!empty($v)) {
                 $vals[] = $v;
             }
         }
-        return $vals;
+        if (count($vals) > 1) {
+            $outMatches[] = $vals;
+        } elseif (count($vals) == 1) {
+            $outMatches[] = $vals[0];
+        } else {
+            $outMatches[] = "";
+        }
     }
 
     /**
@@ -280,11 +268,8 @@ class GroupHelper
      */
     public static function getAsciiServers($group, $keys)
     {
-        $raws = self::matchFirst($group, $keys);
-        $raws = !empty($raws) ? $raws : [];
-        $raws = is_array($raws) ? $raws : [ $raws ];
         $servers = [];
-        foreach ($raws as $raw) {
+        foreach (self::matchKeys($group, $keys, true, true) as $raw) {
             $s = DomainHelper::toAscii($raw);
             if (!empty($s)) {
                 $servers[] = $s;
