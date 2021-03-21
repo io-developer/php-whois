@@ -4,92 +4,42 @@
     "reserved name"
   ],
   "domainKeys": [
-    "domain",
-    "domainname",
-    "domain_name",
-    "domain name",
-    "complete domain name",
-    "Dominio",
-    "query"
+    "~^(complete\\s+)?domain([_\\s]*name)?(\\s+\\(.+?\\))?$~ui",
+    "~^(Dominio|query)$~ui"
   ],
   "whoisServerKeys": [
-    "whois",
-    "whoisserver",
-    "whois_server",
-    "whois server",
-    "registrar whois server"
+    "~^(registrar\\s+)?whois([_\\s]*server)?$~ui"
   ],
   "nameServersKeys": [
-    "nameserver",
-    "nameservers",
-    "name_server",
-    "name server",
-    "name server (db)",
-    "name servers",
-    "Domain Nameservers",
-    "DNS servers",
-    "nserver",
-    "name server handle",
-    "name server information",
-    "Domain servers in listed order",
-    "hostname",
-    "host name",
-    "dns",
-    "name",
-    ["primary server", "secondary server", "third server", "fourth server"],
-    ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"],
-    ["ns_name_01", "ns_name_02", "ns_name_03", "ns_name_04"]
+    "~^(Domain\\s+)?\\s*name[_\\s]*servers?(\\s+\\(.+?\\))?$~ui",
+    "~^(Domain|dns)\\s+(name\\s*)?servers(in\\s+listed\\s+order)?$~ui",
+    "~^(nserver|name\\s+server)\\s+(handle|information)$~ui",
+    "~^(host\\s?name|dns|name)$~ui",
+    ["~^(primary|secondary|third|fourth)\\s+server(\\s+hostname)?$~ui"],
+    ["~^ns_name_\\d+$~ui"]
   ],
   "nameServersKeysGroups": [
-    ["ns 1", "ns 2", "ns 3", "ns 4"],
-    ["primary server", "secondary server", "third server", "fourth server"],
-    ["primary server hostname", "secondary server hostname", "third server hostname", "fourth server hostname"],
-    ["ns_name_01", "ns_name_02", "ns_name_03", "ns_name_04"]
+    [
+      "~^(ns\\s+1|primary\\s+server(\\s+hostname)?|ns_name_01)$~ui",
+      "~^(ns\\s+2|secondary\\s+server(\\s+hostname)?|ns_name_02)$~ui",
+      "~^(ns\\s+3|third\\s+server(\\s+hostname)?|ns_name_03)$~ui",
+      "~^(ns\\s+4|fourth\\s+server(\\s+hostname)?|ns_name_04)$~ui"
+    ]
   ],
   "dnssecKeys": [
     "dnssec"
   ],
   "creationDateKeys": [
-    "creationdate",
-    "creation date",
-    "registration date",
-    "domain registration date",
-    "domain created",
-    "Domain registered",
-    "registration time",
-    "registration",
-    "created",
-    "created on",
-    "created date",
-    "registered",
-    "registered on",
-    "registered date",
-    "record created",
-    "activation",
+    "~^(domain\\s+)?(creation|registration)\\s*date$~ui",
+    "~^domain\\s+(created|registered)$~ui",
+    "~^(record\\s+)?created|registered(\\s+(on|date))?$~ui",
+    "~^registration|activation(\\s+time)?$~ui",
     "Fecha de registro",
     "Relevant dates"
   ],
   "expirationDateKeys": [
-    "expirationdate",
-    "expiration date",
-    "expiration time",
-    "exp date",
-    "domain expiration date",
-    "registry expiry date",
-    "registrar registration expiration date",
-    "Record will expire on",
-    "expiry date",
-    "expiry",
-    "expires",
-    "expires on",
-    "expire date",
-    "expire",
-    "expiration",
-    "paid-till",
-    "renewal date",
-    "renewal",
-    "valid until",
-    "validity",
+    "~^(domain|registry|registrar|registrar\\s+registration)?\\s*(expiration|expires|expiry|exp)[-\\s]*(date|time|on)$~ui",
+    "~^Record\\s+will\\s+expire\\s+on|expiry|expires|expire|expiration|paid-till|renewal\\s+date|renewal|valid\\s+until|validity$~ui",
     "Fecha de vencimiento",
     "Relevant dates"
   ],
@@ -224,7 +174,7 @@
   ],
   "registrarSubsets": [
     {"__HEADER__": "~^Registrar(\\s+Information)?$~ui"},
-    {"__HEADER__": "^(Zone-C|billing-c)$", "~^Organisation|person$~ui": ""},
+    {"__HEADER__": "~^(Zone-C|billing-c)$~ui", "~^Organisation|person$~ui": ""},
     {"__HEADER__": "Billing Contact"},
     {"__HEADER__": "CONTACTO FINANCIERO", "Organizacion": ""},
     {"__HEADER__": "Details", "Registrar": ""},
