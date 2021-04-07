@@ -137,11 +137,7 @@
     {"~^(nic-hdl(-br)?|contact|norid\\s+handle)$~ui": "$id"}
   ],
   "contactOrgKeys": [
-    "organisation",
-    "organization",
-    "organization-loc",
-    "Organization Name",
-    "org",
+    "~^(International)?[-_\\s]?(Organi[zs]a[tc]ion|Org)[-_\\s]?(Loc|Name)?$~ui",
     "name",
     "contact",
     "role",
@@ -149,25 +145,8 @@
     "person"
   ],
   "registrarGroupKeys": [
-    "registrar",
-    "registrar-name",
-    "registrar_name",
-    "registrar name",
-    "current registrar",
-    "current registar",
-    "sponsoring registrar",
-    "sponsoring registrar organization",
-    "registrar created",
-    "registar created",
-    "Registrar Handle",
-    "billing-c",
-    "Organisation",
-    "organization",
-    "organization-loc",
-    "Organization Name",
-    "Organizacion",
-    "name",
-    "address",
-    "person"
+    "~^(Current|Sponsoring)?[-_\\s]?Registr?ar[-_\\s]?(Name|Organization|Handle|Created)?$~ui",
+    "~^(International)?[-_\\s]?(Organi[zs]a[tc]ion|Org)[-_\\s]?(Loc|Name)?$~ui",
+    "~^(International\\sName|Name|Address|Person|Billing-c)$~ui"
   ]
 }
