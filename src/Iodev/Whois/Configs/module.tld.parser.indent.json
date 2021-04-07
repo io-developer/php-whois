@@ -65,26 +65,12 @@
     "~^(Name|Last[-_\\s]Name|First[-_\\s]Name|Descr)$~ui"
   ],
   "registrarKeys": [
-    "registrar",
-    "registrar_name",
-    "registrar-name",
-    "registrar name",
-    "current registrar",
-    "current registar",
-    "sponsoring registrar",
-    "sponsoring registrar organization",
-    "registrar created",
-    "registar created",
-    "Registrar Handle"
+    "~^(Current|Sponsoring)?[-_\\s]?Registr?ar[-_\\s]?(Name|Organization|Handle|Created)?$~ui"
   ],
   "statesKeys": [
-    "domain status",
-    "domainstatus",
-    "registration status",
+    "~^(Domain|Registry|Registration|Ren|Epp)[-_\\s]?(Status|State)$~ui",
     "status",
     "state",
-    "ren-status",
-    "epp status",
     "flags",
     "query_status"
   ],
