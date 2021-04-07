@@ -23,41 +23,26 @@
     ]
   ],
   "dnssecKeys": [
-    "dnssec"
+    "~^dnssec$~ui"
   ],
   "creationDateKeys": [
     "~^(domain\\s+)?(creation|registration)\\s*date$~ui",
     "~^domain\\s+(created|registered)$~ui",
     "~^(record\\s+)?created|registered(\\s+(on|date))?$~ui",
     "~^registration|activation(\\s+time)?$~ui",
-    "Fecha de registro",
-    "Relevant dates"
+    "~^(Fecha\\s+de\\s+registro|Relevant\\s+dates)$~ui"
   ],
   "expirationDateKeys": [
     "~^(domain|registry|registrar|registrar\\s+registration)?\\s*(expiration|expires|expiry|exp)[-\\s]*(date|time|on)$~ui",
     "~^Record\\s+will\\s+expire\\s+on|expiry|expires|expire|expiration|paid-till|renewal\\s+date|renewal|valid\\s+until|validity$~ui",
-    "Fecha de vencimiento"
+    "~^(Fecha\\s+de\\s+vencimiento|Relevant\\s+Dates)$~ui"
   ],
   "updatedDateKeys": [
-    "Modified Date",
-    "Modification date",
-    "domain_datelastmodified",
-    "Last modified",
-    "Modified",
-    "Updated Date",
-    "updated-date",
-    "Last Updated Date",
-    "Last Updated",
-    "last-updated",
-    "Last Update",
-    "last-update",
-    "Record last updated on",
-    "Domain Last Updated Date",
-    "Last Updated On",
-    "Updated",
-    "Changed date",
-    "Changed",
-    "Derniere modification"
+    "~^(Modified|Modification)[-_\\s]Date$~ui",
+    "~^(Domain)?[-_\\s]?(Date)?[-_\\s]?(Last)?[-_\\s]?Modified$~ui",
+    "~^(Record|Domain)?[-_\\s]?(Last)?[-_\\s]?(Modified|Updated|Update)[-_\\s]?(Date|On)?$~ui",
+    "~^Changed[-_\\s]?(Date)?$~ui",
+    "~^Derniere\\s+modification$~ui"
   ],
   "ownerKeys": [
     "owner orgname",
