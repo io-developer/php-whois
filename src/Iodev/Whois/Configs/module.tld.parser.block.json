@@ -1,9 +1,7 @@
 {
   "headerKey": "__HEADER__",
   "reservedDomainKeys": [
-    "reserved name",
-    "blocking",
-    "stop-list"
+    "~^(reserved\\s+name|blocking|stop-list)$~ui"
   ],
   "domainKeys": [
     "~^(complete\\s+)?domain([_\\s]*name)?(\\s+\\(.+?\\))?$~ui",
@@ -16,8 +14,9 @@
     "~^(Domain\\s+)?\\s*name[_\\s]*servers?(\\s+\\(.+?\\))?$~ui",
     "~^(Domain|dns)\\s+(name\\s*)?servers(in\\s+listed\\s+order)?$~ui",
     "~^(nserver|name\\s+server\\s+handle|host\\s?name|dns|name)$~ui",
-    ["~^(primary|secondary|third|fourth)\\s+server(\\s+hostname)?$~ui"],
-    ["~^ns_name_\\d+$~ui"]
+    "~^(host\\s?name|dns|name)$~ui",
+    "~^(primary|secondary|third|fourth)\\s+server(\\s+hostname)?$~ui",
+    "~^ns_name_\\d+$~ui"
   ],
   "nameServersKeysGroups": [
     [
@@ -28,7 +27,7 @@
     ]
   ],
   "dnssecKeys": [
-    "dnssec"
+    "~^dnssec$~ui"
   ],
   "creationDateKeys": [
     "~^(domain\\s+)?(creation|registration)\\s*date$~ui",
@@ -85,9 +84,7 @@
     "440 request denied": 1
   },
   "reservedDomainSubsets": [
-    {"reserved name": ""},
-    {"blocking": ""},
-    {"stop-list": ""}
+    {"~^(reserved\\s+name|blocking|stop-list)$~ui": ""}
   ],
   "domainSubsets": [
     {"__HEADER__": "domain", "name": "$domain"},
@@ -100,21 +97,16 @@
     {"domain status": ""}
   ],
   "nameServersSubsets": [
-    {"__HEADER__": "~^((Domain\\s+)?(Name|DNS)\\s*Servers?)(\\s+in\\s+listed\\s+order)?$~ui"},
+    {"__HEADER__": "~^((Domain\\s+)?(Name|Dns)\\s*Servers?)(\\s+Information)?(\\s+In\\s+Listed\\s+Order)?$~ui"},
+    {"__HEADER__": "~^Domain\\s+INFORMATION$~ui"},
     {"~^(nameserver|ns_name_\\d+|nserver|Name\\s+Server\\s+Handle|Domain\\s+Nameservers|Hostname|dns)$~ui": ""}
   ],
   "nameServersSparsedSubsets": [
     {"~^(primary|secondary|third|fourth)\\s+server(\\s+hostname)?$~ui": ""}
   ],
   "ownerSubsets": [
-    {"__HEADER__": "Registrant"},
-    {"__HEADER__": "Owner Contact"},
-    {"__HEADER__": "Tech-C", "Organisation": ""},
-    {"__HEADER__": "holder"},
-    {"__HEADER__": "Organization Using Domain Name"},
-    {"__HEADER__": "Administrativ contact"},
-    {"__HEADER__": "Technical contact"},
-    {"__HEADER__": "TITULAR", "Organizacion": ""},
+    {"__HEADER__": "~^(Registrant|Owner\\s+Contact|Holder|Organization\\s+Using\\s+Domain\\s+Name|Administrativ\\s+contact|Technical\\s+contact)$~ui"},
+    {"__HEADER__": "~^(Tech-C|TITULAR)$~ui", "~^Organi[sz]a[tc]ion$~ui": ""},
     {"Contact": "Registrant", "Organization": ""}
   ],
   "registrarSubsets": [
