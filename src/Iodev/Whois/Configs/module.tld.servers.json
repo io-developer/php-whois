@@ -525,6 +525,7 @@
   {"zone": ".parts", "host": "whois.donuts.co"},
   {"zone": ".pe", "host": "kero.yachay.pe"},
   {"zone": ".pf", "host": "whois.registry.pf"},
+  {"zone": ".ph", "host": "whois.dot.ph"},
   {"zone": ".photo", "host": "whois.uniregistry.net"},
   {"zone": ".photography", "host": "whois.donuts.co"},
   {"zone": ".photos", "host": "whois.donuts.co"},
