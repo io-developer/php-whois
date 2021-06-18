@@ -637,6 +637,7 @@
   {"zone": ".solutions", "host": "whois.donuts.co"},
   {"zone": ".soy", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".space", "host": "whois.nic.space"},
+  {"zone": ".srl", "host": "whois.afilias-srs.net"},
   {"zone": ".st", "host": "whois.nic.st"},
   {"zone": ".store", "host": "whois.nic.store"},
   {"zone": ".study", "host": "whois.nic.study"},
