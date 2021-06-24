@@ -98,6 +98,7 @@
   {"zone": ".bzh", "host": "whois-bzh.nic.fr"},
   {"zone": ".ca", "host": "whois.cira.ca"},
   {"zone": ".cab", "host": "whois.donuts.co"},
+  {"zone": ".cafe", "host": "whois.nic.cafe"},
   {"zone": ".cal", "host": "domain-registry-whois.l.google.com"},
   {"zone": ".cam", "host": "whois.nic.cam"},
   {"zone": ".camera", "host": "whois.donuts.co"},
