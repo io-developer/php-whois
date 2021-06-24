@@ -429,6 +429,10 @@ class TldParsingTest extends TestCase
             [ "free.ga", ".ga/free.txt", null ],
             // [ "google.ga", ".ga/google.ga.txt", ".ga/google.ga.json" ],
 
+            // .GAY
+            [ "free.gay", ".gay/free.txt", null ],
+            [ "google.gay", ".gay/google.gay.txt", ".gay/google.gay.json" ],
+
             // .GD
             [ "free.gd", ".gd/free.txt", null ],
             [ "google.gd", ".gd/google.gd.txt", ".gd/google.gd.json" ],
