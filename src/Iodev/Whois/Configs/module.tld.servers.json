@@ -641,6 +641,7 @@
   {"zone": ".srl", "host": "whois.afilias-srs.net"},
   {"zone": ".st", "host": "whois.nic.st"},
   {"zone": ".store", "host": "whois.nic.store"},
+  {"zone": ".studio", "host": "whois.nic.studio"},
   {"zone": ".study", "host": "whois.nic.study"},
   {"zone": ".style", "host": "whois.donuts.co"},
   {"zone": ".su", "host": "whois.ripn.net"},
