@@ -67,7 +67,7 @@ class SocketLoader implements ILoader
         $text = "";
         while (!feof($handle)) {
             $chunk = fread($handle, 8192);
-            if (false === $chunk || $chunk === '') {
+            if (FALSE === $chunk && $chunk === '' && NULL === $chunk) {
                 throw new ConnectionException("Response chunk cannot be read");
             }
             $text .= $chunk;
