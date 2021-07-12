@@ -58,12 +58,13 @@ function help()
         '    php-whois {action} [arg1 arg2 ... argN]',
         '    php-whois help|--help|-h',
         '    php-whois lookup {domain}',
-        '    php-whois info {domain} [--parser {type}]',
+        '    php-whois info {domain} [--parser {type}] [--host {whois}]',
         '',
         '  Examples',
         '    php-whois lookup google.com',
         '    php-whois info google.com',
         '    php-whois info google.com --parser block',
+        '    php-whois info ya.ru --host whois.nic.ru --parser auto',
         '',
         '',
     ]);
@@ -87,6 +88,7 @@ function lookup(string $domain)
 function info(string $domain, array $options = [])
 {
     $options = array_replace([
+        'host' => null,
         'parser' => null,
     ], $options);
 
@@ -100,6 +102,25 @@ function info(string $domain, array $options = [])
 
     $tld = Factory::get()->createWhois()->getTldModule();
     $servers = $tld->matchServers($domain);
+
+    if (!empty($options['host'])) {
+        $host = $options['host'];
+        $filteredServers = array_filter($servers, function (\Iodev\Whois\Modules\Tld\TldServer $server) use ($host) {
+            return $server->getHost() == $host;
+        });
+        if (count($filteredServers) == 0 && count($servers) > 0) {
+            $filteredServers = [$servers[0]];
+        }
+        $servers = array_map(function (\Iodev\Whois\Modules\Tld\TldServer $server) use ($host) {
+            return new \Iodev\Whois\Modules\Tld\TldServer(
+                $server->getZone(),
+                $host,
+                $server->isCentralized(),
+                $server->getParser(),
+                $server->getQueryFormat()
+            );
+        }, $filteredServers);
+    }
 
     if (!empty($options['parser'])) {
         try {
