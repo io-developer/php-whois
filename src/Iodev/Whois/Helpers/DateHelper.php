@@ -11,7 +11,7 @@ class DateHelper
      */
     public static function parseDate($datestamp, $inverseMMDD = false)
     {
-        $s = trim($datestamp);
+        $s = is_scalar($datestamp) ? trim($datestamp) : '';
         if (preg_match('/^\d{2}[-\s]+\w+[-\s]+\d{4}[-\s]+\d{2}:\d{2}(:\d{2})?([-\s]+\w+)?/ui', $s)) {
             // pass
         } elseif (preg_match('/^(\d{4})\.\s*(\d{2})\.\s*(\d{2})\.?\s*$/ui', $s, $m)) {
