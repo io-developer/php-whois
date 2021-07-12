@@ -149,7 +149,7 @@ class GroupSelector
     public function mapUnixTime($inverseMMDD = false)
     {
         $this->items = array_map(function($item) use ($inverseMMDD) {
-            return DateHelper::parseDate($item, $inverseMMDD);
+            return is_string($item) ? DateHelper::parseDate($item, $inverseMMDD) : 0;
         }, $this->items);
         return $this;
     }
