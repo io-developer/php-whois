@@ -106,6 +106,7 @@
   {"zone": ".cancerresearch", "host": "whois.nic.cancerresearch"},
   {"zone": ".canon", "host": "whois.nic.canon"},
   {"zone": ".capetown", "host": "whois.nic.capetown"},
+  {"zone": ".capetown", "host": "capetown-whois.registry.net.za"},
   {"zone": ".capital", "host": "whois.donuts.co"},
   {"zone": ".cards", "host": "whois.donuts.co"},
   {"zone": ".care", "host": "whois.donuts.co"},
