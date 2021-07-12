@@ -29,7 +29,7 @@ function main($argv)
 
         case 'info':
             $opts = parseOpts(implode(' ', array_slice($args, 1)));
-            info($args[0], $opts['parser'] ?? null);
+            info($args[0], $opts);
             break;
 
         default:
@@ -84,40 +84,44 @@ function lookup(string $domain)
     var_dump($result);
 }
 
-function info(string $domain, string $parserType = null)
+function info(string $domain, array $options = [])
 {
+    $options = array_replace([
+        'parser' => null,
+    ], $options);
+
     echo implode("\n", [
         '  action: info',
         "  domain: '{$domain}'",
-        "  parser: '{$parserType}'",
+        sprintf("  options: %s", json_encode($options, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)),
         '',
         '',
     ]);
 
     $tld = Factory::get()->createWhois()->getTldModule();
-    if ($parserType) {
+    $servers = $tld->matchServers($domain);
+
+    if (!empty($options['parser'])) {
         try {
-            $parser = Factory::get()->createTldParser($parserType);
+            $parser = Factory::get()->createTldParser($options['parser']);
         } catch (\Throwable $e) {
-            echo "\nCannot create TLD parser with type '$parserType'\n\n";
+            echo "\nCannot create TLD parser with type '{$options['parser']}'\n\n";
             throw $e;
         }
-        $newServers = [];
-        foreach ($tld->getServers() as $server) {
-            $newServers[] = new \Iodev\Whois\Modules\Tld\TldServer(
+        $servers = array_map(function (\Iodev\Whois\Modules\Tld\TldServer $server) use ($parser) {
+            return new \Iodev\Whois\Modules\Tld\TldServer(
                 $server->getZone(),
                 $server->getHost(),
                 $server->isCentralized(),
                 $parser,
                 $server->getQueryFormat()
             );
-        }
-        $tld->setServers($newServers);
+        }, $servers);
     }
 
-    $result = $tld->loadDomainInfo($domain);
+    [, $info] = $tld->loadDomainData($domain, $servers);
 
-    var_dump($result);
+    var_dump($info);
 }
 
 main($argv);
