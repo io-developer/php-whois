@@ -89,8 +89,10 @@
   ],
   "domainSubsets": [
     {"__HEADER__": "domain", "name": "$domain"},
+    {"__HEADER__": "domain", "name": "$domainUnicode"},
     {"__HEADER__": "Domain Information"},
-    {"~^(complete\\s+)?(domain|domainname|domain[\\s_]+?name|dominio|query)\\b~ui": "~\\b$domain\\b~ui"}
+    {"~^(complete\\s+)?(domain|domainname|domain[\\s_]+?name|dominio|query)\\b~ui": "~\\b$domain\\b~ui"},
+    {"~^(complete\\s+)?(domain|domainname|domain[\\s_]+?name|dominio|query)\\b~ui": "~\\b$domainUnicode\\b~ui"}
   ],
   "primarySubsets": [
     {"admin-c": "", "tech-c": "", "nserver": "", "status": ""}
