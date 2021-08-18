@@ -210,9 +210,9 @@ class TldParsingTest extends TestCase
             [ "google.am", ".am/google.am.txt", ".am/google.am.json" ],
             [ "google.com.am", ".am/google.com.am.txt", ".am/google.com.am.json" ],
 
-            // .AO
-            [ "free.ao", ".ao/free.txt", null ],
-            [ "google.it.ao", ".ao/google.it.ao.txt", ".ao/google.it.ao.json" ],
+            // .IT.AO
+            [ "free.it.ao", ".it.ao/free.txt", null ],
+            [ "google.it.ao", ".it.ao/google.it.ao.txt", ".it.ao/google.it.ao.json" ],
 
             // .AS
             [ "free.as", ".as/free.txt", null ],
