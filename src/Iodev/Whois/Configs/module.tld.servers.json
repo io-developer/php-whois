@@ -179,6 +179,7 @@
   {"zone": ".camp", "host": "whois.nic.camp"},
   {"zone": ".cancerresearch", "host": "whois.nic.cancerresearch"},
   {"zone": ".canon", "host": "whois.nic.canon"},
+  {"zone": ".capetown", "host": "whois.nic.capetown"},
   {"zone": ".capetown", "host": "capetown-whois.registry.net.za"},
   {"zone": ".capital", "host": "whois.nic.capital"},
   {"zone": ".capitalone", "host": "whois.nic.capitalone"},

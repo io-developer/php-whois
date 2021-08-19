@@ -292,6 +292,10 @@ class TldParsingTest extends TestCase
             [ "free.bz", ".bz/free.txt", null ],
             [ "google.com.bz", ".bz/google.com.bz.txt", ".bz/google.com.bz.json" ],
 
+            // .CAFE
+            [ "free.cafe", ".cafe/free.txt", null ],
+            [ "nic.cafe", ".cafe/nic.cafe.txt", ".cafe/nic.cafe.json" ],
+
             // .CAM
             [ "free.cam", ".cam/free.txt", null ],
             [ "google.cam", ".cam/google.cam.txt", ".cam/google.cam.json" ],
