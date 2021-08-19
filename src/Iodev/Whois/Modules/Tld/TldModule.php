@@ -164,7 +164,7 @@ class TldModule extends Module
      * @throws ConnectionException
      * @throws WhoisException
      */
-    protected function loadDomainData($domain, $servers)
+    public function loadDomainData(string $domain, array $servers): array
     {
         $this->lastUsedServers = [];
         $domain = DomainHelper::toAscii($domain);
@@ -181,7 +181,7 @@ class TldModule extends Module
         if (!$response && !$info) {
             throw $lastError ? $lastError : new WhoisException("No response");
         }
-        return [ $response, $info ];
+        return [$response, $info];
     }
 
     /**

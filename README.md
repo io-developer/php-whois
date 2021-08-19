@@ -1,7 +1,6 @@
 # PHP WHOIS
 
-[![Build Status](https://travis-ci.org/io-developer/php-whois.svg?branch=master)](https://travis-ci.org/io-developer/php-whois)
-[![PHP version](https://img.shields.io/badge/php-%3E%3D5.4-8892BF.svg)](https://secure.php.net/)
+[![PHP version](https://img.shields.io/badge/php-%3E%3D7.2-8892BF.svg)](https://secure.php.net/)
 [![Packagist](https://img.shields.io/packagist/v/io-developer/php-whois.svg)](https://packagist.org/packages/io-developer/php-whois)
 
 PHP WHOIS client implementation. Sends the queries directly to the WHOIS services.
@@ -16,7 +15,7 @@ PHP WHOIS client implementation. Sends the queries directly to the WHOIS service
 ## Installation
 
 ##### System requirements:
-* PHP >= __7.2__ (previous major version supports __5.4+__)
+* PHP >= __7.2__ (old versions supports __5.4+__)
 * php-curl
 * php-mbstring
 * Open port __43__ in firewall

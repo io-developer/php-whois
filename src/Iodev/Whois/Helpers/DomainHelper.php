@@ -24,7 +24,7 @@ class DomainHelper
      */
     public static function toAscii($domain)
     {
-        if (empty($domain)) {
+        if (empty($domain) || strlen($domain) >= 255) {
             return "";
         }
         $cor = self::correct($domain);
@@ -37,7 +37,7 @@ class DomainHelper
      */
     public static function toUnicode($domain)
     {
-        if (empty($domain)) {
+        if (empty($domain) || strlen($domain) >= 255) {
             return "";
         }
         $cor = self::correct($domain);

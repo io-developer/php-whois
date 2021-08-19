@@ -26,12 +26,27 @@ class GroupSelector
     }
 
     /**
+     * First item
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getFirstItem($default = null)
+    {
+        return empty($this->items) ? $default : reset($this->items);
+    }
+
+    /**
+     * First non-array value
      * @param mixed $default
      * @return mixed
      */
     public function getFirst($default = null)
     {
-        return empty($this->items) ? $default : reset($this->items);
+        $first = $this->getFirstItem();
+        while (is_array($first)) {
+            $first = count($first) > 0 ? reset($first) : null;
+        }
+        return $first !== null ? $first : $default;
     }
 
     /**
@@ -149,7 +164,7 @@ class GroupSelector
     public function mapUnixTime($inverseMMDD = false)
     {
         $this->items = array_map(function($item) use ($inverseMMDD) {
-            return DateHelper::parseDate($item, $inverseMMDD);
+            return is_string($item) ? DateHelper::parseDate($item, $inverseMMDD) : 0;
         }, $this->items);
         return $this;
     }
