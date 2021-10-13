@@ -58,7 +58,8 @@
     "~^(Name|Last[-_\\s]Name|First[-_\\s]Name|Descr)$~ui"
   ],
   "registrarKeys": [
-    "~^(Current|Sponsoring)?[-_\\s]?Registr?ar[-_\\s]?(Name|Organization|Handle|Created)?$~ui"
+    "~^(Current|Sponsoring)?[-_\\s]?Registr?ar[-_\\s]?(Name|Organization|Handle|Created)?$~ui",
+    "~^Authorized[\\s]Agency$~ui"
   ],
   "statesKeys": [
     "~^(Domain|Registry|Registration|Ren|Epp)[-_\\s]?(Status|State)$~ui",
