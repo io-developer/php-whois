@@ -611,6 +611,7 @@
   {"zone": ".ky", "host": "whois.kyregistry.ky"},
   {"zone": ".kyoto", "host": "whois.nic.kyoto"},
   {"zone": ".kuokgroup", "host": "whois.nic.kuokgroup"},
+  {"zone": ".kw", "host": "whois.nic.kw"},
   {"zone": ".kz", "host": "whois.nic.kz", "parserType": "block"},
   {"zone": ".la", "host": "whois.nic.la"},
   {"zone": ".lacaixa", "host": "whois.nic.lacaixa"},
