@@ -90,6 +90,7 @@ function info(string $domain, array $options = [])
     $options = array_replace([
         'host' => null,
         'parser' => null,
+        'file' => null,
     ], $options);
 
     echo implode("\n", [
@@ -100,7 +101,13 @@ function info(string $domain, array $options = [])
         '',
     ]);
 
-    $tld = Factory::get()->createWhois()->getTldModule();
+    $loader = null;
+    if ($options['file']) {
+        $loader = new \Iodev\Whois\Loaders\FakeSocketLoader();
+        $loader->text = file_get_contents($options['file']);
+    }
+
+    $tld = Factory::get()->createWhois($loader)->getTldModule();
     $servers = $tld->matchServers($domain);
 
     if (!empty($options['host'])) {
