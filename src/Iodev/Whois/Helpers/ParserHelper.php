@@ -178,10 +178,21 @@ class ParserHelper
                 if (empty($v)) {
                     $v = self::nodesToDict($node['children']);
                 } elseif (strlen($k) <= $maxKeyLength) {
-                    $v = array_merge([$v], $node['children']);
-                    $v = array_map('trim', $v);
-                    $v = array_filter($v, 'strlen');
-                    $v = empty($v) ? [''] : $v;
+                    $v = trim($v) ? [trim($v)] : [];
+                    foreach ($node['children'] as $child) {
+                        if (is_array($child)) {
+                            $childV = self::nodesToDict([$child]);
+                            if (!empty($childV)) {
+                                $dict = array_merge_recursive($dict, $childV);
+                            }
+                        } elseif (is_scalar($child)) {
+                            $childV = trim((string)$child);
+                            if (strlen($childV) > 0) {
+                                $v[] = $childV;
+                            }
+                        }
+                    }
+                    $v = $v ?? [''];
                 } else {
                     $kv = [$node['line']];
                 }
