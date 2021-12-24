@@ -197,6 +197,10 @@ class TldParsingTest extends TestCase
             [ "free.af", ".af/free.txt", null ],
             [ "google.com.af", ".af/google.com.af.txt", ".af/google.com.af.json" ],
 
+            // .AFRICA
+            [ "free.africa", ".africa/free.txt", null ],
+            [ "google.africa", ".africa/google.africa.txt", ".africa/google.africa.json" ],
+
             // .AG
             [ "free.ag", ".ag/free.txt", null ],
             [ "google.com.ag", ".ag/google.com.ag.txt", ".ag/google.com.ag.json" ],
