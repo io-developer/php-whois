@@ -25,7 +25,7 @@
   {"zone": ".af", "host": "whois.nic.af"},
   {"zone": ".afamilycompany", "host": "whois.nic.afamilycompany"},
   {"zone": ".afl", "host": "whois.nic.afl"},
-  {"zone": ".africa", "host": "africa-whois.registry.net.za"},
+  {"zone": ".africa", "host": "whois.nic.africa"},
   {"zone": ".ag", "host": "whois.nic.ag"},
   {"zone": ".agakhan", "host": "whois.afilias-srs.net"},
   {"zone": ".agency", "host": "whois.nic.agency"},
