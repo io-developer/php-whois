@@ -1121,6 +1121,7 @@
   {"zone": ".travelersinsurance", "host": "whois.afilias-srs.net"},
   {"zone": ".trust", "host": "whois.nic.trust"},
   {"zone": ".trv", "host": "whois.afilias-srs.net"},
+  {"zone": ".tube", "host": "whois.nic.tube"},
   {"zone": ".tui", "host": "whois.nic.tui"},
   {"zone": ".tunes", "host": "whois.nic.tunes"},
   {"zone": ".tushu", "host": "whois.nic.tushu"},
