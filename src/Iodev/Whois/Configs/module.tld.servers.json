@@ -816,7 +816,7 @@
   {"zone": ".osaka", "host": "whois.nic.osaka"},
   {"zone": ".otsuka", "host": "whois.nic.otsuka"},
   {"zone": ".ott", "host": "whois.nic.ott"},
-  {"zone": ".ovh", "host": "whois-ovh.nic.fr"},
+  {"zone": ".ovh", "host": "whois.nic.ovh"},
   {"zone": ".page", "host": "whois.nic.google"},
   {"zone": ".panasonic", "host": "whois.nic.gmo"},
   {"zone": ".paris", "host": "whois-paris.nic.fr"},
