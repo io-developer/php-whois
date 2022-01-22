@@ -65,7 +65,7 @@ class DataObject implements \JsonSerializable
         return $data;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }
