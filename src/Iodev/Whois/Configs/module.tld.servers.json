@@ -313,7 +313,7 @@
   {"zone": ".discount", "host": "whois.nic.discount"},
   {"zone": ".dish", "host": "whois.nic.dish"},
   {"zone": ".diy", "host": "whois.nic.diy"},
-  {"zone": ".dk", "host": "whois.dk-hostmaster.dk", "parserType": "block"},
+  {"zone": ".dk", "host": "whois.dk-hostmaster.dk", "parserType": "block", "queryFormat": "--show-handles %s\r\n"},
   {"zone": ".dm", "host": "whois.nic.dm", "parserType": "commonFlat"},
   {"zone": ".dnp", "host": "whois.nic.dnp"},
   {"zone": ".do", "host": "whois.nic.do"},
