@@ -565,6 +565,10 @@ class TldParsingTest extends TestCase
             [ "free.ki", ".ki/free.txt", null ],
             [ "google.ki", ".ki/google.ki.txt", ".ki/google.ki.json" ],
 
+            // .KIDS
+            [ "free.kids", ".kids/free.txt", null ],
+            [ "google.kids", ".kids/google.kids.txt", ".kids/google.kids.json" ],
+
             // .KOELN
             [ "free.koeln", ".koeln/free.txt", null ],
             [ "google.koeln", ".koeln/google.koeln.txt", ".koeln/google.koeln.json" ],

@@ -1,0 +1,22 @@
+{
+  "domainName": "google.kids",
+  "whoisServer": "",
+  "nameServers": [
+    "ns1.googledomains.com",
+    "ns2.googledomains.com",
+    "ns3.googledomains.com",
+    "ns4.googledomains.com"
+  ],
+  "dnssec": "unsigned",
+  "creationDate": "2022-08-11T19:44:38Z",
+  "expirationDate": "2023-08-11T19:44:38Z",
+  "updatedDate": "2022-08-11T19:45:27Z",
+  "states": [
+    "clientdeleteprohibited",
+    "clienttransferprohibited",
+    "clientupdateprohibited",
+    "servertransferprohibited"
+  ],
+  "owner": "Google LLC",
+  "registrar": "MarkMonitor Inc."
+}
