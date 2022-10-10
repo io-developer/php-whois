@@ -599,6 +599,7 @@
   {"zone": ".kg", "host": "whois.kg"},
   {"zone": ".ki", "host": "whois.nic.ki"},
   {"zone": ".kia", "host": "whois.nic.kia"},
+  {"zone": ".kids", "host": "whois.nic.kids"},
   {"zone": ".kim", "host": "whois.afilias.net"},
   {"zone": ".kindle", "host": "whois.nic.kindle"},
   {"zone": ".kitchen", "host": "whois.nic.kitchen"},
