@@ -29,7 +29,6 @@
         "ext-curl": "*",
         "ext-mbstring": "*",
         "ext-json": "*",
-        "true/punycode": "^2.1",
         "symfony/polyfill-intl-idn": "^1.27"
     },
     "require-dev" : {
