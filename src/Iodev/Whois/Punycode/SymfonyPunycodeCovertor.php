@@ -4,7 +4,7 @@ namespace Iodev\Whois\Punycode;
 
 use Symfony\Polyfill\Intl\Idn\Idn;
 
-class TruePunycode implements IPunycode
+class SymfonyPunycodeCovertor implements IPunycode
 {
     public function encode(string $unicode): string
     {
