@@ -16,7 +16,7 @@ use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Modules\Tld\TldServer;
 use Iodev\Whois\Punycode\IntlPunycode;
 use Iodev\Whois\Punycode\IPunycode;
-use Iodev\Whois\Punycode\TruePunycode;
+use Iodev\Whois\Punycode\SymfonyPunycodeCovertor;
 
 class Factory implements IFactory
 {
@@ -37,7 +37,7 @@ class Factory implements IFactory
         if (function_exists("idn_to_utf8") && function_exists("idn_to_ascii")) {
             return new IntlPunycode();
         }
-        return new TruePunycode();
+        return new SymfonyPunycodeCovertor();
     }
 
     /**
