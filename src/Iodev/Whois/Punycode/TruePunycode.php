@@ -2,17 +2,17 @@
 
 namespace Iodev\Whois\Punycode;
 
-use TrueBV\Punycode;
+use Symfony\Polyfill\Intl\Idn\Idn;
 
 class TruePunycode implements IPunycode
 {
     public function encode(string $unicode): string
     {
-        return empty($unicode) ? '' : (new Punycode())->encode($unicode);
+        return empty($unicode) ? '' : Idn::idn_to_utf8($unicode);
     }
 
     public function decode(string $ascii): string
     {
-        return empty($ascii) ? '' : (new Punycode())->decode($ascii);
+        return empty($ascii) ? '' : Idn::idn_to_ascii($ascii);
     }
 }
