@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 
-composer install
+composer update
 
 php vendor/bin/phpunit --bootstrap tests/bootstrap.php tests $@
