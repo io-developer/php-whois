@@ -8,7 +8,7 @@ Required:
 
 ### Testing single PHP version
 * cd to repository root
-* Run `docker-compose -f docker-compose.tests.yml up --build`
+* Run `docker compose up php-7.3_intl  --build`
 * See output like that:
 ```
 Building php-7.3
@@ -46,7 +46,7 @@ php-whois_php-7.3_1 exited with code 0
 
 ### Testing all PHP versions
 * cd to repository root
-* Run `docker-compose -f docker-compose.tests.full.yml up --build`
+* Run `docker compose up --build`
 * See output like that:
 ```
 Building php-7.2
@@ -119,6 +119,5 @@ php-whois_php-7.2_1 exited with code 0
 ### Teardown/cleanup
 * Run
 ```
-docker-compose -f docker-compose.tests.yml down --volumes
-docker-compose -f docker-compose.tests.full.yml down --volumes
+docker-compose down --volumes --remove-orphans
 ```

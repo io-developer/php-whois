@@ -226,6 +226,18 @@ $whois = Factory::get()->createWhois($loader);
 // do something...
 ```
 
+
+## Develompment
+Supported php versions are configured in `docker-compose.yml`
+
+Common use cases:
+1. Set up & run all tests: `docker compose up --build`
+2. Run tests under specific php version: `docker compose up php-8.2_intl --build`
+3. Run scripts: `docker compose run php-8.2_intl bin/php-whois info google.com`
+
+Also see **TESTS.md**
+
+
 ## Contributing
 
 The project is open for pull requests, issues and feedback. Please read the CODE_OF_CONDUCT.md

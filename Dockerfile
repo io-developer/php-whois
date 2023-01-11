@@ -15,5 +15,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 VOLUME /workdir
 WORKDIR /workdir
 
-COPY "./docker-entrypoint.tests.sh" "/entrypoint.sh"
-ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
+COPY "./run-tests.sh" "/run-tests.sh"
+RUN chmod +x "/run-tests.sh"
+
+ENTRYPOINT []

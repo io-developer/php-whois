@@ -1,4 +1,6 @@
-.idea
-.local
-/vendor
+/.idea/
+/.local/
+/vendor/
+
+docker-compose.local.yml
 composer.lock
