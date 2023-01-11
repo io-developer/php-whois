@@ -2,7 +2,7 @@
 
 namespace Iodev\Whois\Punycode;
 
-interface PunycodeConvertorInterface
+interface IPunycode
 {
     function encode(string $unicode): string;
 

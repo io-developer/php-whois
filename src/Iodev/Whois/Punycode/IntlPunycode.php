@@ -2,7 +2,7 @@
 
 namespace Iodev\Whois\Punycode;
 
-class IntlPunycode implements PunycodeConvertorInterface
+class IntlPunycode implements IPunycode
 {
     public function encode(string $unicode): string
     {
