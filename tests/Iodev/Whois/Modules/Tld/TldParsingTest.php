@@ -52,6 +52,9 @@ class TldParsingTest extends TestCase
      */
     private static function parseExpectedDate($datestr)
     {
+        if ($datestr === null) {
+            $datestr = '';
+        }
         // replace %param by value
         if (strpos($datestr, '%') !== false) {
             $datestr = preg_replace('~^%Y(-\d\d-\d\dT\d\d:\d\d)$~', date('Y').'\1', $datestr);
