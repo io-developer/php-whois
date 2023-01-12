@@ -16,7 +16,6 @@ use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Modules\Tld\TldServer;
 use Iodev\Whois\Punycode\IntlPunycode;
 use Iodev\Whois\Punycode\IPunycode;
-use Iodev\Whois\Punycode\TruePunycode;
 
 class Factory implements IFactory
 {
@@ -34,10 +33,7 @@ class Factory implements IFactory
 
     public function createPunycode(): IPunycode
     {
-        if (function_exists("idn_to_utf8") && function_exists("idn_to_ascii")) {
             return new IntlPunycode();
-        }
-        return new TruePunycode();
     }
 
     /**
