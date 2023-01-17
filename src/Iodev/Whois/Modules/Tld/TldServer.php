@@ -12,9 +12,6 @@ use Iodev\Whois\Factory;
  */
 class TldServer
 {
-    /** @var int */
-    private static $counter = 0;
-
     /**
      * @param array $data
      * @param TldParser $defaultParser
@@ -44,7 +41,6 @@ class TldServer
      */
     public function __construct($zone, $host, $centralized, TldParser $parser, $queryFormat = null)
     {
-        $this->uid = ++self::$counter;
         $this->zone = strval($zone);
         if (empty($this->zone)) {
             throw new InvalidArgumentException("Zone must be specified");
@@ -83,13 +79,6 @@ class TldServer
     /** @var string */
     protected $queryFormat;
 
-    /**
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->uid;
-    }
 
     /**
      * @return bool

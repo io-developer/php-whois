@@ -59,18 +59,40 @@ class TldModule extends Module
      */
     public function setServers($servers)
     {
-        $weightMap = [];
-        foreach ($servers as $index => $server) {
+        $sortedKeys = [];
+        $counter = 0;
+        $serversCount = count($servers);
+        foreach ($servers as $key => $server) {
+            $counter++;
             $parts = explode('.', $server->getZone());
-            $rootZone = array_pop($parts);
-            $subZone1 = $parts ? array_pop($parts) : '';
-            $subZone2 = $parts ? array_pop($parts) : '';
-            $weightMap[$server->getId()] = sprintf('%16s.%16s.%32s.%13s', $subZone2, $subZone1, $rootZone, 1000000 - $index);
+            $len = count($parts);
+            $rootZone = $parts[$len - 1] ?? '';
+            $subZone1 = $parts[$len - 2] ?? '';
+            $subZone2 = $parts[$len - 3] ?? '';
+            $sortedKeys[$key] = sprintf(
+                '%16s.%16s.%32s.%13s',
+                $subZone2,
+                $subZone1,
+                $rootZone,
+                $serversCount - $counter,
+            );
         };
-        usort($servers, function(TldServer $a, TldServer $b) use ($weightMap) {
-            return strcmp($weightMap[$b->getId()], $weightMap[$a->getId()]);
+
+        uksort($sortedKeys, function($keyA, $keyB) use ($sortedKeys) {
+            return strcmp($sortedKeys[$keyB], $sortedKeys[$keyA]);
         });
-        $this->servers = $servers;
+
+        $sortedServers = [];
+        foreach ($sortedKeys as $key => $unused) {
+            if (is_string($key)) {
+                $sortedServers[$key] = $servers[$key];
+            } else {
+                $sortedServers[] = $servers[$key];
+            }
+        }
+
+        $this->servers = $sortedServers;
+
         return $this;
     }
 

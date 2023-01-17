@@ -180,4 +180,23 @@ class TldModuleServerTest extends TestCase
         self::assertEquals(".*.com", $servers[3]->getZone(), "Invalid matched zone");
         self::assertEquals(".*", $servers[4]->getZone(), "Invalid matched zone");
     }
+
+    public function testMatchServersDuplicatesOrder()
+    {
+        $first = self::createServer(".com");
+        $second = self::createServer(".com");
+        $third = self::createServer(".com");
+
+        $this->mod->addServers([
+            $first,
+            $second,
+            $third,
+        ]);
+        $matched = $this->mod->matchServers("domain.foo.bar.com");
+
+        self::assertEquals(3, count($matched));
+        self::assertSame($matched[0], $first);
+        self::assertSame($matched[1], $second);
+        self::assertSame($matched[2], $third);
+    }
 }
