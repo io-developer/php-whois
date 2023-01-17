@@ -6,6 +6,8 @@ namespace Iodev\Whois\Modules\Tld;
 
 class TldServer
 { 
+    public const DEFAULT_QUERY_FORMAT = "%s\r\n";
+
     /** @var string[] */
     protected $inverseZoneParts;
 
@@ -20,20 +22,12 @@ class TldServer
         array_pop($this->inverseZoneParts);
     }
 
-    /**
-     * @param string $domain
-     * @return bool
-     */
-    public function isDomainZone($domain)
+    public function isDomainZone(string $domain): bool
     {
         return $this->matchDomainZone($domain) > 0;
     }
 
-    /**
-     * @param string $domain
-     * @return int
-     */
-    public function matchDomainZone($domain)
+    public function matchDomainZone(string $domain): int
     {
         $domainParts = explode('.', $domain);
         if ($this->zone === '.' && count($domainParts) === 1) {
@@ -56,12 +50,7 @@ class TldServer
         return $zoneCount;
     }
 
-    /**
-     * @param string $domain
-     * @param bool $strict
-     * @return string
-     */
-    public function buildDomainQuery($domain, $strict = false)
+    public function buildDomainQuery(string $domain, bool $strict = false): string
     {
         $query = sprintf($this->queryFormat, $domain);
         return $strict ? "=$query" : $query;

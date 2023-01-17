@@ -119,7 +119,7 @@ class Factory implements IFactory
             $host,
             $config['centralized'] ?? false,
             $this->createTldSeverParser($config, $defaultParser),
-            $config['queryFormat'] ?? "%s\r\n",
+            $config['queryFormat'] ?? TldServer::DEFAULT_QUERY_FORMAT,
         );
     }
 
@@ -234,10 +234,14 @@ class Factory implements IFactory
      */
     public function createAsnSever($config, AsnParser $defaultParser = null)
     {
+        $host = $config['host'] ?? '';
+        if (empty($host)) {
+            throw new InvalidArgumentException("Host must be specified");
+        }
         return new AsnServer(
-            $config['host'] ?? '',
+            $host,
             $this->createAsnSeverParser($config, $defaultParser),
-            $config['queryFormat'] ?? null
+            $config['queryFormat'] ?? AsnServer::DEFAULT_QUERY_FORMAT,
         );
     }
 

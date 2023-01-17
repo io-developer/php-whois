@@ -66,7 +66,7 @@ class AsnModule extends Module
     {
         if ($server) {
             $resp = $this->loadResponse($asn, $server);
-            return $server->getParser()->parseResponse($resp);
+            return $server->parser->parseResponse($resp);
         }
         list (, $info) = $this->loadData($asn);
         return $info;
@@ -84,7 +84,7 @@ class AsnModule extends Module
         foreach ($this->servers as $s) {
             try {
                 $response = $this->loadResponse($asn, $s);
-                $info = $s->getParser()->parseResponse($response);
+                $info = $s->parser->parseResponse($response);
                 if ($info) {
                     break;
                 }
@@ -104,7 +104,7 @@ class AsnModule extends Module
      */
     private function loadResponse(string $asn, AsnServer $server): AsnResponse
     {
-        $host = $server->getHost();
+        $host = $server->host;
         $query = $server->buildQuery($asn);
         $text = $this->getLoader()->loadText($host, $query);
         return new AsnResponse(
