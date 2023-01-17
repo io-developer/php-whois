@@ -4,21 +4,12 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Tld;
 
-use Iodev\Whois\DataObject;
-
-/**
- * @property string $query
- * @property string $text
- * @property string $host
- * @property string $domain
- */
-class TldResponse extends DataObject
+class TldResponse
 {
-    /** @var string */
-    protected $dataDefault = [
-        'query' => '',
-        'text' => '',
-        'host' => '',
-        'domain' => '',
-    ];
+    public function __construct(
+        public readonly string $domain = '',
+        public readonly string $host = '',
+        public readonly string $query = '',
+        public readonly string $text = '',
+    ) {}
 }

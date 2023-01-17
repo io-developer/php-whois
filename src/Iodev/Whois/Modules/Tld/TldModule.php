@@ -139,30 +139,24 @@ class TldModule extends Module
     }
 
     /**
-     * @param TldServer $server
-     * @param string $domain
-     * @param bool $strict
-     * @param string $host
-     * @return TldResponse
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadResponse(TldServer $server, $domain, $strict = false, $host = null)
+    public function loadResponse(TldServer $server, string $domain, bool $strict = false, ?string $host = null): TldResponse
     {
         $host = $host ?: $server->getHost();
         $query = $server->buildDomainQuery($domain, $strict);
-        return new TldResponse([
-            'domain' => $domain,
-            'host' => $host,
-            'query' => $query,
-            'text' => $this->getLoader()->loadText($host, $query),
-        ]);
+        $text = $this->getLoader()->loadText($host, $query);
+        return new TldResponse(
+            $domain,
+            $host,
+            $query,
+            $text,
+        );
     }
 
     /**
-     * @param string $domain
      * @param TldServer[] $servers
-     * @return array
      * @throws ConnectionException
      * @throws WhoisException
      */
