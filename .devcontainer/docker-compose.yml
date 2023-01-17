@@ -1,0 +1,7 @@
+version: '3.9'
+
+services:
+  php-whois-dev:
+    build: .
+    volumes:
+      - ../:/opt/project

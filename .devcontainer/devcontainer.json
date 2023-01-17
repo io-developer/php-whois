@@ -1,0 +1,15 @@
+{
+    "name": "php-whois-dev",
+    "dockerComposeFile": "docker-compose.yml",
+	"service": "php-whois-dev",
+	"workspaceFolder": "/opt/project",
+	"shutdownAction": "stopCompose",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"xdebug.php-debug",
+				"xdebug.php-pack"
+			]
+		}
+	}
+}
