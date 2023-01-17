@@ -13,12 +13,12 @@ class AsnResponseTest extends TestCase
 
     public function setUp(): void
     {
-        $this->resp = new AsnResponse([
-            "asn" => "AS32934",
-            "host" => "whois.host.abc",
-            "query" => "-i origin AS32934",
-            "text" => "Test content",
-        ]);
+        $this->resp = new AsnResponse(
+            "AS32934",
+            "whois.host.abc",
+            "-i origin AS32934",
+            "Test content",
+        );
     }
 
     public function testGetAsn()

@@ -4,21 +4,12 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Asn;
 
-use Iodev\Whois\DataObject;
-
-/**
- * @property string $query
- * @property string $text
- * @property string $host
- * @property string $asn
- */
-class AsnResponse extends DataObject
+class AsnResponse
 {
-    /** @var string */
-    protected $dataDefault = [
-        'query' => '',
-        'text' => '',
-        'host' => '',
-        'asn' => '',
-    ];
+    public function __construct(
+        public readonly string $asn,
+        public readonly string $host,
+        public readonly string $query,
+        public readonly string $text,
+    ) {}
 }

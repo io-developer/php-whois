@@ -31,7 +31,7 @@ class TldModule extends Module
     /**
      * @return TldServer[]
      */
-    public function getServers()
+    public function getServers(): array
     {
         return $this->servers;
     }
@@ -39,25 +39,23 @@ class TldModule extends Module
     /**
      * @return TldServer[]
      */
-    public function getLastUsedServers()
+    public function getLastUsedServers(): array
     {
         return $this->lastUsedServers;
     }
 
     /**
      * @param TldServer[] $servers
-     * @return $this
      */
-    public function addServers($servers)
+    public function addServers(array $servers): static
     {
         return $this->setServers(array_merge($this->servers, $servers));
     }
 
     /**
      * @param TldServer[] $servers
-     * @return $this
      */
-    public function setServers($servers)
+    public function setServers(array $servers): static
     {
         $sortedKeys = [];
         $counter = 0;
@@ -97,12 +95,10 @@ class TldModule extends Module
     }
 
     /**
-     * @param string $domain
-     * @param bool $quiet
      * @return TldServer[]
      * @throws ServerMismatchException
      */
-    public function matchServers($domain, $quiet = false)
+    public function matchServers(string $domain, bool $quiet = false): array
     {
         $domainAscii = DomainHelper::toAscii($domain);
         $servers = [];
@@ -119,26 +115,21 @@ class TldModule extends Module
     }
 
     /**
-     * @param string $domain
-     * @return bool
      * @throws ServerMismatchException
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function isDomainAvailable($domain)
+    public function isDomainAvailable(string $domain): bool
     {
         return !$this->loadDomainInfo($domain);
     }
 
     /**
-     * @param string $domain
-     * @param TldServer $server
-     * @return TldResponse
      * @throws ServerMismatchException
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function lookupDomain($domain, TldServer $server = null)
+    public function lookupDomain(string $domain, TldServer $server = null): TldResponse
     {
         $servers = $server ? [$server] : $this->matchServers($domain);
         list ($response) = $this->loadDomainData($domain, $servers);
@@ -146,14 +137,11 @@ class TldModule extends Module
     }
 
     /**
-     * @param string $domain
-     * @param TldServer $server
-     * @return TldInfo
      * @throws ServerMismatchException
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadDomainInfo($domain, TldServer $server = null)
+    public function loadDomainInfo(string $domain, TldServer $server = null): ?TldInfo
     {
         $servers = $server ? [$server] : $this->matchServers($domain);
         list (, $info) = $this->loadDomainData($domain, $servers);

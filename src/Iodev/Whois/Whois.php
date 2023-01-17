@@ -100,41 +100,35 @@ class Whois
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function lookupDomain($domain)
+    public function lookupDomain($domain): TldResponse
     {
         return $this->getTldModule()->lookupDomain($domain);
     }
 
     /**
-     * @param string $domain
-     * @return TldInfo
      * @throws ServerMismatchException
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadDomainInfo($domain)
+    public function loadDomainInfo(string $domain): ?TldInfo
     {
         return $this->getTldModule()->loadDomainInfo($domain);
     }
 
     /**
-     * @param string $asn
-     * @return AsnResponse
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function lookupAsn($asn)
+    public function lookupAsn(string $asn): AsnResponse
     {
         return $this->getAsnModule()->lookupAsn($asn);
     }
 
     /**
-     * @param string $asn
-     * @return AsnInfo
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadAsnInfo($asn)
+    public function loadAsnInfo(string $asn): ?AsnInfo
     {
         return $this->getAsnModule()->loadAsnInfo($asn);
     }

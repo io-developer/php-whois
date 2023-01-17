@@ -12,9 +12,6 @@ use Iodev\Whois\Modules\ModuleType;
 
 class AsnModule extends Module
 {
-    /**
-     * @param ILoader $loader
-     */
     public function __construct(ILoader $loader)
     {
         parent::__construct(ModuleType::ASN, $loader);
@@ -26,38 +23,33 @@ class AsnModule extends Module
     /**
      * @return AsnServer[]
      */
-    public function getServers()
+    public function getServers(): array
     {
         return $this->servers;
     }
 
     /**
      * @param AsnServer[] $servers
-     * @return $this
      */
-    public function addServers($servers)
+    public function addServers(array $servers): static
     {
         return $this->setServers(array_merge($this->servers, $servers));
     }
 
     /**
      * @param AsnServer[] $servers
-     * @return $this
      */
-    public function setServers($servers)
+    public function setServers(array $servers): static
     {
         $this->servers = $servers;
         return $this;
     }
 
     /**
-     * @param string $asn
-     * @param AsnServer $server
-     * @return AsnResponse
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function lookupAsn($asn, AsnServer $server = null)
+    public function lookupAsn(string $asn, AsnServer $server = null): AsnResponse
     {
         if ($server) {
             return $this->loadResponse($asn, $server);
@@ -67,13 +59,10 @@ class AsnModule extends Module
     }
 
     /**
-     * @param $asn
-     * @param AsnServer $server
-     * @return AsnInfo
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadAsnInfo($asn, AsnServer $server = null)
+    public function loadAsnInfo(string $asn, AsnServer $server = null): ?AsnInfo
     {
         if ($server) {
             $resp = $this->loadResponse($asn, $server);
@@ -84,12 +73,10 @@ class AsnModule extends Module
     }
 
     /**
-     * @param string $asn
-     * @return array
      * @throws ConnectionException
      * @throws WhoisException
      */
-    private function loadData($asn)
+    private function loadData(string $asn): array
     {
         $response = null;
         $info = null;
@@ -112,21 +99,19 @@ class AsnModule extends Module
     }
 
     /**
-     * @param string $asn
-     * @param AsnServer $server
-     * @return AsnResponse
      * @throws ConnectionException
      * @throws WhoisException
      */
-    private function loadResponse($asn, AsnServer $server)
+    private function loadResponse(string $asn, AsnServer $server): AsnResponse
     {
         $host = $server->getHost();
         $query = $server->buildQuery($asn);
-        return new AsnResponse([
-            'asn' => $asn,
-            'host' => $host,
-            'query' => $query,
-            'text' => $this->getLoader()->loadText($host, $query),
-        ]);
+        $text = $this->getLoader()->loadText($host, $query);
+        return new AsnResponse(
+            $asn,
+            $host,
+            $query,
+            $text,
+        );
     }
 }
