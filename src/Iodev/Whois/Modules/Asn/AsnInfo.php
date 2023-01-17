@@ -4,38 +4,14 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Asn;
 
-use Iodev\Whois\DataObject;
-
-/**
- * @property string $asn
- * @property AsnRouteInfo[] $routes
- */
-class AsnInfo extends DataObject
+class AsnInfo
 {
     /**
-     * @param AsnResponse $response
-     * @param array $data
+     * @param AsnRouteInfo[] $routes
      */
-    public function __construct(AsnResponse $response, array $data)
-    {
-        parent::__construct($data);
-        $this->response = $response;
-    }
-
-    /** @var AsnResponse */
-    protected $response;
-
-    /** @var array */
-    protected $dataDefault = [
-        "asn" => "",
-        "routes" => [],
-    ];
-
-    /**
-     * @return AsnResponse
-     */
-    public function getResponse(): AsnResponse
-    {
-        return $this->response;
-    }
+    public function __construct(
+        public readonly AsnResponse $response,
+        public readonly string $asn = '',
+        public readonly array $routes = [],
+    ) {}
 }
