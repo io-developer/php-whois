@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Iodev\Whois\Factory;
 
 $scriptDir = '.';

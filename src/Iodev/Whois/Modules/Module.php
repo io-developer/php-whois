@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Iodev\Whois\Modules;
 
 use Iodev\Whois\Loaders\ILoader;

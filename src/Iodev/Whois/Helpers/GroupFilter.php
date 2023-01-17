@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Iodev\Whois\Helpers;
 
 class GroupFilter

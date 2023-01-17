@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Iodev\Whois\Punycode;
 
 class IntlPunycode implements IPunycode
@@ -9,9 +11,10 @@ class IntlPunycode implements IPunycode
         if (empty($unicode)) {
             return '';
         }
-        return defined('INTL_IDNA_VARIANT_UTS46')
+        $result = defined('INTL_IDNA_VARIANT_UTS46')
             ? idn_to_ascii($unicode, 0, INTL_IDNA_VARIANT_UTS46)
             : idn_to_ascii($unicode);
+        return $result ?: '';
     }
 
     public function decode(string $ascii): string
@@ -19,8 +22,9 @@ class IntlPunycode implements IPunycode
         if (empty($ascii)) {
             return '';
         }
-        return defined('INTL_IDNA_VARIANT_UTS46')
+        $result = defined('INTL_IDNA_VARIANT_UTS46')
             ? idn_to_utf8($ascii, 0, INTL_IDNA_VARIANT_UTS46)
             : idn_to_utf8($ascii);
+        return $result ?: '';
     }
 }
