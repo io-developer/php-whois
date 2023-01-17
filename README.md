@@ -15,7 +15,7 @@ PHP WHOIS client implementation. Sends the queries directly to the WHOIS service
 ## Installation
 
 ##### System requirements:
-* PHP >= __7.2__ (old versions supports __5.4+__)
+* PHP >= __8.1__ (old versions support down to __5.4__)
 * php-curl
 * php-mbstring
 * Open port __43__ in firewall
