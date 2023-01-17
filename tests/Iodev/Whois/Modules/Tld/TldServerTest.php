@@ -25,101 +25,28 @@ class TldServerTest extends TestCase
     }
 
 
-    public function testConstructValid()
-    {
-        $instance = new TldServer(".abc", "some.host.com", false, self::getParser());
-        $this->assertInstanceOf(TldServer::class, $instance);
-    }
-
-    public function testConstructEmptyZone()
-    {
-        $this->expectException('\InvalidArgumentException');
-        new TldServer("", "some.host.com", false, self::getParser());
-    }
-
-    public function testConstructEmptyHost()
-    {
-        $this->expectException('\InvalidArgumentException');
-        new TldServer(".abc", "", false, self::getParser());
-    }
-
-    public function testGetZone()
-    {
-        $s = new TldServer(".abc", "some.host.com", false, self::getParser());
-        self::assertEquals(".abc", $s->getZone());
-    }
-
-    public function testGetHost()
-    {
-        $s = new TldServer(".abc", "some.host.com", false, self::getParser());
-        self::assertEquals("some.host.com", $s->getHost());
-    }
-
-    public function testIsCentralizedTrue()
-    {
-        $s = new TldServer(".abc", "some.host.com", true, self::getParser());
-        self::assertTrue($s->isCentralized());
-
-        $s = new TldServer(".abc", "some.host.com", 1, self::getParser());
-        self::assertTrue($s->isCentralized());
-    }
-
-    public function testIsCentralizedFalse()
-    {
-        $s = new TldServer(".abc", "some.host.com", false, self::getParser());
-        self::assertFalse($s->isCentralized());
-
-        $s = new TldServer(".abc", "some.host.com", 0, self::getParser());
-        self::assertFalse($s->isCentralized());
-    }
-
-    public function testGetParserViaInstance()
-    {
-        $p = self::getParser();
-        $s = new TldServer(".abc", "some.host.com", false, $p);
-        self::assertSame($p, $s->getParser());
-    }
-
     public function testIsDomainZoneValid()
     {
-        $s = new TldServer(".abc", "some.host.com", false, self::getParser());
+        $s = new TldServer(".abc", "some.host.com", false, self::getParser(), "%s\r\n");
         self::assertTrue($s->isDomainZone("some.abc"));
     }
 
     public function testIsDomainZoneValidComplex()
     {
-        $s = new TldServer(".abc", "some.host.com", false, self::getParser());
+        $s = new TldServer(".abc", "some.host.com", false, self::getParser(), "%s\r\n");
         self::assertTrue($s->isDomainZone("some.foo.bar.abc"));
     }
 
     public function testIsDomainZoneInvalid()
     {
-        $s = new TldServer(".abc", "some.host.com", false, self::getParser());
+        $s = new TldServer(".abc", "some.host.com", false, self::getParser(), "%s\r\n");
         self::assertFalse($s->isDomainZone("some.com"));
     }
 
     public function testIsDomainZoneInvalidEnd()
     {
-        $s = new TldServer(".foo.bar", "some.host.com", false, self::getParser());
+        $s = new TldServer(".foo.bar", "some.host.com", false, self::getParser(), "%s\r\n");
         self::assertFalse($s->isDomainZone("some.bar"));
-    }
-
-    public function testBuildDomainQueryDefault()
-    {
-        $s = new TldServer(".foo.bar", "some.host.com", false, self::getParser());
-        self::assertEquals("domain.com\r\n", $s->buildDomainQuery("domain.com"));
-    }
-
-    public function testBuildDomainQueryNull()
-    {
-        $s = new TldServer(".foo.bar", "some.host.com", false, self::getParser(), null);
-        self::assertEquals("site.com\r\n", $s->buildDomainQuery("site.com"));
-    }
-
-    public function testBuildDomainQueryEmpty()
-    {
-        $s = new TldServer(".foo.bar", "some.host.com", false, self::getParser(), "");
-        self::assertEquals("some.com\r\n", $s->buildDomainQuery("some.com"));
     }
 
     public function testBuildDomainQueryCustom()
@@ -136,7 +63,7 @@ class TldServerTest extends TestCase
 
     public function testFromDataFullArgs()
     {
-        $s = TldServer::fromData([
+        $s = Factory::get()->createTldSever([
             "zone" => ".abc",
             "host" => "some.host",
             "centralized" => true,
@@ -144,58 +71,58 @@ class TldServerTest extends TestCase
             "queryFormat" => "prefix %s suffix\r\n",
         ]);
 
-        self::assertEquals(".abc", $s->getZone());
-        self::assertEquals("some.host", $s->getHost());
-        self::assertTrue($s->isCentralized());
-        self::assertInstanceOf(self::getParserClass(), $s->getParser());
-        self::assertEquals("prefix %s suffix\r\n", $s->getQueryFormat());
+        self::assertEquals(".abc", $s->zone);
+        self::assertEquals("some.host", $s->host);
+        self::assertTrue($s->centralized);
+        self::assertInstanceOf(self::getParserClass(), $s->parser);
+        self::assertEquals("prefix %s suffix\r\n", $s->queryFormat);
     }
 
     public function testFromDataZoneHostOnly()
     {
-        $s = TldServer::fromData([ "zone" => ".abc", "host" => "some.host" ], self::getParser());
+        $s = Factory::get()->createTldSever([ "zone" => ".abc", "host" => "some.host" ], self::getParser());
 
-        self::assertEquals(".abc", $s->getZone());
-        self::assertEquals("some.host", $s->getHost());
-        self::assertFalse($s->isCentralized());
-        self::assertInstanceOf(self::getParserClass(), $s->getParser());
+        self::assertEquals(".abc", $s->zone);
+        self::assertEquals("some.host", $s->host);
+        self::assertFalse($s->centralized);
+        self::assertInstanceOf(self::getParserClass(), $s->parser);
     }
 
     public function testFromDataMissingZone()
     {
         $this->expectException('\InvalidArgumentException');
-        TldServer::fromData([ "host" => "some.host" ], self::getParser());
+        Factory::get()->createTldSever([ "host" => "some.host" ], self::getParser());
     }
 
     public function testFromDataMissingHost()
     {
         $this->expectException('\InvalidArgumentException');
-        TldServer::fromData([ "zone" => ".abc" ], self::getParser());
+        Factory::get()->createTldSever([ "zone" => ".abc" ], self::getParser());
     }
 
     public function testFromDataMissingAll()
     {
         $this->expectException('\InvalidArgumentException');
-        TldServer::fromData([], self::getParser());
+        Factory::get()->createTldSever([], self::getParser());
     }
 
     public function testFromDataListOne()
     {
-        $s = TldServer::fromDataList(
+        $s = Factory::get()->createTldSevers(
             [ [ "zone" => ".abc", "host" => "some.host" ] ],
             self::getParser()
         );
         self::assertTrue(is_array($s), "Array expected");
         self::assertEquals(1, count($s));
         self::assertInstanceOf(self::getServerClass(), $s[0]);
-        self::assertEquals(".abc", $s[0]->getZone());
-        self::assertEquals("some.host", $s[0]->getHost());
-        self::assertInstanceOf(self::getParserClass(), $s[0]->getParser());
+        self::assertEquals(".abc", $s[0]->zone);
+        self::assertEquals("some.host", $s[0]->host);
+        self::assertInstanceOf(self::getParserClass(), $s[0]->parser);
     }
 
     public function testFromDataListTwo()
     {
-        $s = TldServer::fromDataList([
+        $s = Factory::get()->createTldSevers([
                 [ "zone" => ".abc", "host" => "some.host" ],
                 [ "zone" => ".cde", "host" => "other.host", "centralized" => true, "queryFormat" => "prefix %s suffix\r\n" ],
             ],
@@ -205,16 +132,16 @@ class TldServerTest extends TestCase
         self::assertEquals(2, count($s));
 
         self::assertInstanceOf(self::getServerClass(), $s[0]);
-        self::assertEquals(".abc", $s[0]->getZone());
-        self::assertEquals("some.host", $s[0]->getHost());
-        self::assertFalse($s[0]->isCentralized());
-        self::assertInstanceOf(self::getParserClass(), $s[0]->getParser());
+        self::assertEquals(".abc", $s[0]->zone);
+        self::assertEquals("some.host", $s[0]->host);
+        self::assertFalse($s[0]->centralized);
+        self::assertInstanceOf(self::getParserClass(), $s[0]->parser);
 
         self::assertInstanceOf(self::getServerClass(), $s[1]);
-        self::assertEquals(".cde", $s[1]->getZone());
-        self::assertEquals("other.host", $s[1]->getHost());
-        self::assertTrue($s[1]->isCentralized());
-        self::assertInstanceOf(self::getParserClass(), $s[1]->getParser());
-        self::assertEquals("prefix %s suffix\r\n", $s[1]->getQueryFormat());
+        self::assertEquals(".cde", $s[1]->zone);
+        self::assertEquals("other.host", $s[1]->host);
+        self::assertTrue($s[1]->centralized);
+        self::assertInstanceOf(self::getParserClass(), $s[1]->parser);
+        self::assertEquals("prefix %s suffix\r\n", $s[1]->queryFormat);
     }
 }

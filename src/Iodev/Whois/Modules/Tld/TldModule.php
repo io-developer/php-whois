@@ -64,7 +64,7 @@ class TldModule extends Module
         $serversCount = count($servers);
         foreach ($servers as $key => $server) {
             $counter++;
-            $parts = explode('.', $server->getZone());
+            $parts = explode('.', $server->zone);
             $len = count($parts);
             $rootZone = $parts[$len - 1] ?? '';
             $subZone1 = $parts[$len - 2] ?? '';
@@ -166,7 +166,7 @@ class TldModule extends Module
      */
     public function loadResponse(TldServer $server, string $domain, bool $strict = false, ?string $host = null): TldResponse
     {
-        $host = $host ?: $server->getHost();
+        $host = $host ?: $server->host;
         $query = $server->buildDomainQuery($domain, $strict);
         $text = $this->getLoader()->loadText($host, $query);
         return new TldResponse(
@@ -206,22 +206,25 @@ class TldModule extends Module
      * @param $outResponse
      * @param TldInfo $outInfo
      * @param TldServer $server
-     * @param $domain
-     * @param $strict
-     * @param $host
-     * @param $lastError
      * @throws ConnectionException
      * @throws WhoisException
      */
-    protected function loadParsedTo(&$outResponse, &$outInfo, $server, $domain, $strict = false, $host = null, &$lastError = null)
-    {
+    protected function loadParsedTo(
+        &$outResponse,
+        &$outInfo,
+        TldServer $server,
+        string $domain,
+        bool $strict = false,
+        ?string $host = null,
+        &$lastError = null,
+    ) {
         try {
             $outResponse = $this->loadResponse($server, $domain, $strict, $host);
-            $outInfo = $server->getParser()->parseResponse($outResponse);
+            $outInfo = $server->parser->parseResponse($outResponse);
         } catch (ConnectionException $e) {
             $lastError = $lastError ?: $e;
         }
-        if (!$outInfo && $lastError && $host == $server->getHost() && $strict) {
+        if (!$outInfo && $lastError && $host == $server->host && $strict) {
             throw $lastError;
         }
         if (!$strict && !$outInfo) {
@@ -233,7 +236,7 @@ class TldModule extends Module
             return;
         }
         $host = $outInfo->whoisServer;
-        if ($host && $host != $server->getHost() && !$server->isCentralized()) {
+        if ($host && $host != $server->host && !$server->centralized) {
             $this->loadParsedTo($tmpResponse, $tmpInfo, $server, $domain, false, $host, $lastError);
             $outResponse = $tmpInfo ? $tmpResponse : $outResponse;
             $outInfo = $tmpInfo ?: $outInfo;

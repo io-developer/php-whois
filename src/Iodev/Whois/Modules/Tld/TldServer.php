@@ -4,88 +4,20 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Tld;
 
-use InvalidArgumentException;
-use Iodev\Whois\Factory;
-
-/**
- * Immutable data object
- */
 class TldServer
-{
-    /**
-     * @param array $data
-     * @param TldParser $defaultParser
-     * @return TldServer
-     */
-    public static function fromData($data, TldParser $defaultParser = null)
-    {
-        return Factory::get()->createTldSever($data, $defaultParser);
-    }
-
-    /**
-     * @param array $dataList
-     * @param TldParser $defaultParser
-     * @return TldServer[]
-     */
-    public static function fromDataList($dataList, TldParser $defaultParser = null)
-    {
-        return Factory::get()->createTldSevers($dataList, $defaultParser);
-    }
-
-    /**
-     * @param string $zone Must starts from '.'
-     * @param string $host
-     * @param bool $centralized
-     * @param TldParser $parser
-     * @param string $queryFormat
-     */
-    public function __construct($zone, $host, $centralized, TldParser $parser, $queryFormat = null)
-    {
-        $this->zone = strval($zone);
-        if (empty($this->zone)) {
-            throw new InvalidArgumentException("Zone must be specified");
-        }
-        $this->zone = ($this->zone[0] == '.') ? $this->zone : ".{$this->zone}";
-        $this->inverseZoneParts = array_reverse(explode('.', $this->zone));
-        array_pop($this->inverseZoneParts);
-
-        $this->host = strval($host);
-        if (empty($this->host)) {
-            throw new InvalidArgumentException("Host must be specified");
-        }
-        $this->centralized = (bool)$centralized;
-        $this->parser = $parser;
-        $this->queryFormat = !empty($queryFormat) ? strval($queryFormat) : "%s\r\n";
-    }
-
-    /** @var string */
-    protected $uid;
-
-    /** @var string */
-    protected $zone;
-
+{ 
     /** @var string[] */
     protected $inverseZoneParts;
 
-    /** @var bool */
-    protected $centralized;
-
-    /** @var string */
-    protected $host;
-    
-    /** @var TldParser */
-    protected $parser;
-
-    /** @var string */
-    protected $queryFormat;
-
-
-    /**
-     * @return bool
-     */
-    public function isCentralized()
-    {
-        return (bool)$this->centralized;
+    public function __construct(
+        public readonly string $zone,
+        public readonly string $host,
+        public readonly bool $centralized,
+        public readonly TldParser $parser,
+        public readonly string $queryFormat,
+    ) {
+        $this->inverseZoneParts = array_reverse(explode('.', $this->zone));
+        array_pop($this->inverseZoneParts);
     }
 
     /**
@@ -122,38 +54,6 @@ class TldServer
             }
         }
         return $zoneCount;
-    }
-
-    /**
-     * @return string
-     */
-    public function getZone()
-    {
-        return $this->zone;
-    }
-
-    /**
-     * @return string
-     */
-    public function getHost()
-    {
-        return $this->host;
-    }
-
-    /**
-     * @return TldParser
-     */
-    public function getParser()
-    {
-        return $this->parser;
-    }
-
-    /**
-     * @return string
-     */
-    public function getQueryFormat()
-    {
-        return $this->queryFormat;
     }
 
     /**

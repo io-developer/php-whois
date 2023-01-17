@@ -18,6 +18,7 @@ use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Modules\Tld\TldServer;
 use Iodev\Whois\Punycode\IntlPunycode;
 use Iodev\Whois\Punycode\IPunycode;
+use InvalidArgumentException;
 
 class Factory implements IFactory
 {
@@ -102,12 +103,23 @@ class Factory implements IFactory
      */
     public function createTldSever(array $config, TldParser $defaultParser = null): TldServer
     {
+        $zone = $config['zone'] ?? '';
+        if (empty($zone)) {
+            throw new InvalidArgumentException("Zone must be specified");
+        }
+        $zone = rtrim('.' . trim($zone, '.'), '.');
+
+        $host = $config['host'] ?? '';
+        if (empty($host)) {
+            throw new InvalidArgumentException("Host must be specified");
+        }
+
         return new TldServer(
-            $config['zone'] ?? '',
-            $config['host'] ?? '',
-            !empty($config['centralized']),
+            $zone,
+            $host,
+            $config['centralized'] ?? false,
             $this->createTldSeverParser($config, $defaultParser),
-            $config['queryFormat'] ?? null
+            $config['queryFormat'] ?? "%s\r\n",
         );
     }
 

@@ -17,7 +17,7 @@ class TldModuleServerTest extends TestCase
     private static function createServer($zone)
     {
         $parser = Factory::get()->createTldParser();
-        return new TldServer($zone, "some.host.net", false, $parser);
+        return new TldServer($zone, "some.host.net", false, $parser, "%s\r\n");
     }
 
     /** @var TldModule */
@@ -104,9 +104,9 @@ class TldModuleServerTest extends TestCase
         $servers = $this->mod->matchServers("domain.foo.bar.com");
 
         self::assertEquals(3, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".foo.bar.com", $servers[0]->getZone(), "Invalid matched zone");
-        self::assertEquals(".bar.com", $servers[1]->getZone(), "Invalid matched zone");
-        self::assertEquals(".com", $servers[2]->getZone(), "Invalid matched zone");
+        self::assertEquals(".foo.bar.com", $servers[0]->zone, "Invalid matched zone");
+        self::assertEquals(".bar.com", $servers[1]->zone, "Invalid matched zone");
+        self::assertEquals(".com", $servers[2]->zone, "Invalid matched zone");
     }
 
     public function testMatchServersCollisionMiddle()
@@ -119,8 +119,8 @@ class TldModuleServerTest extends TestCase
         $servers = $this->mod->matchServers("domain.bar.com");
 
         self::assertEquals(2, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".bar.com", $servers[0]->getZone(), "Invalid matched zone");
-        self::assertEquals(".com", $servers[1]->getZone(), "Invalid matched zone");
+        self::assertEquals(".bar.com", $servers[0]->zone, "Invalid matched zone");
+        self::assertEquals(".com", $servers[1]->zone, "Invalid matched zone");
     }
 
     public function testMatchServersCollisionShorter()
@@ -133,7 +133,7 @@ class TldModuleServerTest extends TestCase
         $servers = $this->mod->matchServers("domain.com");
 
         self::assertEquals(1, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".com", $servers[0]->getZone(), "Invalid matched zone");
+        self::assertEquals(".com", $servers[0]->zone, "Invalid matched zone");
     }
 
     public function testMatchServersCollisiondWildcard()
@@ -145,7 +145,7 @@ class TldModuleServerTest extends TestCase
         $servers = $this->mod->matchServers("domain.com");
 
         self::assertEquals(1, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".com", $servers[0]->getZone(), "Invalid matched zone");
+        self::assertEquals(".com", $servers[0]->zone, "Invalid matched zone");
     }
 
     public function testMatchServersCollisionMissingZone()
@@ -157,8 +157,8 @@ class TldModuleServerTest extends TestCase
         $servers = $this->mod->matchServers("domain.foo.bar.com");
 
         self::assertEquals(2, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".bar.com", $servers[0]->getZone(), "Invalid matched zone");
-        self::assertEquals(".com", $servers[1]->getZone(), "Invalid matched zone");
+        self::assertEquals(".bar.com", $servers[0]->zone, "Invalid matched zone");
+        self::assertEquals(".com", $servers[1]->zone, "Invalid matched zone");
     }
 
     public function testMatchServersCollisionFallback()
@@ -174,11 +174,11 @@ class TldModuleServerTest extends TestCase
         $servers = $this->mod->matchServers("domain.foo.bar.com");
 
         self::assertEquals(5, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".foo.*.*", $servers[0]->getZone(), "Invalid matched zone");
-        self::assertEquals(".bar.com", $servers[1]->getZone(), "Invalid matched zone");
-        self::assertEquals(".bar.*", $servers[2]->getZone(), "Invalid matched zone");
-        self::assertEquals(".*.com", $servers[3]->getZone(), "Invalid matched zone");
-        self::assertEquals(".*", $servers[4]->getZone(), "Invalid matched zone");
+        self::assertEquals(".foo.*.*", $servers[0]->zone, "Invalid matched zone");
+        self::assertEquals(".bar.com", $servers[1]->zone, "Invalid matched zone");
+        self::assertEquals(".bar.*", $servers[2]->zone, "Invalid matched zone");
+        self::assertEquals(".*.com", $servers[3]->zone, "Invalid matched zone");
+        self::assertEquals(".*", $servers[4]->zone, "Invalid matched zone");
     }
 
     public function testMatchServersDuplicatesOrder()
