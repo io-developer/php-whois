@@ -18,8 +18,6 @@ use Iodev\Whois\DataObject;
  */
 class AsnRouteInfo extends DataObject
 {
-    use AsnRouteInfoDeprecated;
-
     /**
      * @param array $data
      * @throws InvalidArgumentException

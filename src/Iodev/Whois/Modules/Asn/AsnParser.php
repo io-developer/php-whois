@@ -8,8 +8,6 @@ use Iodev\Whois\Helpers\ParserHelper;
 
 class AsnParser
 {
-    use AsnParserDeprecated;
-
     /**
      * @param AsnResponse $response
      * @return AsnInfo|null

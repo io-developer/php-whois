@@ -17,8 +17,6 @@ use Iodev\Whois\Modules\Tld\TldModule;
 
 class Whois
 {
-    use WhoisDeprecated;
-
     /**
      * @param ILoader $loader
      */

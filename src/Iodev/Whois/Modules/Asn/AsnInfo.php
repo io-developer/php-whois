@@ -12,8 +12,6 @@ use Iodev\Whois\DataObject;
  */
 class AsnInfo extends DataObject
 {
-    use AsnInfoDeprecated;
-
     /**
      * @param AsnResponse $response
      * @param array $data
