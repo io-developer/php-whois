@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
+use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\TldInfo;
@@ -63,16 +64,12 @@ class CommonParser extends TldParser
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->isFlat ? TldParser::COMMON_FLAT : TldParser::COMMON;
     }
 
-    /**
-     * @param array $cfg
-     * @return $this
-     */
-    public function setConfig($cfg)
+    public function setConfig(array $cfg): static
     {
         foreach ($cfg as $k => $v) {
             $this->{$k} = $v;
@@ -80,24 +77,20 @@ class CommonParser extends TldParser
         return $this;
     }
 
-    /**
-     * @param TldResponse $response
-     * @return TldInfo
-     */
-    public function parseResponse(TldResponse $response)
+    public function parseResponse(TldResponse $response): ?TldInfo
     {
         $rootFilter = $this->filterFrom($response);
         $sel = $rootFilter->toSelector();
         $data = [
             "parserType" => $this->getType(),
 
-            "domainName" => $sel->clean()
+            "domainName" => (string)$sel->clean()
                 ->selectKeys($this->domainKeys)
                 ->mapDomain()
                 ->removeEmpty()
                 ->getFirst(''),
 
-            "whoisServer" => $sel->clean()
+            "whoisServer" => (string)$sel->clean()
                 ->selectKeys($this->whoisServerKeys)
                 ->mapAsciiServer()
                 ->removeEmpty()
@@ -111,7 +104,7 @@ class CommonParser extends TldParser
                 ->removeDuplicates(11)
                 ->getAll(),
 
-            "dnssec" => $sel->clean()
+            "dnssec" => (string)$sel->clean()
                 ->selectKeys($this->dnssecKeys)
                 ->removeEmpty()
                 ->sort(SORT_ASC)
@@ -120,23 +113,23 @@ class CommonParser extends TldParser
             "creationDate" => $sel->clean()
                 ->selectKeys($this->creationDateKeys)
                 ->mapUnixTime($this->getOption('inversedDateMMDD', false))
-                ->getFirst(''),
+                ->getFirst(0),
 
             "expirationDate" => $sel->clean()
                 ->selectKeys($this->expirationDateKeys)
                 ->mapUnixTime($this->getOption('inversedDateMMDD', false))
-                ->getFirst(''),
+                ->getFirst(0),
 
             "updatedDate" => $sel->clean()
                 ->selectKeys($this->updatedDateKeys)
                 ->mapUnixTime($this->getOption('inversedDateMMDD', false))
-                ->getFirst(''),
+                ->getFirst(0),
 
-            "owner" => $sel->clean()
+            "owner" => (string)$sel->clean()
                 ->selectKeys($this->ownerKeys)
                 ->getFirst(''),
 
-            "registrar" => $sel->clean()
+            "registrar" => (string)$sel->clean()
                 ->selectKeys($this->registrarKeys)
                 ->getFirst(''),
 
@@ -154,30 +147,33 @@ class CommonParser extends TldParser
         return $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
     }
 
-    /**
-     * @param TldResponse $response
-     * @param array $data
-     * @param array $options
-     * @return TldInfo
-     */
-    protected function createDomainInfo(TldResponse $response, array $data, $options = [])
+    protected function createDomainInfo(TldResponse $response, array $data, array $extra = []): TldInfo
     {
-        return new TldInfo($response, $data, $options);
+        $domainName = $data['domainName'] ?? '';
+        return new TldInfo(
+            $response,
+            $data['parserType'] ?? '',
+            $domainName,
+            $domainName ? DomainHelper::toUnicode($domainName) : '',
+            $data['whoisServer'] ?? '',
+            $data['nameServers'] ?? [],
+            $data['creationDate'] ?? 0,
+            $data['expirationDate'] ?? 0,
+            $data['updatedDate'] ?? 0,
+            $data['states'] ?? '',
+            $data['owner'] ?? '',
+            $data['registrar'] ?? '',
+            $data['dnssec'] ?? '',
+            $extra,
+        );
     }
 
-    /**
-     * @return GroupFilter
-     */
     protected function createGroupFilter(): GroupFilter
     {
         return new GroupFilter();
     }
 
-    /**
-     * @param TldResponse $response
-     * @return GroupFilter
-     */
-    protected function filterFrom(TldResponse $response)
+    protected function filterFrom(TldResponse $response): GroupFilter
     {
         $groups = $this->groupsFromText($response->text);
         $filter = $this->createGroupFilter()
@@ -193,11 +189,7 @@ class CommonParser extends TldParser
             ->useFirstGroup();
     }
 
-    /**
-     * @param string $text
-     * @return array
-     */
-    protected function groupsFromText($text)
+    protected function groupsFromText(string $text): array
     {
         $lines = ParserHelper::splitLines($text);
         return ParserHelper::linesToGroups($lines, $this->headerKey);

@@ -13,19 +13,12 @@ class AutoParser extends TldParser
     /** @var TldParser[] */
     protected $parsers = [];
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return TldParser::AUTO;
     }
 
-    /**
-     * @param array $cfg
-     * @return $this
-     */
-    public function setConfig($cfg)
+    public function setConfig(array $cfg): static
     {
         return $this;
     }
@@ -33,16 +26,15 @@ class AutoParser extends TldParser
     /**
      * @return TldParser[]
      */
-    public function getParsers()
+    public function getParsers(): array
     {
         return $this->parsers;
     }
 
     /**
      * @param TldParser[] $parsers
-     * @return $this
      */
-    public function setParsers(array $parsers)
+    public function setParsers(array $parsers): static
     {
         foreach ($parsers as $parser) {
             $this->addParser($parser);
@@ -52,19 +44,14 @@ class AutoParser extends TldParser
 
     /**
      * @param TldParser $parser
-     * @return $this
      */
-    public function addParser(TldParser $parser)
+    public function addParser(TldParser $parser): static
     {
         $this->parsers[] = $parser;
         return $this;
     }
 
-    /**
-     * @param TldResponse $response
-     * @return TldInfo
-     */
-    public function parseResponse(TldResponse $response)
+    public function parseResponse(TldResponse $response): ?TldInfo
     {
         $bestInfo = null;
         $bestVal = 0;

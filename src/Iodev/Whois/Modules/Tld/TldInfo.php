@@ -4,159 +4,63 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Tld;
 
-use InvalidArgumentException;
-use Iodev\Whois\DataObject;
-use Iodev\Whois\Helpers\DomainHelper;
-
 /**
- * @property string $parserType
- * @property string $domainName
- * @property string $whoisServer
  * @property string[] $nameServers
- * @property int $creationDate
- * @property int $expirationDate
- * @property int $updatedDate
  * @property string[] $states
- * @property string $owner
- * @property string $registrar
- * @property string $dnssec
  */
-class TldInfo extends DataObject
+class TldInfo
 {
-    /**
-     * @param TldResponse $response
-     * @param array $data
-     * @param array $extra
-     * @throws InvalidArgumentException
-     */
-    public function __construct(TldResponse $response, $data = [], $extra = [])
+    public function __construct(
+        public readonly TldResponse $response,
+        public readonly string $parserType = '',
+        public readonly string $domainName = '',
+        public readonly string $domainNameUnicode = '',
+        public readonly string $whoisServer = '',
+        public readonly array $nameServers = [],
+        public readonly int $creationDate = 0,
+        public readonly int $expirationDate = 0,
+        public readonly int $updatedDate = 0,
+        public readonly array $states = [],
+        public readonly string $owner = '',
+        public readonly string $registrar = '',
+        public readonly string $dnssec = '',
+        public readonly array $extra = [],
+    ) {}
+
+    public function isValuable(array $badFirstStatesDict = []): bool
     {
-        if (!is_array($data)) {
-            throw new InvalidArgumentException("Data must be an array");
-        }
-        parent::__construct($data);
-        $this->response = $response;
-        $this->extra = $extra;
-    }
-
-    /** @var array */
-    protected $dataDefault = [
-        "parserType" => "",
-        "domainName" => "",
-        "whoisServer" => "",
-        "nameServers" => [],
-        "creationDate" => 0,
-        "expirationDate" => 0,
-        "updatedDate" => 0,
-        "states" => [],
-        "owner" => "",
-        "registrar" => "",
-        "dnssec" => "",
-    ];
-
-    /** @var TldResponse */
-    protected $response;
-
-    /** @var array */
-    protected $extra;
-
-    /**
-     * @return TldResponse
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
-     * @return array
-     */
-    public function getExtra()
-    {
-        return $this->extra;
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    public function getExtraVal($key, $default = null)
-    {
-        return $this->extra[$key] ?? $default;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDomainNameUnicode()
-    {
-        return DomainHelper::toUnicode($this->domainName);
-    }
-
-    /**
-     * @param array|null $keys
-     * @return bool
-     */
-    public function isEmpty($keys = null)
-    {
-        $empty = true;
-        $keys = $keys ? $keys : array_keys($this->data);
-        foreach ($keys as $key) {
-            $empty = $empty && empty($this->data[$key]);
-        }
-        return $empty;
-    }
-
-    /**
-     * @param array $badFirstStatesDict
-     * @return bool
-     */
-    public function isValuable($badFirstStatesDict = [])
-    {
-        $states = $this->states;
-        $firstState = empty($states) ? '' : reset($states);
+        $firstState = count($this->states) > 0
+            ? $this->states[array_key_first($this->states)]
+            : ''
+        ;
         $firstState = mb_strtolower(trim($firstState));
         if (!empty($badFirstStatesDict[$firstState])) {
             return false;
         }
-        $primaryKeys = ['domainName'];
-        $secondaryKeys = [
-            "states",
-            "nameServers",
-            "owner",
-            "creationDate",
-            "expirationDate",
-            "updatedDate",
-            "registrar",
-        ];
-        return !$this->isEmpty($primaryKeys) && !$this->isEmpty($secondaryKeys);
+        if (empty($this->domainName)) {
+            return false;
+        }
+        return count($this->states) > 0
+            || count($this->nameServers) > 0
+            || !empty($this->owner)
+            || $this->creationDate > 0
+            || $this->expirationDate > 0
+            || !empty($this->registrar)
+        ;
     }
 
-    /**
-     * @return int
-     */
-    public function calcValuation()
+    public function calcValuation(): int
     {
-        $weights = [
-            'domainName' => 100,
-            'nameServers' => 20,
-            'creationDate' => 6,
-            'expirationDate' => 6,
-            'updatedDate' => 6,
-            'states' => 4,
-            'owner' => 4,
-            'registrar' => 3,
-            'whoisServer' => 2,
-            'dnssec' => 2,
-        ];
-        $sum = 0;
-        foreach ($this->data as $k => $v) {
-            if (!empty($v) && !empty($weights[$k])) {
-                $w = $weights[$k];
-                $sum += is_array($v) ? $w * count($v) : $w;
-            }
-        }
-        return $sum;
+        return (!empty($this->domainName) ? 100 : 0)
+            + (count($this->nameServers) > 0 ? 20 : 0)
+            + ($this->creationDate > 0 ? 6 : 0)
+            + ($this->expirationDate > 0 ? 6 : 0)
+            + ($this->updatedDate > 0 ? 6 : 0)
+            + (count($this->states) > 0 ? 4 : 0)
+            + (!empty($this->owner) ? 4 : 0)
+            + (!empty($this->registrar) ? 3 : 0)
+            + (!empty($this->whoisServer) ? 2 : 0)
+            + (!empty($this->dnssec) ? 2 : 0)
+        ;
     }
 }

@@ -62,19 +62,12 @@ class BlockParser extends CommonParser
     /** @var string */
     protected $matchedDomain = '';
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return TldParser::BLOCK;
     }
 
-    /**
-     * @param TldResponse $response
-     * @return TldInfo
-     */
-    public function parseResponse(TldResponse $response)
+    public function parseResponse(TldResponse $response): ?TldInfo
     {
         $groups = $this->groupsFromText($response->text);
         $rootFilter = $this->createGroupFilter()
@@ -129,11 +122,7 @@ class BlockParser extends CommonParser
         return $isReserved || $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
     }
 
-    /**
-     * @param GroupFilter $domainFilter
-     * @return string
-     */
-    protected function parseDomain(GroupFilter $domainFilter)
+    protected function parseDomain(GroupFilter $domainFilter): string
     {
         $sel = $domainFilter
             ->toSelector()
@@ -156,12 +145,7 @@ class BlockParser extends CommonParser
         return $sel->mapDomain()->removeEmpty()->getFirst('');
     }
 
-    /**
-     * @param GroupFilter $rootFilter
-     * @param GroupFilter $primaryFilter
-     * @return array
-     */
-    protected function parseStates(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    protected function parseStates(GroupFilter $rootFilter, GroupFilter $primaryFilter): array
     {
         $states = $primaryFilter->toSelector()
             ->selectKeys($this->statesKeys)
@@ -190,12 +174,7 @@ class BlockParser extends CommonParser
             ->getAll();
     }
 
-    /**
-     * @param GroupFilter $rootFilter
-     * @param GroupFilter $primaryFilter
-     * @return array
-     */
-    protected function parseNameServers(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    protected function parseNameServers(GroupFilter $rootFilter, GroupFilter $primaryFilter): array
     {
         $nameServers = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
@@ -233,12 +212,7 @@ class BlockParser extends CommonParser
             ->getAll();
     }
 
-    /**
-     * @param GroupFilter $rootFilter
-     * @param GroupFilter $primaryFilter
-     * @return string
-     */
-    protected function parseDnssec(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    protected function parseDnssec(GroupFilter $rootFilter, GroupFilter $primaryFilter): string
     {
         $dnssec = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
@@ -267,12 +241,7 @@ class BlockParser extends CommonParser
         return $dnssec;
     }
 
-    /**
-     * @param GroupFilter $rootFilter
-     * @param GroupFilter $primaryFilter
-     * @return string
-     */
-    protected function parseOwner(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    protected function parseOwner(GroupFilter $rootFilter, GroupFilter $primaryFilter): string
     {
         $owner = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
@@ -297,15 +266,10 @@ class BlockParser extends CommonParser
                 ->removeEmpty()
                 ->getFirst('');
         }
-        return $owner;
+        return (string)$owner;
     }
 
-    /**
-     * @param GroupFilter $rootFilter
-     * @param GroupFilter $primaryFilter
-     * @return string
-     */
-    protected function parseRegistrar(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    protected function parseRegistrar(GroupFilter $rootFilter, GroupFilter $primaryFilter): string
     {
         $registrar = $primaryFilter->toSelector()
             ->useMatchFirstOnly(true)
@@ -356,7 +320,7 @@ class BlockParser extends CommonParser
                 : $registrar;
         }
 
-        return $registrar;
+        return (string)$registrar;
     }
 
     protected function parseCreationDate(GroupFilter $rootFilter, GroupFilter $primaryFilter): int
@@ -385,7 +349,7 @@ class BlockParser extends CommonParser
         if ($ts) {
             return $ts;
         }
-        return $primaryFilter->cloneMe()
+        return (int)$primaryFilter->cloneMe()
             ->useMatchFirstOnly(true)
             ->filterHasSubsetKeyOf($this->updatedDateExtraKeys)
             ->toSelector()
@@ -437,14 +401,9 @@ class BlockParser extends CommonParser
         return 0;
     }
 
-    /**
-     * @param GroupFilter $rootFilter
-     * @param GroupFilter $primaryFilter
-     * @return mixed
-     */
-    protected function parseWhoisServer(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    protected function parseWhoisServer(GroupFilter $rootFilter, GroupFilter $primaryFilter): string
     {
-        return $primaryFilter->toSelector()
+        return (string)$primaryFilter->toSelector()
             ->selectKeys($this->whoisServerKeys)
             ->mapAsciiServer()
             ->getFirst('');

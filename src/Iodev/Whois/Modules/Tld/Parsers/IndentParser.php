@@ -16,20 +16,15 @@ class IndentParser extends BlockParser
     /** @var array */
     protected $secondaryStatesSubsets = [];
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->isAutofix ? TldParser::INDENT_AUTOFIX : TldParser::INDENT;
     }
 
     /**
-     * @param string $line
      * @param string[] $commentChars
-     * @return bool
      */
-    public static function validateLine($line, $commentChars = ['%'])
+    public static function validateLine(string $line, array $commentChars = ['%']): bool
     {
         if ($line && in_array($line[0], $commentChars)) {
             return false;
@@ -41,20 +36,12 @@ class IndentParser extends BlockParser
         return true;
     }
 
-    /**
-     * @param string $line
-     * @return bool
-     */
-    public static function validateStopline($line)
+    public static function validateStopline(string $line): bool
     {
         return trim($line) != '--';
     }
 
-    /**
-     * @param array $block
-     * @return bool
-     */
-    public static function validateBlock($block)
+    public static function validateBlock(array $block): bool
     {
         foreach ($block as $line) {
             $clean = preg_replace('~\w+://[-\w/\.#@?&:=%]+|\d\d:\d\d:\d\d~ui', '', $line);
@@ -65,22 +52,14 @@ class IndentParser extends BlockParser
         return false;
     }
 
-    /**
-     * @param string $line
-     * @return int
-     */
-    public static function biasIndent($line)
+    public static function biasIndent(string $line): int
     {
         $trimmed = rtrim($line);
         $len = strlen($trimmed);
         return ($len > 0 && $trimmed[$len - 1] == ':') ? -1 : 0;
     }
 
-    /**
-     * @param string $text
-     * @return array
-     */
-    protected function groupsFromText($text)
+    protected function groupsFromText(string $text): array
     {
         $groups = [];
         $lines = ParserHelper::splitLines($text);
@@ -100,12 +79,7 @@ class IndentParser extends BlockParser
         return $groups;
     }
 
-    /**
-     * @param GroupFilter $rootFilter
-     * @param GroupFilter $primaryFilter
-     * @return array
-     */
-    protected function parseStates(GroupFilter $rootFilter, GroupFilter $primaryFilter)
+    protected function parseStates(GroupFilter $rootFilter, GroupFilter $primaryFilter): array
     {
         return $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)

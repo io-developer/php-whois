@@ -8,49 +8,32 @@ use Iodev\Whois\Factory;
 
 class DomainHelper
 {
-    /**
-     * @param string $a
-     * @param string $b
-     * @return string
-     */
-    public static function compareNames($a, $b)
+    public static function compareNames(string $a, string $b): bool
     {
         $a = self::toAscii($a);
         $b = self::toAscii($b);
         return ($a == $b);
     }
     
-    /**
-     * @param string $domain
-     * @return string
-     */
-    public static function toAscii($domain)
+    public static function toAscii(string $domain): string
     {
         if (empty($domain) || strlen($domain) >= 255) {
-            return "";
+            return '';
         }
         $cor = self::correct($domain);
         return Factory::get()->createPunycode()->encode($cor);
     }
     
-    /**
-     * @param string $domain
-     * @return string
-     */
-    public static function toUnicode($domain)
+    public static function toUnicode(string $domain): string
     {
         if (empty($domain) || strlen($domain) >= 255) {
-            return "";
+            return '';
         }
         $cor = self::correct($domain);
         return Factory::get()->createPunycode()->decode($cor);
     }
 
-    /**
-     * @param string $domain
-     * @return string
-     */
-    public static function filterAscii($domain)
+    public static function filterAscii(string $domain): string
     {
         $domain = self::correct($domain);
         // Pick first part before space
@@ -62,11 +45,7 @@ class DomainHelper
         return $domain;
     }
 
-    /**
-     * @param string $domain
-     * @return string
-     */
-    private static function correct($domain)
+    private static function correct(string $domain): string
     {
         $domain = trim($domain);
         // Fix for .UZ whois response
