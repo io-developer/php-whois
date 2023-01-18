@@ -5,15 +5,39 @@ declare(strict_types=1);
 namespace Iodev\Whois\Modules\Tld;
 
 use InvalidArgumentException;
+use Iodev\Whois\Container\Default\Container;
+use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Helpers\DomainHelper;
+use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Whois;
 use PHPUnit\Framework\TestCase;
 
 class TldParsingTest extends TestCase
 {
+    private static ?Container $container = null;
+    private static ?FakeSocketLoader $loader = null;
+    private static ?Whois $whois = null;
+
+    public function setUp(): void
+    {
+        if (self::$loader === null) {
+            self::$loader = new FakeSocketLoader();
+        }
+        if (self::$container === null) {
+            self::$container = (new ContainerBuilder())
+                ->configure()
+                ->getContainer()
+                ->bind(ILoader::class, fn() => self::$loader)
+            ;
+        }
+        if (self::$whois === null) {
+            self::$whois = self::$container->get(Whois::class);
+        }
+    }
+    
     /**
      * @param $filename
      * @return bool|string
@@ -31,11 +55,10 @@ class TldParsingTest extends TestCase
      * @param string $filename
      * @return Whois
      */
-    private static function whoisFrom($filename)
+    private function whoisFrom($filename)
     {
-        $l = new FakeSocketLoader();
-        $l->text = self::loadContent($filename);
-        return new Whois($l);
+        self::$loader->text = self::loadContent($filename);
+        return self::$whois;
     }
 
     /**
@@ -76,7 +99,7 @@ class TldParsingTest extends TestCase
      */
     public function testResponseParsing($domain, $srcTextFilename, $expectedJsonFilename = null)
     {
-        $w = self::whoisFrom($srcTextFilename);
+        $w = $this->whoisFrom($srcTextFilename);
         $tld = $w->getTldModule();
         $info = $tld->loadDomainInfo($domain);
 

@@ -29,7 +29,8 @@
         "ext-curl": "*",
         "ext-mbstring": "*",
         "ext-json": "*",
-        "symfony/polyfill-intl-idn": "*"
+        "symfony/polyfill-intl-idn": "*",
+        "psr/container": "*"
     },
     "require-dev" : {
         "phpunit/phpunit": "^9.0"

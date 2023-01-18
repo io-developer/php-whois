@@ -14,70 +14,39 @@ use Iodev\Whois\Modules\Asn\AsnResponse;
 use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldModule;
+use Psr\Container\ContainerInterface;
 
 class Whois
 {
-    /**
-     * @param ILoader $loader
-     */
-    public function __construct(ILoader $loader)
-    {
-        $this->loader = $loader;
-    }
-
-    /** @var IFactory */
-    private $factory;
-
     /** @var ILoader */
     private $loader;
 
-    /** @var TldModule */
-    private $tldModule;
+    public function __construct(
+        public readonly ContainerInterface $container,
+        public readonly TldModule $tldModule,
+        public readonly AsnModule $asnModule,
+    ) {}
 
-    /** @var AsnModule */
-    private $asnModule;
 
-    /**
-     * @param IFactory $factory
-     * @return $this
-     */
-    public function setFactory(IFactory $factory)
+    public function setContainer(ContainerInterface $container): static
     {
-        $this->factory = $factory;
+        $this->container = $container;
         return $this;
     }
 
-    /**
-     * @return IFactory
-     */
-    public function getFactory(): IFactory
+    public function getContainer(): ContainerInterface
     {
-        return $this->factory ?: Factory::get();
+        return $this->container;
     }
 
-    /**
-     * @return ILoader
-     */
-    public function getLoader()
-    {
-        return $this->loader;
-    }
 
-    /**
-     * @return TldModule
-     */
-    public function getTldModule()
+    public function getTldModule(): TldModule
     {
-        $this->tldModule = $this->tldModule ?: $this->getFactory()->createTldModule($this);
         return $this->tldModule;
     }
 
-    /**
-     * @return AsnModule
-     */
-    public function getAsnModule()
+    public function getAsnModule(): AsnModule
     {
-        $this->asnModule = $this->asnModule ?: $this->getFactory()->createAsnModule($this);
         return $this->asnModule;
     }
 

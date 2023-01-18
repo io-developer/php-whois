@@ -4,37 +4,34 @@ declare(strict_types=1);
 
 namespace Iodev\Whois;
 
+use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loaders\FakeSocketLoader;
-use Iodev\Whois\Loaders\SocketLoader;
+use Iodev\Whois\Loaders\ILoader;
 use PHPUnit\Framework\TestCase;
 
 class WhoisTest extends TestCase
 {
-    /** @var Whois */
-    private $whois;
+    private Whois $whois;
 
-    /** @var FakeSocketLoader */
-    private $loader;
+    private FakeSocketLoader $loader;
 
-    /**
-     * @return Whois
-     */
-    private function getWhois()
+    private function createWhois(): Whois
     {
         $this->loader = new FakeSocketLoader();
-        $this->whois = new Whois($this->loader);
+
+        $container = (new ContainerBuilder())
+            ->configure()
+            ->getContainer()
+            ->bind(ILoader::class, fn() => $this->loader)
+        ;
+        $this->whois = $container->get(Whois::class);
+
         return $this->whois;
     }
 
     public function testConstruct()
     {
-        $instance = new Whois(new SocketLoader());
+        $instance = $this->createWhois();
         $this->assertInstanceOf(Whois::class, $instance);
-    }
-
-    public function testGetLoader()
-    {
-        $w = $this->getWhois();
-        self::assertSame($this->loader, $w->getLoader());
     }
 }

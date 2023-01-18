@@ -2,45 +2,76 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois;
+namespace Iodev\Whois\Container\Default;
 
+
+use \InvalidArgumentException;
+
+use Iodev\Whois\Config;
+use Iodev\Whois\Loaders\ILoader;
+use Iodev\Whois\Loaders\SocketLoader;
+use Iodev\Whois\Modules\Asn\AsnModule;
 use Iodev\Whois\Modules\Asn\AsnParser;
 use Iodev\Whois\Modules\Asn\AsnServer;
 use Iodev\Whois\Modules\Tld\Parsers\AutoParser;
 use Iodev\Whois\Modules\Tld\Parsers\BlockParser;
 use Iodev\Whois\Modules\Tld\Parsers\CommonParser;
 use Iodev\Whois\Modules\Tld\Parsers\IndentParser;
+use Iodev\Whois\Modules\Tld\TldModule;
 use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Modules\Tld\TldServer;
 use Iodev\Whois\Punycode\IPunycode;
-use InvalidArgumentException;
-use Iodev\Whois\Container\Default\ContainerBuilder;
-use Psr\Container\ContainerInterface;
+use Iodev\Whois\Punycode\IntlPunycode;
+use Iodev\Whois\Whois;
 
-class Factory implements IFactory
+
+class ContainerBuilder
 {
-    private ContainerInterface $container;
+    protected $container;
 
     public function __construct()
     {
-        $this->container = (new ContainerBuilder())
-            ->configure()
-            ->getContainer()
-        ;
+        $this->container = new Container();
     }
 
-    public static function get(): Factory
+    public function getContainer(): Container
     {
-        static $instance;
-        if (!$instance) {
-            $instance = new static();
-        }
-        return $instance;
+        return $this->container;
     }
 
-    public function createPunycode(): IPunycode
+    public function configure(): static
     {
-        return $this->container->get(IPunycode::class);
+        $this->container->bindMany([
+            Container::ID_COMMON_CLASS_INSTANTIATOR => fn($clName) => new $clName(),
+
+            IPunycode::class => fn() => new IntlPunycode(),
+            ILoader::class => fn() => new SocketLoader(),
+
+            Whois::class => function() {
+                $instance = new Whois(
+                    $this->container,
+                    $this->container->get(TldModule::class),
+                    $this->container->get(AsnModule::class),
+                );
+                return $instance;
+            },
+
+            TldModule::class => function() {
+                $instance = new TldModule($this->container->get(ILoader::class));
+                $instance->setServers($this->createTldSevers());
+                return $instance;
+            },
+
+            AsnModule::class => function() {
+                $instance = new AsnModule($this->container->get(ILoader::class));
+                $instance->setServers($this->createAsnSevers());
+                return $instance;
+            },
+
+            AsnParser::class => fn() => new AsnParser(),
+        ]);
+
+        return $this;
     }
 
     /**
@@ -48,13 +79,12 @@ class Factory implements IFactory
      * @param TldParser|null $defaultParser
      * @return TldServer[]
      */
-    public function createTldSevers($configs = null, TldParser $defaultParser = null): array
+    protected function createTldSevers($configs = null): array
     {
         $configs = is_array($configs) ? $configs : Config::load("module.tld.servers");
-        $defaultParser = $defaultParser ?: $this->createTldParser();
         $servers = [];
         foreach ($configs as $config) {
-            $servers[] = $this->createTldSever($config, $defaultParser);
+            $servers[] = $this->createTldSever($config);
         }
         return $servers;
     }
@@ -64,7 +94,7 @@ class Factory implements IFactory
      * @param TldParser|null $defaultParser
      * @return TldServer
      */
-    public function createTldSever(array $config, TldParser $defaultParser = null): TldServer
+    protected function createTldSever(array $config): TldServer
     {
         $zone = $config['zone'] ?? '';
         if (empty($zone)) {
@@ -81,7 +111,7 @@ class Factory implements IFactory
             $zone,
             $host,
             $config['centralized'] ?? false,
-            $this->createTldSeverParser($config, $defaultParser),
+            $this->createTldSeverParser($config),
             $config['queryFormat'] ?? TldServer::DEFAULT_QUERY_FORMAT,
         );
     }
@@ -91,7 +121,7 @@ class Factory implements IFactory
      * @param TldParser|null $defaultParser
      * @return TldParser
      */
-    public function createTldSeverParser(array $config, TldParser $defaultParser = null): TldParser
+    protected function createTldSeverParser(array $config): TldParser
     {
         $options = $config['parserOptions'] ?? [];
         if (isset($config['parserClass'])) {
@@ -103,14 +133,14 @@ class Factory implements IFactory
         if (isset($config['parserType'])) {
             return $this->createTldParser($config['parserType'])->setOptions($options);
         }
-        return $defaultParser ?: $this->createTldParser()->setOptions($options);
+        return $this->createTldParser()->setOptions($options);
     }
 
     /**
      * @param string $type
      * @return TldParser
      */
-    public function createTldParser($type = null)
+    protected function createTldParser($type = null)
     {
         $type = $type ? $type : TldParser::AUTO;
         $d = [
@@ -129,7 +159,7 @@ class Factory implements IFactory
      * @param string $configType
      * @return TldParser
      */
-    public function createTldParserByClass($className, $configType = null)
+    protected function createTldParserByClass($className, $configType = null)
     {
         $configType = empty($configType) ? TldParser::AUTO : $configType;
         $config = $this->getTldParserConfigByType($configType);
@@ -160,7 +190,7 @@ class Factory implements IFactory
      * @param string $type
      * @return array
      */
-    public function getTldParserConfigByType($type)
+    protected function getTldParserConfigByType($type)
     {
         if ($type == TldParser::COMMON_FLAT) {
             $type = TldParser::COMMON;
@@ -179,13 +209,12 @@ class Factory implements IFactory
      * @param AsnParser $defaultParser
      * @return AsnServer[]
      */
-    public function createAsnSevers($configs = null, AsnParser $defaultParser = null): array
+    protected function createAsnSevers($configs = null): array
     {
         $configs = is_array($configs) ? $configs : Config::load("module.asn.servers");
-        $defaultParser = $defaultParser ?: $this->createAsnParser();
         $servers = [];
         foreach ($configs as $config) {
-            $servers[] = $this->createAsnSever($config, $defaultParser);
+            $servers[] = $this->createAsnSever($config);
         }
         return $servers;
     }
@@ -195,7 +224,7 @@ class Factory implements IFactory
      * @param AsnParser $defaultParser
      * @return AsnServer
      */
-    public function createAsnSever($config, AsnParser $defaultParser = null)
+    protected function createAsnSever($config)
     {
         $host = $config['host'] ?? '';
         if (empty($host)) {
@@ -203,39 +232,8 @@ class Factory implements IFactory
         }
         return new AsnServer(
             $host,
-            $this->createAsnSeverParser($config, $defaultParser),
+            $this->container->get($config['parserClass'] ?? AsnParser::class),
             $config['queryFormat'] ?? AsnServer::DEFAULT_QUERY_FORMAT,
         );
     }
-
-    /**
-     * @param array $config
-     * @param AsnParser|null $defaultParser
-     * @return AsnParser
-     */
-    public function createAsnSeverParser(array $config, AsnParser $defaultParser = null): AsnParser
-    {
-        if (isset($config['parserClass'])) {
-            return $this->createAsnParserByClass($config['parserClass']);
-        }
-        return $defaultParser ?: $this->createAsnParser();
-    }
-
-    /**
-     * @return AsnParser
-     */
-    public function createAsnParser(): AsnParser
-    {
-        return new AsnParser();
-    }
-
-    /**
-     * @param string $className
-     * @return AsnParser
-     */
-    public function createAsnParserByClass($className): AsnParser
-    {
-        return new $className();
-    }
-
 }
