@@ -14,8 +14,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - run: php${{ matrix.php-version }} -v
-      - run: php${{ matrix.php-version }} -m
-      - run: composer -V
+      - run: sudo rm -f /etc/php/${{ matrix.php-version }}/cli/conf.d/*xdebug.ini
+      - run: php${{ matrix.php-version }} -m ; php${{ matrix.php-version }} -v ; composer -V
       - run: composer install
       - run: php${{ matrix.php-version }} vendor/bin/phpunit --bootstrap tests/bootstrap.php tests
