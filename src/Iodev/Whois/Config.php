@@ -28,6 +28,9 @@ class Config
     private static function loadJson($name)
     {
         $json = file_get_contents(__DIR__."/Configs/$name.json");
+        if ($json === false) {
+            return false;
+        }
         return json_decode($json, true);
     }
 }

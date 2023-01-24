@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Tld;
 
+use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loaders\FakeSocketLoader;
-use Iodev\Whois\Factory;
 use PHPUnit\Framework\TestCase;
 
 class TldModuleServerTest extends TestCase
@@ -14,9 +14,14 @@ class TldModuleServerTest extends TestCase
      * @param $zone
      * @return TldServer
      */
-    private static function createServer($zone)
+    private function createServer($zone)
     {
-        $parser = Factory::get()->createTldParser();
+        $container = (new ContainerBuilder())->configure()->getContainer();
+
+        /** @var TldParserProviderInterface */
+        $parserProvider = $container->get(TldParserProviderInterface::class);
+        $parser = $parserProvider->getDefault();
+
         return new TldServer($zone, "some.host.net", false, $parser, "%s\r\n");
     }
 
@@ -36,7 +41,7 @@ class TldModuleServerTest extends TestCase
 
     public function testAddServersReturnsSelf()
     {
-        $res = $this->mod->addServers([ self::createServer(".abc") ]);
+        $res = $this->mod->addServers([ $this->createServer(".abc") ]);
         self::assertSame($this->mod, $res, "Result must be self reference");
     }
 
@@ -49,7 +54,7 @@ class TldModuleServerTest extends TestCase
 
     public function testMatchServersOne()
     {
-        $s = self::createServer(".com");
+        $s = $this->createServer(".com");
         $this->mod->addServers([$s]);
         $servers = $this->mod->matchServers("domain.com");
         self::assertTrue(is_array($servers), "Result must be Array");
@@ -59,16 +64,16 @@ class TldModuleServerTest extends TestCase
 
     public function testMatchServersSome()
     {
-        $s = self::createServer(".com");
+        $s = $this->createServer(".com");
         $this->mod->addServers([
-            self::createServer(".net"),
-            self::createServer(".com"),
-            self::createServer(".net"),
-            self::createServer(".com"),
-            self::createServer(".su"),
+            $this->createServer(".net"),
+            $this->createServer(".com"),
+            $this->createServer(".net"),
+            $this->createServer(".com"),
+            $this->createServer(".su"),
             $s,
-            self::createServer(".com"),
-            self::createServer(".gov"),
+            $this->createServer(".com"),
+            $this->createServer(".gov"),
         ]);
 
         $servers = $this->mod->matchServers("domain.com");
@@ -80,13 +85,13 @@ class TldModuleServerTest extends TestCase
     public function testMatchServersQuietNoneInSome()
     {
         $this->mod->addServers([
-            self::createServer(".net"),
-            self::createServer(".com"),
-            self::createServer(".net"),
-            self::createServer(".com"),
-            self::createServer(".su"),
-            self::createServer(".com"),
-            self::createServer(".gov"),
+            $this->createServer(".net"),
+            $this->createServer(".com"),
+            $this->createServer(".net"),
+            $this->createServer(".com"),
+            $this->createServer(".su"),
+            $this->createServer(".com"),
+            $this->createServer(".gov"),
         ]);
 
         $servers = $this->mod->matchServers("domain.xyz", true);
@@ -97,9 +102,9 @@ class TldModuleServerTest extends TestCase
     public function testMatchServersCollisionLongest()
     {
         $this->mod->addServers([
-            self::createServer(".com"),
-            self::createServer(".bar.com"),
-            self::createServer(".foo.bar.com"),
+            $this->createServer(".com"),
+            $this->createServer(".bar.com"),
+            $this->createServer(".foo.bar.com"),
         ]);
         $servers = $this->mod->matchServers("domain.foo.bar.com");
 
@@ -112,9 +117,9 @@ class TldModuleServerTest extends TestCase
     public function testMatchServersCollisionMiddle()
     {
         $this->mod->addServers([
-            self::createServer(".com"),
-            self::createServer(".bar.com"),
-            self::createServer(".foo.bar.com"),
+            $this->createServer(".com"),
+            $this->createServer(".bar.com"),
+            $this->createServer(".foo.bar.com"),
         ]);
         $servers = $this->mod->matchServers("domain.bar.com");
 
@@ -126,9 +131,9 @@ class TldModuleServerTest extends TestCase
     public function testMatchServersCollisionShorter()
     {
         $this->mod->addServers([
-            self::createServer(".com"),
-            self::createServer(".bar.com"),
-            self::createServer(".foo.bar.com"),
+            $this->createServer(".com"),
+            $this->createServer(".bar.com"),
+            $this->createServer(".foo.bar.com"),
         ]);
         $servers = $this->mod->matchServers("domain.com");
 
@@ -139,8 +144,8 @@ class TldModuleServerTest extends TestCase
     public function testMatchServersCollisiondWildcard()
     {
         $this->mod->addServers([
-            self::createServer(".com"),
-            self::createServer(".*.com"),
+            $this->createServer(".com"),
+            $this->createServer(".*.com"),
         ]);
         $servers = $this->mod->matchServers("domain.com");
 
@@ -151,8 +156,8 @@ class TldModuleServerTest extends TestCase
     public function testMatchServersCollisionMissingZone()
     {
         $this->mod->addServers([
-            self::createServer(".com"),
-            self::createServer(".bar.com"),
+            $this->createServer(".com"),
+            $this->createServer(".bar.com"),
         ]);
         $servers = $this->mod->matchServers("domain.foo.bar.com");
 
@@ -164,12 +169,12 @@ class TldModuleServerTest extends TestCase
     public function testMatchServersCollisionFallback()
     {
         $this->mod->addServers([
-            self::createServer(".*"),
-            self::createServer(".*.foo"),
-            self::createServer(".*.com"),
-            self::createServer(".bar.*"),
-            self::createServer(".foo.*.*"),
-            self::createServer(".bar.com"),
+            $this->createServer(".*"),
+            $this->createServer(".*.foo"),
+            $this->createServer(".*.com"),
+            $this->createServer(".bar.*"),
+            $this->createServer(".foo.*.*"),
+            $this->createServer(".bar.com"),
         ]);
         $servers = $this->mod->matchServers("domain.foo.bar.com");
 
@@ -183,9 +188,9 @@ class TldModuleServerTest extends TestCase
 
     public function testMatchServersDuplicatesOrder()
     {
-        $first = self::createServer(".com");
-        $second = self::createServer(".com");
-        $third = self::createServer(".com");
+        $first = $this->createServer(".com");
+        $second = $this->createServer(".com");
+        $third = $this->createServer(".com");
 
         $this->mod->addServers([
             $first,

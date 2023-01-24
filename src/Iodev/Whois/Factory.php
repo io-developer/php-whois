@@ -171,7 +171,7 @@ class Factory implements IFactory
             $extra = ['isAutofix' => true];
         }
         $config = Config::load("module.tld.parser.$type");
-        return empty($extra) ? $config : array_merge($config, $extra);
+        return empty($extra) ? $config : array_replace($config, $extra);
     }
 
     /**
