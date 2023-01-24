@@ -1,0 +1,13 @@
+{
+  "domainName": "udr.hk.com",
+  "whoisServer": "",
+  "nameServers": [
+    "ns1.hkdot.com",
+    "ns2.hkdot.com"
+  ],
+  "creationDate": "2005-08-11T00:00:00Z",
+  "updatedDate": "2005-08-11T00:00:00Z",
+  "states": [],
+  "owner": "Hostmaster - Universal Domain Registry",
+  "registrar": "SARNic - Legacy Registrar"
+}
