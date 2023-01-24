@@ -6,12 +6,14 @@ namespace Iodev\Whois\Modules\Tld;
 
 use InvalidArgumentException;
 use Iodev\Whois\Config;
+use Psr\Container\ContainerInterface;
 
 class TldServerProvider implements TldServerProviderInterface
 {
     protected ?array $servers = null;
 
     public function __construct(
+        protected ContainerInterface $container,
         protected TldParserProviderInterface $parserProvider,
     ) {}
 
