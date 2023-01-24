@@ -37,7 +37,10 @@ class TldServerProvider implements TldServerProviderInterface
             throw new InvalidArgumentException("Host must be specified");
         }
 
-        $parser = $this->getParser($config);
+        $parser = $config['parser'] ?? null;
+        if ($parser === null || !($parser instanceof TldParser)) {
+            $parser = $this->getParser($config);
+        }
 
         return new TldServer(
             rtrim('.' . trim($config['zone'], '.'), '.'),

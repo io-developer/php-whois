@@ -34,7 +34,11 @@ class TldParserProvider implements TldParserProviderInterface
     public function getDefault(): TldParser
     {
         if ($this->default === null) {
-            $this->default = $this->getByClassName(AutoParser::class, TldParser::AUTO);
+            if ($this->container->has(TldParser::class)) {
+                $this->default = $this->container->get(TldParser::class);
+            } else {
+                $this->default = $this->getByClassName(AutoParser::class);
+            }
         }
         return $this->default;
     }
@@ -59,14 +63,19 @@ class TldParserProvider implements TldParserProviderInterface
 
     protected function create(string $className, ?string $type): TldParser
     {
-        $config = $type ? $this->getParserConfig($type) : [];
-
+        /** @var TldParser */
         $parser = $this->container->get($className);
+
+        $type = $type ?: $parser->getType();
+
+        $config = $this->getParserConfig($type);        
         $parser->setConfig($config);
 
-        if ($className === AutoParser::class || $type === TldParser::AUTO) {
-            foreach ($config['parserTypes'] ?? [] as $type) {
-                $parser->addParser($this->getByType($type));
+        if ($className === AutoParser::class) {
+            /** @var AutoParser */
+            $autoParser = $parser;
+            foreach ($config['parserTypes'] ?? [] as $parserType) {
+                $autoParser->addParser($this->getByType($parserType));
             }
         }
         

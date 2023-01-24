@@ -5,21 +5,27 @@ declare(strict_types=1);
 namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Container\Default\ContainerBuilder;
-use Iodev\Whois\Factory;
+use Iodev\Whois\Modules\Tld\Parsers\TestCommonParser;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 class TldServerTest extends TestCase
 {
     private ContainerInterface $container;
-    private TldParserProviderInterface $tldParserProvider;
+    private TldServerProviderInterface $tldServerProvider;
+    private TldParser $parser;
 
     public function __construct()
     {
         parent::__construct();
 
         $this->container = (new ContainerBuilder())->configure()->getContainer();
-        $this->tldParserProvider = $this->container->get(TldParserProviderInterface::class);
+        $this->tldServerProvider = $this->container->get(TldServerProviderInterface::class);
+
+        $this->parser = $this->container->get($this->getParserClass());
+        $this->container->bind(TldParser::class, function() {
+            return $this->parser;
+        });
     }
 
     private function getServerClass()
@@ -29,12 +35,12 @@ class TldServerTest extends TestCase
 
     private function getParser()
     {
-        return $this->tldParserProvider->getByClassName($this->getParserClass());
+        return $this->parser;
     }
 
     private function getParserClass(): string
     {
-        return '\Iodev\Whois\Modules\Tld\Parsers\TestCommonParser';
+        return TestCommonParser::class;
     }
 
 
@@ -76,7 +82,7 @@ class TldServerTest extends TestCase
 
     public function testFromDataFullArgs()
     {
-        $s = Factory::get()->createTldSever([
+        $s = $this->tldServerProvider->create([
             "zone" => ".abc",
             "host" => "some.host",
             "centralized" => true,
@@ -93,7 +99,11 @@ class TldServerTest extends TestCase
 
     public function testFromDataZoneHostOnly()
     {
-        $s = Factory::get()->createTldSever([ "zone" => ".abc", "host" => "some.host" ], $this->getParser());
+        $s = $this->tldServerProvider->create([
+            'zone' => '.abc',
+            'host' => 'some.host',
+            'parser' => $this->getParser(),
+        ]);
 
         self::assertEquals(".abc", $s->zone);
         self::assertEquals("some.host", $s->host);
@@ -104,27 +114,26 @@ class TldServerTest extends TestCase
     public function testFromDataMissingZone()
     {
         $this->expectException('\InvalidArgumentException');
-        Factory::get()->createTldSever([ "host" => "some.host" ], $this->getParser());
+        $this->tldServerProvider->create([ "host" => "some.host" ]);
     }
 
     public function testFromDataMissingHost()
     {
         $this->expectException('\InvalidArgumentException');
-        Factory::get()->createTldSever([ "zone" => ".abc" ], $this->getParser());
+        $this->tldServerProvider->create([ "zone" => ".abc" ]);
     }
 
     public function testFromDataMissingAll()
     {
         $this->expectException('\InvalidArgumentException');
-        Factory::get()->createTldSever([], $this->getParser());
+        $this->tldServerProvider->create([]);
     }
 
     public function testFromDataListOne()
     {
-        $s = Factory::get()->createTldSevers(
-            [ [ "zone" => ".abc", "host" => "some.host" ] ],
-            self::getParser()
-        );
+        $s = $this->tldServerProvider->createMany([
+            [ "zone" => ".abc", "host" => "some.host" ],
+        ]);
         self::assertTrue(is_array($s), "Array expected");
         self::assertEquals(1, count($s));
         self::assertInstanceOf($this->getServerClass(), $s[0]);
@@ -135,12 +144,10 @@ class TldServerTest extends TestCase
 
     public function testFromDataListTwo()
     {
-        $s = Factory::get()->createTldSevers([
-                [ "zone" => ".abc", "host" => "some.host" ],
-                [ "zone" => ".cde", "host" => "other.host", "centralized" => true, "queryFormat" => "prefix %s suffix\r\n" ],
-            ],
-            self::getParser()
-        );
+        $s = $this->tldServerProvider->createMany([
+            [ "zone" => ".abc", "host" => "some.host" ],
+            [ "zone" => ".cde", "host" => "other.host", "centralized" => true, "queryFormat" => "prefix %s suffix\r\n" ],
+        ]);
         self::assertTrue(is_array($s), "Array expected");
         self::assertEquals(2, count($s));
 

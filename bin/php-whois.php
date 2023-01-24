@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
-use Iodev\Whois\Factory;
+use Iodev\Whois\Container\Default\Container;
+use Iodev\Whois\Container\Default\ContainerBuilder;
+use Iodev\Whois\Loaders\ILoader;
+use Iodev\Whois\Modules\Tld\TldModule;
+use Iodev\Whois\Modules\Tld\TldParserProviderInterface;
+use Iodev\Whois\Whois;
 
 $scriptDir = '.';
 if (preg_match('~^(.+?)/[^/]+$~ui', $_SERVER['SCRIPT_FILENAME'], $m)) {
@@ -51,6 +56,15 @@ function parseOpts(string $str): array
     return $result;
 }
 
+function getContainer(): Container
+{
+    static $container = null;
+    if ($container === null) {
+        $container = (new ContainerBuilder())->configure()->getContainer();
+    }
+    return $container;
+}
+
 function help()
 {
     echo implode("\n", [
@@ -81,7 +95,7 @@ function lookup(string $domain)
         '',
     ]);
 
-    $whois = Factory::get()->createWhois();
+    $whois = getContainer()->get(Whois::class);
     $result = $whois->lookupDomain($domain);
 
     var_dump($result);
@@ -107,44 +121,50 @@ function info(string $domain, array $options = [])
     if ($options['file']) {
         $loader = new \Iodev\Whois\Loaders\FakeSocketLoader();
         $loader->text = file_get_contents($options['file']);
+
+        getContainer()->bind(ILoader::class, function() use ($loader) {
+            return $loader;
+        });
     }
 
-    $tld = Factory::get()->createWhois($loader)->getTldModule();
+    $tld = getContainer()->get(TldModule::class);
     $servers = $tld->matchServers($domain);
 
     if (!empty($options['host'])) {
         $host = $options['host'];
         $filteredServers = array_filter($servers, function (\Iodev\Whois\Modules\Tld\TldServer $server) use ($host) {
-            return $server->getHost() == $host;
+            return $server->host == $host;
         });
         if (count($filteredServers) == 0 && count($servers) > 0) {
             $filteredServers = [$servers[0]];
         }
         $servers = array_map(function (\Iodev\Whois\Modules\Tld\TldServer $server) use ($host) {
             return new \Iodev\Whois\Modules\Tld\TldServer(
-                $server->getZone(),
+                $server->zone,
                 $host,
-                $server->isCentralized(),
-                $server->getParser(),
-                $server->getQueryFormat()
+                $server->centralized,
+                $server->parser,
+                $server->queryFormat,
             );
         }, $filteredServers);
     }
 
     if (!empty($options['parser'])) {
         try {
-            $parser = Factory::get()->createTldParser($options['parser']);
+            /** @var TldParserProviderInterface */
+            $tldParserProvider = getContainer()->get(TldParserProviderInterface::class);
+            $parser = $tldParserProvider->getByType($options['parser']);
         } catch (\Throwable $e) {
             echo "\nCannot create TLD parser with type '{$options['parser']}'\n\n";
             throw $e;
         }
         $servers = array_map(function (\Iodev\Whois\Modules\Tld\TldServer $server) use ($parser) {
             return new \Iodev\Whois\Modules\Tld\TldServer(
-                $server->getZone(),
-                $server->getHost(),
-                $server->isCentralized(),
+                $server->zone,
+                $server->host,
+                $server->centralized,
                 $parser,
-                $server->getQueryFormat()
+                $server->queryFormat,
             );
         }, $servers);
     }
