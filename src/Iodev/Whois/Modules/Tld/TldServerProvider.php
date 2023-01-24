@@ -38,11 +38,7 @@ class TldServerProvider implements TldServerProviderInterface
         if (empty($config['host'])) {
             throw new InvalidArgumentException("Host must be specified");
         }
-
-        $parser = $config['parser'] ?? null;
-        if ($parser === null || !($parser instanceof TldParser)) {
-            $parser = $this->getParser($config);
-        }
+        $parser = $this->getParser($config);
 
         return new TldServer(
             rtrim('.' . trim($config['zone'], '.'), '.'),
@@ -66,11 +62,14 @@ class TldServerProvider implements TldServerProviderInterface
     {
         $options = $config['parserOptions'] ?? [];
 
+        $parser = $config['parser'] ?? null;
         $type = $config['parserType'] ?? null;
         $className = $config['parserClass'] ?? null;
-        if ($className) {
+        if ($parser !== null && $parser instanceof TldParser) {
+            // do nothing
+        } elseif (!empty($className) && class_exists($className)) {
             $parser = $this->parserProvider->getByClassName($className, $type);
-        } elseif ($type) {
+        } elseif (!empty($type)) {
             $parser = $this->parserProvider->getByType($type);
         } else {
             $parser = $this->parserProvider->getDefault();
