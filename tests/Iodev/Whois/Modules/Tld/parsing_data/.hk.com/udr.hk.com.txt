@@ -1,0 +1,20 @@
+Use of this whois service implies agreement with our whois
+terms found here http://www.whois.hk.com/terms.html
+
+Available: No
+
+Domain Name: UDR.HK.COM
+Registrar URL: http://www.sarnic.hk.com
+Creation Date: 2005-08-11T00:00:00Z
+Last Updated: 2005-08-11T00:00:00Z
+
+Registrar: SARNic - Legacy Registrar
+Registrar Abuse Contact Email: domreg@sarnic.hk.com
+Registrant ID: SA-12246
+Registrant Name: Hostmaster - Universal Domain Registry
+Registrant Organization:
+Name Server: NS2.HKDOT.COM
+Name Server: NS1.HKDOT.COM
+
+For complete domain details go to:
+http://www.whois.hk.com

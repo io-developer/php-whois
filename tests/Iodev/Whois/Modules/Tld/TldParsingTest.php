@@ -486,6 +486,10 @@ class TldParsingTest extends TestCase
             [ "free.hk", ".hk/free.txt", null ],
             // [ "google.com.hk", ".hk/google.com.hk.txt", ".hk/google.com.hk.json" ],
 
+            // .HK.COM
+            [ "free.hk.com", ".hk.com/free.txt", null ],
+            [ "udr.hk.com", ".hk.com/udr.hk.com.txt", ".hk.com/udr.hk.com.json" ],
+
             // .HR
             [ "free.hr", ".hr/free.txt", null ],
             [ "google.hr", ".hr/google.hr.txt", ".hr/google.hr.json" ],
