@@ -70,17 +70,17 @@ class GroupFilter
     /**
      * Replaces special empty values by NULL
      */
-    public function handleEmpty(array $extraDict = []): static
+    public function handleEmpty(array $nullValDict): static
     {
         foreach ($this->groups as $index => &$group) {
             foreach ($group as $k => &$v) {
                 if (is_array($v)) {
                     foreach ($v as &$subVal) {
-                        if (is_string($subVal) && !empty($extraDict[(string)$subVal])) {
+                        if (is_string($subVal) && !empty($nullValDict[(string)$subVal])) {
                             $subVal = null;
                         }
                     }
-                } elseif (!empty($extraDict[(string)$v])) {
+                } elseif (!empty($nullValDict[(string)$v])) {
                     $v = null;
                 }
             }

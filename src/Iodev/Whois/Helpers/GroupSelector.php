@@ -11,7 +11,6 @@ class GroupSelector
     use GroupTrait;
     
 
-    /** @var array */
     private array $items = [];
 
 
@@ -37,20 +36,16 @@ class GroupSelector
 
     /**
      * First item
-     * @param mixed $default
-     * @return mixed
      */
-    public function getFirstItem($default = null)
+    public function getFirstItem(mixed $default = null): mixed
     {
-        return empty($this->items) ? $default : reset($this->items);
+        return count($this->items) > 0 ? reset($this->items) : $default;
     }
 
     /**
      * First non-array value
-     * @param mixed $default
-     * @return mixed
      */
-    public function getFirst($default = null)
+    public function getFirst(mixed $default = null): mixed
     {
         $first = $this->getFirstItem();
         while (is_array($first)) {
@@ -59,20 +54,13 @@ class GroupSelector
         return $first !== null ? $first : $default;
     }
 
-    /**
-     * @return $this
-     */
-    public function clean()
+    public function clean(): static
     {
         $this->items = [];
         return $this;
     }
 
-    /**
-     * @param array $items
-     * @return $this
-     */
-    public function selectItems($items)
+    public function selectItems(array $items): static
     {
         $this->items = array_merge($this->items, $items);
         return $this;
@@ -80,9 +68,8 @@ class GroupSelector
 
     /**
      * @param string[] $keys
-     * @return $this
      */
-    public function selectKeys($keys)
+    public function selectKeys(array $keys): static
     {
         foreach ($this->groups as $group) {
             $matches = GroupHelper::matchKeys($group, $keys, $this->matchFirstOnly);
@@ -97,11 +84,7 @@ class GroupSelector
         return $this;
     }
 
-    /**
-     * @param array $keyGroups
-     * @return $this
-     */
-    public function selectKeyGroups($keyGroups)
+    public function selectKeyGroups(array $keyGroups): static
     {
         foreach ($keyGroups as $keyGroup) {
             foreach ($keyGroup as $key) {
@@ -111,34 +94,25 @@ class GroupSelector
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function removeEmpty()
+    public function removeEmpty(): static
     {
         $this->items = array_filter($this->items);
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function removeDuplicates()
+    public function removeDuplicates(): static
     {
         $this->items = array_unique($this->items);
         return $this;
     }
 
-    public function sort(int $flags = SORT_REGULAR): self
+    public function sort(int $flags = SORT_REGULAR): static
     {
         sort($this->items, $flags);
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function mapDomain()
+    public function mapDomain(): static
     {
         foreach ($this->items as &$item) {
             if ($item && preg_match('~([-\pL\d]+\.)+[-\pL\d]+~ui', $item, $m)) {
@@ -151,10 +125,7 @@ class GroupSelector
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function mapAsciiServer()
+    public function mapAsciiServer(): static
     {
         foreach ($this->items as &$item) {
             $raw = is_string($item) ? trim($item, '.') : '';
@@ -169,11 +140,7 @@ class GroupSelector
         return $this;
     }
 
-    /**
-     * @param bool $inverseMMDD
-     * @return $this
-     */
-    public function mapUnixTime($inverseMMDD = false)
+    public function mapUnixTime(bool $inverseMMDD = false): static
     {
         $this->items = array_map(function($item) use ($inverseMMDD) {
             return is_string($item) ? DateHelper::parseDate($item, $inverseMMDD) : 0;
@@ -181,11 +148,7 @@ class GroupSelector
         return $this;
     }
 
-    /**
-     * @param bool $removeExtra
-     * @return $this
-     */
-    public function mapStates($removeExtra = true)
+    public function mapStates(bool $removeExtra = true): static
     {
         $states = [];
         foreach ($this->items as $item) {

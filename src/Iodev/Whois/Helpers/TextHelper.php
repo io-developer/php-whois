@@ -6,11 +6,7 @@ namespace Iodev\Whois\Helpers;
 
 class TextHelper
 {
-    /**
-     * @param string $text
-     * @return string
-     */
-    public static function toUtf8($text)
+    public static function toUtf8(string $text): string
     {
         $srcEncoding = mb_detect_encoding($text);
         if (!empty($srcEncoding) && strtolower($srcEncoding) !== 'utf-8') {

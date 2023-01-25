@@ -8,11 +8,8 @@ use Iodev\Whois\Tool\DomainTool;
 
 class GroupHelper
 {
-    /**
-     * @param bool $ignoreCase
-     * @return \Closure
-     */
-    public static function getMatcher($ignoreCase = true) {
+    public static function getMatcher(bool $ignoreCase = true): callable
+    {
         return function($needle, $subject) use ($ignoreCase) {
             $needle = (string)$needle;
             $subject = (string)$subject;
@@ -26,24 +23,15 @@ class GroupHelper
         };
     }
 
-    /**
-     * @param array $group
-     * @param bool $keysOnly
-     * @return array
-     */
-    public static function toLowerCase($group, $keysOnly = false)
+    public static function toLowerCase(array $group, bool $keysOnly = false): array
     {
         return $keysOnly
             ? self::mapRecursiveKeys($group, 'mb_strtolower')
             : self::mapRecursive($group, 'mb_strtolower');
     }
 
-    /**
-     * @param array $group
-     * @param callable $callback
-     * @return array
-     */
-    public static function mapRecursive($group, $callback) {
+    public static function mapRecursive(array $group, callable $callback): array
+    {
         $out = [];
         array_walk($group, function($val, $key) use (&$out, $callback) {
             $out[$callback($key)] = is_array($val) ? self::mapRecursive($val, $callback) : $callback($val);
@@ -51,12 +39,8 @@ class GroupHelper
         return $out;
     }
 
-    /**
-     * @param array $group
-     * @param callable $callback
-     * @return array
-     */
-    public static function mapRecursiveKeys($group, $callback) {
+    public static function mapRecursiveKeys(array $group, callable $callback): array
+    {
         $out = [];
         array_walk($group, function($val, $key) use (&$out, $callback) {
             $out[$callback($key)] = is_array($val) ? self::mapRecursiveKeys($val, $callback) : $val;
@@ -65,14 +49,15 @@ class GroupHelper
     }
 
     /**
-     * @param array $group
      * @param string[] $keys
-     * @param bool $firstOnly
-     * @param callable $matcher
      * @return string[]
      */
-    public static function matchKeys($group, $keys, $firstOnly = false, $matcher = null)
-    {
+    public static function matchKeys(
+        array $group,
+        array $keys,
+        bool $firstOnly = false,
+        callable $matcher = null,
+    ): array {
         if (empty($group)) {
             return [];
         }
@@ -101,13 +86,14 @@ class GroupHelper
     }
 
     /**
-     * @param array $group
      * @param string[] $keys
-     * @param array $outMatches
-     * @param callable $matcher
      */
-    private static function matchSubKeys($group, $keys, &$outMatches = [], $matcher = null)
-    {
+    private static function matchSubKeys(
+        array $group,
+        array $keys,
+        array &$outMatches = [],
+        callable $matcher = null,
+    ): void {
         $vals = [];
         foreach ($keys as $k) {
             $v = self::matchKeys($group, [$k], true, $matcher);
@@ -127,12 +113,7 @@ class GroupHelper
         }
     }
 
-    /**
-     * @param array $subsets
-     * @param array $params
-     * @return array
-     */
-    public static function renderSubsets($subsets, $params)
+    public static function renderSubsets(array $subsets, array $params): array
     {
         array_walk_recursive($subsets, function(&$val) use ($params) {
             $origVal = (string)$val;
@@ -148,15 +129,12 @@ class GroupHelper
         return $subsets;
     }
 
-    /**
-     * @param array $groups
-     * @param array $subsets
-     * @param bool $ignoreCase
-     * @param bool $stopOnFirst
-     * @return array
-     */
-    public static function findGroupsHasSubsetOf($groups, $subsets, $ignoreCase = true, $stopOnFirst = false)
-    {
+    public static function findGroupsHasSubsetOf(
+        array $groups,
+        array $subsets,
+        bool $ignoreCase = true,
+        bool $stopOnFirst = false,
+    ): array {
         $keyMatcher = self::getMatcher($ignoreCase);
         $valMatcher = self::getMatcher($ignoreCase);
         $foundGroups = [];
@@ -173,17 +151,14 @@ class GroupHelper
         return $foundGroups;
     }
 
-    /**
-     * @param array $group
-     * @param array $subset
-     * @param callable $keyMatcher
-     * @param callable $valMatcher
-     * @return bool
-     */
-    public static function matchGroupSubset($group, $subset, $keyMatcher = null, $valMatcher = null)
-    {
-        $keyMatcher = is_callable($keyMatcher) ? $keyMatcher : self::getMatcher();
-        $valMatcher = is_callable($valMatcher) ? $valMatcher : self::getMatcher();
+    public static function matchGroupSubset(
+        array $group,
+        array $subset,
+        callable $keyMatcher = null,
+        callable $valMatcher = null
+    ): bool {
+        $keyMatcher = $keyMatcher ?: self::getMatcher();
+        $valMatcher = $valMatcher ?: self::getMatcher();
         foreach ($subset as $subsetKey => $subsetVal) {
             $isKeyMatched = false;
             $groupVal = null;

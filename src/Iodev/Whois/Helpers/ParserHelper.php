@@ -7,20 +7,18 @@ namespace Iodev\Whois\Helpers;
 class ParserHelper
 {
     /**
-     * @param string $text
      * @return string[]
      */
-    public static function splitLines($text)
+    public static function splitLines(string $text): array
     {
         return preg_split('~\r\n|\r|\n~ui', strval($text));
     }
 
     /**
      * @param string[] $lines
-     * @param string $header
      * @return array
      */
-    public static function linesToGroups($lines, $header = '$header')
+    public static function linesToGroups(array $lines, string $header = '$header'): array
     {
         $groups = [];
         $group = [];
@@ -50,11 +48,9 @@ class ParserHelper
     }
 
     /**
-     * @param string $line
-     * @param string $trimChars
      * @return string[]
      */
-    public static function lineToKeyVal($line, $trimChars = " \t\n\r\0\x0B")
+    public static function lineToKeyVal(string $line, string $trimChars = " \t\n\r\0\x0B"): array
     {
         if (preg_match('~^\s*(\.{2,})?\s*(.+?)\s*(\.{2,})?\s*:(?![\\/:])(?<!::)(.*)$~ui', $line, $m)) {
             return [trim($m[2], $trimChars), trim($m[4], $trimChars)];
@@ -66,7 +62,7 @@ class ParserHelper
      * @param string[] $lines
      * @return int|null|string
      */
-    public static function linesToBestHeader($lines)
+    public static function linesToBestHeader(array $lines): mixed
     {
         $map = [];
         $empty = 1;
@@ -90,17 +86,17 @@ class ParserHelper
 
     /**
      * @param string[] $lines
-     * @param callable $validateStoplineFn
-     * @return array
      */
-    public static function linesToSpacedBlocks($lines, $validateStoplineFn = null)
-    {
+    public static function linesToSpacedBlocks(
+        array $lines,
+        callable $validateStoplineFn = null,
+    ): array {
         $lines[] = '';
         $blocks = [];
         $block = [];
         foreach ($lines as $line) {
             $tline = trim($line);
-            if (!empty($tline) && empty($block) && is_callable($validateStoplineFn) && !$validateStoplineFn($line)) {
+            if (!empty($tline) && empty($block) && $validateStoplineFn !== null && !$validateStoplineFn($line)) {
                 break;
             } elseif (!empty($tline)) {
                 $block[] = $line;
@@ -112,14 +108,11 @@ class ParserHelper
         return $blocks;
     }
 
-    /**
-     * @param array $block
-     * @param callable $biasIndentFn
-     * @param int $maxDepth
-     * @return array
-     */
-    public static function blockToIndentedNodes($block, $biasIndentFn = null, $maxDepth = 10)
-    {
+    public static function blockToIndentedNodes(
+        array $block,
+        ?callable $biasIndentFn = null,
+        int $maxDepth = 10
+    ): array {
         $nodes = [];
         $node = [];
         $nodePad = 999999;
@@ -139,7 +132,7 @@ class ParserHelper
         unset($node);
         foreach ($nodes as &$node) {
             if (!empty($node['children']) && $maxDepth > 1) {
-                $node['children'] = self::blockToIndentedNodes($node['children'], $maxDepth - 1);
+                $node['children'] = self::blockToIndentedNodes($node['children'], null, $maxDepth - 1);
             }
             if (empty($node['children'])) {
                 $node = $node['line'];
@@ -148,26 +141,16 @@ class ParserHelper
         return $nodes;
     }
 
-    /**
-     * @param string $line
-     * @param callable $biasFn
-     * @return int
-     */
-    public static function calcIndent($line, $biasFn = null)
+    public static function calcIndent(string $line, ?callable $biasFn = null): int
     {
         $pad = strlen($line) - strlen(ltrim($line));
-        if (is_callable($biasFn)) {
+        if ($biasFn !== null) {
             $pad += $biasFn($line);
         }
         return $pad;
     }
 
-    /**
-     * @param array $nodes
-     * @param int $maxKeyLength
-     * @return array
-     */
-    public static function nodesToDict($nodes, $maxKeyLength = 32)
+    public static function nodesToDict(array $nodes, int $maxKeyLength = 32): array
     {
         $dict = [];
         foreach ($nodes as $node) {
@@ -219,12 +202,8 @@ class ParserHelper
         return $dict;
     }
 
-    /**
-     * @param array $dict
-     * @param string $header
-     * @return array
-     */
-    public static function dictToGroup($dict, $header = '$header') {
+    public static function dictToGroup(array $dict, string $header = '$header'): array
+    {
         if (empty($dict) || count($dict) > 1) {
             return $dict;
         }
@@ -241,11 +220,8 @@ class ParserHelper
         return $dict;
     }
 
-    /**
-     * @param array $groups
-     * @return array
-     */
-    public static function joinParentlessGroups($groups) {
+    public static function joinParentlessGroups(array $groups): array
+    {
         $lastGroup = null;
         foreach ($groups as &$group) {
             if (count($group) == 1 && is_string(key($group)) && reset($group) === false) {
@@ -263,10 +239,9 @@ class ParserHelper
 
     /**
      * @param string[]|string $rawstates
-     * @param bool $removeExtra
      * @return string[]
      */
-    public static function parseStates($rawstates, $removeExtra = true)
+    public static function parseStates(mixed $rawstates, bool $removeExtra = true): array
     {
         $states = [];
         $rawstates = is_array($rawstates) ? $rawstates : [ strval($rawstates) ];
@@ -287,7 +262,7 @@ class ParserHelper
      * @param string[] $lines
      * @return string[]
      */
-    public static function autofixTldLines($lines)
+    public static function autofixTldLines(array $lines): array
     {
         $emptyBefore = false;
         $kvBefore = false;
@@ -330,7 +305,7 @@ class ParserHelper
      * @param callable|null $biasIndentFn
      * @return string[]
      */
-    public static function removeInnerEmpties($lines, $biasIndentFn = null)
+    public static function removeInnerEmpties(array $lines, callable $biasIndentFn = null): array
     {
         $prevPad = 0;
         $outLines = [];

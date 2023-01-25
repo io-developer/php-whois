@@ -6,98 +6,58 @@ namespace Iodev\Whois\Helpers;
 
 trait GroupTrait
 {
-    /** @var array */
-    private $groups = [];
+    private array $groups = [];
+    private string $headerKey = '$header';
+    private array $domainKeys = [];
+    private array $subsetParams = [];
+    private bool $matchFirstOnly = false;
+    private bool $ignoreCase = false;
 
-    /** @var string */
-    private $headerKey = '$header';
 
-    /** @var array */
-    private $domainKeys = [];
-
-    /** @var array */
-    private $subsetParams = [];
-
-    /** @var bool */
-    private $matchFirstOnly = false;
-
-    /** @var bool */
-    private $ignoreCase = false;
-
-    /**
-     * @return $this
-     */
-    public function cloneMe()
+    public function cloneMe(): static
     {
         return clone $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isEmptyGroups()
+    public function isEmptyGroups(): bool
     {
         return empty($this->groups);
     }
 
-    /**
-     * @return array
-     */
-    public function getFirstGroup()
+    public function getFirstGroup(): ?array
     {
-        return count($this->groups) ? $this->groups[0] : null;
+        return count($this->groups) > 0 ? $this->groups[0] : null;
     }
 
-    /**
-     * @return array
-     */
-    public function getGroups()
+    public function getGroups(): array
     {
         return $this->groups;
     }
 
-    /**
-     * @param array $groups
-     * @return $this
-     */
-    public function setGroups($groups)
+    public function setGroups(array $groups): static
     {
         $this->groups = $groups;
         return $this;
     }
 
-    /**
-     * @param array $group
-     * @return $this
-     */
-    public function setOneGroup($group)
+    public function setOneGroup(?array $group): static
     {
-        $this->groups = $group ? [ $group ] : [];
+        $this->groups = !empty($group) ? [ $group ] : [];
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function useFirstGroup()
+    public function useFirstGroup(): static
     {
         return $this->setOneGroup($this->getFirstGroup());
     }
 
-    /**
-     * @param array $group
-     * @return $this
-     */
-    public function useFirstGroupOr($group)
+    public function useFirstGroupOr(?array $group): static
     {
         $first = $this->getFirstGroup();
-        return $this->setOneGroup(empty($first) ? $group : $first);
+        return $this->setOneGroup(!empty($first) ? $first : $group);
     }
 
-    /**
-     * @return $this
-     */
-    public function mergeGroups()
+    public function mergeGroups(): static
     {
         $finalGroup = [];
         foreach ($this->groups as $group) {
@@ -107,53 +67,33 @@ trait GroupTrait
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @return $this
-     */
-    public function setHeaderKey($key)
+    public function setHeaderKey(string $key): static
     {
         $this->headerKey = $key;
         return $this;
     }
 
-    /**
-     * @param array $keys
-     * @return $this
-     */
-    public function setDomainKeys($keys)
+    public function setDomainKeys(array $keys): static
     {
         $this->domainKeys = $keys;
         return $this;
     }
 
-    /**
-     * @param array $params
-     * @return $this
-     */
-    public function setSubsetParams($params)
+    public function setSubsetParams(array $params): static
     {
         $this->subsetParams = $params;
         return $this;
     }
 
-    /**
-     * @param bool $val
-     * @return $this
-     */
-    public function useMatchFirstOnly($val)
+    public function useMatchFirstOnly(bool $yes): static
     {
-        $this->matchFirstOnly = (bool)$val;
+        $this->matchFirstOnly = (bool)$yes;
         return $this;
     }
 
-    /**
-     * @param bool $val
-     * @return $this
-     */
-    public function useIgnoreCase($val)
+    public function useIgnoreCase(bool $yes): static
     {
-        $this->ignoreCase = (bool)$val;
+        $this->ignoreCase = (bool)$yes;
         return $this;
     }
 }
