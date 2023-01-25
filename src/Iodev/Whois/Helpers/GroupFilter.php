@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Helpers;
 
+use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 
 class GroupFilter
@@ -12,6 +13,7 @@ class GroupFilter
 
     public function __construct(
         protected DomainTool $domainTool,
+        protected DateTool $dateTool,
     ) {}
 
     /**
@@ -100,6 +102,9 @@ class GroupFilter
 
     protected function createSelector(): GroupSelector
     {
-        return new GroupSelector($this->domainTool);
+        return new GroupSelector(
+            $this->domainTool,
+            $this->dateTool,
+        );
     }
 }

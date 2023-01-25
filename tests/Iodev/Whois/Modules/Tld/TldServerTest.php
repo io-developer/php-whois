@@ -6,6 +6,7 @@ namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Modules\Tld\Parsers\TestCommonParser;
+use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -24,6 +25,7 @@ class TldServerTest extends TestCase
         $this->container->bind(TestCommonParser::class, function() {
             return new TestCommonParser(
                 $this->container->get(DomainTool::class),
+                $this->container->get(DateTool::class),
             );
         });
 

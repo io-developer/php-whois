@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
-use Iodev\Whois\Helpers\DateHelper;
 use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
@@ -391,7 +390,7 @@ class BlockParser extends CommonParser
         }
         foreach ($sel->getAll() as $str) {
             if ($str && preg_match($fallbackRegex, $str)) {
-                $time = DateHelper::parseDateInText($str);
+                $time = $this->dateTool->parseDateInText($str);
                 if (!empty($time)) {
                     return $time;
                 }

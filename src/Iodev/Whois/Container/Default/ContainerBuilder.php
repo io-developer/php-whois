@@ -19,6 +19,7 @@ use Iodev\Whois\Modules\Tld\TldServerProvider;
 use Iodev\Whois\Modules\Tld\TldServerProviderInterface;
 use Iodev\Whois\Punycode\IPunycode;
 use Iodev\Whois\Punycode\IntlPunycode;
+use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Whois;
 
@@ -91,18 +92,21 @@ class ContainerBuilder
             CommonParser::class => function() {
                 return new CommonParser(
                     $this->container->get(DomainTool::class),
+                    $this->container->get(DateTool::class),
                 );
             },
 
             BlockParser::class => function() {
                 return new BlockParser(
                     $this->container->get(DomainTool::class),
+                    $this->container->get(DateTool::class),
                 );
             },
 
             IndentParser::class => function() {
                 return new IndentParser(
                     $this->container->get(DomainTool::class),
+                    $this->container->get(DateTool::class),
                 );
             },
 

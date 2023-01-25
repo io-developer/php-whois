@@ -9,6 +9,7 @@ use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
+use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 
 class CommonParser extends TldParser
@@ -63,6 +64,7 @@ class CommonParser extends TldParser
 
     public function __construct(
         protected DomainTool $domainTool,
+        protected DateTool $dateTool,
     ) {}
 
     /**
@@ -174,7 +176,10 @@ class CommonParser extends TldParser
 
     protected function createGroupFilter(): GroupFilter
     {
-        return new GroupFilter($this->domainTool);
+        return new GroupFilter(
+            $this->domainTool,
+            $this->dateTool,
+        );
     }
 
     protected function filterFrom(TldResponse $response): GroupFilter

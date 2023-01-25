@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Helpers;
 
+use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 
 class GroupSelector
@@ -16,6 +17,7 @@ class GroupSelector
 
     public function __construct(
         protected DomainTool $domainTool,
+        protected DateTool $dateTool,
     ) {}
 
     /**
@@ -143,7 +145,10 @@ class GroupSelector
     public function mapUnixTime(bool $inverseMMDD = false): static
     {
         $this->items = array_map(function($item) use ($inverseMMDD) {
-            return is_string($item) ? DateHelper::parseDate($item, $inverseMMDD) : 0;
+            return is_string($item)
+                ? $this->dateTool->parseDate($item, $inverseMMDD)
+                : 0
+            ;
         }, $this->items);
         return $this;
     }

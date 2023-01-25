@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Helpers;
+namespace Iodev\Whois\Tool;
 
-class DateHelper
+class DateTool
 {
-    public static function parseDate(string $datestamp, bool $inverseMMDD = false): int
+    public function parseDate(string $datestamp, bool $inverseMMDD = false): int
     {
         $s = trim($datestamp);
         if (preg_match('/^\d{2}[-\s]+\w+[-\s]+\d{4}[-\s]+\d{2}:\d{2}(:\d{2})?([-\s]+\w+)?/ui', $s)) {
@@ -16,12 +16,12 @@ class DateHelper
         } elseif (preg_match('/^\d{4}\.\d{2}\.\d{2}\s+\d{2}:\d{2}:\d{2}/ui', $s)) {
             $s = str_replace(".", "-", $s);
         } elseif (preg_match('/^(\d{2})-(\w+)-(\d{4})\s+(\d{2}:\d{2}:\d{2})/ui', $s, $m)) {
-            $month = self::textMonthToDigital($m[2]);
+            $month = $this->textMonthToDigital($m[2]);
             $s = "{$m[3]}-{$month}-{$m[1]}T{$m[4]}";
         } elseif (preg_match('/^(\d{2})[-\.](\d{2})[-\.](\d{4})$/ui', $s, $m)) {
             $s = "{$m[3]}-{$m[2]}-{$m[1]}T00:00:00";
         } elseif (preg_match('/^(\d{2})[-\s]+(\w+)[-\s]+(\d{4})/ui', $s, $m)) {
-            $month = self::textMonthToDigital($m[2]);
+            $month = $this->textMonthToDigital($m[2]);
             $s = "{$m[3]}-{$month}-{$m[1]}T00:00:00";
         } elseif (preg_match('/^(\d{4})(\d{2})(\d{2})$/ui', preg_replace('/\s*#.*/ui', '', $s), $m)) {
             $s = "{$m[1]}-{$m[2]}-{$m[3]}T00:00:00";
@@ -35,7 +35,7 @@ class DateHelper
         return (int)strtotime($s);
     }
 
-    public static function parseDateInText(string $text): int
+    public function parseDateInText(string $text): int
     {
         if (preg_match('~\b(\d{1,2})(nd|th|st)?[-\s]+([a-z]+)[-\s]+(\d{4})\b~ui', $text, $m)) {
             return strtotime("{$m[1]} {$m[3]} {$m[4]} 00:00");
@@ -47,7 +47,7 @@ class DateHelper
         return 0;
     }
 
-    public static function textMonthToDigital(string $month, string $default = '01'): string
+    public function textMonthToDigital(string $month, string $default = '01'): string
     {
         $mond = [
             'jan' => '01',
