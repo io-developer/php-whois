@@ -9,6 +9,9 @@ use Iodev\Whois\Loaders\SocketLoader;
 use Iodev\Whois\Modules\Asn\AsnModule;
 use Iodev\Whois\Modules\Asn\AsnServerProvider;
 use Iodev\Whois\Modules\Asn\AsnServerProviderInterface;
+use Iodev\Whois\Modules\Tld\Parsers\BlockParser;
+use Iodev\Whois\Modules\Tld\Parsers\CommonParser;
+use Iodev\Whois\Modules\Tld\Parsers\IndentParser;
 use Iodev\Whois\Modules\Tld\TldModule;
 use Iodev\Whois\Modules\Tld\TldParserProvider;
 use Iodev\Whois\Modules\Tld\TldParserProviderInterface;
@@ -16,6 +19,7 @@ use Iodev\Whois\Modules\Tld\TldServerProvider;
 use Iodev\Whois\Modules\Tld\TldServerProviderInterface;
 use Iodev\Whois\Punycode\IPunycode;
 use Iodev\Whois\Punycode\IntlPunycode;
+use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Whois;
 
 class ContainerBuilder
@@ -56,6 +60,7 @@ class ContainerBuilder
 
                 $instance = new TldModule(
                     $this->container->get(ILoader::class),
+                    $this->container->get(DomainTool::class),
                 );
                 $instance->setServers($servers);
 
@@ -83,6 +88,24 @@ class ContainerBuilder
                 );
             },
 
+            CommonParser::class => function() {
+                return new CommonParser(
+                    $this->container->get(DomainTool::class),
+                );
+            },
+
+            BlockParser::class => function() {
+                return new BlockParser(
+                    $this->container->get(DomainTool::class),
+                );
+            },
+
+            IndentParser::class => function() {
+                return new IndentParser(
+                    $this->container->get(DomainTool::class),
+                );
+            },
+
             AsnModule::class => function() {
                 /** @var AsnServerProviderInterface */
                 $provider = $this->container->get(AsnServerProviderInterface::class);
@@ -102,6 +125,12 @@ class ContainerBuilder
             AsnServerProvider::class => function() {
                 return new AsnServerProvider(
                     $this->container,
+                );
+            },
+
+            DomainTool::class => function() {
+                return new DomainTool(
+                    $this->container->get(IPunycode::class),
                 );
             },
         ]);

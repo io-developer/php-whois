@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Helpers\DateHelper;
-use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
@@ -78,7 +77,7 @@ class BlockParser extends CommonParser
             ->setDomainKeys($this->domainKeys)
             ->setSubsetParams([
                 '$domain' => $response->domain,
-                '$domainUnicode' => DomainHelper::toUnicode($response->domain),
+                '$domainUnicode' => $this->domainTool->toUnicode($response->domain),
             ]);
 
         $reserved = $rootFilter->cloneMe()

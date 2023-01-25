@@ -7,18 +7,16 @@ namespace Iodev\Whois\Modules\Asn;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\WhoisException;
 use Iodev\Whois\Loaders\ILoader;
-use Iodev\Whois\Modules\Module;
-use Iodev\Whois\Modules\ModuleType;
 
-class AsnModule extends Module
+class AsnModule
 {
-    public function __construct(ILoader $loader)
-    {
-        parent::__construct(ModuleType::ASN, $loader);
-    }
-
     /** @var AsnServer[] */
-    private $servers = [];
+    protected array $servers = [];
+
+
+    public function __construct(
+        protected ILoader $loader,
+    ) {}
 
     /**
      * @return AsnServer[]
@@ -76,7 +74,7 @@ class AsnModule extends Module
      * @throws ConnectionException
      * @throws WhoisException
      */
-    private function loadData(string $asn): array
+    protected function loadData(string $asn): array
     {
         $response = null;
         $info = null;
@@ -102,11 +100,11 @@ class AsnModule extends Module
      * @throws ConnectionException
      * @throws WhoisException
      */
-    private function loadResponse(string $asn, AsnServer $server): AsnResponse
+    protected function loadResponse(string $asn, AsnServer $server): AsnResponse
     {
         $host = $server->host;
         $query = $server->buildQuery($asn);
-        $text = $this->getLoader()->loadText($host, $query);
+        $text = $this->loader->loadText($host, $query);
         return new AsnResponse(
             $asn,
             $host,

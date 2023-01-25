@@ -2,38 +2,42 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Helpers;
+namespace Iodev\Whois\Tool;
 
-use Iodev\Whois\Factory;
+use Iodev\Whois\Punycode\IPunycode;
 
-class DomainHelper
+class DomainTool
 {
-    public static function compareNames(string $a, string $b): bool
+    public function __construct(
+        protected IPunycode $punycode,
+    ) {}
+
+    public function compareNames(string $a, string $b): bool
     {
         $a = self::toAscii($a);
         $b = self::toAscii($b);
         return ($a == $b);
     }
     
-    public static function toAscii(string $domain): string
+    public function toAscii(string $domain): string
     {
         if (empty($domain) || strlen($domain) >= 255) {
             return '';
         }
         $cor = self::correct($domain);
-        return Factory::get()->createPunycode()->encode($cor);
+        return $this->punycode->encode($cor);
     }
     
-    public static function toUnicode(string $domain): string
+    public function toUnicode(string $domain): string
     {
         if (empty($domain) || strlen($domain) >= 255) {
             return '';
         }
         $cor = self::correct($domain);
-        return Factory::get()->createPunycode()->decode($cor);
+        return $this->punycode->decode($cor);
     }
 
-    public static function filterAscii(string $domain): string
+    public function filterAscii(string $domain): string
     {
         $domain = self::correct($domain);
         // Pick first part before space
@@ -45,7 +49,7 @@ class DomainHelper
         return $domain;
     }
 
-    private static function correct(string $domain): string
+    public function correct(string $domain): string
     {
         $domain = trim($domain);
         // Fix for .UZ whois response

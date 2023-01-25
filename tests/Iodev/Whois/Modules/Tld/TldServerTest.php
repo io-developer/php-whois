@@ -6,6 +6,7 @@ namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Modules\Tld\Parsers\TestCommonParser;
+use Iodev\Whois\Tool\DomainTool;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -20,6 +21,12 @@ class TldServerTest extends TestCase
         parent::__construct();
 
         $this->container = (new ContainerBuilder())->configure()->getContainer();
+        $this->container->bind(TestCommonParser::class, function() {
+            return new TestCommonParser(
+                $this->container->get(DomainTool::class),
+            );
+        });
+
         $this->tldServerProvider = $this->container->get(TldServerProviderInterface::class);
 
         $this->parser = $this->container->get($this->getParserClass());
@@ -30,7 +37,7 @@ class TldServerTest extends TestCase
 
     private function getServerClass()
     {
-        return '\Iodev\Whois\Modules\Tld\TldServer';
+        return TldServer::class;
     }
 
     private function getParser()

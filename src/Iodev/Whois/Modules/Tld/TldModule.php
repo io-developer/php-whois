@@ -7,26 +7,22 @@ namespace Iodev\Whois\Modules\Tld;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Exceptions\WhoisException;
-use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Loaders\ILoader;
-use Iodev\Whois\Modules\Module;
-use Iodev\Whois\Modules\ModuleType;
+use Iodev\Whois\Tool\DomainTool;
 
-class TldModule extends Module
+class TldModule
 {
-    /**
-     * @param ILoader $loader
-     */
-    public function __construct(ILoader $loader)
-    {
-        parent::__construct(ModuleType::TLD, $loader);
-    }
+    /** @var TldServer[] */
+    protected array $servers = [];
 
     /** @var TldServer[] */
-    protected $servers = [];
+    protected array $lastUsedServers = [];
 
-    /** @var TldServer[] */
-    protected $lastUsedServers = [];
+
+    public function __construct(
+        protected ILoader $loader,
+        protected DomainTool $domainTool,
+    ) {}
 
     /**
      * @return TldServer[]
@@ -100,7 +96,7 @@ class TldModule extends Module
      */
     public function matchServers(string $domain, bool $quiet = false): array
     {
-        $domainAscii = DomainHelper::toAscii($domain);
+        $domainAscii = $this->domainTool->toAscii($domain);
         $servers = [];
         foreach ($this->servers as $server) {
             $matchedCount = $server->matchDomainZone($domainAscii);
@@ -156,7 +152,7 @@ class TldModule extends Module
     {
         $host = $host ?: $server->host;
         $query = $server->buildDomainQuery($domain, $strict);
-        $text = $this->getLoader()->loadText($host, $query);
+        $text = $this->loader->loadText($host, $query);
         return new TldResponse(
             $domain,
             $host,
@@ -173,7 +169,7 @@ class TldModule extends Module
     public function loadDomainData(string $domain, array $servers): array
     {
         $this->lastUsedServers = [];
-        $domain = DomainHelper::toAscii($domain);
+        $domain = $this->domainTool->toAscii($domain);
         $response = null;
         $info = null;
         $lastError = null;

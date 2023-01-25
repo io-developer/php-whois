@@ -4,31 +4,32 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Helpers;
 
+use Iodev\Whois\Tool\DomainTool;
+
 class GroupFilter
 {
     use GroupTrait;
 
+    public function __construct(
+        protected DomainTool $domainTool,
+    ) {}
+
     /**
-     * @param string $domain
      * @param string[] $domainKeys
-     * @return $this
      */
-    public function filterIsDomain($domain, $domainKeys)
+    public function filterIsDomain(string $domain, array $domainKeys): static
     {
         $groups = GroupHelper::findDomainGroups(
             $this->groups,
             $domain,
             $domainKeys,
-            $this->matchFirstOnly
+            $this->matchFirstOnly,
+            $this->domainTool,
         );
         return $this->setGroups($groups);
     }
 
-    /**
-     * @param array $subsets
-     * @return $this
-     */
-    public function filterHasSubsetOf($subsets)
+    public function filterHasSubsetOf(array $subsets): static
     {
         $subsets = GroupHelper::renderSubsets($subsets, $this->subsetParams);
         $groups = GroupHelper::findGroupsHasSubsetOf(
@@ -40,11 +41,7 @@ class GroupFilter
         return $this->setGroups($groups);
     }
 
-    /**
-     * @param array $subsetKeys
-     * @return $this
-     */
-    public function filterHasSubsetKeyOf($subsetKeys)
+    public function filterHasSubsetKeyOf(array $subsetKeys): static
     {
         $subsets = [];
         foreach ($subsetKeys as $k) {
@@ -59,10 +56,7 @@ class GroupFilter
         return $this->setGroups($groups);
     }
 
-    /**
-     * @return $this
-     */
-    public function filterHasHeader()
+    public function filterHasHeader(): static
     {
         $groups = GroupHelper::findGroupsHasSubsetOf(
             $this->groups,
@@ -75,10 +69,8 @@ class GroupFilter
 
     /**
      * Replaces special empty values by NULL
-     * @param array $extraDict
-     * @return $this
      */
-    public function handleEmpty($extraDict = [])
+    public function handleEmpty(array $extraDict = []): static
     {
         foreach ($this->groups as $index => &$group) {
             foreach ($group as $k => &$v) {
@@ -96,10 +88,7 @@ class GroupFilter
         return $this;
     }
 
-    /**
-     * @return GroupSelector
-     */
-    public function toSelector()
+    public function toSelector(): GroupSelector
     {
         return $this->createSelector()
             ->setGroups($this->groups)
@@ -109,11 +98,8 @@ class GroupFilter
             ->setSubsetParams($this->subsetParams);
     }
 
-    /**
-     * @return GroupSelector
-     */
     protected function createSelector(): GroupSelector
     {
-        return new GroupSelector();
+        return new GroupSelector($this->domainTool);
     }
 }

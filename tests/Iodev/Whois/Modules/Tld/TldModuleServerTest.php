@@ -4,34 +4,39 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Tld;
 
+use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loaders\FakeSocketLoader;
+use Iodev\Whois\Loaders\ILoader;
 use PHPUnit\Framework\TestCase;
 
 class TldModuleServerTest extends TestCase
 {
-    /**
-     * @param $zone
-     * @return TldServer
-     */
-    private function createServer($zone)
-    {
-        $container = (new ContainerBuilder())->configure()->getContainer();
+    private Container $container;
+    private TldParserProviderInterface $parserProvider;
+    private TldModule $mod;
 
-        /** @var TldParserProviderInterface */
-        $parserProvider = $container->get(TldParserProviderInterface::class);
-        $parser = $parserProvider->getDefault();
+    public function __construct()
+    {
+        parent::__construct();
+        
+        $this->container = (new ContainerBuilder())->configure()->getContainer();
+        $this->container->bind(ILoader::class, fn() => new FakeSocketLoader());
+
+        $this->parserProvider = $this->container->get(TldParserProviderInterface::class);
+    }
+
+    private function createServer(string $zone): TldServer
+    {
+        $parser = $this->parserProvider->getDefault();
 
         return new TldServer($zone, "some.host.net", false, $parser, "%s\r\n");
     }
 
-    /** @var TldModule */
-    private $mod;
-
-
     public function setUp(): void
     {
-        $this->mod = new TldModule(new FakeSocketLoader());
+        $this->mod = $this->container->get(TldModule::class);
+        $this->mod->setServers([]);
     }
 
     public function tearDown(): void

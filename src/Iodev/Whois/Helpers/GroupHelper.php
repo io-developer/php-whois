@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Helpers;
 
+use Iodev\Whois\Tool\DomainTool;
+
 class GroupHelper
 {
     /**
@@ -220,25 +222,23 @@ class GroupHelper
         return true;
     }
 
-    /**
-     * @param array $groups
-     * @param string $domain
-     * @param string[] $domainKeys
-     * @param bool $stopOnFirst
-     * @return array
-     */
-    public static function findDomainGroups($groups, $domain, $domainKeys, $stopOnFirst = false)
-    {
+    public static function findDomainGroups(
+        array $groups,
+        string $domain,
+        array $domainKeys,
+        bool $stopOnFirst,
+        DomainTool $domainTool,
+    ): array {
         $foundGroups = [];
         foreach ($groups as $group) {
             $foundDomain = null;
             foreach (self::matchKeys($group, $domainKeys, true) as $val) {
-                $foundDomain = DomainHelper::toAscii($val);
+                $foundDomain = $domainTool->toAscii($val);
                 if (!empty($foundDomain)) {
                     break;
                 }
             }
-            if ($foundDomain && DomainHelper::compareNames($foundDomain, $domain)) {
+            if ($foundDomain && $domainTool->compareNames($foundDomain, $domain)) {
                 $foundGroups[] = $group;
                 if ($stopOnFirst) {
                     break;

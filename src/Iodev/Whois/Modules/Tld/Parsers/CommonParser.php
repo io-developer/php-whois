@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
-use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Helpers\GroupFilter;
 use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
+use Iodev\Whois\Tool\DomainTool;
 
 class CommonParser extends TldParser
 {
@@ -60,6 +60,10 @@ class CommonParser extends TldParser
         "" => 1,
         "not.defined." => 1,
     ];
+
+    public function __construct(
+        protected DomainTool $domainTool,
+    ) {}
 
     /**
      * @return string
@@ -154,7 +158,7 @@ class CommonParser extends TldParser
             $response,
             $data['parserType'] ?? '',
             $domainName,
-            $domainName ? DomainHelper::toUnicode($domainName) : '',
+            $domainName ? $this->domainTool->toUnicode($domainName) : '',
             $data['whoisServer'] ?? '',
             $data['nameServers'] ?? [],
             $data['creationDate'] ?? 0,
@@ -170,7 +174,7 @@ class CommonParser extends TldParser
 
     protected function createGroupFilter(): GroupFilter
     {
-        return new GroupFilter();
+        return new GroupFilter($this->domainTool);
     }
 
     protected function filterFrom(TldResponse $response): GroupFilter

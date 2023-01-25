@@ -9,19 +9,24 @@ use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\ServerMismatchException;
-use Iodev\Whois\Helpers\DomainHelper;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\FakeSocketLoader;
+use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Whois;
 use PHPUnit\Framework\TestCase;
 
 class TldParsingTest extends TestCase
 {
+    // statics due to performance & memory decreacing
+    // without statics: instatiating x NUM OF TEST DATA
+    // maybe needed to be refactored to singletons into base TestCase
+    
     private static ?Container $container = null;
     private static ?FakeSocketLoader $loader = null;
     private static ?Whois $whois = null;
+    private static ?DomainTool $domainTool = null;
 
-    public function setUp(): void
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         if (self::$loader === null) {
             self::$loader = new FakeSocketLoader();
@@ -30,12 +35,23 @@ class TldParsingTest extends TestCase
             self::$container = (new ContainerBuilder())
                 ->configure()
                 ->getContainer()
-                ->bind(ILoader::class, fn() => self::$loader)
+                ->bind(ILoader::class, function() {
+                    return self::$loader;
+                })
             ;
         }
         if (self::$whois === null) {
             self::$whois = self::$container->get(Whois::class);
         }
+        if (self::$domainTool === null) {
+            self::$domainTool = self::$container->get(DomainTool::class);
+        }
+
+        parent::__construct($name, $data, $dataName);
+    }
+
+    public function setUp(): void
+    {
     }
     
     /**
@@ -192,12 +208,12 @@ class TldParsingTest extends TestCase
             };
             foreach ($list as $index => $item) {
                 list ($domain) = $item;
-                $domainUnicode = DomainHelper::toUnicode($domain);
+                $domainUnicode = self::$domainTool->toUnicode($domain);
                 $domainUnicode = $domain == $domainUnicode ? '' : $domainUnicode;
 
                 $parts = explode('.', $domain);
                 $tld = mb_strtoupper(end($parts));
-                $tldUnicode = mb_strtoupper(DomainHelper::toUnicode($tld));
+                $tldUnicode = mb_strtoupper(self::$domainTool->toUnicode($tld));
                 $tldUnicode = $tld == $tldUnicode ? '' : $tldUnicode;
 
                 $key = sprintf(

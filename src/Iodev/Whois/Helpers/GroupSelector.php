@@ -4,12 +4,20 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Helpers;
 
+use Iodev\Whois\Tool\DomainTool;
+
 class GroupSelector
 {
     use GroupTrait;
+    
 
     /** @var array */
-    private $items = [];
+    private array $items = [];
+
+
+    public function __construct(
+        protected DomainTool $domainTool,
+    ) {}
 
     /**
      * @return bool
@@ -134,7 +142,8 @@ class GroupSelector
     {
         foreach ($this->items as &$item) {
             if ($item && preg_match('~([-\pL\d]+\.)+[-\pL\d]+~ui', $item, $m)) {
-                $item = DomainHelper::filterAscii(DomainHelper::toAscii($m[0]));
+                $ascii = $this->domainTool->toAscii($m[0]);
+                $item = $this->domainTool->filterAscii($ascii);
             } else {
                 $item = '';
             }
@@ -149,7 +158,8 @@ class GroupSelector
     {
         foreach ($this->items as &$item) {
             $raw = is_string($item) ? trim($item, '.') : '';
-            $item = DomainHelper::filterAscii(DomainHelper::toAscii($raw));
+            $ascii = $this->domainTool->toAscii($raw);
+            $item = $this->domainTool->filterAscii($ascii);
             if ($item && !preg_match('~^([-\pL\d]+\.)+[-\pL\d]+$~ui', $item)) {
                 if (!preg_match('~^[a-z\d]+-norid$~ui', $item)) {
                     $item = '';
