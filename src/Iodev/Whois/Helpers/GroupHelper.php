@@ -213,7 +213,7 @@ class GroupHelper
                     break;
                 }
             }
-            if ($foundDomain && $domainTool->compareNames($foundDomain, $domain)) {
+            if ($foundDomain && $domainTool->isEqual($foundDomain, $domain)) {
                 $foundGroups[] = $group;
                 if ($stopOnFirst) {
                     break;

@@ -12,11 +12,11 @@ class DomainTool
         protected IPunycode $punycode,
     ) {}
 
-    public function compareNames(string $a, string $b): bool
+    public function isEqual(string $a, string $b): bool
     {
-        $a = self::toAscii($a);
-        $b = self::toAscii($b);
-        return ($a == $b);
+        $a = $this->toAscii($a);
+        $b = $this->toAscii($b);
+        return $a === $b;
     }
     
     public function toAscii(string $domain): string
@@ -24,7 +24,7 @@ class DomainTool
         if (empty($domain) || strlen($domain) >= 255) {
             return '';
         }
-        $cor = self::correct($domain);
+        $cor = $this->correct($domain);
         return $this->punycode->encode($cor);
     }
     
@@ -33,18 +33,18 @@ class DomainTool
         if (empty($domain) || strlen($domain) >= 255) {
             return '';
         }
-        $cor = self::correct($domain);
+        $cor = $this->correct($domain);
         return $this->punycode->decode($cor);
     }
 
     public function filterAscii(string $domain): string
     {
-        $domain = self::correct($domain);
+        $domain = $this->correct($domain);
         // Pick first part before space
-        $domain = explode(" ", $domain)[0];
+        $domain = explode(' ', $domain)[0];
         // All symbols must be valid
         if (preg_match('~[^-.\da-z]+~ui', $domain)) {
-            return "";
+            return '';
         }
         return $domain;
     }
