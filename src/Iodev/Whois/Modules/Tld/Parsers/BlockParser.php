@@ -117,7 +117,10 @@ class BlockParser extends CommonParser
             'primaryFilter' => $primaryFilter,
             'reserved' => $reserved,
         ]);
-        return $isReserved || $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
+        return $isReserved || $this->isnfoRankCalculator->isValuable($info, $this->notRegisteredStatesDict)
+            ? $info
+            : null
+        ;
     }
 
     protected function parseDomain(GroupFilter $domainFilter): string

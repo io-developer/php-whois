@@ -25,6 +25,7 @@ class TldServerTest extends TestCase
         $this->container = (new ContainerBuilder())->configure()->getContainer();
         $this->container->bind(TestCommonParser::class, function() {
             return new TestCommonParser(
+                $this->container->get(TldInfoRankCalculator::class),
                 $this->container->get(ParserTool::class),
                 $this->container->get(DomainTool::class),
                 $this->container->get(DateTool::class),

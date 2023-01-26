@@ -11,9 +11,11 @@ use Iodev\Whois\Modules\Asn\AsnModule;
 use Iodev\Whois\Modules\Asn\AsnParser;
 use Iodev\Whois\Modules\Asn\AsnServerProvider;
 use Iodev\Whois\Modules\Asn\AsnServerProviderInterface;
+use Iodev\Whois\Modules\Tld\Parsers\AutoParser;
 use Iodev\Whois\Modules\Tld\Parsers\BlockParser;
 use Iodev\Whois\Modules\Tld\Parsers\CommonParser;
 use Iodev\Whois\Modules\Tld\Parsers\IndentParser;
+use Iodev\Whois\Modules\Tld\TldInfoRankCalculator;
 use Iodev\Whois\Modules\Tld\TldModule;
 use Iodev\Whois\Modules\Tld\TldParserProvider;
 use Iodev\Whois\Modules\Tld\TldParserProviderInterface;
@@ -107,6 +109,7 @@ class ContainerBuilder
 
             CommonParser::class => function() {
                 return new CommonParser(
+                    $this->container->get(TldInfoRankCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
@@ -115,6 +118,7 @@ class ContainerBuilder
 
             BlockParser::class => function() {
                 return new BlockParser(
+                    $this->container->get(TldInfoRankCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
@@ -123,9 +127,16 @@ class ContainerBuilder
 
             IndentParser::class => function() {
                 return new IndentParser(
+                    $this->container->get(TldInfoRankCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
+                );
+            },
+
+            AutoParser::class => function() {
+                return new AutoParser(
+                    $this->container->get(TldInfoRankCalculator::class),
                 );
             },
 

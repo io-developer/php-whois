@@ -6,6 +6,7 @@ namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Selection\GroupFilter;
 use Iodev\Whois\Modules\Tld\TldInfo;
+use Iodev\Whois\Modules\Tld\TldInfoRankCalculator;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Tool\DateTool;
@@ -63,6 +64,7 @@ class CommonParser extends TldParser
     ];
 
     public function __construct(
+        protected TldInfoRankCalculator $isnfoRankCalculator,
         protected ParserTool $parserTool,
         protected DomainTool $domainTool,
         protected DateTool $dateTool,
@@ -151,7 +153,11 @@ class CommonParser extends TldParser
             'groups' => $rootFilter->getGroups(),
             'rootFilter' => $rootFilter,
         ]);
-        return $info->isValuable($this->notRegisteredStatesDict) ? $info : null;
+        
+        return $this->isnfoRankCalculator->isValuable($info, $this->notRegisteredStatesDict)
+            ? $info
+            : null
+        ;
     }
 
     protected function createDomainInfo(TldResponse $response, array $data, array $extra = []): TldInfo

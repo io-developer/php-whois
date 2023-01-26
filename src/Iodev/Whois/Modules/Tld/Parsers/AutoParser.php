@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Modules\Tld\TldInfo;
+use Iodev\Whois\Modules\Tld\TldInfoRankCalculator;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
 
@@ -12,6 +13,10 @@ class AutoParser extends TldParser
 {
     /** @var TldParser[] */
     protected $parsers = [];
+
+    public function __construct(
+        protected TldInfoRankCalculator $infoRankCalculator,
+    ) {}
 
     public function getType(): string
     {
@@ -54,15 +59,15 @@ class AutoParser extends TldParser
     public function parseResponse(TldResponse $response): ?TldInfo
     {
         $bestInfo = null;
-        $bestVal = 0;
+        $bestRank = 0;
         foreach ($this->parsers as $parser) {
             $info = $parser->setOptions($this->options)->parseResponse($response);
             if (!$info) {
                 continue;
             }
-            $val = $info->calcValuation();
-            if ($val > $bestVal) {
-                $bestVal = $val;
+            $rank = $this->infoRankCalculator->calcRank($info);
+            if ($rank > $bestRank) {
+                $bestRank = $rank;
                 $bestInfo = $info;
             }
         }
