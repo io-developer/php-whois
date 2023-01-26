@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Helpers;
+namespace Iodev\Whois\Selection;
 
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
@@ -10,9 +10,9 @@ use Iodev\Whois\Tool\DomainTool;
 class GroupSelector
 {
     use GroupTrait;
-    
 
-    private array $items = [];
+
+    protected array $items = [];
 
 
     public function __construct(

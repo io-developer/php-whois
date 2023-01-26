@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
-use Iodev\Whois\Helpers\GroupFilter;
+use Iodev\Whois\Selection\GroupFilter;
 use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;

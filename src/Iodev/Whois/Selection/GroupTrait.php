@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Helpers;
+namespace Iodev\Whois\Selection;
 
 trait GroupTrait
 {
-    private array $groups = [];
-    private string $headerKey = '$header';
-    private array $domainKeys = [];
-    private array $subsetParams = [];
-    private bool $matchFirstOnly = false;
-    private bool $ignoreCase = false;
+    protected array $groups = [];
+    protected string $headerKey = '$header';
+    protected array $domainKeys = [];
+    protected array $subsetParams = [];
+    protected bool $matchFirstOnly = false;
+    protected bool $ignoreCase = false;
 
 
     public function cloneMe(): static
