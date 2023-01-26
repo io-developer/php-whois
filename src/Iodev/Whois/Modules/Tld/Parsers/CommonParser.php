@@ -141,7 +141,7 @@ class CommonParser extends TldParser
 
             "states" => $sel->clean()
                 ->selectKeys($this->statesKeys)
-                ->mapStates()
+                ->transform(fn($items) => $this->transformItemsIntoStates($items))
                 ->removeEmpty()
                 ->removeDuplicates()
                 ->getAll(),
@@ -202,5 +202,18 @@ class CommonParser extends TldParser
     {
         $lines = ParserHelper::splitLines($text);
         return ParserHelper::linesToGroups($lines, $this->headerKey);
+    }
+
+    protected function transformItemsIntoStates(array $items): array
+    {
+        $states = [];
+        foreach ($items as $item) {
+            foreach (ParserHelper::parseStates($item) as $k => $state) {
+                if (is_int($k) && is_string($state)) {
+                    $states[] = $state;
+                }
+            }
+        }
+        return $states;
     }
 }

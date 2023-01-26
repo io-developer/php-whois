@@ -20,18 +20,12 @@ class GroupSelector
         protected DateTool $dateTool,
     ) {}
 
-    /**
-     * @return bool
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->items);
     }
 
-    /**
-     * @return array
-     */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->items;
     }
@@ -114,6 +108,22 @@ class GroupSelector
         return $this;
     }
 
+    /**
+     * @param callable $fn(array $input): array
+     * Transform source items -> to new items (array lengths may be different)
+     */
+    public function transform(callable $fn): static
+    {
+        $this->items = $fn($this->items);
+        return $this;
+    }
+
+    public function map(callable $fn): static
+    {
+        $this->items = array_map($fn, $this->items);
+        return $this;
+    }
+
     public function mapDomain(): static
     {
         foreach ($this->items as &$item) {
@@ -144,26 +154,11 @@ class GroupSelector
 
     public function mapUnixTime(bool $inverseMMDD = false): static
     {
-        $this->items = array_map(function($item) use ($inverseMMDD) {
+        return $this->map(function($item) use ($inverseMMDD) {
             return is_string($item)
                 ? $this->dateTool->parseDate($item, $inverseMMDD)
                 : 0
             ;
-        }, $this->items);
-        return $this;
-    }
-
-    public function mapStates(bool $removeExtra = true): static
-    {
-        $states = [];
-        foreach ($this->items as $item) {
-            foreach (ParserHelper::parseStates($item, $removeExtra) as $k => $state) {
-                if (is_int($k) && is_string($state)) {
-                    $states[] = $state;
-                }
-            }
-        }
-        $this->items = $states;
-        return $this;
+        });
     }
 }

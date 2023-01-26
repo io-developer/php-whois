@@ -87,7 +87,7 @@ class IndentParser extends BlockParser
             ->toSelector()
             ->selectItems(parent::parseStates($rootFilter, $primaryFilter))
             ->selectKeys($this->statesKeys)
-            ->mapStates()
+            ->transform(fn($items) => $this->transformItemsIntoStates($items))
             ->removeEmpty()
             ->removeDuplicates()
             ->getAll();

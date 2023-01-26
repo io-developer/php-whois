@@ -147,7 +147,7 @@ class BlockParser extends CommonParser
     {
         $states = $primaryFilter->toSelector()
             ->selectKeys($this->statesKeys)
-            ->mapStates()
+            ->transform(fn($items) => $this->transformItemsIntoStates($items))
             ->removeEmpty()
             ->removeDuplicates()
             ->getAll();
@@ -166,7 +166,7 @@ class BlockParser extends CommonParser
             ->toSelector()
             ->selectItems($extraStates)
             ->selectKeys($this->statesKeys)
-            ->mapStates()
+            ->transform(fn($items) => $this->transformItemsIntoStates($items))
             ->removeEmpty()
             ->removeDuplicates()
             ->getAll();
