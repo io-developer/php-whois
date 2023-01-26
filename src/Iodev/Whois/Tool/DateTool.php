@@ -8,43 +8,62 @@ class DateTool
 {
     public function parseDate(string $datestamp, bool $inverseMMDD = false): int
     {
+        $stamp = $this->normalizeDateStamp($datestamp, $inverseMMDD);
+        return (int)strtotime($stamp);
+    }
+
+    public function normalizeDateStamp(string $datestamp, bool $inverseMMDD = false): string
+    {
         $s = trim($datestamp);
         if (preg_match('/^\d{2}[-\s]+\w+[-\s]+\d{4}[-\s]+\d{2}:\d{2}(:\d{2})?([-\s]+\w+)?/ui', $s)) {
-            // pass
-        } elseif (preg_match('/^(\d{4})\.\s*(\d{2})\.\s*(\d{2})\.?\s*$/ui', $s, $m)) {
-            $s = "{$m[1]}-{$m[2]}-{$m[3]}T00:00:00";
-        } elseif (preg_match('/^\d{4}\.\d{2}\.\d{2}\s+\d{2}:\d{2}:\d{2}/ui', $s)) {
-            $s = str_replace(".", "-", $s);
-        } elseif (preg_match('/^(\d{2})-(\w+)-(\d{4})\s+(\d{2}:\d{2}:\d{2})/ui', $s, $m)) {
-            $month = $this->textMonthToDigital($m[2]);
-            $s = "{$m[3]}-{$month}-{$m[1]}T{$m[4]}";
-        } elseif (preg_match('/^(\d{2})[-\.](\d{2})[-\.](\d{4})$/ui', $s, $m)) {
-            $s = "{$m[3]}-{$m[2]}-{$m[1]}T00:00:00";
-        } elseif (preg_match('/^(\d{2})[-\s]+(\w+)[-\s]+(\d{4})/ui', $s, $m)) {
-            $month = $this->textMonthToDigital($m[2]);
-            $s = "{$m[3]}-{$month}-{$m[1]}T00:00:00";
-        } elseif (preg_match('/^(\d{4})(\d{2})(\d{2})$/ui', preg_replace('/\s*#.*/ui', '', $s), $m)) {
-            $s = "{$m[1]}-{$m[2]}-{$m[3]}T00:00:00";
-        } elseif (preg_match('~^(\d{2})/(\d{2})/(\d{4})$~ui', $s, $m)) {
-            $s = $inverseMMDD
-                ? "{$m[3]}-{$m[2]}-{$m[1]}T00:00:00"
-                : "{$m[3]}-{$m[1]}-{$m[2]}T00:00:00";
-        } elseif (preg_match('/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+\(GMT([-+]\d+:\d{2})\)$/ui', $s, $m)) {
-            $s = "{$m[1]}T{$m[2]}{$m[3]}";
+            return $s;
         }
-        return (int)strtotime($s);
+        if (preg_match('/^(\d{4})\.\s*(\d{2})\.\s*(\d{2})\.?\s*$/ui', $s, $m)) {
+            return sprintf('%s-%s-%sT00:00:00', $m[1], $m[2], $m[3]);
+        }
+        if (preg_match('/^\d{4}\.\d{2}\.\d{2}\s+\d{2}:\d{2}:\d{2}/ui', $s)) {
+            return str_replace(".", "-", $s);
+        }
+        if (preg_match('/^(\d{2})-(\w+)-(\d{4})\s+(\d{2}:\d{2}:\d{2})/ui', $s, $m)) {
+            return sprintf('%s-%s-%sT%s', $m[3], $this->textMonthToDigital($m[2]), $m[1], $m[4]);
+        }
+        if (preg_match('/^(\d{2})[-\.](\d{2})[-\.](\d{4})$/ui', $s, $m)) {
+            return sprintf('%s-%s-%sT00:00:00', $m[3], $m[2], $m[1]);
+        }
+        if (preg_match('/^(\d{2})[-\s]+(\w+)[-\s]+(\d{4})/ui', $s, $m)) {
+            return sprintf('%s-%s-%sT00:00:00', $m[3], $this->textMonthToDigital($m[2]), $m[1]);
+        }
+        if (preg_match('/^(\d{4})(\d{2})(\d{2})$/ui', preg_replace('/\s*#.*/ui', '', $s), $m)) {
+            return sprintf('%s-%s-%sT00:00:00', $m[1], $m[2], $m[3]);
+        }
+        if (preg_match('~^(\d{2})/(\d{2})/(\d{4})$~ui', $s, $m)) {
+            return $inverseMMDD
+                ? sprintf('%s-%s-%sT00:00:00', $m[3], $m[2], $m[1])
+                : sprintf('%s-%s-%sT00:00:00', $m[3], $m[1], $m[2])
+            ;
+        }
+        if (preg_match('/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+\(GMT([-+]\d+:\d{2})\)$/ui', $s, $m)) {
+            return sprintf('%sT%s%s', $m[1], $m[2], $m[3]);
+        }
+        return $s;
     }
 
     public function parseDateInText(string $text): int
     {
+        $stamp = $this->parseDateStampInText($text);
+        return $stamp !== null ? strtotime($stamp) : 0;
+
+    }
+
+    public function parseDateStampInText(string $text): ?string
+    {
         if (preg_match('~\b(\d{1,2})(nd|th|st)?[-\s]+([a-z]+)[-\s]+(\d{4})\b~ui', $text, $m)) {
-            return strtotime("{$m[1]} {$m[3]} {$m[4]} 00:00");
+            return sprintf('%s %s %s 00:00', $m[1], $m[3], $m[4]);
         }
         if (preg_match('~\b(\d{1,2})(nd|th|st)?[-\s]+([a-z]+)\b~ui', $text, $m)) {
-            $y = date('Y');
-            return strtotime("{$m[1]} {$m[3]} $y 00:00");
+            return sprintf('%s %s %s 00:00', $m[1], $m[3], date('Y'));
         }
-        return 0;
+        return null;
     }
 
     public function textMonthToDigital(string $month, string $default = '01'): string
