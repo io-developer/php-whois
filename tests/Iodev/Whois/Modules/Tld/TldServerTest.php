@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Container\Default\ContainerBuilder;
-use Iodev\Whois\Modules\Tld\Parsers\TestCommonParser;
+use Iodev\Whois\Modules\Tld\Parser\TestCommonParser;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;

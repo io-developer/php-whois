@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Modules\Tld\Parsers;
+namespace Iodev\Whois\Modules\Tld\Parser;
 
 use Iodev\Whois\Selection\GroupFilter;
 use Iodev\Whois\Modules\Tld\TldParser;

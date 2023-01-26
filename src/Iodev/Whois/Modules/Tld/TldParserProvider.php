@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Iodev\Whois\Modules\Tld;
 
 use Iodev\Whois\Config;
-use Iodev\Whois\Modules\Tld\Parsers\AutoParser;
-use Iodev\Whois\Modules\Tld\Parsers\BlockParser;
-use Iodev\Whois\Modules\Tld\Parsers\CommonParser;
-use Iodev\Whois\Modules\Tld\Parsers\IndentParser;
+use Iodev\Whois\Modules\Tld\Parser\AutoParser;
+use Iodev\Whois\Modules\Tld\Parser\BlockParser;
+use Iodev\Whois\Modules\Tld\Parser\CommonParser;
+use Iodev\Whois\Modules\Tld\Parser\IndentParser;
 use Psr\Container\ContainerInterface;
 
 class TldParserProvider implements TldParserProviderInterface
