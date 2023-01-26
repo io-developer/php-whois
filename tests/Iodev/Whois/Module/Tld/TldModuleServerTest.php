@@ -8,6 +8,7 @@ use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loader\FakeSocketLoader;
 use Iodev\Whois\Loader\LoaderInterface;
+use Iodev\Whois\Loader\ResponseHandler;
 use Iodev\Whois\Tool\TextTool;
 use PHPUnit\Framework\TestCase;
 
@@ -25,8 +26,7 @@ class TldModuleServerTest extends TestCase
         
         $this->container->bind(LoaderInterface::class, function() {
             return new FakeSocketLoader(
-                $this->container->get(TextTool::class),
-                60,
+                $this->container->get(ResponseHandler::class),
             );
         });
 

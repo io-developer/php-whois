@@ -6,18 +6,15 @@ namespace Iodev\Whois\Loader;
 
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Tool\TextTool;
 
 class SocketLoader implements LoaderInterface
 {
-    protected TextTool $textTool;
-    protected int $timeout = 0;
     protected bool $origEnv = false;
 
-
-    public function __construct(TextTool $textTool, int $timeout)
-    {
-        $this->textTool = $textTool;
+    public function __construct(
+        protected ResponseHandler $responseHandler,
+        protected int $timeout = 60,
+    ) {
         $this->setTimeout($timeout);
     }
 
@@ -66,18 +63,7 @@ class SocketLoader implements LoaderInterface
         }
         fclose($handle);
 
-        return $this->validateResponse($this->textTool->toUtf8($text));
-    }
-
-    /**
-     * @throws WhoisException
-     */
-    protected function validateResponse(string $text): string
-    {
-        if (preg_match('~^WHOIS\s+.*?LIMIT\s+EXCEEDED~ui', $text, $m)) {
-            throw new WhoisException($m[0]);
-        }
-        return $text;
+        return $this->responseHandler->handleText($text);
     }
 
     protected function setupEnv(): void

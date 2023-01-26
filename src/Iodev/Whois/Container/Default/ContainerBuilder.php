@@ -6,6 +6,7 @@ namespace Iodev\Whois\Container\Default;
 
 use Iodev\Whois\Loader\CurlLoader;
 use Iodev\Whois\Loader\LoaderInterface;
+use Iodev\Whois\Loader\ResponseHandler;
 use Iodev\Whois\Loader\SocketLoader;
 use Iodev\Whois\Module\Asn\AsnModule;
 use Iodev\Whois\Module\Asn\AsnParser;
@@ -56,10 +57,21 @@ class ContainerBuilder
                 return $this->container->get(SocketLoader::class);
             },
 
+            SocketLoader::class => function() {
+                return new SocketLoader(
+                    $this->container->get(ResponseHandler::class),
+                );
+            },
+
             CurlLoader::class => function() {
                 return new CurlLoader(
+                    $this->container->get(ResponseHandler::class),
+                );
+            },
+            
+            ResponseHandler::class => function() {
+                return new ResponseHandler(
                     $this->container->get(TextTool::class),
-                    60,
                 );
             },
 

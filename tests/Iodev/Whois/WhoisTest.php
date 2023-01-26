@@ -7,7 +7,7 @@ namespace Iodev\Whois;
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loader\FakeSocketLoader;
 use Iodev\Whois\Loader\LoaderInterface;
-use Iodev\Whois\Tool\TextTool;
+use Iodev\Whois\Loader\ResponseHandler;
 use PHPUnit\Framework\TestCase;
 
 class WhoisTest extends TestCase
@@ -23,8 +23,7 @@ class WhoisTest extends TestCase
             ->getContainer()
         ;
         $this->loader = new FakeSocketLoader(
-            $container->get(TextTool::class),
-            60,
+            $container->get(ResponseHandler::class),
         );
         $container->bind(LoaderInterface::class, fn() => $this->loader);
 

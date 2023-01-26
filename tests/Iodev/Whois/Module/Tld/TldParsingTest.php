@@ -12,6 +12,7 @@ use Iodev\Whois\Exception\ServerMismatchException;
 use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Loader\FakeSocketLoader;
+use Iodev\Whois\Loader\ResponseHandler;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\TextTool;
 use Iodev\Whois\Whois;
@@ -38,8 +39,7 @@ class TldParsingTest extends TestCase
         }
         if (self::$loader === null) {
             self::$loader = new FakeSocketLoader(
-                self::$container->get(TextTool::class),
-                60,
+                self::$container->get(ResponseHandler::class),
             );
             self::$container->bind(LoaderInterface::class, fn() => self::$loader);
         }

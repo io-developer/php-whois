@@ -9,7 +9,7 @@ use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Loader\FakeSocketLoader;
-use Iodev\Whois\Tool\TextTool;
+use Iodev\Whois\Loader\ResponseHandler;
 use Iodev\Whois\Whois;
 use PHPUnit\Framework\TestCase;
 
@@ -29,8 +29,7 @@ class AsnParsingTest extends TestCase
         }
         if (self::$loader === null) {
             self::$loader = new FakeSocketLoader(
-                self::$container->get(TextTool::class),
-                60,
+                self::$container->get(ResponseHandler::class),
             );
             self::$container->bind(LoaderInterface::class, fn() => self::$loader);
         }

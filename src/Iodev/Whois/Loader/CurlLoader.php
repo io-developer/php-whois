@@ -6,18 +6,15 @@ namespace Iodev\Whois\Loader;
 
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Tool\TextTool;
 
 class CurlLoader implements LoaderInterface
 {
-    protected TextTool $textTool;
-    protected int $timeout = 0;
     protected array $options = [];
 
-
-    public function __construct(TextTool $textTool, int $timeout)
-    {
-        $this->textTool = $textTool;
+    public function __construct(
+        protected ResponseHandler $responseHandler,
+        protected int $timeout = 60,
+    ) {
         $this->setTimeout($timeout);
     }
 
@@ -86,19 +83,7 @@ class CurlLoader implements LoaderInterface
         if ($result === false) {
             throw new ConnectionException($errstr, $errno);
         }
-        $fixedText = $this->textTool->toUtf8($result);
 
-        return $this->validateResponse($fixedText);
-    }
-
-    /**
-     * @throws WhoisException
-     */
-    protected function validateResponse(string $text): string
-    {
-        if (preg_match('~^WHOIS\s+.*?LIMIT\s+EXCEEDED~ui', $text, $m)) {
-            throw new WhoisException($m[0]);
-        }
-        return $text;
+        return $this->responseHandler->handleText($result);
     }
 }
