@@ -6,47 +6,37 @@ namespace Iodev\Whois\Loaders;
 
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\WhoisException;
-use Iodev\Whois\Helpers\TextHelper;
+use Iodev\Whois\Tool\TextTool;
 
 class SocketLoader implements ILoader
 {
-    public function __construct($timeout = 60)
+    protected TextTool $textTool;
+    protected int $timeout = 0;
+    protected bool $origEnv = false;
+
+
+    public function __construct(TextTool $textTool, int $timeout)
     {
+        $this->textTool = $textTool;
         $this->setTimeout($timeout);
     }
 
-    /** @var int */
-    private $timeout;
-
-    /** @var string|bool */
-    private $origEnv = false;
-
-    /**
-     * @return int
-     */
-    public function getTimeout()
+    public function getTimeout(): int
     {
         return $this->timeout;
     }
 
-    /**
-     * @param int $seconds
-     * @return $this
-     */
-    public function setTimeout($seconds)
+    public function setTimeout(int $seconds): static
     {
-        $this->timeout = max(0, (int)$seconds);
+        $this->timeout = max(0, $seconds);
         return $this;
     }
 
     /**
-     * @param string $whoisHost
-     * @param string $query
-     * @return string
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadText($whoisHost, $query)
+    public function loadText(string $whoisHost, string $query): string
     {
         $this->setupEnv();
         if (!gethostbynamel($whoisHost)) {
@@ -76,15 +66,13 @@ class SocketLoader implements ILoader
         }
         fclose($handle);
 
-        return $this->validateResponse(TextHelper::toUtf8($text));
+        return $this->validateResponse($this->textTool->toUtf8($text));
     }
 
     /**
-     * @param string $text
-     * @return mixed
      * @throws WhoisException
      */
-    private function validateResponse($text)
+    protected function validateResponse(string $text): string
     {
         if (preg_match('~^WHOIS\s+.*?LIMIT\s+EXCEEDED~ui', $text, $m)) {
             throw new WhoisException($m[0]);
@@ -92,20 +80,17 @@ class SocketLoader implements ILoader
         return $text;
     }
 
-    /**
-     *
-     */
-    private function setupEnv()
+    protected function setupEnv(): void
     {
         $this->origEnv = getenv('RES_OPTIONS');
         putenv("RES_OPTIONS=retrans:1 retry:1 timeout:{$this->timeout} attempts:1");
     }
 
-    /**
-     *
-     */
-    private function teardownEnv()
+    protected function teardownEnv(): void
     {
-        $this->origEnv === false ? putenv("RES_OPTIONS") : putenv("RES_OPTIONS={$this->origEnv}");
+        $this->origEnv === false
+            ? putenv("RES_OPTIONS")
+            : putenv("RES_OPTIONS={$this->origEnv}")
+        ;
     }
 }

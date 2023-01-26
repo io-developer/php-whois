@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Container\Default;
 
+use Iodev\Whois\Loaders\CurlLoader;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\SocketLoader;
 use Iodev\Whois\Modules\Asn\AsnModule;
@@ -21,6 +22,7 @@ use Iodev\Whois\Punycode\IPunycode;
 use Iodev\Whois\Punycode\IntlPunycode;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
+use Iodev\Whois\Tool\TextTool;
 use Iodev\Whois\Whois;
 
 class ContainerBuilder
@@ -42,8 +44,20 @@ class ContainerBuilder
         $this->container->bindMany([
             Container::ID_COMMON_CLASS_INSTANTIATOR => fn($clName) => new $clName(),
 
-            IPunycode::class => fn() => new IntlPunycode(),
-            ILoader::class => fn() => new SocketLoader(),
+            IPunycode::class => function() {
+                return $this->container->get(IntlPunycode::class);
+            },
+
+            ILoader::class => function() {
+                return $this->container->get(SocketLoader::class);
+            },
+
+            CurlLoader::class => function() {
+                return new CurlLoader(
+                    $this->container->get(TextTool::class),
+                    60,
+                );
+            },
 
             Whois::class => function() {
                 $instance = new Whois(

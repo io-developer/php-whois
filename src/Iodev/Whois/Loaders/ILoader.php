@@ -10,11 +10,8 @@ use Iodev\Whois\Exceptions\WhoisException;
 interface ILoader
 {
     /**
-     * @param string $whoisHost
-     * @param string $query
-     * @return string
      * @throws ConnectionException
      * @throws WhoisException
      */
-    function loadText($whoisHost, $query);
+    function loadText(string $whoisHost, string $query): string;
 }

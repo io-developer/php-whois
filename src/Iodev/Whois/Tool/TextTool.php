@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Helpers;
+namespace Iodev\Whois\Tool;
 
-class TextHelper
+class TextTool
 {
-    public static function toUtf8(string $text): string
+    public function toUtf8(string $text): string
     {
         $srcEncoding = mb_detect_encoding($text);
         if (!empty($srcEncoding) && strtolower($srcEncoding) !== 'utf-8') {

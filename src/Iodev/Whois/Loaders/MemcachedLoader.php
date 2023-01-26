@@ -4,40 +4,24 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Loaders;
 
-use Memcached;
+use \Memcached;
 use Iodev\Whois\Exceptions\ConnectionException;
 use Iodev\Whois\Exceptions\WhoisException;
 
 class MemcachedLoader implements ILoader
 {
-    public function __construct(ILoader $l, Memcached $m, $keyPrefix = "", $ttl = 3600)
-    {
-        $this->loader = $l;
-        $this->memcached = $m;
-        $this->keyPrefix = $keyPrefix;
-        $this->ttl = $ttl;
-    }
-
-    /** @var ILoader */
-    private $loader;
-
-    /** @var Memcached */
-    private $memcached;
-
-    /** @var string */
-    private $keyPrefix;
-
-    /** @var int */
-    private $ttl;
+    public function __construct(
+        protected ILoader $loader,
+        protected Memcached $memcached,
+        protected string $keyPrefix = "",
+        protected int $ttl = 3600,
+    ) {}
 
     /**
-     * @param string $whoisHost
-     * @param string $query
-     * @return string
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadText($whoisHost, $query)
+    public function loadText(string $whoisHost, string $query): string
     {
         $key = $this->keyPrefix . md5(serialize([$whoisHost, $query]));
         $val = $this->memcached->get($key);

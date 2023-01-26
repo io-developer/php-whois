@@ -12,6 +12,7 @@ use Iodev\Whois\Exceptions\ServerMismatchException;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Tool\DomainTool;
+use Iodev\Whois\Tool\TextTool;
 use Iodev\Whois\Whois;
 use PHPUnit\Framework\TestCase;
 
@@ -28,17 +29,18 @@ class TldParsingTest extends TestCase
 
     public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
-        if (self::$loader === null) {
-            self::$loader = new FakeSocketLoader();
-        }
         if (self::$container === null) {
             self::$container = (new ContainerBuilder())
                 ->configure()
                 ->getContainer()
-                ->bind(ILoader::class, function() {
-                    return self::$loader;
-                })
             ;
+        }
+        if (self::$loader === null) {
+            self::$loader = new FakeSocketLoader(
+                self::$container->get(TextTool::class),
+                60,
+            );
+            self::$container->bind(ILoader::class, fn() => self::$loader);
         }
         if (self::$whois === null) {
             self::$whois = self::$container->get(Whois::class);

@@ -7,6 +7,7 @@ namespace Iodev\Whois;
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Loaders\ILoader;
+use Iodev\Whois\Tool\TextTool;
 use PHPUnit\Framework\TestCase;
 
 class WhoisTest extends TestCase
@@ -17,13 +18,16 @@ class WhoisTest extends TestCase
 
     private function createWhois(): Whois
     {
-        $this->loader = new FakeSocketLoader();
-
         $container = (new ContainerBuilder())
             ->configure()
             ->getContainer()
-            ->bind(ILoader::class, fn() => $this->loader)
         ;
+        $this->loader = new FakeSocketLoader(
+            $container->get(TextTool::class),
+            60,
+        );
+        $container->bind(ILoader::class, fn() => $this->loader);
+
         $this->whois = $container->get(Whois::class);
 
         return $this->whois;
