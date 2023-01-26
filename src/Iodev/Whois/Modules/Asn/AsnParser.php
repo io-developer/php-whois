@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Asn;
 
-use Iodev\Whois\Helpers\ParserHelper;
+use Iodev\Whois\Tool\ParserTool;
 
 class AsnParser
 {
+    public function __construct(
+        protected ParserTool $parserTool,
+    ) {}
+
     public function parseResponse(AsnResponse $response): ?AsnInfo
     {
         $routes = [];
@@ -33,7 +37,7 @@ class AsnParser
     protected function parseBlock(string $block): array
     {
         $dict = [];
-        foreach (ParserHelper::splitLines($block) as $line) {
+        foreach ($this->parserTool->splitLines($block) as $line) {
             $kv = explode(':', $line, 2);
             if (count($kv) == 2) {
                 [$k, $v] = $kv;

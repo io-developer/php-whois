@@ -2,23 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Helpers;
+namespace Iodev\Whois\Tool;
 
-class ParserHelper
+class ParserTool
 {
     /**
      * @return string[]
      */
-    public static function splitLines(string $text): array
+    public function splitLines(string $text): array
     {
         return preg_split('~\r\n|\r|\n~ui', strval($text));
     }
 
     /**
      * @param string[] $lines
-     * @return array
      */
-    public static function linesToGroups(array $lines, string $header = '$header'): array
+    public function linesToGroups(array $lines, string $header = '$header'): array
     {
         $groups = [];
         $group = [];
@@ -30,13 +29,13 @@ class ParserHelper
             $line = ltrim(rtrim($line, "%#*=$trimChars"), "%#*=;$trimChars");
             $headerLine = trim($line, ':[]');
             $headerLines[] = $headerLine;
-            $kv = $isComment ? [] : self::lineToKeyVal($line, ":$trimChars");
+            $kv = $isComment ? [] : $this->lineToKeyVal($line, ":$trimChars");
             if (count($kv) == 2) {
                 $group = array_merge_recursive($group, [$kv[0] => ltrim($kv[1], ".")]);
                 continue;
             }
             if (empty($group[$header]) && count($group) > 0) {
-                $group[$header] = self::linesToBestHeader($headerLines);
+                $group[$header] = $this->linesToBestHeader($headerLines);
             }
             if (count($group) > 1) {
                 $groups[] = array_filter($group);
@@ -50,7 +49,7 @@ class ParserHelper
     /**
      * @return string[]
      */
-    public static function lineToKeyVal(string $line, string $trimChars = " \t\n\r\0\x0B"): array
+    public function lineToKeyVal(string $line, string $trimChars = " \t\n\r\0\x0B"): array
     {
         if (preg_match('~^\s*(\.{2,})?\s*(.+?)\s*(\.{2,})?\s*:(?![\\/:])(?<!::)(.*)$~ui', $line, $m)) {
             return [trim($m[2], $trimChars), trim($m[4], $trimChars)];
@@ -62,7 +61,7 @@ class ParserHelper
      * @param string[] $lines
      * @return int|null|string
      */
-    public static function linesToBestHeader(array $lines): mixed
+    public function linesToBestHeader(array $lines): mixed
     {
         $map = [];
         $empty = 1;
@@ -87,7 +86,7 @@ class ParserHelper
     /**
      * @param string[] $lines
      */
-    public static function linesToSpacedBlocks(
+    public function linesToSpacedBlocks(
         array $lines,
         callable $validateStoplineFn = null,
     ): array {
@@ -108,7 +107,7 @@ class ParserHelper
         return $blocks;
     }
 
-    public static function blockToIndentedNodes(
+    public function blockToIndentedNodes(
         array $block,
         ?callable $biasIndentFn = null,
         int $maxDepth = 10
@@ -117,7 +116,7 @@ class ParserHelper
         $node = [];
         $nodePad = 999999;
         foreach ($block as $line) {
-            $pad = self::calcIndent($line, $biasIndentFn);
+            $pad = $this->calcIndent($line, $biasIndentFn);
             if ($pad <= $nodePad) {
                 $nodePad = $pad;
                 $nodes[] = [
@@ -132,7 +131,7 @@ class ParserHelper
         unset($node);
         foreach ($nodes as &$node) {
             if (!empty($node['children']) && $maxDepth > 1) {
-                $node['children'] = self::blockToIndentedNodes($node['children'], null, $maxDepth - 1);
+                $node['children'] = $this->blockToIndentedNodes($node['children'], null, $maxDepth - 1);
             }
             if (empty($node['children'])) {
                 $node = $node['line'];
@@ -141,7 +140,7 @@ class ParserHelper
         return $nodes;
     }
 
-    public static function calcIndent(string $line, ?callable $biasFn = null): int
+    public function calcIndent(string $line, ?callable $biasFn = null): int
     {
         $pad = strlen($line) - strlen(ltrim($line));
         if ($biasFn !== null) {
@@ -150,23 +149,23 @@ class ParserHelper
         return $pad;
     }
 
-    public static function nodesToDict(array $nodes, int $maxKeyLength = 32): array
+    public function nodesToDict(array $nodes, int $maxKeyLength = 32): array
     {
         $dict = [];
         foreach ($nodes as $node) {
             $node = is_array($node) ? $node : ['line' => $node, 'children' => []];
             $k = '';
             $v = '';
-            $kv = self::lineToKeyVal($node['line']);
+            $kv = $this->lineToKeyVal($node['line']);
             if (count($kv) == 2) {
                 list ($k, $v) = $kv;
                 if (empty($v)) {
-                    $v = self::nodesToDict($node['children']);
+                    $v = $this->nodesToDict($node['children']);
                 } elseif (strlen($k) <= $maxKeyLength) {
                     $v = trim($v) ? [trim($v)] : [];
                     foreach ($node['children'] as $child) {
                         if (is_array($child)) {
-                            $childV = self::nodesToDict([$child]);
+                            $childV = $this->nodesToDict([$child]);
                             if (!empty($childV)) {
                                 $dict = array_merge_recursive($dict, $childV);
                             }
@@ -184,7 +183,7 @@ class ParserHelper
             }
             if (count($kv) == 1) {
                 $k = trim($kv[0]);
-                $v = self::nodesToDict($node['children']);
+                $v = $this->nodesToDict($node['children']);
                 if (empty($v)) {
                     $v = $k;
                     $k = '';
@@ -202,7 +201,7 @@ class ParserHelper
         return $dict;
     }
 
-    public static function dictToGroup(array $dict, string $header = '$header'): array
+    public function dictToGroup(array $dict, string $header = '$header'): array
     {
         if (empty($dict) || count($dict) > 1) {
             return $dict;
@@ -220,7 +219,7 @@ class ParserHelper
         return $dict;
     }
 
-    public static function joinParentlessGroups(array $groups): array
+    public function joinParentlessGroups(array $groups): array
     {
         $lastGroup = null;
         foreach ($groups as &$group) {
@@ -241,7 +240,7 @@ class ParserHelper
      * @param string[]|string $rawstates
      * @return string[]
      */
-    public static function parseStates(mixed $rawstates, bool $removeExtra = true): array
+    public function parseStates(mixed $rawstates, bool $removeExtra = true): array
     {
         $states = [];
         $rawstates = is_array($rawstates) ? $rawstates : [ strval($rawstates) ];
@@ -262,7 +261,7 @@ class ParserHelper
      * @param string[] $lines
      * @return string[]
      */
-    public static function autofixTldLines(array $lines): array
+    public function autofixTldLines(array $lines): array
     {
         $emptyBefore = false;
         $kvBefore = false;
@@ -284,8 +283,8 @@ class ParserHelper
             if (!empty($line) || !$kvBefore) {
                 if ($needIndent && !$isHeader && !empty($line)) {
                     $indent = '    ';
-                    $nextLinePad = empty($lines[$i + 1]) || strlen(trim($lines[$i + 1])) == 0 ? 0 : self::calcIndent($lines[$i + 1]);
-                    if ($nextLinePad <= 2 && self::calcIndent($lines[$i]) == 0) {
+                    $nextLinePad = empty($lines[$i + 1]) || strlen(trim($lines[$i + 1])) == 0 ? 0 : $this->calcIndent($lines[$i + 1]);
+                    if ($nextLinePad <= 2 && $this->calcIndent($lines[$i]) == 0) {
                         $indent .= str_repeat(' ', $nextLinePad);
                     }
                     $outLines[] = $indent . $line;
@@ -305,18 +304,18 @@ class ParserHelper
      * @param callable|null $biasIndentFn
      * @return string[]
      */
-    public static function removeInnerEmpties(array $lines, callable $biasIndentFn = null): array
+    public function removeInnerEmpties(array $lines, callable $biasIndentFn = null): array
     {
         $prevPad = 0;
         $outLines = [];
         foreach ($lines as $index => $line) {
             if (empty($line)) {
                 $nextLine = isset($lines[$index + 1]) ? $lines[$index + 1] : '';
-                if (!empty($nextLine) && $prevPad > 0 && $prevPad == self::calcIndent($nextLine, $biasIndentFn)) {
+                if (!empty($nextLine) && $prevPad > 0 && $prevPad == $this->calcIndent($nextLine, $biasIndentFn)) {
                     continue;
                 }
             }
-            $prevPad = empty($line) ? 0 : self::calcIndent($line, $biasIndentFn);
+            $prevPad = empty($line) ? 0 : $this->calcIndent($line, $biasIndentFn);
             $outLines[] = $line;
         }
         return $outLines;

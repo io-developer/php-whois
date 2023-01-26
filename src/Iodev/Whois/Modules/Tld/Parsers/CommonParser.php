@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Helpers\GroupFilter;
-use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
+use Iodev\Whois\Tool\ParserTool;
 
 class CommonParser extends TldParser
 {
@@ -63,6 +63,7 @@ class CommonParser extends TldParser
     ];
 
     public function __construct(
+        protected ParserTool $parserTool,
         protected DomainTool $domainTool,
         protected DateTool $dateTool,
     ) {}
@@ -200,15 +201,15 @@ class CommonParser extends TldParser
 
     protected function groupsFromText(string $text): array
     {
-        $lines = ParserHelper::splitLines($text);
-        return ParserHelper::linesToGroups($lines, $this->headerKey);
+        $lines = $this->parserTool->splitLines($text);
+        return $this->parserTool->linesToGroups($lines, $this->headerKey);
     }
 
     protected function transformItemsIntoStates(array $items): array
     {
         $states = [];
         foreach ($items as $item) {
-            foreach (ParserHelper::parseStates($item) as $k => $state) {
+            foreach ($this->parserTool->parseStates($item) as $k => $state) {
                 if (is_int($k) && is_string($state)) {
                     $states[] = $state;
                 }

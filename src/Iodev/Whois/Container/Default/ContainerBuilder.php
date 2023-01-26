@@ -8,6 +8,7 @@ use Iodev\Whois\Loaders\CurlLoader;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\SocketLoader;
 use Iodev\Whois\Modules\Asn\AsnModule;
+use Iodev\Whois\Modules\Asn\AsnParser;
 use Iodev\Whois\Modules\Asn\AsnServerProvider;
 use Iodev\Whois\Modules\Asn\AsnServerProviderInterface;
 use Iodev\Whois\Modules\Tld\Parsers\BlockParser;
@@ -22,6 +23,7 @@ use Iodev\Whois\Punycode\IPunycode;
 use Iodev\Whois\Punycode\IntlPunycode;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
+use Iodev\Whois\Tool\ParserTool;
 use Iodev\Whois\Tool\TextTool;
 use Iodev\Whois\Whois;
 
@@ -105,6 +107,7 @@ class ContainerBuilder
 
             CommonParser::class => function() {
                 return new CommonParser(
+                    $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
                 );
@@ -112,6 +115,7 @@ class ContainerBuilder
 
             BlockParser::class => function() {
                 return new BlockParser(
+                    $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
                 );
@@ -119,6 +123,7 @@ class ContainerBuilder
 
             IndentParser::class => function() {
                 return new IndentParser(
+                    $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
                 );
@@ -143,6 +148,12 @@ class ContainerBuilder
             AsnServerProvider::class => function() {
                 return new AsnServerProvider(
                     $this->container,
+                );
+            },
+
+            AsnParser::class => function() {
+                return new AsnParser(
+                    $this->container->get(ParserTool::class),
                 );
             },
 

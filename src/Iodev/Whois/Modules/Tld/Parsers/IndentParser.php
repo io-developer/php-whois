@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Iodev\Whois\Modules\Tld\Parsers;
 
 use Iodev\Whois\Helpers\GroupFilter;
-use Iodev\Whois\Helpers\ParserHelper;
 use Iodev\Whois\Modules\Tld\TldParser;
 
 class IndentParser extends BlockParser
@@ -62,20 +61,20 @@ class IndentParser extends BlockParser
     protected function groupsFromText(string $text): array
     {
         $groups = [];
-        $lines = ParserHelper::splitLines($text);
+        $lines = $this->parserTool->splitLines($text);
         if ($this->isAutofix) {
-            $lines = ParserHelper::autofixTldLines($lines);
-            $lines = ParserHelper::removeInnerEmpties($lines, [__CLASS__, 'biasIndent']);
+            $lines = $this->parserTool->autofixTldLines($lines);
+            $lines = $this->parserTool->removeInnerEmpties($lines, [__CLASS__, 'biasIndent']);
         }
         $lines = array_filter($lines, [__CLASS__, 'validateLine']);
-        $blocks = ParserHelper::linesToSpacedBlocks($lines, [__CLASS__, 'validateStopline']);
+        $blocks = $this->parserTool->linesToSpacedBlocks($lines, [__CLASS__, 'validateStopline']);
         //$blocks = array_filter($blocks, [__CLASS__, 'validateBlock']);
         foreach ($blocks as $block) {
-            $nodes = ParserHelper::blockToIndentedNodes($block, [__CLASS__, 'biasIndent'], 2);
-            $dict = ParserHelper::nodesToDict($nodes);
-            $groups[] = ParserHelper::dictToGroup($dict, $this->headerKey);
+            $nodes = $this->parserTool->blockToIndentedNodes($block, [__CLASS__, 'biasIndent'], 2);
+            $dict = $this->parserTool->nodesToDict($nodes);
+            $groups[] = $this->parserTool->dictToGroup($dict, $this->headerKey);
         }
-        $groups = ParserHelper::joinParentlessGroups($groups);
+        $groups = $this->parserTool->joinParentlessGroups($groups);
         return $groups;
     }
 
