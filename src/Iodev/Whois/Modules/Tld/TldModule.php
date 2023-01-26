@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Modules\Tld;
 
-use Iodev\Whois\Exceptions\ConnectionException;
-use Iodev\Whois\Exceptions\ServerMismatchException;
-use Iodev\Whois\Exceptions\WhoisException;
+use Iodev\Whois\Exception\ConnectionException;
+use Iodev\Whois\Exception\ServerMismatchException;
+use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Tool\DomainTool;
 

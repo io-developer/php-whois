@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Exceptions;
+namespace Iodev\Whois\Exception;
 
+use Exception;
 use Throwable;
 
-class WhoisException extends \Exception
+class ConnectionException extends Exception
 {
     public function __construct($message = "", $code = 0, Throwable $previous = null)
     {

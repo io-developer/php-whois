@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Iodev\Whois\Loaders;
 
 use \Memcached;
-use Iodev\Whois\Exceptions\ConnectionException;
-use Iodev\Whois\Exceptions\WhoisException;
+use Iodev\Whois\Exception\ConnectionException;
+use Iodev\Whois\Exception\WhoisException;
 
 class MemcachedLoader implements ILoader
 {

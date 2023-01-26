@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Exceptions;
+namespace Iodev\Whois\Exception;
 
 use Throwable;
 

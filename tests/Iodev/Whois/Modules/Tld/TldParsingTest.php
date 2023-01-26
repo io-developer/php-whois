@@ -7,8 +7,9 @@ namespace Iodev\Whois\Modules\Tld;
 use InvalidArgumentException;
 use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
-use Iodev\Whois\Exceptions\ConnectionException;
-use Iodev\Whois\Exceptions\ServerMismatchException;
+use Iodev\Whois\Exception\ConnectionException;
+use Iodev\Whois\Exception\ServerMismatchException;
+use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Loaders\ILoader;
 use Iodev\Whois\Loaders\FakeSocketLoader;
 use Iodev\Whois\Tool\DomainTool;
@@ -113,7 +114,7 @@ class TldParsingTest extends TestCase
      * @param string $expectedJsonFilename
      * @throws ConnectionException
      * @throws ServerMismatchException
-     * @throws \Iodev\Whois\Exceptions\WhoisException
+     * @throws WhoisException
      */
     public function testResponseParsing($domain, $srcTextFilename, $expectedJsonFilename = null)
     {
