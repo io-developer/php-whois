@@ -7,7 +7,7 @@ namespace Iodev\Whois\Module\Asn;
 use InvalidArgumentException;
 use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
-use Iodev\Whois\Loader\ILoader;
+use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Loader\FakeSocketLoader;
 use Iodev\Whois\Tool\TextTool;
 use Iodev\Whois\Whois;
@@ -32,7 +32,7 @@ class AsnParsingTest extends TestCase
                 self::$container->get(TextTool::class),
                 60,
             );
-            self::$container->bind(ILoader::class, fn() => self::$loader);
+            self::$container->bind(LoaderInterface::class, fn() => self::$loader);
         }
         if (self::$whois === null) {
             self::$whois = self::$container->get(Whois::class);

@@ -7,7 +7,7 @@ namespace Iodev\Whois\Loader;
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\WhoisException;
 
-interface ILoader
+interface LoaderInterface
 {
     /**
      * @throws ConnectionException

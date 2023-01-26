@@ -7,7 +7,7 @@ namespace Iodev\Whois\Module\Tld;
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\ServerMismatchException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Loader\ILoader;
+use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Tool\DomainTool;
 
 class TldModule
@@ -20,7 +20,7 @@ class TldModule
 
 
     public function __construct(
-        protected ILoader $loader,
+        protected LoaderInterface $loader,
         protected DomainTool $domainTool,
     ) {}
 

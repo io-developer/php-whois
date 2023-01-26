@@ -8,7 +8,7 @@ use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Tool\TextTool;
 
-class SocketLoader implements ILoader
+class SocketLoader implements LoaderInterface
 {
     protected TextTool $textTool;
     protected int $timeout = 0;

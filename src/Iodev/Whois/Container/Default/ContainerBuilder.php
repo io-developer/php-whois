@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Iodev\Whois\Container\Default;
 
 use Iodev\Whois\Loader\CurlLoader;
-use Iodev\Whois\Loader\ILoader;
+use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Loader\SocketLoader;
 use Iodev\Whois\Module\Asn\AsnModule;
 use Iodev\Whois\Module\Asn\AsnParser;
@@ -52,7 +52,7 @@ class ContainerBuilder
                 return $this->container->get(IntlPunycode::class);
             },
 
-            ILoader::class => function() {
+            LoaderInterface::class => function() {
                 return $this->container->get(SocketLoader::class);
             },
 
@@ -78,7 +78,7 @@ class ContainerBuilder
                 $servers = $provider->getList();
 
                 $instance = new TldModule(
-                    $this->container->get(ILoader::class),
+                    $this->container->get(LoaderInterface::class),
                     $this->container->get(DomainTool::class),
                 );
                 $instance->setServers($servers);
@@ -146,7 +146,7 @@ class ContainerBuilder
                 $servers = $provider->getList();
 
                 $instance = new AsnModule(
-                    $this->container->get(ILoader::class),
+                    $this->container->get(LoaderInterface::class),
                 );
                 $instance->setServers($servers);
                 return $instance;

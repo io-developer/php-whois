@@ -10,7 +10,7 @@ use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\ServerMismatchException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Loader\ILoader;
+use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Loader\FakeSocketLoader;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\TextTool;
@@ -41,7 +41,7 @@ class TldParsingTest extends TestCase
                 self::$container->get(TextTool::class),
                 60,
             );
-            self::$container->bind(ILoader::class, fn() => self::$loader);
+            self::$container->bind(LoaderInterface::class, fn() => self::$loader);
         }
         if (self::$whois === null) {
             self::$whois = self::$container->get(Whois::class);

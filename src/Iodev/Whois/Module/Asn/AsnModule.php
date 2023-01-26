@@ -6,7 +6,7 @@ namespace Iodev\Whois\Module\Asn;
 
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Loader\ILoader;
+use Iodev\Whois\Loader\LoaderInterface;
 
 class AsnModule
 {
@@ -15,7 +15,7 @@ class AsnModule
 
 
     public function __construct(
-        protected ILoader $loader,
+        protected LoaderInterface $loader,
     ) {}
 
     /**

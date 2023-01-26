@@ -8,10 +8,10 @@ use \Memcached;
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\WhoisException;
 
-class MemcachedLoader implements ILoader
+class MemcachedLoader implements LoaderInterface
 {
     public function __construct(
-        protected ILoader $loader,
+        protected LoaderInterface $loader,
         protected Memcached $memcached,
         protected string $keyPrefix = "",
         protected int $ttl = 3600,
