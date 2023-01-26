@@ -8,12 +8,12 @@ use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\ServerMismatchException;
 use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Loaders\ILoader;
-use Iodev\Whois\Modules\Asn\AsnInfo;
-use Iodev\Whois\Modules\Asn\AsnModule;
-use Iodev\Whois\Modules\Asn\AsnResponse;
-use Iodev\Whois\Modules\Tld\TldInfo;
-use Iodev\Whois\Modules\Tld\TldResponse;
-use Iodev\Whois\Modules\Tld\TldModule;
+use Iodev\Whois\Module\Asn\AsnInfo;
+use Iodev\Whois\Module\Asn\AsnModule;
+use Iodev\Whois\Module\Asn\AsnResponse;
+use Iodev\Whois\Module\Tld\TldInfo;
+use Iodev\Whois\Module\Tld\TldResponse;
+use Iodev\Whois\Module\Tld\TldModule;
 use Psr\Container\ContainerInterface;
 
 class Whois
