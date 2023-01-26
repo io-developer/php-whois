@@ -6,7 +6,7 @@ namespace Iodev\Whois\Module\Asn;
 
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Loaders\ILoader;
+use Iodev\Whois\Loader\ILoader;
 
 class AsnModule
 {

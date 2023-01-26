@@ -7,7 +7,7 @@ namespace Iodev\Whois\Module\Tld;
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\ServerMismatchException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Loaders\ILoader;
+use Iodev\Whois\Loader\ILoader;
 use Iodev\Whois\Tool\DomainTool;
 
 class TldModule

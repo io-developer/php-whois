@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
-use Iodev\Whois\Loaders\ILoader;
+use Iodev\Whois\Loader\ILoader;
 use Iodev\Whois\Module\Tld\TldModule;
 use Iodev\Whois\Module\Tld\TldParserProviderInterface;
 use Iodev\Whois\Whois;
@@ -119,7 +119,7 @@ function info(string $domain, array $options = [])
 
     $loader = null;
     if ($options['file']) {
-        $loader = new \Iodev\Whois\Loaders\FakeSocketLoader();
+        $loader = new \Iodev\Whois\Loader\FakeSocketLoader();
         $loader->text = file_get_contents($options['file']);
 
         getContainer()->bind(ILoader::class, function() use ($loader) {

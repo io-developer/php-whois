@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Iodev\Whois;
 
 use Iodev\Whois\Container\Default\ContainerBuilder;
-use Iodev\Whois\Loaders\FakeSocketLoader;
-use Iodev\Whois\Loaders\ILoader;
+use Iodev\Whois\Loader\FakeSocketLoader;
+use Iodev\Whois\Loader\ILoader;
 use Iodev\Whois\Tool\TextTool;
 use PHPUnit\Framework\TestCase;
 

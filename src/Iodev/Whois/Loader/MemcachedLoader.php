@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Loaders;
+namespace Iodev\Whois\Loader;
 
 use \Memcached;
 use Iodev\Whois\Exception\ConnectionException;

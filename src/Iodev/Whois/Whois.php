@@ -7,7 +7,7 @@ namespace Iodev\Whois;
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\ServerMismatchException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Loaders\ILoader;
+use Iodev\Whois\Loader\ILoader;
 use Iodev\Whois\Module\Asn\AsnInfo;
 use Iodev\Whois\Module\Asn\AsnModule;
 use Iodev\Whois\Module\Asn\AsnResponse;

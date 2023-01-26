@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Container\Default;
 
-use Iodev\Whois\Loaders\CurlLoader;
-use Iodev\Whois\Loaders\ILoader;
-use Iodev\Whois\Loaders\SocketLoader;
+use Iodev\Whois\Loader\CurlLoader;
+use Iodev\Whois\Loader\ILoader;
+use Iodev\Whois\Loader\SocketLoader;
 use Iodev\Whois\Module\Asn\AsnModule;
 use Iodev\Whois\Module\Asn\AsnParser;
 use Iodev\Whois\Module\Asn\AsnServerProvider;
