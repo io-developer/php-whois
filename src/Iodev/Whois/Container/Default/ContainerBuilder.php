@@ -125,7 +125,7 @@ class ContainerBuilder
 
             TldServerProvider::class => function() {
                 return new TldServerProvider(
-                    $this->container,
+                    $this->container->get(ConfigProviderInterface::class),
                     $this->container->get(TldParserProviderInterface::class),
                 );
             },

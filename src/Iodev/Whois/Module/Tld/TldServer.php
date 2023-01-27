@@ -6,8 +6,6 @@ namespace Iodev\Whois\Module\Tld;
 
 class TldServer
 { 
-    public const DEFAULT_QUERY_FORMAT = "%s\r\n";
-
     /** @var string[] */
     protected $inverseZoneParts;
 

@@ -69,7 +69,7 @@ class TldServerTest extends BaseTestCase
 
     public function testFromDataFullArgs()
     {
-        $s = $this->tldServerProvider->create([
+        $s = $this->tldServerProvider->fromConfig([
             "zone" => ".abc",
             "host" => "some.host",
             "centralized" => true,
@@ -86,7 +86,7 @@ class TldServerTest extends BaseTestCase
 
     public function testFromDataZoneHostOnly()
     {
-        $s = $this->tldServerProvider->create([
+        $s = $this->tldServerProvider->fromConfig([
             'zone' => '.abc',
             'host' => 'some.host',
             'parser' => $this->parser,
@@ -101,52 +101,63 @@ class TldServerTest extends BaseTestCase
     public function testFromDataMissingZone()
     {
         $this->expectException('\InvalidArgumentException');
-        $this->tldServerProvider->create([ "host" => "some.host" ]);
+        $this->tldServerProvider->fromConfig([ "host" => "some.host" ]);
     }
 
     public function testFromDataMissingHost()
     {
         $this->expectException('\InvalidArgumentException');
-        $this->tldServerProvider->create([ "zone" => ".abc" ]);
+        $this->tldServerProvider->fromConfig([ "zone" => ".abc" ]);
     }
 
     public function testFromDataMissingAll()
     {
         $this->expectException('\InvalidArgumentException');
-        $this->tldServerProvider->create([]);
+        $this->tldServerProvider->fromConfig([]);
     }
 
     public function testFromDataListOne()
     {
-        $s = $this->tldServerProvider->createMany([
-            [ "zone" => ".abc", "host" => "some.host" ],
-        ]);
-        self::assertTrue(is_array($s), "Array expected");
+        $s = [
+            $this->tldServerProvider->fromConfig([
+                'zone' => '.abc',
+                'host' => 'some.host',
+            ]),
+        ];
+        self::assertTrue(is_array($s), 'Array expected');
         self::assertEquals(1, count($s));
         self::assertInstanceOf(TldServer::class, $s[0]);
-        self::assertEquals(".abc", $s[0]->zone);
-        self::assertEquals("some.host", $s[0]->host);
+        self::assertEquals('.abc', $s[0]->zone);
+        self::assertEquals('some.host', $s[0]->host);
         self::assertInstanceOf($this->getParserClass(), $s[0]->parser);
     }
 
     public function testFromDataListTwo()
     {
-        $s = $this->tldServerProvider->createMany([
-            [ "zone" => ".abc", "host" => "some.host" ],
-            [ "zone" => ".cde", "host" => "other.host", "centralized" => true, "queryFormat" => "prefix %s suffix\r\n" ],
-        ]);
+        $s = [
+            $this->tldServerProvider->fromConfig([
+                'zone' => '.abc',
+                'host' => 'some.host',
+            ]),
+            $this->tldServerProvider->fromConfig([
+                'zone' => '.cde',
+                'host' => 'other.host',
+                'centralized' => true,
+                'queryFormat' => "prefix %s suffix\r\n",
+            ]),
+        ];
         self::assertTrue(is_array($s), "Array expected");
         self::assertEquals(2, count($s));
 
         self::assertInstanceOf(TldServer::class, $s[0]);
-        self::assertEquals(".abc", $s[0]->zone);
-        self::assertEquals("some.host", $s[0]->host);
+        self::assertEquals('.abc', $s[0]->zone);
+        self::assertEquals('some.host', $s[0]->host);
         self::assertFalse($s[0]->centralized);
         self::assertInstanceOf($this->getParserClass(), $s[0]->parser);
 
         self::assertInstanceOf(TldServer::class, $s[1]);
-        self::assertEquals(".cde", $s[1]->zone);
-        self::assertEquals("other.host", $s[1]->host);
+        self::assertEquals('.cde', $s[1]->zone);
+        self::assertEquals('other.host', $s[1]->host);
         self::assertTrue($s[1]->centralized);
         self::assertInstanceOf($this->getParserClass(), $s[1]->parser);
         self::assertEquals("prefix %s suffix\r\n", $s[1]->queryFormat);
