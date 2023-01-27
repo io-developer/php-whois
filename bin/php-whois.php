@@ -7,6 +7,7 @@ use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Module\Tld\TldModule;
 use Iodev\Whois\Module\Tld\TldParserProviderInterface;
+use Iodev\Whois\Module\Tld\TldServer;
 use Iodev\Whois\Whois;
 
 $scriptDir = '.';
@@ -127,19 +128,22 @@ function info(string $domain, array $options = [])
         });
     }
 
+    /** @var TldModule */
     $tld = getContainer()->get(TldModule::class);
-    $servers = $tld->matchServers($domain);
+    $tldServers = $tld->getServerCollection()->getServers();
+
+    $servers = $tld->getServerMatcher()->match($tldServers, $domain);
 
     if (!empty($options['host'])) {
         $host = $options['host'];
-        $filteredServers = array_filter($servers, function (\Iodev\Whois\Module\Tld\TldServer $server) use ($host) {
+        $filteredServers = array_filter($servers, function (TldServer $server) use ($host) {
             return $server->host == $host;
         });
         if (count($filteredServers) == 0 && count($servers) > 0) {
             $filteredServers = [$servers[0]];
         }
-        $servers = array_map(function (\Iodev\Whois\Module\Tld\TldServer $server) use ($host) {
-            return new \Iodev\Whois\Module\Tld\TldServer(
+        $servers = array_map(function (TldServer $server) use ($host) {
+            return new TldServer(
                 $server->zone,
                 $host,
                 $server->centralized,
@@ -158,8 +162,8 @@ function info(string $domain, array $options = [])
             echo "\nCannot create TLD parser with type '{$options['parser']}'\n\n";
             throw $e;
         }
-        $servers = array_map(function (\Iodev\Whois\Module\Tld\TldServer $server) use ($parser) {
-            return new \Iodev\Whois\Module\Tld\TldServer(
+        $servers = array_map(function (TldServer $server) use ($parser) {
+            return new TldServer(
                 $server->zone,
                 $server->host,
                 $server->centralized,
@@ -169,7 +173,8 @@ function info(string $domain, array $options = [])
         }, $servers);
     }
 
-    [, $info] = $tld->loadDomainData($domain, $servers);
+    $tld->getLoader()->loadDomainData($domain, $servers);
+    $info = $tld->getLoader()->getLoadedInfo();
 
     var_dump($info);
 }

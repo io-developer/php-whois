@@ -10,11 +10,13 @@ use Iodev\Whois\Module\Tld\Parser\TestCommonParser;
 class TldServerTest extends BaseTestCase
 {
     private TldServerProviderInterface $tldServerProvider;
+    private TldServerMatcher $tldServerMatcher;
     private TestCommonParser $parser;
 
     protected function onConstructed()
     {
         $this->tldServerProvider = $this->container->get(TldServerProviderInterface::class);
+        $this->tldServerMatcher = $this->container->get(TldServerMatcher::class);
 
         $this->parser = $this->container->get(TestCommonParser::class);
 
@@ -32,25 +34,25 @@ class TldServerTest extends BaseTestCase
     public function testIsDomainZoneValid()
     {
         $s = new TldServer(".abc", "some.host.com", false, $this->parser, "%s\r\n");
-        self::assertTrue($s->isDomainZone("some.abc"));
+        self::assertTrue($this->tldServerMatcher->isDomainZone($s, "some.abc"));
     }
 
     public function testIsDomainZoneValidComplex()
     {
         $s = new TldServer(".abc", "some.host.com", false, $this->parser, "%s\r\n");
-        self::assertTrue($s->isDomainZone("some.foo.bar.abc"));
+        self::assertTrue($this->tldServerMatcher->isDomainZone($s, "some.foo.bar.abc"));
     }
 
     public function testIsDomainZoneInvalid()
     {
         $s = new TldServer(".abc", "some.host.com", false, $this->parser, "%s\r\n");
-        self::assertFalse($s->isDomainZone("some.com"));
+        self::assertFalse($this->tldServerMatcher->isDomainZone($s, "some.com"));
     }
 
     public function testIsDomainZoneInvalidEnd()
     {
         $s = new TldServer(".foo.bar", "some.host.com", false, $this->parser, "%s\r\n");
-        self::assertFalse($s->isDomainZone("some.bar"));
+        self::assertFalse($this->tldServerMatcher->isDomainZone($s, "some.bar"));
     }
 
     public function testBuildDomainQueryCustom()

@@ -11,6 +11,8 @@ interface TldServerProviderInterface
      */
     public function getList(): array;
 
+    public function getCollection(): TldServerCollection;
+
     public function create(array $config): TldServer;
 
     /**

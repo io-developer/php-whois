@@ -22,9 +22,11 @@ use Iodev\Whois\Module\Tld\Parser\CommonParserOpts;
 use Iodev\Whois\Module\Tld\Parser\IndentParser;
 use Iodev\Whois\Module\Tld\Parser\IndentParserOpts;
 use Iodev\Whois\Module\Tld\TldInfoRankCalculator;
+use Iodev\Whois\Module\Tld\TldLoader;
 use Iodev\Whois\Module\Tld\TldModule;
 use Iodev\Whois\Module\Tld\TldParserProvider;
 use Iodev\Whois\Module\Tld\TldParserProviderInterface;
+use Iodev\Whois\Module\Tld\TldServerMatcher;
 use Iodev\Whois\Module\Tld\TldServerProvider;
 use Iodev\Whois\Module\Tld\TldServerProviderInterface;
 use Iodev\Whois\Tool\DateTool;
@@ -95,16 +97,26 @@ class ContainerBuilder
 
             TldModule::class => function() {
                 /** @var TldServerProviderInterface */
-                $provider = $this->container->get(TldServerProviderInterface::class);
-                $servers = $provider->getList();
+                $serverProvider = $this->container->get(TldServerProviderInterface::class);
 
-                $instance = new TldModule(
+                return new TldModule(
+                    $this->container->get(TldLoader::class),
+                    $serverProvider->getCollection(),
+                    $this->container->get(TldServerMatcher::class),
+                );
+            },
+
+            TldLoader::class => function() {
+                return new TldLoader(
                     $this->container->get(LoaderInterface::class),
                     $this->container->get(DomainTool::class),
                 );
-                $instance->setServers($servers);
+            },
 
-                return $instance;
+            TldServerMatcher::class => function() {
+                return new TldServerMatcher(
+                    $this->container->get(DomainTool::class),
+                );
             },
 
             TldServerProviderInterface::class => function() {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Tld;
 
 use InvalidArgumentException;
-use Iodev\Whois\Config;
 use Iodev\Whois\Config\ConfigProviderInterface;
 use Psr\Container\ContainerInterface;
 
@@ -32,6 +31,13 @@ class TldServerProvider implements TldServerProviderInterface
             }
         }
         return $this->servers;
+    }
+
+    public function getCollection(): TldServerCollection
+    {
+        $col = new TldServerCollection();
+        $col->setServers($this->getList());
+        return $col;
     }
 
     public function create(array $config): TldServer

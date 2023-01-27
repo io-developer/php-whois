@@ -7,117 +7,31 @@ namespace Iodev\Whois\Module\Tld;
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\ServerMismatchException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Loader\LoaderInterface;
-use Iodev\Whois\Tool\DomainTool;
 
 class TldModule
 {
     /** @var TldServer[] */
     protected array $servers = [];
 
-    /** @var TldServer[] */
-    protected array $lastUsedServers = [];
-
-
     public function __construct(
-        protected LoaderInterface $loader,
-        protected DomainTool $domainTool,
+        protected TldLoader $loader,
+        protected TldServerCollection $serverCollection,
+        protected TldServerMatcher $serverMatcher,
     ) {}
 
-    /**
-     * @return TldServer[]
-     */
-    public function getServers(): array
+    public function getLoader(): TldLoader
     {
-        return $this->servers;
+        return $this->loader;
     }
 
-    /**
-     * @return TldServer[]
-     */
-    public function getLastUsedServers(): array
+    public function getServerCollection(): TldServerCollection
     {
-        return $this->lastUsedServers;
+        return $this->serverCollection;
     }
 
-    /**
-     * @param TldServer[] $servers
-     */
-    public function addServers(array $servers): static
+    public function getServerMatcher(): TldServerMatcher
     {
-        return $this->setServers(array_merge($this->servers, $servers));
-    }
-
-    /**
-     * @param TldServer[] $servers
-     */
-    public function setServers(array $servers): static
-    {
-        $sortedKeys = [];
-        $counter = 0;
-        $serversCount = count($servers);
-        foreach ($servers as $key => $server) {
-            $counter++;
-            $parts = explode('.', $server->zone);
-            $len = count($parts);
-            $rootZone = $parts[$len - 1] ?? '';
-            $subZone1 = $parts[$len - 2] ?? '';
-            $subZone2 = $parts[$len - 3] ?? '';
-            $sortedKeys[$key] = sprintf(
-                '%16s.%16s.%32s.%13s',
-                $subZone2,
-                $subZone1,
-                $rootZone,
-                $serversCount - $counter,
-            );
-        };
-
-        uksort($sortedKeys, function($keyA, $keyB) use ($sortedKeys) {
-            return strcmp($sortedKeys[$keyB], $sortedKeys[$keyA]);
-        });
-
-        $sortedServers = [];
-        foreach ($sortedKeys as $key => $unused) {
-            if (is_string($key)) {
-                $sortedServers[$key] = $servers[$key];
-            } else {
-                $sortedServers[] = $servers[$key];
-            }
-        }
-
-        $this->servers = $sortedServers;
-
-        return $this;
-    }
-
-    /**
-     * @return TldServer[]
-     * @throws ServerMismatchException
-     */
-    public function matchServers(string $domain, bool $quiet = false): array
-    {
-        $domainAscii = $this->domainTool->toAscii($domain);
-        $servers = [];
-        foreach ($this->servers as $server) {
-            $matchedCount = $server->matchDomainZone($domainAscii);
-            if ($matchedCount) {
-                $servers[] = $server;
-            }
-        }
-        if (!$quiet && empty($servers)) {
-            throw new ServerMismatchException("No servers matched for domain '$domain'");
-        }
-        return $servers;
-    }
-
-    /**
-     * @throws ServerMismatchException
-     * @throws ConnectionException
-     * @throws WhoisException
-     */
-    public function isDomainAvailable(string $domain): bool
-    {
-        return !$this->loadDomainInfo($domain);
+        return $this->serverMatcher;
     }
 
     /**
@@ -127,9 +41,12 @@ class TldModule
      */
     public function lookupDomain(string $domain, TldServer $server = null): TldResponse
     {
-        $servers = $server ? [$server] : $this->matchServers($domain);
-        list ($response) = $this->loadDomainData($domain, $servers);
-        return $response;
+        $servers = $server !== null
+            ? [$server]
+            : $this->serverMatcher->match($this->serverCollection->getServers(), $domain)
+        ;
+        $this->loader->loadDomainData($domain, $servers);
+        return $this->loader->getLoadedResponse();
     }
 
     /**
@@ -139,91 +56,32 @@ class TldModule
      */
     public function loadDomainInfo(string $domain, TldServer $server = null): ?TldInfo
     {
-        $servers = $server ? [$server] : $this->matchServers($domain);
-        list (, $info) = $this->loadDomainData($domain, $servers);
-        return $info;
+        $servers = $server !== null
+            ? [$server]
+            : $this->serverMatcher->match($this->serverCollection->getServers(), $domain)
+        ;
+        $this->loader->loadDomainData($domain, $servers);
+        return $this->loader->getLoadedInfo();
     }
 
     /**
+     * @throws ServerMismatchException
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadResponse(TldServer $server, string $domain, bool $strict = false, ?string $host = null): TldResponse
+    public function isDomainBusy(string $domain): bool
     {
-        $host = $host ?: $server->host;
-        $query = $server->buildDomainQuery($domain, $strict);
-        $text = $this->loader->loadText($host, $query);
-        return new TldResponse(
-            $domain,
-            $host,
-            $query,
-            $text,
-        );
+        return $this->loadDomainInfo($domain) !== null;
     }
 
     /**
-     * @param TldServer[] $servers
+     * @deprecated use isDomainBusy()
+     * @throws ServerMismatchException
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadDomainData(string $domain, array $servers): array
+    public function isDomainAvailable(string $domain): bool
     {
-        $this->lastUsedServers = [];
-        $domain = $this->domainTool->toAscii($domain);
-        $response = null;
-        $info = null;
-        $lastError = null;
-        foreach ($servers as $server) {
-            $this->lastUsedServers[] = $server;
-            $this->loadParsedTo($response, $info, $server, $domain, false, null, $lastError);
-            if ($info) {
-                break;
-            }
-        }
-        if (!$response && !$info) {
-            throw $lastError ? $lastError : new WhoisException("No response");
-        }
-        return [$response, $info];
-    }
-
-    /**
-     * @param $outResponse
-     * @param TldInfo $outInfo
-     * @param TldServer $server
-     * @throws ConnectionException
-     * @throws WhoisException
-     */
-    protected function loadParsedTo(
-        &$outResponse,
-        &$outInfo,
-        TldServer $server,
-        string $domain,
-        bool $strict = false,
-        ?string $host = null,
-        &$lastError = null,
-    ) {
-        try {
-            $outResponse = $this->loadResponse($server, $domain, $strict, $host);
-            $outInfo = $server->parser->parseResponse($outResponse);
-        } catch (ConnectionException $e) {
-            $lastError = $lastError ?: $e;
-        }
-        if (!$outInfo && $lastError && $host == $server->host && $strict) {
-            throw $lastError;
-        }
-        if (!$strict && !$outInfo) {
-            $this->loadParsedTo($tmpResponse, $tmpInfo, $server, $domain, true, $host, $lastError);
-            $outResponse = $tmpInfo ? $tmpResponse : $outResponse;
-            $outInfo = $tmpInfo ?: $outInfo;
-        }
-        if (!$outInfo || $host == $outInfo->whoisServer) {
-            return;
-        }
-        $host = $outInfo->whoisServer;
-        if ($host && $host != $server->host && !$server->centralized) {
-            $this->loadParsedTo($tmpResponse, $tmpInfo, $server, $domain, false, $host, $lastError);
-            $outResponse = $tmpInfo ? $tmpResponse : $outResponse;
-            $outInfo = $tmpInfo ?: $outInfo;
-        }
+        return !$this->isDomainBusy($domain);
     }
 }

@@ -10,6 +10,8 @@ class TldModuleServerTest extends BaseTestCase
 {
     protected TldParserProviderInterface $parserProvider;
     protected TldModule $tldModule;
+    protected TldServerCollection $serverCol;
+    protected TldServerMatcher $serverMatcher;
 
     protected function onConstructed()
     {
@@ -26,7 +28,11 @@ class TldModuleServerTest extends BaseTestCase
     public function setUp(): void
     {
         $this->tldModule = $this->container->get(TldModule::class);
-        $this->tldModule->setServers([]);
+
+        $this->serverCol = $this->tldModule->getServerCollection();
+        $this->serverCol->setServers([]);
+
+        $this->serverMatcher = $this->tldModule->getServerMatcher();
     }
 
     public function tearDown(): void
@@ -36,13 +42,13 @@ class TldModuleServerTest extends BaseTestCase
 
     public function testAddServersReturnsSelf()
     {
-        $res = $this->tldModule->addServers([ $this->createServer(".abc") ]);
-        self::assertSame($this->tldModule, $res, "Result must be self reference");
+        $res = $this->serverCol->addServers([$this->createServer(".abc")]);
+        self::assertSame($this->tldModule->getServerCollection(), $res, "Result must be self reference");
     }
 
     public function testMatchServersQuietEmpty()
     {
-        $servers = $this->tldModule->matchServers("domain.com", true);
+        $servers = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.com', true);
         self::assertTrue(is_array($servers), "Result must be Array");
         self::assertEquals(0, count($servers), "Count must be zero");
     }
@@ -50,8 +56,8 @@ class TldModuleServerTest extends BaseTestCase
     public function testMatchServersOne()
     {
         $s = $this->createServer(".com");
-        $this->tldModule->addServers([$s]);
-        $servers = $this->tldModule->matchServers("domain.com");
+        $this->serverCol->addServers([$s]);
+        $servers = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.com');
         self::assertTrue(is_array($servers), "Result must be Array");
         self::assertEquals(1, count($servers), "Count must be 1");
         self::assertSame($servers[0], $s, "Wrong matched server");
@@ -60,7 +66,7 @@ class TldModuleServerTest extends BaseTestCase
     public function testMatchServersSome()
     {
         $s = $this->createServer(".com");
-        $this->tldModule->addServers([
+        $this->serverCol->addServers([
             $this->createServer(".net"),
             $this->createServer(".com"),
             $this->createServer(".net"),
@@ -71,7 +77,7 @@ class TldModuleServerTest extends BaseTestCase
             $this->createServer(".gov"),
         ]);
 
-        $servers = $this->tldModule->matchServers("domain.com");
+        $servers = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.com');
         self::assertTrue(is_array($servers), "Result must be Array");
         self::assertEquals(4, count($servers), "Count of matched servers not equals");
         self::assertContains($s, $servers, "Server not matched");
@@ -79,7 +85,7 @@ class TldModuleServerTest extends BaseTestCase
 
     public function testMatchServersQuietNoneInSome()
     {
-        $this->tldModule->addServers([
+        $this->serverCol->addServers([
             $this->createServer(".net"),
             $this->createServer(".com"),
             $this->createServer(".net"),
@@ -89,19 +95,19 @@ class TldModuleServerTest extends BaseTestCase
             $this->createServer(".gov"),
         ]);
 
-        $servers = $this->tldModule->matchServers("domain.xyz", true);
+        $servers = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.xyz', true);
         self::assertTrue(is_array($servers), "Result must be Array");
         self::assertEquals(0, count($servers), "Count of matched servers must be zaro");
     }
 
     public function testMatchServersCollisionLongest()
     {
-        $this->tldModule->addServers([
+        $this->serverCol->addServers([
             $this->createServer(".com"),
             $this->createServer(".bar.com"),
             $this->createServer(".foo.bar.com"),
         ]);
-        $servers = $this->tldModule->matchServers("domain.foo.bar.com");
+        $servers = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.foo.bar.com');
 
         self::assertEquals(3, count($servers), "Count of matched servers not equals");
         self::assertEquals(".foo.bar.com", $servers[0]->zone, "Invalid matched zone");
@@ -111,12 +117,12 @@ class TldModuleServerTest extends BaseTestCase
 
     public function testMatchServersCollisionMiddle()
     {
-        $this->tldModule->addServers([
+        $this->serverCol->addServers([
             $this->createServer(".com"),
             $this->createServer(".bar.com"),
             $this->createServer(".foo.bar.com"),
         ]);
-        $servers = $this->tldModule->matchServers("domain.bar.com");
+        $servers = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.bar.com');
 
         self::assertEquals(2, count($servers), "Count of matched servers not equals");
         self::assertEquals(".bar.com", $servers[0]->zone, "Invalid matched zone");
@@ -125,12 +131,12 @@ class TldModuleServerTest extends BaseTestCase
 
     public function testMatchServersCollisionShorter()
     {
-        $this->tldModule->addServers([
+        $this->serverCol->addServers([
             $this->createServer(".com"),
             $this->createServer(".bar.com"),
             $this->createServer(".foo.bar.com"),
         ]);
-        $servers = $this->tldModule->matchServers("domain.com");
+        $servers = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.com');
 
         self::assertEquals(1, count($servers), "Count of matched servers not equals");
         self::assertEquals(".com", $servers[0]->zone, "Invalid matched zone");
@@ -138,11 +144,11 @@ class TldModuleServerTest extends BaseTestCase
 
     public function testMatchServersCollisiondWildcard()
     {
-        $this->tldModule->addServers([
+        $this->serverCol->addServers([
             $this->createServer(".com"),
             $this->createServer(".*.com"),
         ]);
-        $servers = $this->tldModule->matchServers("domain.com");
+        $servers = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.com');
 
         self::assertEquals(1, count($servers), "Count of matched servers not equals");
         self::assertEquals(".com", $servers[0]->zone, "Invalid matched zone");
@@ -150,11 +156,11 @@ class TldModuleServerTest extends BaseTestCase
 
     public function testMatchServersCollisionMissingZone()
     {
-        $this->tldModule->addServers([
+        $this->serverCol->addServers([
             $this->createServer(".com"),
             $this->createServer(".bar.com"),
         ]);
-        $servers = $this->tldModule->matchServers("domain.foo.bar.com");
+        $servers = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.foo.bar.com');
 
         self::assertEquals(2, count($servers), "Count of matched servers not equals");
         self::assertEquals(".bar.com", $servers[0]->zone, "Invalid matched zone");
@@ -163,7 +169,7 @@ class TldModuleServerTest extends BaseTestCase
 
     public function testMatchServersCollisionFallback()
     {
-        $this->tldModule->addServers([
+        $this->serverCol->addServers([
             $this->createServer(".*"),
             $this->createServer(".*.foo"),
             $this->createServer(".*.com"),
@@ -171,7 +177,7 @@ class TldModuleServerTest extends BaseTestCase
             $this->createServer(".foo.*.*"),
             $this->createServer(".bar.com"),
         ]);
-        $servers = $this->tldModule->matchServers("domain.foo.bar.com");
+        $servers = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.foo.bar.com');
 
         self::assertEquals(5, count($servers), "Count of matched servers not equals");
         self::assertEquals(".foo.*.*", $servers[0]->zone, "Invalid matched zone");
@@ -187,12 +193,12 @@ class TldModuleServerTest extends BaseTestCase
         $second = $this->createServer(".com");
         $third = $this->createServer(".com");
 
-        $this->tldModule->addServers([
+        $this->serverCol->addServers([
             $first,
             $second,
             $third,
         ]);
-        $matched = $this->tldModule->matchServers("domain.foo.bar.com");
+        $matched = $this->serverMatcher->match($this->serverCol->getServers(), 'domain.foo.bar.com');
 
         self::assertEquals(3, count($matched));
         self::assertSame($matched[0], $first);
