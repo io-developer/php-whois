@@ -68,7 +68,7 @@ class CommonParser extends TldParser
                 ->selectKeyGroups($this->getOpts()->nameServersKeysGroups)
                 ->mapAsciiServer()
                 ->removeEmpty()
-                ->removeDuplicates(11)
+                ->removeDuplicates()
                 ->getAll(),
 
             "dnssec" => (string)$sel->clean()

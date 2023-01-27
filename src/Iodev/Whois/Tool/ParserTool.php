@@ -11,7 +11,7 @@ class ParserTool
      */
     public function splitLines(string $text): array
     {
-        return preg_split('~\r\n|\r|\n~ui', strval($text));
+        return preg_split('~\r\n|\r|\n~ui', $text);
     }
 
     /**
