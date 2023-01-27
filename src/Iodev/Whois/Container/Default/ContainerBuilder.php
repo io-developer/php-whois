@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Container\Default;
 
-use Iodev\Whois\Loader\CurlLoader;
+use Iodev\Whois\Config\ConfigProviderInterface;
+use Iodev\Whois\Config\ConfigProvider;
 use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Loader\ResponseHandler;
+use Iodev\Whois\Loader\CurlLoader;
 use Iodev\Whois\Loader\SocketLoader;
 use Iodev\Whois\Module\Asn\AsnModule;
 use Iodev\Whois\Module\Asn\AsnParser;
@@ -51,6 +53,10 @@ class ContainerBuilder
     {
         $this->container->bindMany([
             Container::ID_COMMON_CLASS_INSTANTIATOR => fn($clName) => new $clName(),
+
+            ConfigProviderInterface::class => function() {
+                return $this->container->get(ConfigProvider::class);
+            },
 
             IPunycode::class => function() {
                 return $this->container->get(IntlPunycode::class);

@@ -16,10 +16,12 @@ use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
 use PHPUnit\Framework\TestCase;
+use Iodev\Whois\Config\ConfigProvider;
 
 abstract class BaseTestCase extends TestCase
 {
     protected Container $container;
+    protected ConfigProvider $configProvider;
     protected FakeSocketLoader $loader;
     protected Whois $whois;
 
@@ -29,6 +31,7 @@ abstract class BaseTestCase extends TestCase
         parent::__construct($name, $data, $dataName);
 
         $this->container = static::getContainer();
+        $this->configProvider = static::getConfigProvider();
         $this->loader = static::getLoader();
         $this->whois = static::getWhois();
 
@@ -68,6 +71,16 @@ abstract class BaseTestCase extends TestCase
             ]);
         }
         return $container;
+    }
+
+    protected static function getConfigProvider(): ConfigProvider
+    {
+        static $configProvider = null;
+
+        if ($configProvider === null) {
+            $configProvider = static::getContainer()->get(ConfigProvider::class);
+        }
+        return $configProvider;
     }
 
     protected static function getLoader(): FakeSocketLoader

@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Tld;
 
 use Iodev\Whois\BaseTestCase;
-use Iodev\Whois\Config;
 
 class TldConfigTest extends BaseTestCase
 {
     public function testUnnecessarySubzones()
     {
-        $data = Config::load('module.tld.servers');
+        $data = $this->configProvider->get('module.tld.servers');
 
         $rootDict = [];
         foreach ($data as $row) {

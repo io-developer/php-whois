@@ -6,23 +6,27 @@ namespace Iodev\Whois\Module\Tld;
 
 use InvalidArgumentException;
 use Iodev\Whois\Config;
+use Iodev\Whois\Config\ConfigProviderInterface;
 use Psr\Container\ContainerInterface;
 
 class TldServerProvider implements TldServerProviderInterface
 {
+    protected ConfigProviderInterface $configProvider;
     protected ?array $servers = null;
 
     public function __construct(
         protected ContainerInterface $container,
         protected TldParserProviderInterface $parserProvider,
-    ) {}
+    ) {
+        $this->configProvider = $container->get(ConfigProviderInterface::class);
+    }
 
     public function getList(): array
     {
         if ($this->servers === null) {
             $this->servers = [];
 
-            $configs = Config::load("module.tld.servers");
+            $configs = $this->configProvider->get("module.tld.servers");
             foreach ($configs as $config) {
                 $this->servers[] = $this->create($config);
             }

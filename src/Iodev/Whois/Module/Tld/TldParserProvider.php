@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld;
 
-use Iodev\Whois\Config;
+use Iodev\Whois\Config\ConfigProviderInterface;
 use Iodev\Whois\Module\Tld\Parser\AutoParser;
 use Iodev\Whois\Module\Tld\Parser\BlockParser;
 use Iodev\Whois\Module\Tld\Parser\CommonParser;
@@ -14,6 +14,7 @@ use Psr\Container\ContainerInterface;
 class TldParserProvider implements TldParserProviderInterface
 {
     protected ContainerInterface $container;
+    protected ConfigProviderInterface $configProvider;
     protected array $classByType;
     protected ?TldParser $default = null;
     protected array $cache = [];
@@ -21,6 +22,8 @@ class TldParserProvider implements TldParserProviderInterface
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->configProvider = $container->get(ConfigProviderInterface::class);
+
         $this->classByType = [
             TldParser::AUTO => AutoParser::class,
             TldParser::COMMON => CommonParser::class,
@@ -92,7 +95,7 @@ class TldParserProvider implements TldParserProviderInterface
             $type = TldParser::INDENT;
             $extra = ['isAutofix' => true];
         }
-        $config = Config::load("module.tld.parser.$type") ?? [];
+        $config = $this->configProvider->get("module.tld.parser.$type") ?? [];
         return array_replace($config, $extra);
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Asn;
 
 use InvalidArgumentException;
-use Iodev\Whois\Config;
+use Iodev\Whois\Config\ConfigProviderInterface;
 use Psr\Container\ContainerInterface;
 
 class AsnServerProvider implements AsnServerProviderInterface
@@ -21,7 +21,10 @@ class AsnServerProvider implements AsnServerProviderInterface
         if ($this->servers === null) {
             $this->servers = [];
 
-            $configs = Config::load("module.asn.servers");
+            /** @var ConfigProviderInterface */
+            $configProvider = $this->container->get(ConfigProviderInterface::class);
+
+            $configs = $configProvider->get('module.asn.servers');
             foreach ($configs as $config) {
                 $this->servers[] = $this->create($config);
             }
