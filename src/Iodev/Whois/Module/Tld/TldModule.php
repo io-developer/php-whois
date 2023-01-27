@@ -43,7 +43,7 @@ class TldModule
     {
         $servers = $server !== null
             ? [$server]
-            : $this->serverMatcher->match($this->serverCollection->getServers(), $domain)
+            : $this->serverMatcher->match($this->serverCollection->getList(), $domain)
         ;
         $this->loader->loadDomainData($domain, $servers);
         return $this->loader->getLoadedResponse();
@@ -58,7 +58,7 @@ class TldModule
     {
         $servers = $server !== null
             ? [$server]
-            : $this->serverMatcher->match($this->serverCollection->getServers(), $domain)
+            : $this->serverMatcher->match($this->serverCollection->getList(), $domain)
         ;
         $this->loader->loadDomainData($domain, $servers);
         return $this->loader->getLoadedInfo();

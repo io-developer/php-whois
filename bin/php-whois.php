@@ -130,7 +130,7 @@ function info(string $domain, array $options = [])
 
     /** @var TldModule */
     $tld = getContainer()->get(TldModule::class);
-    $tldServers = $tld->getServerCollection()->getServers();
+    $tldServers = $tld->getServerCollection()->getList();
 
     $servers = $tld->getServerMatcher()->match($tldServers, $domain);
 

@@ -9,31 +9,53 @@ class TldServerCollection
     /** @var TldServer[] */
     protected array $servers = [];
 
+    protected bool $isSorted = true;
+
     /**
      * @return TldServer[]
      */
-    public function getServers(): array
+    public function getList(): array
     {
+        if (!$this->isSorted) {
+            $this->sort();
+        }
         return $this->servers;
     }
 
-    /**
-     * @param TldServer[] $servers
-     */
-    public function addServers(array $servers): static
+    public function add(TldServer $server): static
     {
-        return $this->setServers(array_merge($this->servers, $servers));
+        $this->isSorted = false;
+        $this->servers[] = $server;
+        return $this;
     }
 
     /**
      * @param TldServer[] $servers
      */
-    public function setServers(array $servers): static
+    public function addList(array $servers): static
+    {
+        foreach ($servers as $server) {
+            $this->add($server);
+        }
+        return $this;
+    }
+
+    /**
+     * @param TldServer[] $servers
+     */
+    public function setList(array $servers): static
+    {
+        $this->servers = [];
+        $this->addList($servers);
+        return $this;
+    }
+
+    public function sort(): static
     {
         $sortedKeys = [];
         $counter = 0;
-        $serversCount = count($servers);
-        foreach ($servers as $key => $server) {
+        $serversCount = count($this->servers);
+        foreach ($this->servers as $key => $server) {
             $counter++;
             $parts = explode('.', $server->zone);
             $len = count($parts);
@@ -56,13 +78,14 @@ class TldServerCollection
         $sortedServers = [];
         foreach ($sortedKeys as $key => $unused) {
             if (is_string($key)) {
-                $sortedServers[$key] = $servers[$key];
+                $sortedServers[$key] = $this->servers[$key];
             } else {
-                $sortedServers[] = $servers[$key];
+                $sortedServers[] = $this->servers[$key];
             }
         }
 
         $this->servers = $sortedServers;
+        $this->isSorted = true;
 
         return $this;
     }

@@ -36,7 +36,7 @@ class TldServerProvider implements TldServerProviderInterface
     public function getCollection(): TldServerCollection
     {
         $col = new TldServerCollection();
-        $col->setServers($this->getList());
+        $col->setList($this->getList());
         return $col;
     }
 
