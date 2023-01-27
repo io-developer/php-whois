@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Punycode;
+namespace Iodev\Whois\Tool;
 
-class IntlPunycode implements IPunycode
+class PunycodeTool implements PunycodeToolInterface
 {
     public function encode(string $unicode): string
     {
@@ -13,7 +13,8 @@ class IntlPunycode implements IPunycode
         }
         $result = defined('INTL_IDNA_VARIANT_UTS46')
             ? idn_to_ascii($unicode, 0, INTL_IDNA_VARIANT_UTS46)
-            : idn_to_ascii($unicode);
+            : idn_to_ascii($unicode)
+        ;
         return $result ?: '';
     }
 
@@ -24,7 +25,8 @@ class IntlPunycode implements IPunycode
         }
         $result = defined('INTL_IDNA_VARIANT_UTS46')
             ? idn_to_utf8($ascii, 0, INTL_IDNA_VARIANT_UTS46)
-            : idn_to_utf8($ascii);
+            : idn_to_utf8($ascii)
+        ;
         return $result ?: '';
     }
 }

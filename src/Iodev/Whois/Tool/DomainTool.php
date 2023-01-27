@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Tool;
 
-use Iodev\Whois\Punycode\IPunycode;
-
 class DomainTool
 {
     public function __construct(
-        protected IPunycode $punycode,
+        protected PunycodeToolInterface $punycodeTool,
     ) {}
 
     public function isEqual(string $a, string $b): bool
@@ -25,7 +23,7 @@ class DomainTool
             return '';
         }
         $cor = $this->correct($domain);
-        return $this->punycode->encode($cor);
+        return $this->punycodeTool->encode($cor);
     }
     
     public function toUnicode(string $domain): string
@@ -34,7 +32,7 @@ class DomainTool
             return '';
         }
         $cor = $this->correct($domain);
-        return $this->punycode->decode($cor);
+        return $this->punycodeTool->decode($cor);
     }
 
     public function filterAscii(string $domain): string

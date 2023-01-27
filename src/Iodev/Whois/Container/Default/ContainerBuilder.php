@@ -27,14 +27,14 @@ use Iodev\Whois\Module\Tld\TldParserProvider;
 use Iodev\Whois\Module\Tld\TldParserProviderInterface;
 use Iodev\Whois\Module\Tld\TldServerProvider;
 use Iodev\Whois\Module\Tld\TldServerProviderInterface;
-use Iodev\Whois\Punycode\IPunycode;
-use Iodev\Whois\Punycode\IntlPunycode;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
+use Iodev\Whois\Tool\PunycodeTool;
+use Iodev\Whois\Tool\PunycodeToolInterface;
 use Iodev\Whois\Tool\TextTool;
 use Iodev\Whois\Whois;
-
+                                                               
 class ContainerBuilder
 {
     protected $container;
@@ -58,8 +58,8 @@ class ContainerBuilder
                 return $this->container->get(ConfigProvider::class);
             },
 
-            IPunycode::class => function() {
-                return $this->container->get(IntlPunycode::class);
+            PunycodeToolInterface::class => function() {
+                return $this->container->get(PunycodeTool::class);
             },
 
             LoaderInterface::class => function() {
@@ -194,7 +194,7 @@ class ContainerBuilder
 
             DomainTool::class => function() {
                 return new DomainTool(
-                    $this->container->get(IPunycode::class),
+                    $this->container->get(PunycodeToolInterface::class),
                 );
             },
         ]);

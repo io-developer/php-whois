@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Punycode;
+namespace Iodev\Whois\Tool;
 
-interface IPunycode
+interface PunycodeToolInterface
 {
     function encode(string $unicode): string;
 
