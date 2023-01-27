@@ -5,45 +5,19 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Asn;
 
 use InvalidArgumentException;
-use Iodev\Whois\Container\Default\Container;
-use Iodev\Whois\Container\Default\ContainerBuilder;
-use Iodev\Whois\Loader\LoaderInterface;
-use Iodev\Whois\Loader\FakeSocketLoader;
-use Iodev\Whois\Loader\ResponseHandler;
+use Iodev\Whois\BaseTestCase;
 use Iodev\Whois\Whois;
-use PHPUnit\Framework\TestCase;
 
-class AsnParsingTest extends TestCase
+class AsnParsingTest extends BaseTestCase
 {
-    private static ?Container $container = null;
-    private static ?FakeSocketLoader $loader = null;
-    private static ?Whois $whois = null;
+    protected AsnModule $asnModule;
 
-    public function setUp(): void
+    protected function onConstructed()
     {
-        if (self::$container === null) {
-            self::$container = (new ContainerBuilder())
-                ->configure()
-                ->getContainer()
-            ;
-        }
-        if (self::$loader === null) {
-            self::$loader = new FakeSocketLoader(
-                self::$container->get(ResponseHandler::class),
-            );
-            self::$container->bind(LoaderInterface::class, fn() => self::$loader);
-        }
-        if (self::$whois === null) {
-            self::$whois = self::$container->get(Whois::class);
-        }
+        $this->asnModule = $this->whois->getAsnModule();
     }
 
-    /**
-     * @param $filename
-     * @return string
-     * @throws InvalidArgumentException
-     */
-    public static function loadContent($filename)
+    protected function loadContent(string $filename): mixed
     {
         $file = __DIR__ . '/parsing_data/' . $filename;
         if (!file_exists($file)) {
@@ -52,36 +26,25 @@ class AsnParsingTest extends TestCase
         return file_get_contents($file);
     }
 
-    /**
-     * @param string $filename
-     * @return Whois
-     */
-    private function whoisFrom($filename)
+    public function getLoadAsnInfoData(): array
     {
-        self::$loader->text = self::loadContent($filename);
-        return self::$whois;
+        return [
+            [ "AS32934", "AS32934/whois.ripe.net.txt", null ],
+            [ "AS32934", "AS32934/whois.radb.net.txt", "AS32934/whois.radb.net.json" ],
+
+            [ "AS62041", "AS62041/whois.ripe.net.txt", "AS62041/whois.ripe.net.json" ],
+            [ "AS62041", "AS62041/whois.radb.net.txt", "AS62041/whois.radb.net.json" ],
+        ];
     }
 
     /**
-     * @param array $items
+     * @dataProvider getLoadAsnInfoData
      */
-    private function assertDataItems($items)
+    public function testLoadAsnInfo(string $asn, string $srcTextFilename, ?string $expectedJsonFilename): void
     {
-        foreach ($items as $item) {
-            list ($domain, $text, $json) = $item;
-            $this->assertData($domain, $text, $json);
-        }
-    }
-
-    /**
-     * @param string $asn
-     * @param string $srcTextFilename
-     * @param string $expectedJsonFilename
-     */
-    private function assertData($asn, $srcTextFilename, $expectedJsonFilename)
-    {
-        $w = $this->whoisFrom($srcTextFilename);
-        $info = $w->loadAsnInfo($asn);
+        $this->loader->text = $this->loadContent($srcTextFilename);
+        
+        $info = $this->asnModule->loadAsnInfo($asn);
 
         if (empty($expectedJsonFilename)) {
             self::assertNull($info, "Loaded info should be null for empty response ($srcTextFilename)");
@@ -113,57 +76,40 @@ class AsnParsingTest extends TestCase
         foreach ($actualRoutes as $index => $actualRoute) {
             $expectedRoute = $expectedRoutes[$index];
             self::assertEquals(
-                $expectedRoute["route"],
+                $expectedRoute['route'],
                 $actualRoute->route,
                 "Route ($index) 'route' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
-                $expectedRoute["route6"],
+                $expectedRoute['route6'],
                 $actualRoute->route6,
                 "Route ($index) 'route6' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
-                $expectedRoute["descr"],
+                $expectedRoute['descr'],
                 $actualRoute->descr,
                 "Route ($index) 'descr' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
-                $expectedRoute["origin"],
+                $expectedRoute['origin'],
                 $actualRoute->origin,
                 "Route ($index) 'origin' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
-                $expectedRoute["mntBy"],
+                $expectedRoute['mntBy'],
                 $actualRoute->mntBy,
                 "Route ($index) 'mntBy' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
-                $expectedRoute["changed"],
+                $expectedRoute['changed'],
                 $actualRoute->changed,
                 "Route ($index) 'changed' mismatch ($srcTextFilename)"
             );
             self::assertEquals(
-                $expectedRoute["source"],
+                $expectedRoute['source'],
                 $actualRoute->source,
                 "Route ($index) 'source' mismatch ($srcTextFilename)"
             );
         }
-    }
-
-
-    public function test_AS32934()
-    {
-        $this->assertDataItems([
-            [ "AS32934", "AS32934/whois.ripe.net.txt", null ],
-            [ "AS32934", "AS32934/whois.radb.net.txt", "AS32934/whois.radb.net.json" ],
-        ]);
-    }
-
-    public function test_AS62041()
-    {
-        $this->assertDataItems([
-            [ "AS62041", "AS62041/whois.ripe.net.txt", "AS62041/whois.ripe.net.json" ],
-            [ "AS62041", "AS62041/whois.radb.net.txt", "AS62041/whois.radb.net.json" ],
-        ]);
     }
 }

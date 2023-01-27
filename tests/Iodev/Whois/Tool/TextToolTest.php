@@ -5,16 +5,14 @@ declare(strict_types=1);
 namespace Iodev\Whois\Tool;
 
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
+use Iodev\Whois\BaseTestCase;
 
-class TextToolTest extends TestCase
+class TextToolTest extends BaseTestCase
 {
     protected TextTool $textTool;
 
-    public function __construct(?string $name = null, array $data = [], $dataName = '')
+    protected function onConstructed()
     {
-        parent::__construct($name, $data, $dataName);
-
         $this->textTool = new TextTool();
     }
 

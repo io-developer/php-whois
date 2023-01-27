@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Asn;
 
-use PHPUnit\Framework\TestCase;
+use Iodev\Whois\BaseTestCase;
 
-class AsnResponseTest extends TestCase
+class AsnResponseTest extends BaseTestCase
 {
-    /** @var AsnResponse */
-    private $resp;
+    protected AsnResponse $resp;
 
     public function setUp(): void
     {
