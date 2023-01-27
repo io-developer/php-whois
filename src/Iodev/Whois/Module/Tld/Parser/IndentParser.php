@@ -4,20 +4,39 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld\Parser;
 
+use Iodev\Whois\Module\Tld\TldInfoRankCalculator;
 use Iodev\Whois\Selection\GroupFilter;
 use Iodev\Whois\Module\Tld\TldParser;
+use Iodev\Whois\Tool\DateTool;
+use Iodev\Whois\Tool\DomainTool;
+use Iodev\Whois\Tool\ParserTool;
 
 class IndentParser extends BlockParser
 {
-    /** @var bool */
-    protected $isAutofix = false;
-
-    /** @var array */
-    protected $secondaryStatesSubsets = [];
+    public function __construct(
+        IndentParserOpts $opts,
+        TldInfoRankCalculator $isnfoRankCalculator,
+        ParserTool $parserTool,
+        DomainTool $domainTool,
+        DateTool $dateTool,
+    ) {
+        parent::__construct(
+            $opts,
+            $isnfoRankCalculator,
+            $parserTool,
+            $domainTool,
+            $dateTool
+        );
+    }
 
     public function getType(): string
     {
-        return $this->isAutofix ? TldParser::INDENT_AUTOFIX : TldParser::INDENT;
+        return $this->getOpts()->isAutofix ? TldParser::INDENT_AUTOFIX : TldParser::INDENT;
+    }
+
+    public function getOpts(): IndentParserOpts
+    {
+        return $this->opts;
     }
 
     /**
@@ -62,7 +81,7 @@ class IndentParser extends BlockParser
     {
         $groups = [];
         $lines = $this->parserTool->splitLines($text);
-        if ($this->isAutofix) {
+        if ($this->getOpts()->isAutofix) {
             $lines = $this->parserTool->autofixTldLines($lines);
             $lines = $this->parserTool->removeInnerEmpties($lines, [__CLASS__, 'biasIndent']);
         }
@@ -72,7 +91,7 @@ class IndentParser extends BlockParser
         foreach ($blocks as $block) {
             $nodes = $this->parserTool->blockToIndentedNodes($block, [__CLASS__, 'biasIndent'], 2);
             $dict = $this->parserTool->nodesToDict($nodes);
-            $groups[] = $this->parserTool->dictToGroup($dict, $this->headerKey);
+            $groups[] = $this->parserTool->dictToGroup($dict, $this->getOpts()->headerKey);
         }
         $groups = $this->parserTool->joinParentlessGroups($groups);
         return $groups;
@@ -82,13 +101,14 @@ class IndentParser extends BlockParser
     {
         return $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetOf($this->secondaryStatesSubsets)
+            ->filterHasSubsetOf($this->getOpts()->secondaryStatesSubsets)
             ->toSelector()
             ->selectItems(parent::parseStates($rootFilter, $primaryFilter))
-            ->selectKeys($this->statesKeys)
+            ->selectKeys($this->getOpts()->statesKeys)
             ->transform(fn($items) => $this->transformItemsIntoStates($items))
             ->removeEmpty()
             ->removeDuplicates()
-            ->getAll();
+            ->getAll()
+        ;
     }
 }

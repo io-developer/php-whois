@@ -9,6 +9,7 @@ use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loader\FakeSocketLoader;
 use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Loader\ResponseHandler;
+use Iodev\Whois\Module\Tld\Parser\CommonParserOpts;
 use Iodev\Whois\Module\Tld\Parser\TestCommonParser;
 use Iodev\Whois\Module\Tld\TldInfoRankCalculator;
 use Iodev\Whois\Tool\DateTool;
@@ -57,6 +58,7 @@ abstract class BaseTestCase extends TestCase
 
                 TestCommonParser::class => function() use ($container) {
                     return new TestCommonParser(
+                        $container->get(CommonParserOpts::class),
                         $container->get(TldInfoRankCalculator::class),
                         $container->get(ParserTool::class),
                         $container->get(DomainTool::class),

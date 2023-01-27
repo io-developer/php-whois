@@ -6,63 +6,42 @@ namespace Iodev\Whois\Module\Tld\Parser;
 
 use Iodev\Whois\Selection\GroupFilter;
 use Iodev\Whois\Module\Tld\TldInfo;
+use Iodev\Whois\Module\Tld\TldInfoRankCalculator;
 use Iodev\Whois\Module\Tld\TldResponse;
 use Iodev\Whois\Module\Tld\TldParser;
+use Iodev\Whois\Tool\DateTool;
+use Iodev\Whois\Tool\DomainTool;
+use Iodev\Whois\Tool\ParserTool;
 
 class BlockParser extends CommonParser
 {
-    /** @var array */
-    protected $reservedDomainKeys = [ "Reserved name" ];
-
-    /** @var array */
-    protected $reservedDomainSubsets = [];
-
-    /** @var array */
-    protected $domainSubsets = [];
-
-    /** @var array */
-    protected $primarySubsets = [];
-
-    /** @var array */
-    protected $statesSubsets = [];
-
-    /** @var array */
-    protected $nameServersSubsets = [];
-
-    /** @var array */
-    protected $nameServersSparsedSubsets = [];
-
-    /** @var array */
-    protected $ownerSubsets = [];
-
-    /** @var array */
-    protected $registrgetOptionarSubsets = [];
-
-    /** @var array */
-    protected $registrarReservedSubsets = [];
-
-    /** @var array */
-    protected $registrarReservedKeys = [];
-
-    /** @var array */
-    protected $contactSubsets = [];
-
-    /** @var array */
-    protected $contactOrgKeys = [];
-
-    /** @var array */
-    protected $registrarGroupKeys = [];
-
-    /** @var array */
-    protected $updatedDateExtraKeys = [ "changed" ];
-
-
     /** @var string */
     protected $matchedDomain = '';
+
+    public function __construct(
+        BlockParserOpts $opts,
+        TldInfoRankCalculator $isnfoRankCalculator,
+        ParserTool $parserTool,
+        DomainTool $domainTool,
+        DateTool $dateTool,
+    ) {
+        parent::__construct(
+            $opts,
+            $isnfoRankCalculator,
+            $parserTool,
+            $domainTool,
+            $dateTool
+        );
+    }
 
     public function getType(): string
     {
         return TldParser::BLOCK;
+    }
+
+    public function getOpts(): BlockParserOpts
+    {
+        return $this->opts;
     }
 
     public function parseResponse(TldResponse $response): ?TldInfo
@@ -71,29 +50,29 @@ class BlockParser extends CommonParser
         $rootFilter = $this->createGroupFilter()
             ->setGroups($groups)
             ->useIgnoreCase(true)
-            ->handleEmpty($this->emptyValuesDict)
-            ->setHeaderKey($this->headerKey)
-            ->setDomainKeys($this->domainKeys)
+            ->handleEmpty($this->getOpts()->emptyValuesDict)
+            ->setHeaderKey($this->getOpts()->headerKey)
+            ->setDomainKeys($this->getOpts()->domainKeys)
             ->setSubsetParams([
                 '$domain' => $response->domain,
                 '$domainUnicode' => $this->domainTool->toUnicode($response->domain),
             ]);
 
         $reserved = $rootFilter->cloneMe()
-            ->filterHasSubsetOf($this->reservedDomainSubsets)
+            ->filterHasSubsetOf($this->getOpts()->reservedDomainSubsets)
             ->toSelector()
-            ->selectKeys($this->reservedDomainKeys)
+            ->selectKeys($this->getOpts()->reservedDomainKeys)
             ->getFirst();
 
         $isReserved = !empty($reserved);
 
         $domainFilter = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetOf($this->domainSubsets);
+            ->filterHasSubsetOf($this->getOpts()->domainSubsets);
 
         $primaryFilter = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetOf($this->primarySubsets)
+            ->filterHasSubsetOf($this->getOpts()->primarySubsets)
             ->useFirstGroupOr($domainFilter->getFirstGroup());
 
         $data = [
@@ -117,7 +96,7 @@ class BlockParser extends CommonParser
             'primaryFilter' => $primaryFilter,
             'reserved' => $reserved,
         ]);
-        return $isReserved || $this->isnfoRankCalculator->isValuable($info, $this->notRegisteredStatesDict)
+        return $isReserved || $this->isnfoRankCalculator->isValuable($info, $this->getOpts()->notRegisteredStatesDict)
             ? $info
             : null
         ;
@@ -127,8 +106,9 @@ class BlockParser extends CommonParser
     {
         $sel = $domainFilter
             ->toSelector()
-            ->selectKeys($this->domainKeys)
-            ->removeEmpty();
+            ->selectKeys($this->getOpts()->domainKeys)
+            ->removeEmpty()
+        ;
         $this->matchedDomain = $sel->getFirst('');
 
         $domain = $sel->mapDomain()->removeEmpty()->getFirst('');
@@ -140,7 +120,8 @@ class BlockParser extends CommonParser
             ->filterHasHeader()
             ->toSelector()
             ->selectKeys([ 'name' ])
-            ->removeEmpty();
+            ->removeEmpty()
+        ;
         $this->matchedDomain = $sel->getFirst('');
 
         return $sel->mapDomain()->removeEmpty()->getFirst('');
@@ -149,7 +130,7 @@ class BlockParser extends CommonParser
     protected function parseStates(GroupFilter $rootFilter, GroupFilter $primaryFilter): array
     {
         $states = $primaryFilter->toSelector()
-            ->selectKeys($this->statesKeys)
+            ->selectKeys($this->getOpts()->statesKeys)
             ->transform(fn($items) => $this->transformItemsIntoStates($items))
             ->removeEmpty()
             ->removeDuplicates()
@@ -165,10 +146,10 @@ class BlockParser extends CommonParser
         }
         return $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetOf($this->statesSubsets)
+            ->filterHasSubsetOf($this->getOpts()->statesSubsets)
             ->toSelector()
             ->selectItems($extraStates)
-            ->selectKeys($this->statesKeys)
+            ->selectKeys($this->getOpts()->statesKeys)
             ->transform(fn($items) => $this->transformItemsIntoStates($items))
             ->removeEmpty()
             ->removeDuplicates()
@@ -179,22 +160,22 @@ class BlockParser extends CommonParser
     {
         $nameServers = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetOf($this->nameServersSubsets)
+            ->filterHasSubsetOf($this->getOpts()->nameServersSubsets)
             ->useFirstGroup()
             ->toSelector()
-            ->selectKeys($this->nameServersKeys)
-            ->selectKeyGroups($this->nameServersKeysGroups)
+            ->selectKeys($this->getOpts()->nameServersKeys)
+            ->selectKeyGroups($this->getOpts()->nameServersKeysGroups)
             ->mapAsciiServer()
             ->removeEmpty()
             ->getAll();
 
         $nameServers = $rootFilter->cloneMe()
-            ->filterHasSubsetOf($this->nameServersSparsedSubsets)
+            ->filterHasSubsetOf($this->getOpts()->nameServersSparsedSubsets)
             ->toSelector()
             ->useMatchFirstOnly(true)
             ->selectItems($nameServers)
-            ->selectKeys($this->nameServersKeys)
-            ->selectKeyGroups($this->nameServersKeysGroups)
+            ->selectKeys($this->getOpts()->nameServersKeys)
+            ->selectKeyGroups($this->getOpts()->nameServersKeysGroups)
             ->mapAsciiServer()
             ->removeEmpty()
             ->removeDuplicates()
@@ -205,8 +186,8 @@ class BlockParser extends CommonParser
         }
         return $primaryFilter->toSelector()
             ->useMatchFirstOnly(true)
-            ->selectKeys($this->nameServersKeys)
-            ->selectKeyGroups($this->nameServersKeysGroups)
+            ->selectKeys($this->getOpts()->nameServersKeys)
+            ->selectKeyGroups($this->getOpts()->nameServersKeysGroups)
             ->mapAsciiServer()
             ->removeEmpty()
             ->removeDuplicates()
@@ -217,24 +198,24 @@ class BlockParser extends CommonParser
     {
         $dnssec = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetOf($this->nameServersSubsets)
+            ->filterHasSubsetOf($this->getOpts()->nameServersSubsets)
             ->useFirstGroup()
             ->toSelector()
-            ->selectKeys($this->dnssecKeys)
+            ->selectKeys($this->getOpts()->dnssecKeys)
             ->removeEmpty()
             ->sort(SORT_ASC)
             ->getFirst()
         ;
         if (empty($dnssec)) {
             $dnssec = $primaryFilter->toSelector()
-                ->selectKeys($this->dnssecKeys)
+                ->selectKeys($this->getOpts()->dnssecKeys)
                 ->removeEmpty()
                 ->sort(SORT_ASC)
                 ->getFirst('');
         }
         if (empty($dnssec)) {
             $dnssec = $rootFilter->toSelector()
-                ->selectKeys($this->dnssecKeys)
+                ->selectKeys($this->getOpts()->dnssecKeys)
                 ->removeEmpty()
                 ->sort(SORT_ASC)
                 ->getFirst('');
@@ -246,23 +227,23 @@ class BlockParser extends CommonParser
     {
         $owner = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetOf($this->ownerSubsets)
+            ->filterHasSubsetOf($this->getOpts()->ownerSubsets)
             ->toSelector()
-            ->selectKeys($this->ownerKeys)
+            ->selectKeys($this->getOpts()->ownerKeys)
             ->getFirst('');
 
         if (empty($owner)) {
             $owner = $primaryFilter->toSelector()
-                ->selectKeys($this->ownerKeys)
+                ->selectKeys($this->getOpts()->ownerKeys)
                 ->getFirst('');
         }
         if (!empty($owner)) {
             $owner = $rootFilter->cloneMe()
                 ->setSubsetParams(['$id' => $owner])
                 ->useMatchFirstOnly(true)
-                ->filterHasSubsetOf($this->contactSubsets)
+                ->filterHasSubsetOf($this->getOpts()->contactSubsets)
                 ->toSelector()
-                ->selectKeys($this->contactOrgKeys)
+                ->selectKeys($this->getOpts()->contactOrgKeys)
                 ->selectItems([ $owner ])
                 ->removeEmpty()
                 ->getFirst('');
@@ -274,45 +255,45 @@ class BlockParser extends CommonParser
     {
         $registrar = $primaryFilter->toSelector()
             ->useMatchFirstOnly(true)
-            ->selectKeys($this->registrarKeys)
+            ->selectKeys($this->getOpts()->registrarKeys)
             ->getFirst();
 
         if (empty($registrar)) {
             $registrarFilter = $rootFilter->cloneMe()
                 ->useMatchFirstOnly(true)
-                ->filterHasSubsetOf($this->registrarSubsets);
+                ->filterHasSubsetOf($this->getOpts()->registrarSubsets);
 
             $registrar = $registrarFilter->toSelector()
-                ->selectKeys($this->registrarGroupKeys)
+                ->selectKeys($this->getOpts()->registrarGroupKeys)
                 ->getFirst();
         }
         if (empty($registrar) && !empty($registrarFilter)) {
             $registrar = $registrarFilter->filterHasHeader()
                 ->toSelector()
-                ->selectKeys([ 'name' ])
+                ->selectKeys(['name'])
                 ->getFirst();
         }
         if (empty($registrar)) {
             $registrar = $primaryFilter->toSelector()
-                ->selectKeys($this->registrarKeys)
+                ->selectKeys($this->getOpts()->registrarKeys)
                 ->getFirst();
         }
 
         $regFilter = $rootFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetOf($this->registrarReservedSubsets);
+            ->filterHasSubsetOf($this->getOpts()->registrarReservedSubsets);
 
         $regId = $regFilter->toSelector()
-            ->selectKeys($this->registrarReservedKeys)
+            ->selectKeys($this->getOpts()->registrarReservedKeys)
             ->getFirst();
 
         if (!empty($regId) && (empty($registrar) || $regFilter->getFirstGroup() != $primaryFilter->getFirstGroup())) {
             $registrarOrg = $rootFilter->cloneMe()
                 ->setSubsetParams(['$id' => $regId])
                 ->useMatchFirstOnly(true)
-                ->filterHasSubsetOf($this->contactSubsets)
+                ->filterHasSubsetOf($this->getOpts()->contactSubsets)
                 ->toSelector()
-                ->selectKeys($this->contactOrgKeys)
+                ->selectKeys($this->getOpts()->contactOrgKeys)
                 ->getFirst();
 
             $owner = $this->parseOwner($rootFilter, $primaryFilter);
@@ -329,7 +310,7 @@ class BlockParser extends CommonParser
         return $this->parseDate(
             $rootFilter,
             $primaryFilter,
-            $this->creationDateKeys,
+            $this->getOpts()->creationDateKeys,
             '~registered\s+on\b~ui'
         );
     }
@@ -339,22 +320,22 @@ class BlockParser extends CommonParser
         return $this->parseDate(
             $rootFilter,
             $primaryFilter,
-            $this->expirationDateKeys,
+            $this->getOpts()->expirationDateKeys,
             '~registry\s+fee\s+due\s+on\b~ui'
         );
     }
 
     protected function parseUpdatedDate(GroupFilter $rootFilter, GroupFilter $primaryFilter): int
     {
-        $ts = $this->parseDate($rootFilter, $primaryFilter, $this->updatedDateKeys);
+        $ts = $this->parseDate($rootFilter, $primaryFilter, $this->getOpts()->updatedDateKeys);
         if ($ts) {
             return $ts;
         }
         return (int)$primaryFilter->cloneMe()
             ->useMatchFirstOnly(true)
-            ->filterHasSubsetKeyOf($this->updatedDateExtraKeys)
+            ->filterHasSubsetKeyOf($this->getOpts()->updatedDateExtraKeys)
             ->toSelector()
-            ->selectKeys($this->updatedDateExtraKeys)
+            ->selectKeys($this->getOpts()->updatedDateExtraKeys)
             ->mapUnixTime($this->getOption('inversedDateMMDD', false))
             ->removeEmpty()
             ->getFirst(0)
@@ -405,7 +386,7 @@ class BlockParser extends CommonParser
     protected function parseWhoisServer(GroupFilter $rootFilter, GroupFilter $primaryFilter): string
     {
         return (string)$primaryFilter->toSelector()
-            ->selectKeys($this->whoisServerKeys)
+            ->selectKeys($this->getOpts()->whoisServerKeys)
             ->mapAsciiServer()
             ->getFirst('');
     }

@@ -14,8 +14,11 @@ use Iodev\Whois\Module\Asn\AsnServerProvider;
 use Iodev\Whois\Module\Asn\AsnServerProviderInterface;
 use Iodev\Whois\Module\Tld\Parser\AutoParser;
 use Iodev\Whois\Module\Tld\Parser\BlockParser;
+use Iodev\Whois\Module\Tld\Parser\BlockParserOpts;
 use Iodev\Whois\Module\Tld\Parser\CommonParser;
+use Iodev\Whois\Module\Tld\Parser\CommonParserOpts;
 use Iodev\Whois\Module\Tld\Parser\IndentParser;
+use Iodev\Whois\Module\Tld\Parser\IndentParserOpts;
 use Iodev\Whois\Module\Tld\TldInfoRankCalculator;
 use Iodev\Whois\Module\Tld\TldModule;
 use Iodev\Whois\Module\Tld\TldParserProvider;
@@ -121,6 +124,7 @@ class ContainerBuilder
 
             CommonParser::class => function() {
                 return new CommonParser(
+                    $this->container->get(CommonParserOpts::class),
                     $this->container->get(TldInfoRankCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
@@ -130,6 +134,7 @@ class ContainerBuilder
 
             BlockParser::class => function() {
                 return new BlockParser(
+                    $this->container->get(BlockParserOpts::class),
                     $this->container->get(TldInfoRankCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
@@ -139,6 +144,7 @@ class ContainerBuilder
 
             IndentParser::class => function() {
                 return new IndentParser(
+                    $this->container->get(IndentParserOpts::class),
                     $this->container->get(TldInfoRankCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),

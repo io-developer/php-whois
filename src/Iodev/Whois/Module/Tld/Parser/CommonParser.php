@@ -15,73 +15,31 @@ use Iodev\Whois\Tool\ParserTool;
 
 class CommonParser extends TldParser
 {
-    /** @var string */
-    protected $headerKey = 'HEADER';
-
-    /** @var bool */
-    protected $isFlat = false;
-
-    /** @var array */
-    protected $domainKeys = [ "domain name" ];
-
-    /** @var array */
-    protected $whoisServerKeys = [ "whois server" ];
-
-    /** @var array */
-    protected $nameServersKeys = [ "name server" ];
-
-    /** @var array */
-    protected $nameServersKeysGroups = [ [ "ns 1", "ns 2", "ns 3", "ns 4" ] ];
-
-    /** @var array */
-    protected $dnssecKeys = [ "dnssec" ];
-
-    /** @var array */
-    protected $creationDateKeys = [ "creation date" ];
-
-    /** @var array */
-    protected $expirationDateKeys = [ "expiration date" ];
-
-    /** @var array */
-    protected $updatedDateKeys = [ "updated date" ];
-
-    /** @var array */
-    protected $ownerKeys = [ "owner-organization" ];
-
-    /** @var array */
-    protected $registrarKeys = [ "registrar" ];
-
-    /** @var array */
-    protected $statesKeys = [ "domain status" ];
-
-    /** @var array */
-    protected $notRegisteredStatesDict = [ "not registered" => 1 ];
-
-    /** @var string */
-    protected $emptyValuesDict = [
-        "" => 1,
-        "not.defined." => 1,
-    ];
-
     public function __construct(
+        protected CommonParserOpts $opts,
         protected TldInfoRankCalculator $isnfoRankCalculator,
         protected ParserTool $parserTool,
         protected DomainTool $domainTool,
         protected DateTool $dateTool,
     ) {}
 
+    public function getOpts(): CommonParserOpts
+    {
+        return $this->opts;
+    }
+
     /**
      * @return string
      */
     public function getType(): string
     {
-        return $this->isFlat ? TldParser::COMMON_FLAT : TldParser::COMMON;
+        return $this->getOpts()->isFlat ? TldParser::COMMON_FLAT : TldParser::COMMON;
     }
 
     public function setConfig(array $cfg): static
     {
         foreach ($cfg as $k => $v) {
-            $this->{$k} = $v;
+            $this->opts->{$k} = $v;
         }
         return $this;
     }
@@ -94,56 +52,56 @@ class CommonParser extends TldParser
             "parserType" => $this->getType(),
 
             "domainName" => (string)$sel->clean()
-                ->selectKeys($this->domainKeys)
+                ->selectKeys($this->getOpts()->domainKeys)
                 ->mapDomain()
                 ->removeEmpty()
                 ->getFirst(''),
 
             "whoisServer" => (string)$sel->clean()
-                ->selectKeys($this->whoisServerKeys)
+                ->selectKeys($this->getOpts()->whoisServerKeys)
                 ->mapAsciiServer()
                 ->removeEmpty()
                 ->getFirst(''),
 
             "nameServers" => $sel->clean()
-                ->selectKeys($this->nameServersKeys)
-                ->selectKeyGroups($this->nameServersKeysGroups)
+                ->selectKeys($this->getOpts()->nameServersKeys)
+                ->selectKeyGroups($this->getOpts()->nameServersKeysGroups)
                 ->mapAsciiServer()
                 ->removeEmpty()
                 ->removeDuplicates(11)
                 ->getAll(),
 
             "dnssec" => (string)$sel->clean()
-                ->selectKeys($this->dnssecKeys)
+                ->selectKeys($this->getOpts()->dnssecKeys)
                 ->removeEmpty()
                 ->sort(SORT_ASC)
                 ->getFirst(''),
 
             "creationDate" => $sel->clean()
-                ->selectKeys($this->creationDateKeys)
+                ->selectKeys($this->getOpts()->creationDateKeys)
                 ->mapUnixTime($this->getOption('inversedDateMMDD', false))
                 ->getFirst(0),
 
             "expirationDate" => $sel->clean()
-                ->selectKeys($this->expirationDateKeys)
+                ->selectKeys($this->getOpts()->expirationDateKeys)
                 ->mapUnixTime($this->getOption('inversedDateMMDD', false))
                 ->getFirst(0),
 
             "updatedDate" => $sel->clean()
-                ->selectKeys($this->updatedDateKeys)
+                ->selectKeys($this->getOpts()->updatedDateKeys)
                 ->mapUnixTime($this->getOption('inversedDateMMDD', false))
                 ->getFirst(0),
 
             "owner" => (string)$sel->clean()
-                ->selectKeys($this->ownerKeys)
+                ->selectKeys($this->getOpts()->ownerKeys)
                 ->getFirst(''),
 
             "registrar" => (string)$sel->clean()
-                ->selectKeys($this->registrarKeys)
+                ->selectKeys($this->getOpts()->registrarKeys)
                 ->getFirst(''),
 
             "states" => $sel->clean()
-                ->selectKeys($this->statesKeys)
+                ->selectKeys($this->getOpts()->statesKeys)
                 ->transform(fn($items) => $this->transformItemsIntoStates($items))
                 ->removeEmpty()
                 ->removeDuplicates()
@@ -154,7 +112,7 @@ class CommonParser extends TldParser
             'rootFilter' => $rootFilter,
         ]);
         
-        return $this->isnfoRankCalculator->isValuable($info, $this->notRegisteredStatesDict)
+        return $this->isnfoRankCalculator->isValuable($info, $this->getOpts()->notRegisteredStatesDict)
             ? $info
             : null
         ;
@@ -196,19 +154,19 @@ class CommonParser extends TldParser
             ->setGroups($groups)
             ->useIgnoreCase(true)
             ->useMatchFirstOnly(true)
-            ->handleEmpty($this->emptyValuesDict);
+            ->handleEmpty($this->getOpts()->emptyValuesDict);
 
-        if ($this->isFlat) {
+        if ($this->getOpts()->isFlat) {
             return $filter->mergeGroups();
         }
-        return $filter->filterIsDomain($response->domain, $this->domainKeys)
+        return $filter->filterIsDomain($response->domain, $this->getOpts()->domainKeys)
             ->useFirstGroup();
     }
 
     protected function groupsFromText(string $text): array
     {
         $lines = $this->parserTool->splitLines($text);
-        return $this->parserTool->linesToGroups($lines, $this->headerKey);
+        return $this->parserTool->linesToGroups($lines, $this->getOpts()->headerKey);
     }
 
     protected function transformItemsIntoStates(array $items): array
