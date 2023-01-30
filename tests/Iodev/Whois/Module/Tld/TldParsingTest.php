@@ -80,11 +80,12 @@ class TldParsingTest extends BaseTestCase
     {
         $w = $this->whoisFrom($srcTextFilename);
         $tld = $w->getTldModule();
-        $info = $tld->loadDomainInfo($domain);
+        $lookupResult = $tld->lookupDomain($domain);
+        $info = $lookupResult->info;
 
         if (empty($expectedJsonFilename)) {
             $this->assertNull($info, "Loaded info should be null for free domain ($srcTextFilename)");
-            $this->assertTrue($tld->isDomainAvailable($domain), "Free domain should be available ($srcTextFilename)");
+            $this->assertFalse($lookupResult->isDomainBusy(), "Free domain should be available ($srcTextFilename)");
             return;
         }
 
@@ -105,7 +106,7 @@ class TldParsingTest extends BaseTestCase
         ], $expected);
 
         $this->assertNotNull($info, "Loaded info should not be null ($srcTextFilename)");
-        $this->assertFalse($tld->isDomainAvailable($domain), "Domain should not be available ($srcTextFilename)");
+        $this->assertTrue($lookupResult->isDomainBusy(), "Domain should not be available ($srcTextFilename)");
 
         $this->assertEquals(
             $expected["domainName"],

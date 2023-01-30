@@ -11,6 +11,7 @@ use Iodev\Whois\Module\Asn\AsnInfo;
 use Iodev\Whois\Module\Asn\AsnModule;
 use Iodev\Whois\Module\Asn\AsnResponse;
 use Iodev\Whois\Module\Tld\TldInfo;
+use Iodev\Whois\Module\Tld\TldLookupDomainResult;
 use Iodev\Whois\Module\Tld\TldResponse;
 use Iodev\Whois\Module\Tld\TldModule;
 use Psr\Container\ContainerInterface;
@@ -55,7 +56,7 @@ class Whois
      */
     public function isDomainAvailable($domain)
     {
-        return $this->getTldModule()->isDomainAvailable($domain);
+        return !$this->getTldModule()->lookupDomain($domain)->isDomainBusy();
     }
 
     /**
@@ -65,19 +66,9 @@ class Whois
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function lookupDomain($domain): TldResponse
+    public function lookupDomain($domain): TldLookupDomainResult
     {
         return $this->getTldModule()->lookupDomain($domain);
-    }
-
-    /**
-     * @throws ServerMismatchException
-     * @throws ConnectionException
-     * @throws WhoisException
-     */
-    public function loadDomainInfo(string $domain): ?TldInfo
-    {
-        return $this->getTldModule()->loadDomainInfo($domain);
     }
 
     /**

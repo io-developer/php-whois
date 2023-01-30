@@ -9,4 +9,9 @@ class TldLookupDomainResult
         public readonly ?TldResponse $response,
         public readonly ?TldInfo $info,
     ) {}
+
+    public function isDomainBusy(): bool
+    {
+        return $this->info !== null;
+    }
 }

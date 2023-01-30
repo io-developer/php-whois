@@ -46,9 +46,9 @@ class TldModule
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function lookupDomain(string $domain, TldServer $server = null): TldResponse
+    public function loadDomainResponse(string $domain, TldServer $server = null): TldResponse
     {
-        $result = $this->lookupDomainCmd($domain, $server);
+        $result = $this->lookupDomain($domain, $server);
         return $result->response;
     }
 
@@ -59,7 +59,7 @@ class TldModule
      */
     public function loadDomainInfo(string $domain, TldServer $server = null): ?TldInfo
     {
-        $result = $this->lookupDomainCmd($domain, $server);
+        $result = $this->lookupDomain($domain, $server);
         return $result->info;
     }
 
@@ -67,12 +67,16 @@ class TldModule
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function lookupDomainCmd(string $domain, TldServer $server = null): TldLookupDomainResult
-    {
+    public function lookupDomain(
+        string $domain,
+        ?string $overrideHost = null,
+        ?TldServer $overrideServer = null,
+        ?TldParser $overrideParser = null,
+    ): TldLookupDomainResult {
         $this->lastUsedServers = [];
 
-        $servers = $server !== null
-            ? [$server]
+        $servers = $overrideServer !== null
+            ? [$overrideServer]
             : $this->serverProvider->getMatched($domain)
         ;
         if (count($servers) == 0) {
@@ -87,10 +91,10 @@ class TldModule
             $command
                 ->setLoader($this->loader)
                 ->setDomain($domain)
-                ->setHost($server->host)
+                ->setHost($overrideHost ?: $server->host)
                 ->setQueryFormat($server->queryFormat)
                 ->setRecursionLimit($server->centralized ? 0 : static::LOOKUP_DOMAIN_RECURSION_MAX)
-                ->setParser($server->parser)
+                ->setParser($overrideParser ?: $server->parser)
                 ->execute()
             ;
             if ($command->getResult() !== null && $command->getResult()->info) {
@@ -105,26 +109,5 @@ class TldModule
         }
 
         return $result;
-    }
-
-    /**
-     * @throws ServerMismatchException
-     * @throws ConnectionException
-     * @throws WhoisException
-     */
-    public function isDomainBusy(string $domain): bool
-    {
-        return $this->loadDomainInfo($domain) !== null;
-    }
-
-    /**
-     * @deprecated use isDomainBusy()
-     * @throws ServerMismatchException
-     * @throws ConnectionException
-     * @throws WhoisException
-     */
-    public function isDomainAvailable(string $domain): bool
-    {
-        return !$this->isDomainBusy($domain);
     }
 }

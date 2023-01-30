@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loader\LoaderInterface;
+use Iodev\Whois\Loader\ResponseHandler;
 use Iodev\Whois\Module\Tld\TldModule;
 use Iodev\Whois\Module\Tld\TldParserProviderInterface;
 use Iodev\Whois\Module\Tld\TldServer;
@@ -120,7 +121,9 @@ function info(string $domain, array $options = [])
 
     $loader = null;
     if ($options['file']) {
-        $loader = new \Iodev\Whois\Loader\FakeSocketLoader();
+        $loader = new \Iodev\Whois\Loader\FakeSocketLoader(
+            getContainer()->get(ResponseHandler::class),
+        );
         $loader->text = file_get_contents($options['file']);
 
         getContainer()->bind(LoaderInterface::class, function() use ($loader) {
@@ -130,29 +133,8 @@ function info(string $domain, array $options = [])
 
     /** @var TldModule */
     $tld = getContainer()->get(TldModule::class);
-    $tldServers = $tld->getServerCollection()->getList();
 
-    $servers = $tld->getServerMatcher()->match($tldServers, $domain);
-
-    if (!empty($options['host'])) {
-        $host = $options['host'];
-        $filteredServers = array_filter($servers, function (TldServer $server) use ($host) {
-            return $server->host == $host;
-        });
-        if (count($filteredServers) == 0 && count($servers) > 0) {
-            $filteredServers = [$servers[0]];
-        }
-        $servers = array_map(function (TldServer $server) use ($host) {
-            return new TldServer(
-                $server->zone,
-                $host,
-                $server->centralized,
-                $server->parser,
-                $server->queryFormat,
-            );
-        }, $filteredServers);
-    }
-
+    $parser = null;
     if (!empty($options['parser'])) {
         try {
             /** @var TldParserProviderInterface */
@@ -162,18 +144,11 @@ function info(string $domain, array $options = [])
             echo "\nCannot create TLD parser with type '{$options['parser']}'\n\n";
             throw $e;
         }
-        $servers = array_map(function (TldServer $server) use ($parser) {
-            return new TldServer(
-                $server->zone,
-                $server->host,
-                $server->centralized,
-                $parser,
-                $server->queryFormat,
-            );
-        }, $servers);
     }
 
-    $result = $tld->getLoader()->lookupDomain($domain, $servers);
+    $host = $options['host'] ?? null;
+
+    $result = $tld->lookupDomain($domain, $host, null, $parser);
 
     var_dump($result->info);
 }
