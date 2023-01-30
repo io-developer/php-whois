@@ -9,13 +9,13 @@ use Iodev\Whois\Module\Tld\Parser\TestCommonParser;
 
 class TldServerTest extends BaseTestCase
 {
-    private TldServerProviderInterface $tldServerProvider;
+    private TldServerProvider $tldServerProvider;
     private TldServerMatcher $tldServerMatcher;
     private TestCommonParser $parser;
 
     protected function onConstructed()
     {
-        $this->tldServerProvider = $this->container->get(TldServerProviderInterface::class);
+        $this->tldServerProvider = $this->container->get(TldServerProvider::class);
         $this->tldServerMatcher = $this->container->get(TldServerMatcher::class);
 
         $this->parser = $this->container->get(TestCommonParser::class);

@@ -7,31 +7,38 @@ namespace Iodev\Whois\Module\Tld;
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\ServerMismatchException;
 use Iodev\Whois\Exception\WhoisException;
+use Iodev\Whois\Loader\LoaderInterface;
+use Psr\Container\ContainerInterface;
 
 class TldModule
 {
+    public const LOOKUP_DOMAIN_RECURSION_MAX = 1;
+
     /** @var TldServer[] */
-    protected array $servers = [];
+    protected array $lastUsedServers = [];
 
     public function __construct(
-        protected TldLoader $loader,
-        protected TldServerCollection $serverCollection,
-        protected TldServerMatcher $serverMatcher,
+        protected ContainerInterface $container,
+        protected LoaderInterface $loader,
+        protected TldServerProviderInterface $serverProvider,
     ) {}
 
-    public function getLoader(): TldLoader
+    public function getLoader(): LoaderInterface
     {
         return $this->loader;
     }
 
-    public function getServerCollection(): TldServerCollection
+    public function getServerProvider(): TldServerProviderInterface
     {
-        return $this->serverCollection;
+        return $this->serverProvider;
     }
 
-    public function getServerMatcher(): TldServerMatcher
+    /**
+     * @return TldServer[]
+     */
+    public function getLastUsedServers(): array
     {
-        return $this->serverMatcher;
+        return $this->lastUsedServers;
     }
 
     /**
@@ -41,11 +48,7 @@ class TldModule
      */
     public function lookupDomain(string $domain, TldServer $server = null): TldResponse
     {
-        $servers = $server !== null
-            ? [$server]
-            : $this->serverMatcher->match($this->serverCollection->getList(), $domain)
-        ;
-        $result = $this->loader->lookupDomain($domain, $servers);
+        $result = $this->lookupDomainCmd($domain, $server);
         return $result->response;
     }
 
@@ -56,12 +59,52 @@ class TldModule
      */
     public function loadDomainInfo(string $domain, TldServer $server = null): ?TldInfo
     {
+        $result = $this->lookupDomainCmd($domain, $server);
+        return $result->info;
+    }
+
+    /**
+     * @throws ConnectionException
+     * @throws WhoisException
+     */
+    public function lookupDomainCmd(string $domain, TldServer $server = null): TldLookupDomainResult
+    {
+        $this->lastUsedServers = [];
+
         $servers = $server !== null
             ? [$server]
-            : $this->serverMatcher->match($this->serverCollection->getList(), $domain)
+            : $this->serverProvider->getMatched($domain)
         ;
-        $result = $this->loader->lookupDomain($domain, $servers);
-        return $result->info;
+        if (count($servers) == 0) {
+            throw new ServerMismatchException("No servers matched for domain '$domain'");
+        }
+
+        foreach ($servers as $server) {
+            $this->lastUsedServers[] = $server;
+
+            /** @var TldLookupDomainCommand */
+            $command = $this->container->get(TldLookupDomainCommand::class);
+            $command
+                ->setLoader($this->loader)
+                ->setDomain($domain)
+                ->setHost($server->host)
+                ->setQueryFormat($server->queryFormat)
+                ->setRecursionLimit($server->centralized ? 0 : static::LOOKUP_DOMAIN_RECURSION_MAX)
+                ->setParser($server->parser)
+                ->execute()
+            ;
+            if ($command->getResult() !== null && $command->getResult()->info) {
+                break;
+            }
+        }
+
+        $result = $command->getResult();
+
+        if ($result->response === null && $result->info === null) {
+            throw new WhoisException('No response');
+        }
+
+        return $result;
     }
 
     /**

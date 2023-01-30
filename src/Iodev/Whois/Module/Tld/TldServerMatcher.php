@@ -18,7 +18,7 @@ class TldServerMatcher
      * @return TldServer[]
      * @throws ServerMismatchException
      */
-    public function match(array $servers, string $domain, bool $quiet = false): array
+    public function match(array $servers, string $domain): array
     {
         $domainAscii = $this->domainTool->toAscii($domain);
         $matchedServers = [];
@@ -27,9 +27,6 @@ class TldServerMatcher
             if ($matchedCount) {
                 $matchedServers[] = $server;
             }
-        }
-        if (count($matchedServers) == 0 && !$quiet) {
-            throw new ServerMismatchException("No servers matched for domain '$domain'");
         }
         return $matchedServers;
     }

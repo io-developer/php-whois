@@ -12,12 +12,17 @@ class TldServerProvider implements TldServerProviderInterface
     public const CONFIG_ID = 'module.tld.servers';
     public const DEFAULT_QUERY_FORMAT = "%s\r\n";
 
+    protected TldServerCollection $collection;
+
     public function __construct(
         protected ConfigProviderInterface $configProvider,
         protected TldParserProviderInterface $parserProvider,
-    ) {}
+        protected TldServerMatcher $serverMatcher,
+    ) {
+        $this->collection = $this->createCollection();
+    }
 
-    public function getCollection(): TldServerCollection
+    protected function createCollection(): TldServerCollection
     {
         $col = new TldServerCollection();
         $configs = $this->configProvider->get(static::CONFIG_ID);
@@ -25,6 +30,16 @@ class TldServerProvider implements TldServerProviderInterface
             $col->add($this->fromConfig($config));
         }
         return $col;
+    }
+
+    public function getCollection(): TldServerCollection
+    {
+        return $this->collection;
+    }
+
+    public function getMatched(string $domain): array
+    {
+        return $this->serverMatcher->match($this->collection->getList(), $domain);
     }
 
     public function fromConfig(array $config): TldServer

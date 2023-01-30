@@ -16,7 +16,7 @@ class TldLookupDomainCommand
     protected string $domain;
     protected string $queryFormat;
     protected TldParser $parser;
-    protected int $recurseLimit = 0;
+    protected int $recursionLimit = 0;
     protected bool $altQueryEnabled = true;
 
     protected ?TldLookupDomainCommand $childCommand = null;
@@ -63,9 +63,9 @@ class TldLookupDomainCommand
         return $this;
     }
 
-    public function setRecurseLimit(int $limit): static
+    public function setRecursionLimit(int $limit): static
     {
-        $this->recurseLimit = $limit;
+        $this->recursionLimit = $limit;
         return $this;
     }
 
@@ -153,7 +153,7 @@ class TldLookupDomainCommand
         }
 
         if (
-            $this->recurseLimit > 0
+            $this->recursionLimit > 0
             && $info !== null
             && !empty($info->whoisServer)
             && $info->whoisServer != $this->host
@@ -161,7 +161,7 @@ class TldLookupDomainCommand
             $this->childCommand = (clone $this);
             $this->childCommand
                 ->clearResult()
-                ->setRecurseLimit($this->recurseLimit - 1)
+                ->setRecursionLimit($this->recursionLimit - 1)
                 ->setHost($info->whoisServer)
                 ->execute()
             ;

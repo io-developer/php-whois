@@ -8,5 +8,5 @@ interface TldServerProviderInterface
 {
     public function getCollection(): TldServerCollection;
 
-    public function fromConfig(array $config): TldServer;
+    public function getMatched(string $domain): array;
 }
