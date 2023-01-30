@@ -45,8 +45,8 @@ class TldModule
             ? [$server]
             : $this->serverMatcher->match($this->serverCollection->getList(), $domain)
         ;
-        $this->loader->loadDomainData($domain, $servers);
-        return $this->loader->getLoadedResponse();
+        $result = $this->loader->lookupDomain($domain, $servers);
+        return $result->response;
     }
 
     /**
@@ -60,8 +60,8 @@ class TldModule
             ? [$server]
             : $this->serverMatcher->match($this->serverCollection->getList(), $domain)
         ;
-        $this->loader->loadDomainData($domain, $servers);
-        return $this->loader->getLoadedInfo();
+        $result = $this->loader->lookupDomain($domain, $servers);
+        return $result->info;
     }
 
     /**

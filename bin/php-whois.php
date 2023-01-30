@@ -173,10 +173,9 @@ function info(string $domain, array $options = [])
         }, $servers);
     }
 
-    $tld->getLoader()->loadDomainData($domain, $servers);
-    $info = $tld->getLoader()->getLoadedInfo();
+    $result = $tld->getLoader()->lookupDomain($domain, $servers);
 
-    var_dump($info);
+    var_dump($result->info);
 }
 
 main($argv);
