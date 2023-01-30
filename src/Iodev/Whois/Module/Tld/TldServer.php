@@ -15,6 +15,7 @@ class TldServer
         public readonly bool $centralized,
         public readonly TldParser $parser,
         public readonly string $queryFormat,
+        public readonly int $priority,
     ) {
         $this->inverseZoneParts = array_reverse(explode('.', $this->zone));
         array_pop($this->inverseZoneParts);

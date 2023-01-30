@@ -22,7 +22,7 @@ class TldModuleServerTest extends BaseTestCase
     {
         $parser = $this->parserProvider->getDefault();
 
-        return new TldServer($zone, "some.host.net", false, $parser, "%s\r\n");
+        return new TldServer($zone, "some.host.net", false, $parser, "%s\r\n", 0);
     }
 
     public function setUp(): void

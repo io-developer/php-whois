@@ -53,21 +53,28 @@ class TldServerCollection
     public function sort(): static
     {
         $sortedKeys = [];
+        $priorityMin = 0;
+        foreach ($this->servers as $server) {
+            $priorityMin = min($priorityMin, $server->priority);
+        }
         $counter = 0;
         $serversCount = count($this->servers);
         foreach ($this->servers as $key => $server) {
             $counter++;
+            $priority = $priorityMin + $server->priority;
+            $subPriority = $serversCount - $counter;
             $parts = explode('.', $server->zone);
             $len = count($parts);
             $rootZone = $parts[$len - 1] ?? '';
             $subZone1 = $parts[$len - 2] ?? '';
             $subZone2 = $parts[$len - 3] ?? '';
             $sortedKeys[$key] = sprintf(
-                '%16s.%16s.%32s.%13s',
+                '%16s.%16s.%32s.%8s.%8s',
                 $subZone2,
                 $subZone1,
                 $rootZone,
-                $serversCount - $counter,
+                $priority,
+                $subPriority,
             );
         };
 

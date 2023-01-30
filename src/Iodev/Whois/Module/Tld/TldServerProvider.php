@@ -11,6 +11,7 @@ class TldServerProvider implements TldServerProviderInterface
 {
     public const CONFIG_ID = 'module.tld.servers';
     public const DEFAULT_QUERY_FORMAT = "%s\r\n";
+    public const DEFAULT_PRIORITY = 0;
 
     protected TldServerCollection $collection;
 
@@ -39,7 +40,9 @@ class TldServerProvider implements TldServerProviderInterface
 
     public function getMatched(string $domain): array
     {
-        return $this->serverMatcher->match($this->collection->getList(), $domain);
+        $servers = $this->serverMatcher->match($this->collection->getList(), $domain);
+
+        return $servers;
     }
 
     public function fromConfig(array $config): TldServer
@@ -58,6 +61,7 @@ class TldServerProvider implements TldServerProviderInterface
             $config['centralized'] ?? false,
             $parser,
             $config['queryFormat'] ?? static::DEFAULT_QUERY_FORMAT,
+            $config['priority'] ?? static::DEFAULT_PRIORITY,
         );
     }
 

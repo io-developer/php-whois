@@ -33,37 +33,38 @@ class TldServerTest extends BaseTestCase
 
     public function testIsDomainZoneValid()
     {
-        $s = new TldServer(".abc", "some.host.com", false, $this->parser, "%s\r\n");
+        $s = new TldServer(".abc", "some.host.com", false, $this->parser, "%s\r\n", 0);
         self::assertTrue($this->tldServerMatcher->isDomainZone($s, "some.abc"));
     }
 
     public function testIsDomainZoneValidComplex()
     {
-        $s = new TldServer(".abc", "some.host.com", false, $this->parser, "%s\r\n");
+        $s = new TldServer(".abc", "some.host.com", false, $this->parser, "%s\r\n", 0);
         self::assertTrue($this->tldServerMatcher->isDomainZone($s, "some.foo.bar.abc"));
     }
 
     public function testIsDomainZoneInvalid()
     {
-        $s = new TldServer(".abc", "some.host.com", false, $this->parser, "%s\r\n");
+        $s = new TldServer(".abc", "some.host.com", false, $this->parser, "%s\r\n", 0);
         self::assertFalse($this->tldServerMatcher->isDomainZone($s, "some.com"));
     }
 
     public function testIsDomainZoneInvalidEnd()
     {
-        $s = new TldServer(".foo.bar", "some.host.com", false, $this->parser, "%s\r\n");
+        $s = new TldServer(".foo.bar", "some.host.com", false, $this->parser, "%s\r\n", 0);
         self::assertFalse($this->tldServerMatcher->isDomainZone($s, "some.bar"));
     }
 
     public function testBuildDomainQueryCustom()
     {
-        $s = new TldServer(".foo.bar", "some.host.com", false, $this->parser, "prefix %s suffix\r\n");
+        $s = new TldServer(".foo.bar", "some.host.com", false, $this->parser, "prefix %s suffix\r\n", 0);
         self::assertEquals("prefix domain.com suffix\r\n", $s->buildDomainQuery("domain.com"));
     }
 
     public function testBuildDomainQueryCustomNoParam()
     {
-        $s = new TldServer(".foo.bar", "some.host.com", false, $this->parser, "prefix suffix\r\n");
+        $s = new TldServer(
+            ".foo.bar", "some.host.com", false, $this->parser, "prefix suffix\r\n", 0);
         self::assertEquals("prefix suffix\r\n", $s->buildDomainQuery("domain.com"));
     }
 
