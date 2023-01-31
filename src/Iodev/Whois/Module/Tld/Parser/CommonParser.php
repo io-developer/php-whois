@@ -6,7 +6,7 @@ namespace Iodev\Whois\Module\Tld\Parser;
 
 use Iodev\Whois\Selection\GroupFilter;
 use Iodev\Whois\Module\Tld\TldInfo;
-use Iodev\Whois\Module\Tld\TldInfoRankCalculator;
+use Iodev\Whois\Module\Tld\TldInfoScoreCalculator;
 use Iodev\Whois\Module\Tld\TldResponse;
 use Iodev\Whois\Module\Tld\TldParser;
 use Iodev\Whois\Tool\DateTool;
@@ -17,7 +17,7 @@ class CommonParser extends TldParser
 {
     public function __construct(
         protected CommonParserOpts $opts,
-        protected TldInfoRankCalculator $isnfoRankCalculator,
+        protected TldInfoScoreCalculator $infoScoreCalculator,
         protected ParserTool $parserTool,
         protected DomainTool $domainTool,
         protected DateTool $dateTool,
@@ -125,7 +125,7 @@ class CommonParser extends TldParser
         //         ->selectKeys($this->getOpts()->domainKeys),
         // ]);
         
-        return $this->isnfoRankCalculator->isValuable($info, $this->getOpts()->notRegisteredStatesDict)
+        return $this->infoScoreCalculator->isValuable($info, $this->getOpts()->notRegisteredStatesDict)
             ? $info
             : null
         ;

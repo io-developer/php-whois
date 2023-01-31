@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld;
 
-class TldInfoRankCalculator
+class TldInfoScoreCalculator
 {
     public function isValuable(TldInfo $info, array $badFirstStatesDict = []): bool
     {

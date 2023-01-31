@@ -21,7 +21,7 @@ use Iodev\Whois\Module\Tld\Parser\CommonParser;
 use Iodev\Whois\Module\Tld\Parser\CommonParserOpts;
 use Iodev\Whois\Module\Tld\Parser\IndentParser;
 use Iodev\Whois\Module\Tld\Parser\IndentParserOpts;
-use Iodev\Whois\Module\Tld\TldInfoRankCalculator;
+use Iodev\Whois\Module\Tld\TldInfoScoreCalculator;
 use Iodev\Whois\Module\Tld\TldQueryBuilder;
 use Iodev\Whois\Module\Tld\TldLookupDomainCommand;
 use Iodev\Whois\Module\Tld\TldLookupWhoisCommand;
@@ -154,7 +154,7 @@ class ContainerBuilder
             CommonParser::class => function() {
                 return new CommonParser(
                     $this->container->get(CommonParserOpts::class),
-                    $this->container->get(TldInfoRankCalculator::class),
+                    $this->container->get(TldInfoScoreCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
@@ -164,7 +164,7 @@ class ContainerBuilder
             BlockParser::class => function() {
                 return new BlockParser(
                     $this->container->get(BlockParserOpts::class),
-                    $this->container->get(TldInfoRankCalculator::class),
+                    $this->container->get(TldInfoScoreCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
@@ -174,7 +174,7 @@ class ContainerBuilder
             IndentParser::class => function() {
                 return new IndentParser(
                     $this->container->get(IndentParserOpts::class),
-                    $this->container->get(TldInfoRankCalculator::class),
+                    $this->container->get(TldInfoScoreCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
@@ -183,7 +183,7 @@ class ContainerBuilder
 
             AutoParser::class => function() {
                 return new AutoParser(
-                    $this->container->get(TldInfoRankCalculator::class),
+                    $this->container->get(TldInfoScoreCalculator::class),
                 );
             },
 

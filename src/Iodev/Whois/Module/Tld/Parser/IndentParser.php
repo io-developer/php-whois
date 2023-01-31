@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld\Parser;
 
-use Iodev\Whois\Module\Tld\TldInfoRankCalculator;
+use Iodev\Whois\Module\Tld\TldInfoScoreCalculator;
 use Iodev\Whois\Selection\GroupFilter;
 use Iodev\Whois\Module\Tld\TldParser;
 use Iodev\Whois\Tool\DateTool;
@@ -15,14 +15,14 @@ class IndentParser extends BlockParser
 {
     public function __construct(
         IndentParserOpts $opts,
-        TldInfoRankCalculator $isnfoRankCalculator,
+        TldInfoScoreCalculator $infoScoreCalculator,
         ParserTool $parserTool,
         DomainTool $domainTool,
         DateTool $dateTool,
     ) {
         parent::__construct(
             $opts,
-            $isnfoRankCalculator,
+            $infoScoreCalculator,
             $parserTool,
             $domainTool,
             $dateTool

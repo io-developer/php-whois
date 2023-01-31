@@ -6,7 +6,7 @@ namespace Iodev\Whois\Module\Tld\Parser;
 
 use Iodev\Whois\Selection\GroupFilter;
 use Iodev\Whois\Module\Tld\TldInfo;
-use Iodev\Whois\Module\Tld\TldInfoRankCalculator;
+use Iodev\Whois\Module\Tld\TldInfoScoreCalculator;
 use Iodev\Whois\Module\Tld\TldResponse;
 use Iodev\Whois\Module\Tld\TldParser;
 use Iodev\Whois\Tool\DateTool;
@@ -20,14 +20,14 @@ class BlockParser extends CommonParser
 
     public function __construct(
         BlockParserOpts $opts,
-        TldInfoRankCalculator $isnfoRankCalculator,
+        TldInfoScoreCalculator $infoScoreCalculator,
         ParserTool $parserTool,
         DomainTool $domainTool,
         DateTool $dateTool,
     ) {
         parent::__construct(
             $opts,
-            $isnfoRankCalculator,
+            $infoScoreCalculator,
             $parserTool,
             $domainTool,
             $dateTool
@@ -96,7 +96,7 @@ class BlockParser extends CommonParser
             'primaryFilter' => $primaryFilter,
             'reserved' => $reserved,
         ]);
-        return $isReserved || $this->isnfoRankCalculator->isValuable($info, $this->getOpts()->notRegisteredStatesDict)
+        return $isReserved || $this->infoScoreCalculator->isValuable($info, $this->getOpts()->notRegisteredStatesDict)
             ? $info
             : null
         ;
