@@ -28,8 +28,8 @@ class TldLookupDomainCommand
 
 
     public function __construct(
-        protected DomainTool $domainTool,
         protected TldQueryBuilder $queryBuilder,
+        protected DomainTool $domainTool,
     ) {}
 
 

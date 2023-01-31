@@ -2,7 +2,8 @@
   "headerKey": "__HEADER__",
   "domainKeys": [
     "~^(complete\\s+)?domain([_\\s]*name)?(\\s+\\(.+?\\))?$~ui",
-    "~^(Dominio|query)$~ui"
+    "~^(Dominio|query)$~ui",
+    "~^domain$~ui"
   ],
   "whoisServerKeys": [
     "~^(registrar\\s+)?whois([_\\s]*server)?$~ui"

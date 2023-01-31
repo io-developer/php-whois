@@ -17,6 +17,10 @@ use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
 use PHPUnit\Framework\TestCase;
 use Iodev\Whois\Config\ConfigProvider;
+use Iodev\Whois\Config\ConfigProviderInterface;
+use Iodev\Whois\Module\Tld\TldParserProviderInterface;
+use Iodev\Whois\Module\Tld\TldServerMatcher;
+use Iodev\Whois\Module\Tld\TldServerProvider;
 
 abstract class BaseTestCase extends TestCase
 {
@@ -67,6 +71,22 @@ abstract class BaseTestCase extends TestCase
                         $container->get(DomainTool::class),
                         $container->get(DateTool::class),
                     );
+                },
+
+                TldServerProviderInterface::class => function() {
+                    return $this->container->get(TldServerProvider::class);
+                },
+
+                TldServerProvider::class => function() use ($container) {
+                    $instance = new TldServerProvider(
+                        $container,
+                        $container->get(ConfigProviderInterface::class),
+                        $container->get(LoaderInterface::class),
+                        $container->get(TldParserProviderInterface::class),
+                        $container->get(TldServerMatcher::class),
+                    );
+                    $instance->setWhoisUpdateEnabled(false);
+                    return $instance;
                 },
             ]);
         }

@@ -111,6 +111,19 @@ class CommonParser extends TldParser
             'groups' => $rootFilter->getGroups(),
             'rootFilter' => $rootFilter,
         ]);
+
+        // var_dump([
+        //     'RAW INFO',
+        //     'domainName' => $info->domainName,
+        //     'whoisServer' => $info->whoisServer,
+        //     'domainKeys' => $this->getOpts()->domainKeys,
+        //     'sel getGroups' => $sel->getGroups(),
+        // ]);
+
+        // var_dump([
+        //     "selectKeys" => $sel->clean()
+        //         ->selectKeys($this->getOpts()->domainKeys),
+        // ]);
         
         return $this->isnfoRankCalculator->isValuable($info, $this->getOpts()->notRegisteredStatesDict)
             ? $info
@@ -149,7 +162,23 @@ class CommonParser extends TldParser
 
     protected function filterFrom(TldResponse $response): GroupFilter
     {
-        $groups = $this->groupsFromText($response->text);
+        $text = $response->text;
+
+
+        // var_dump([
+        //     'getType' => $this->getType(),
+        //     '$this->getOpts()->isFlat' => $this->getOpts()->isFlat,
+        // ]);
+
+        if ($this->getOpts()->isFlat) {
+            $text = $this->parserTool->removeEmptyLines($text);
+
+            // var_dump([
+            //     '$text' => $text,
+            // ]);
+        }
+
+        $groups = $this->groupsFromText($text);
         $filter = $this->createGroupFilter()
             ->setGroups($groups)
             ->useIgnoreCase(true)

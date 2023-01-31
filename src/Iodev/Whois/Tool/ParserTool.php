@@ -14,6 +14,17 @@ class ParserTool
         return preg_split('~\r\n|\r|\n~ui', $text);
     }
 
+    public function removeEmptyLines(string $text): string
+    {
+        $resultLines = [];
+        foreach ($this->splitLines($text) as $line) {
+            if (!empty(trim($line))) {
+                $resultLines[] = $line;
+            }
+        }
+        return implode("\n", $resultLines);
+    }
+
     /**
      * @param string[] $lines
      */
@@ -47,10 +58,40 @@ class ParserTool
     }
 
     /**
+     * @param string[] $lines
+     */
+    public function linesToSimpleKV(array $lines): array
+    {
+        $trimChars = " \t\n\r\0\x0B";
+        $result = [];
+        $lines[] = '';
+        foreach ($lines as $line) {
+            $isComment = mb_strlen($line) != mb_strlen(ltrim($line, "%#;:"));
+            if ($isComment) {
+                continue;
+            }
+            $line = ltrim(rtrim($line, "%#*=$trimChars"), "%#*=;$trimChars");
+            $kv = explode(':', $line, 2);
+            if (count($kv) == 2) {
+                [$key, $val] = $kv;
+                $key = trim($key, $trimChars);
+                $val = trim($val, $trimChars);
+                if ($key !== '' && $val !== '') {
+                    $result[$key] = $val;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return string[]
      */
     public function lineToKeyVal(string $line, string $trimChars = " \t\n\r\0\x0B"): array
     {
+        if (preg_match('~^(\.{2,}):\s*(\.{2,})?$~ui', $line, $m)) {
+            return [trim($m[1], $trimChars), trim($m[2], $trimChars)];
+        }
         if (preg_match('~^\s*(\.{2,})?\s*(.+?)\s*(\.{2,})?\s*:(?![\\/:])(?<!::)(.*)$~ui', $line, $m)) {
             return [trim($m[2], $trimChars), trim($m[4], $trimChars)];
         }
