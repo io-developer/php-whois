@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Loader;
+namespace Iodev\Whois\Transport\Loader;
 
 use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Tool\TextTool;

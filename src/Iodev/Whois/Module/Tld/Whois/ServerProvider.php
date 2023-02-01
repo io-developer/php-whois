@@ -6,11 +6,11 @@ namespace Iodev\Whois\Module\Tld\Whois;
 
 use InvalidArgumentException;
 use Iodev\Whois\Config\ConfigProviderInterface;
-use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Module\Tld\Command\WhoisLookupCommand;
 use Iodev\Whois\Module\Tld\Dto\WhoisServer;
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
+use Iodev\Whois\Transport\Loader\LoaderInterface;
 use Psr\Container\ContainerInterface;
 
 class ServerProvider implements ServerProviderInterface

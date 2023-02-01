@@ -6,9 +6,9 @@ namespace Iodev\Whois;
 
 use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
-use Iodev\Whois\Loader\FakeSocketLoader;
-use Iodev\Whois\Loader\LoaderInterface;
-use Iodev\Whois\Loader\ResponseHandler;
+use Iodev\Whois\Transport\Loader\FakeSocketLoader;
+use Iodev\Whois\Transport\Loader\LoaderInterface;
+use Iodev\Whois\Transport\Loader\ResponseHandler;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;

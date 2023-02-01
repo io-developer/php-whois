@@ -4,16 +4,25 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Container\Default;
 
+
+use Iodev\Whois\Whois;
+
 use Iodev\Whois\Config\ConfigProviderInterface;
 use Iodev\Whois\Config\ConfigProvider;
-use Iodev\Whois\Loader\LoaderInterface;
-use Iodev\Whois\Loader\ResponseHandler;
-use Iodev\Whois\Loader\CurlLoader;
-use Iodev\Whois\Loader\SocketLoader;
-use Iodev\Whois\Module\Asn\AsnModule;
-use Iodev\Whois\Module\Asn\AsnParser;
-use Iodev\Whois\Module\Asn\AsnServerProvider;
-use Iodev\Whois\Module\Asn\AsnServerProviderInterface;
+
+use Iodev\Whois\Transport\Loader\{
+    LoaderInterface,
+    SocketLoader,
+    CurlLoader,
+    ResponseHandler,
+};
+
+use Iodev\Whois\Module\Asn\{
+    AsnModule,
+    AsnParser,
+    AsnServerProvider,
+    AsnServerProviderInterface,
+};
 
 use Iodev\Whois\Module\Tld\TldModule;
 use Iodev\Whois\Module\Tld\Command\{
@@ -39,14 +48,16 @@ use Iodev\Whois\Module\Tld\Whois\{
 };
 use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
 
-use Iodev\Whois\Tool\DateTool;
-use Iodev\Whois\Tool\DomainTool;
-use Iodev\Whois\Tool\ParserTool;
-use Iodev\Whois\Tool\PunycodeTool;
-use Iodev\Whois\Tool\PunycodeToolInterface;
-use Iodev\Whois\Tool\TextTool;
-use Iodev\Whois\Whois;
-                                                               
+use Iodev\Whois\Tool\{
+    DateTool,
+    DomainTool,
+    ParserTool,
+    PunycodeToolInterface,
+    PunycodeTool,
+    TextTool,
+};
+                  
+
 class ContainerBuilder
 {
     protected $container;

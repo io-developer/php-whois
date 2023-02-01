@@ -6,12 +6,12 @@ namespace Iodev\Whois\Module\Tld\Command;
 
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Module\Tld\Dto\LookupResponse;
 use Iodev\Whois\Module\Tld\Dto\LookupResult;
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 use Iodev\Whois\Module\Tld\Whois\QueryBuilder;
 use Iodev\Whois\Tool\DomainTool;
+use Iodev\Whois\Transport\Loader\LoaderInterface;
 
 class LookupCommand
 {

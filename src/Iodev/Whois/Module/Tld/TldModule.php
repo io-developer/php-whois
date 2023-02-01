@@ -7,7 +7,6 @@ namespace Iodev\Whois\Module\Tld;
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\ServerMismatchException;
 use Iodev\Whois\Exception\WhoisException;
-use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Module\Tld\Command\LookupCommand;
 use Iodev\Whois\Module\Tld\Dto\LookupInfo;
 use Iodev\Whois\Module\Tld\Dto\LookupResponse;
@@ -15,6 +14,7 @@ use Iodev\Whois\Module\Tld\Dto\LookupResult;
 use Iodev\Whois\Module\Tld\Dto\WhoisServer;
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 use Iodev\Whois\Module\Tld\Whois\ServerProviderInterface;
+use Iodev\Whois\Transport\Loader\LoaderInterface;
 use Psr\Container\ContainerInterface;
 
 class TldModule
