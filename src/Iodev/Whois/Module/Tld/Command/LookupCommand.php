@@ -159,14 +159,14 @@ class LookupCommand
         if (
             $this->recursionLimit > 0
             && $info !== null
-            && !empty($info->whoisServer)
-            && $info->whoisServer != $this->host
+            && !empty($info->getWhoisHost())
+            && $info->getWhoisHost() != $this->host
         ) {
             $this->childCommand = (clone $this);
             $this->childCommand
                 ->clearResult()
                 ->setRecursionLimit($this->recursionLimit - 1)
-                ->setHost($info->whoisServer)
+                ->setHost($info->getWhoisHost())
                 ->execute()
             ;
             $this->resolveResult();
