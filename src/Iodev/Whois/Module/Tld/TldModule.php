@@ -55,7 +55,7 @@ class TldModule
      */
     public function loadDomainResponse(string $domain, WhoisServer $server = null): LookupResponse
     {
-        $result = $this->lookupDomain($domain, $server);
+        $result = $this->lookupDomain($domain, null, $server);
         return $result->response;
     }
 
@@ -66,7 +66,7 @@ class TldModule
      */
     public function loadDomainInfo(string $domain, WhoisServer $server = null): ?LookupInfo
     {
-        $result = $this->lookupDomain($domain, $server);
+        $result = $this->lookupDomain($domain, null, $server);
         return $result->info;
     }
 
@@ -82,6 +82,7 @@ class TldModule
     ): LookupResult {
         $this->lastUsedServers = [];
 
+        /** @var WhoisServer[] */
         $servers = $overrideServer !== null
             ? [$overrideServer]
             : $this->serverProvider->getMatched($domain)
@@ -98,10 +99,10 @@ class TldModule
             $command
                 ->setLoader($this->loader)
                 ->setDomain($domain)
-                ->setHost($overrideHost ?: $server->host)
-                ->setQueryFormat($server->queryFormat)
-                ->setRecursionLimit($server->centralized ? 0 : static::LOOKUP_DOMAIN_RECURSION_MAX)
-                ->setParser($overrideParser ?: $server->parser)
+                ->setHost($overrideHost ?: $server->getHost())
+                ->setQueryFormat($server->getQueryFormat())
+                ->setRecursionLimit($server->getCentralized() ? 0 : static::LOOKUP_DOMAIN_RECURSION_MAX)
+                ->setParser($overrideParser ?: $server->getParser())
                 ->execute()
             ;
             if ($command->getResult() !== null && $command->getResult()->info) {

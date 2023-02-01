@@ -59,6 +59,9 @@ class ServerProvider implements ServerProviderInterface
         return $col;
     }
 
+    /**
+     * @return WhoisServer[]
+     */
     public function getMatched(string $domain): array
     {
         $collectionUpdated = false;
@@ -69,8 +72,8 @@ class ServerProvider implements ServerProviderInterface
             $collectionUpdated = $this->updateCollectionFor($domain, null);
         } else {
             $firstServer = $servers[0];
-            $isSimpleZone = count($firstServer->getInverseZoneParts()) == 1;
-            if ($isSimpleZone && $firstServer->priority < static::UPDATED_WHOIS_PRIORITY) {
+            $isSimpleZone = count($firstServer->getTldPartsInversed()) == 1;
+            if ($isSimpleZone && $firstServer->getPriority() < static::UPDATED_WHOIS_PRIORITY) {
                 $collectionUpdated = $this->updateCollectionFor($domain, $firstServer);
             }
         }
@@ -90,7 +93,7 @@ class ServerProvider implements ServerProviderInterface
 
         $queryDomain = $domain;
         if ($server !== null) {
-            $queryDomain = trim($server->zone, '.');
+            $queryDomain = trim($server->getTld(), '.');
         }
         if (empty($queryDomain)) {
             return false;
@@ -115,9 +118,9 @@ class ServerProvider implements ServerProviderInterface
         $ianaServer = $this->fromConfig([
             'zone' => $resultZone,
             'host' => $resultWhoisHost,
-            'centralized' => $server ? $server->centralized : false,
-            'parser' => $server ? $server->parser : null,
-            'queryFormat' => $server ? $server->queryFormat : null,
+            'centralized' => $server ? $server->getCentralized() : false,
+            'parser' => $server ? $server->getParser() : null,
+            'queryFormat' => $server ? $server->getQueryFormat() : null,
             'priority' => static::UPDATED_WHOIS_PRIORITY,
         ]);
 
@@ -134,16 +137,20 @@ class ServerProvider implements ServerProviderInterface
         if (empty($config['host'])) {
             throw new InvalidArgumentException('Host must be specified');
         }
-        $parser = $this->getParser($config);
+        $server = $this->createServer()
+            ->setTld($config['zone'])
+            ->setHost($config['host'])
+            ->setPriority($config['priority'] ?? static::DEFAULT_PRIORITY)
+            ->setCentralized($config['centralized'] ?? false)
+            ->setQueryFormat($config['queryFormat'] ?? static::DEFAULT_QUERY_FORMAT)
+            ->setParser($this->getParser($config))
+        ;
+        return $server;
+    }
 
-        return new WhoisServer(
-            rtrim('.' . trim(mb_strtolower($config['zone']), '.'), '.'),
-            $config['host'],
-            $config['centralized'] ?? false,
-            $parser,
-            $config['queryFormat'] ?? static::DEFAULT_QUERY_FORMAT,
-            $config['priority'] ?? static::DEFAULT_PRIORITY,
-        );
+    protected function createServer(): WhoisServer
+    {
+        return new WhoisServer();
     }
 
     protected function getParser(array $config): ParserInterface

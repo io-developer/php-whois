@@ -42,7 +42,13 @@ class ServerProviderTest extends BaseTestCase
 
     protected function createServer(string $zone): WhoisServer
     {
-        return new WhoisServer($zone, 'some.host.net', false, $this->parser, "%s\r\n", 0);
+        return (new WhoisServer())
+            ->setTld($zone)
+            ->setHost('some.host.net')
+            ->setPriority(0)
+            ->setCentralized(false)
+            ->setQueryFormat("%s\r\n")
+        ;
     }
 
     public function testFromDataFullArgs()
@@ -55,11 +61,11 @@ class ServerProviderTest extends BaseTestCase
             'queryFormat' => "prefix %s suffix\r\n",
         ]);
 
-        self::assertEquals('.abc', $s->zone);
-        self::assertEquals('some.host', $s->host);
-        self::assertTrue($s->centralized);
-        self::assertInstanceOf($this->getParserClass(), $s->parser);
-        self::assertEquals("prefix %s suffix\r\n", $s->queryFormat);
+        self::assertEquals('.abc', $s->getTld());
+        self::assertEquals('some.host', $s->getHost());
+        self::assertTrue($s->getCentralized());
+        self::assertInstanceOf($this->getParserClass(), $s->getParser());
+        self::assertEquals("prefix %s suffix\r\n", $s->getQueryFormat());
     }
 
     public function testFromDataZoneHostOnly()
@@ -70,10 +76,10 @@ class ServerProviderTest extends BaseTestCase
             'parser' => $this->parser,
         ]);
 
-        self::assertEquals(".abc", $s->zone);
-        self::assertEquals("some.host", $s->host);
-        self::assertFalse($s->centralized);
-        self::assertInstanceOf($this->parser::class, $s->parser);
+        self::assertEquals(".abc", $s->getTld());
+        self::assertEquals("some.host", $s->getHost());
+        self::assertFalse($s->getCentralized());
+        self::assertInstanceOf($this->parser::class, $s->getParser());
     }
 
     public function testFromDataMissingZone()
@@ -105,9 +111,9 @@ class ServerProviderTest extends BaseTestCase
         self::assertTrue(is_array($s), 'Array expected');
         self::assertEquals(1, count($s));
         self::assertInstanceOf(WhoisServer::class, $s[0]);
-        self::assertEquals('.abc', $s[0]->zone);
-        self::assertEquals('some.host', $s[0]->host);
-        self::assertInstanceOf($this->getParserClass(), $s[0]->parser);
+        self::assertEquals('.abc', $s[0]->getTld());
+        self::assertEquals('some.host', $s[0]->getHost());
+        self::assertInstanceOf($this->getParserClass(), $s[0]->getParser());
     }
 
     public function testFromDataListTwo()
@@ -128,17 +134,17 @@ class ServerProviderTest extends BaseTestCase
         self::assertEquals(2, count($s));
 
         self::assertInstanceOf(WhoisServer::class, $s[0]);
-        self::assertEquals('.abc', $s[0]->zone);
-        self::assertEquals('some.host', $s[0]->host);
-        self::assertFalse($s[0]->centralized);
-        self::assertInstanceOf($this->getParserClass(), $s[0]->parser);
+        self::assertEquals('.abc', $s[0]->getTld());
+        self::assertEquals('some.host', $s[0]->getHost());
+        self::assertFalse($s[0]->getCentralized());
+        self::assertInstanceOf($this->getParserClass(), $s[0]->getParser());
 
         self::assertInstanceOf(WhoisServer::class, $s[1]);
-        self::assertEquals('.cde', $s[1]->zone);
-        self::assertEquals('other.host', $s[1]->host);
-        self::assertTrue($s[1]->centralized);
-        self::assertInstanceOf($this->getParserClass(), $s[1]->parser);
-        self::assertEquals("prefix %s suffix\r\n", $s[1]->queryFormat);
+        self::assertEquals('.cde', $s[1]->getTld());
+        self::assertEquals('other.host', $s[1]->getHost());
+        self::assertTrue($s[1]->getCentralized());
+        self::assertInstanceOf($this->getParserClass(), $s[1]->getParser());
+        self::assertEquals("prefix %s suffix\r\n", $s[1]->getQueryFormat());
     }
 
 
@@ -214,9 +220,9 @@ class ServerProviderTest extends BaseTestCase
         $servers = $this->serverProvider->getMatched('domain.foo.bar.com');
 
         self::assertEquals(3, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".foo.bar.com", $servers[0]->zone, "Invalid matched zone");
-        self::assertEquals(".bar.com", $servers[1]->zone, "Invalid matched zone");
-        self::assertEquals(".com", $servers[2]->zone, "Invalid matched zone");
+        self::assertEquals(".foo.bar.com", $servers[0]->getTld(), "Invalid matched zone");
+        self::assertEquals(".bar.com", $servers[1]->getTld(), "Invalid matched zone");
+        self::assertEquals(".com", $servers[2]->getTld(), "Invalid matched zone");
     }
 
     public function testMatchServersCollisionMiddle()
@@ -229,8 +235,8 @@ class ServerProviderTest extends BaseTestCase
         $servers = $this->serverProvider->getMatched('domain.bar.com');
 
         self::assertEquals(2, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".bar.com", $servers[0]->zone, "Invalid matched zone");
-        self::assertEquals(".com", $servers[1]->zone, "Invalid matched zone");
+        self::assertEquals(".bar.com", $servers[0]->getTld(), "Invalid matched zone");
+        self::assertEquals(".com", $servers[1]->getTld(), "Invalid matched zone");
     }
 
     public function testMatchServersCollisionShorter()
@@ -243,7 +249,7 @@ class ServerProviderTest extends BaseTestCase
         $servers = $this->serverProvider->getMatched('domain.com');
 
         self::assertEquals(1, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".com", $servers[0]->zone, "Invalid matched zone");
+        self::assertEquals(".com", $servers[0]->getTld(), "Invalid matched zone");
     }
 
     public function testMatchServersCollisiondWildcard()
@@ -255,7 +261,7 @@ class ServerProviderTest extends BaseTestCase
         $servers = $this->serverProvider->getMatched('domain.com');
 
         self::assertEquals(1, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".com", $servers[0]->zone, "Invalid matched zone");
+        self::assertEquals(".com", $servers[0]->getTld(), "Invalid matched zone");
     }
 
     public function testMatchServersCollisionMissingZone()
@@ -267,8 +273,8 @@ class ServerProviderTest extends BaseTestCase
         $servers = $this->serverProvider->getMatched('domain.foo.bar.com');
 
         self::assertEquals(2, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".bar.com", $servers[0]->zone, "Invalid matched zone");
-        self::assertEquals(".com", $servers[1]->zone, "Invalid matched zone");
+        self::assertEquals(".bar.com", $servers[0]->getTld(), "Invalid matched zone");
+        self::assertEquals(".com", $servers[1]->getTld(), "Invalid matched zone");
     }
 
     public function testMatchServersCollisionFallback()
@@ -284,11 +290,11 @@ class ServerProviderTest extends BaseTestCase
         $servers = $this->serverProvider->getMatched('domain.foo.bar.com');
 
         self::assertEquals(5, count($servers), "Count of matched servers not equals");
-        self::assertEquals(".foo.*.*", $servers[0]->zone, "Invalid matched zone");
-        self::assertEquals(".bar.com", $servers[1]->zone, "Invalid matched zone");
-        self::assertEquals(".bar.*", $servers[2]->zone, "Invalid matched zone");
-        self::assertEquals(".*.com", $servers[3]->zone, "Invalid matched zone");
-        self::assertEquals(".*", $servers[4]->zone, "Invalid matched zone");
+        self::assertEquals(".foo.*.*", $servers[0]->getTld(), "Invalid matched zone");
+        self::assertEquals(".bar.com", $servers[1]->getTld(), "Invalid matched zone");
+        self::assertEquals(".bar.*", $servers[2]->getTld(), "Invalid matched zone");
+        self::assertEquals(".*.com", $servers[3]->getTld(), "Invalid matched zone");
+        self::assertEquals(".*", $servers[4]->getTld(), "Invalid matched zone");
     }
 
     public function testMatchServersDuplicatesOrder()

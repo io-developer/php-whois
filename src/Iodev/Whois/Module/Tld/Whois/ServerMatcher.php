@@ -40,12 +40,15 @@ class ServerMatcher
     public function matchDomainZone(WhoisServer $server, string $domain): int
     {
         $domainParts = explode('.', $domain);
-        if ($server->zone === '.' && count($domainParts) === 1) {
+
+        // TODO: tld == '.' ???
+        if ($server->getTld() === '.' && count($domainParts) === 1) {
             return 1;
         }
+        
         array_shift($domainParts);
         $domainCount = count($domainParts);
-        $invZoneParts = $server->getInverseZoneParts();
+        $invZoneParts = $server->getTldPartsInversed();
         $zoneCount = count($invZoneParts);
         if (count($domainParts) < $zoneCount) {
             return 0;

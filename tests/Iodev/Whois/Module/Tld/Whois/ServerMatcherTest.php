@@ -19,7 +19,14 @@ class ServerMatcherTest extends BaseTestCase
     protected function onConstructed()
     {
         $parser = $this->container->get(TestCommonParser::class);
-        $this->server = new WhoisServer(self::TLD, '', false, $parser, "%s\r\n", 0);
+        $this->server = (new WhoisServer())
+            ->setTld(self::TLD)
+            ->setHost('')
+            ->setPriority(0)
+            ->setCentralized(false)
+            ->setParser($parser)
+            ->setQueryFormat("%s\r\n")
+        ;
     }
 
     public function setUp(): void

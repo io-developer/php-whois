@@ -6,30 +6,114 @@ namespace Iodev\Whois\Module\Tld\Dto;
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 
 class WhoisServer
-{ 
+{
+    protected readonly string $tld;
+    
     /** @var string[] */
-    protected $inverseZoneParts;
+    protected readonly array $tldParts;
 
-    public function __construct(
-        public readonly string $zone,
-        public readonly string $host,
-        public readonly bool $centralized,
-        public readonly ParserInterface $parser,
-        public readonly string $queryFormat,
-        public readonly int $priority,
-    ) {
-        $this->inverseZoneParts = array_reverse(explode('.', $this->zone));
-        array_pop($this->inverseZoneParts);
+    /** @var string[] */
+    protected readonly array $tldPartsInv;
+
+    protected readonly string $host;
+
+    protected readonly bool $centralized;
+
+    protected readonly ParserInterface $parser;
+
+    protected readonly string $queryFormat;
+
+    protected readonly int $priority;
+
+
+    public function getTld(): string
+    {
+        return $this->tld ?? '';
     }
 
-    public function getInverseZoneParts(): array
+    public function getZone(): string
     {
-        return $this->inverseZoneParts;
+        return $this->getTld();
     }
 
-    public function buildDomainQuery(string $domain, bool $strict = false): string
+    public function setTld(string $tld): static
     {
-        $query = sprintf($this->queryFormat, $domain);
-        return $strict ? "=$query" : $query;
+        $normalizedTld = trim(mb_strtolower($tld), '.');
+
+        $this->tld = rtrim('.' . $normalizedTld, '.');
+        $this->tldParts = explode('.', $normalizedTld);
+        $this->tldPartsInv = array_reverse($this->tldParts);
+
+        return $this;
+    }
+
+    public function getTldParts(): array
+    {
+        return $this->tldParts ?? [];
+    }
+
+    public function getTldPartsInversed(): array
+    {
+        return $this->tldPartsInv ?? [];
+    }
+
+
+    public function getHost(): string
+    {
+        return $this->host ?? '';
+    }
+
+    public function setHost(string $host): static
+    {
+        $this->host = $host;
+        return $this;
+    }
+
+
+    public function getPriority(): int
+    {
+        return $this->priority ?? 0;
+    }
+
+    public function setPriority(int $priority): static
+    {
+        $this->priority = $priority;
+        return $this;
+    }
+
+
+    public function getCentralized(): bool
+    {
+        return $this->centralized ?? false;
+    }
+
+    public function setCentralized(bool $centralized): static
+    {
+        $this->centralized = $centralized;
+        return $this;
+    }
+
+
+    public function getQueryFormat(): string
+    {
+        return $this->queryFormat ?? '';
+    }
+
+    public function setQueryFormat(string $fmt): static
+    {
+        $this->queryFormat = $fmt;
+        return $this;
+    }
+
+
+    public function getParser(): ?ParserInterface
+    {
+        return $this->parser ?? null;
+    }
+
+    public function setParser(ParserInterface $parser): static
+    {
+        $this->parser = $parser;
+        return $this;
     }
 }

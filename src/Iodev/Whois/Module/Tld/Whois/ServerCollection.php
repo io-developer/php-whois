@@ -57,19 +57,18 @@ class ServerCollection
         $sortedKeys = [];
         $priorityMin = 0;
         foreach ($this->servers as $server) {
-            $priorityMin = min($priorityMin, $server->priority);
+            $priorityMin = min($priorityMin, $server->getPriority());
         }
         $counter = 0;
         $serversCount = count($this->servers);
         foreach ($this->servers as $key => $server) {
             $counter++;
-            $priority = $priorityMin + $server->priority;
+            $priority = $priorityMin + $server->getPriority();
             $subPriority = $serversCount - $counter;
-            $parts = explode('.', $server->zone);
-            $len = count($parts);
-            $rootZone = $parts[$len - 1] ?? '';
-            $subZone1 = $parts[$len - 2] ?? '';
-            $subZone2 = $parts[$len - 3] ?? '';
+            $parts = $server->getTldPartsInversed();
+            $rootZone = $parts[0] ?? '';
+            $subZone1 = $parts[1] ?? '';
+            $subZone2 = $parts[2] ?? '';
             $sortedKeys[$key] = sprintf(
                 '%16s.%16s.%32s.%8s.%8s',
                 $subZone2,

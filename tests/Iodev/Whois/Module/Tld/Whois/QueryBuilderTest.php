@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Tld\Whois;
 
 use Iodev\Whois\BaseTestCase;
-use Iodev\Whois\Module\Tld\Parsing\TestCommonParser;
 
 class QueryBuilderTest extends BaseTestCase
 {
