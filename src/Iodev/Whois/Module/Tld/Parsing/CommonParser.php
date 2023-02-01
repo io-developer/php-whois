@@ -47,69 +47,85 @@ class CommonParser extends ParserInterface
     {
         $rootFilter = $this->filterFrom($response);
         $sel = $rootFilter->toSelector();
-        $data = [
-            "parserType" => $this->getType(),
 
-            "domainName" => (string)$sel->clean()
-                ->selectKeys($this->getOpts()->domainKeys)
-                ->mapDomain()
-                ->removeEmpty()
-                ->getFirst(''),
-
-            "whoisServer" => (string)$sel->clean()
+        $domain = (string)$sel->clean()
+            ->selectKeys($this->getOpts()->domainKeys)
+            ->mapDomain()
+            ->removeEmpty()
+            ->getFirst('')
+        ;
+        $info = $this->createInfo()
+            ->setResponse($response)
+            ->setParserType($this->getType())
+            ->setDomain($domain)
+            ->setDomainUnicode($domain
+                ? $this->domainTool->toUnicode($domain)
+                : ''
+            )
+            ->setWhoisHost((string)$sel
+                ->clean()
                 ->selectKeys($this->getOpts()->whoisServerKeys)
                 ->mapAsciiServer()
                 ->removeEmpty()
-                ->getFirst(''),
-
-            "nameServers" => $sel->clean()
+                ->getFirst('')
+            )
+            ->setNameServers($sel
+                ->clean()
                 ->selectKeys($this->getOpts()->nameServersKeys)
                 ->selectKeyGroups($this->getOpts()->nameServersKeysGroups)
                 ->mapAsciiServer()
                 ->removeEmpty()
                 ->removeDuplicates()
-                ->getAll(),
-
-            "dnssec" => (string)$sel->clean()
-                ->selectKeys($this->getOpts()->dnssecKeys)
-                ->removeEmpty()
-                ->sort(SORT_ASC)
-                ->getFirst(''),
-
-            "creationDate" => $sel->clean()
+                ->getAll()
+            )
+            ->setCreatedTs($sel
+                ->clean()
                 ->selectKeys($this->getOpts()->creationDateKeys)
                 ->mapUnixTime($this->getOption('inversedDateMMDD', false))
-                ->getFirst(0),
-
-            "expirationDate" => $sel->clean()
+                ->getFirst(0)
+            )
+            ->setExpiresTs($sel
+                ->clean()
                 ->selectKeys($this->getOpts()->expirationDateKeys)
                 ->mapUnixTime($this->getOption('inversedDateMMDD', false))
-                ->getFirst(0),
-
-            "updatedDate" => $sel->clean()
+                ->getFirst(0)
+            )
+            ->setUpdatedTs($sel
+                ->clean()
                 ->selectKeys($this->getOpts()->updatedDateKeys)
                 ->mapUnixTime($this->getOption('inversedDateMMDD', false))
-                ->getFirst(0),
-
-            "owner" => (string)$sel->clean()
-                ->selectKeys($this->getOpts()->ownerKeys)
-                ->getFirst(''),
-
-            "registrar" => (string)$sel->clean()
-                ->selectKeys($this->getOpts()->registrarKeys)
-                ->getFirst(''),
-
-            "states" => $sel->clean()
+                ->getFirst(0)
+            )
+            ->setStatuses($sel
+                ->clean()
                 ->selectKeys($this->getOpts()->statesKeys)
                 ->transform(fn($items) => $this->transformItemsIntoStates($items))
                 ->removeEmpty()
                 ->removeDuplicates()
-                ->getAll(),
-        ];
-        $info = $this->createDomainInfo($response, $data, [
-            'groups' => $rootFilter->getGroups(),
-            'rootFilter' => $rootFilter,
-        ]);
+                ->getAll()
+            )
+            ->setRegistrant((string)$sel
+                ->clean()
+                ->selectKeys($this->getOpts()->ownerKeys)
+                ->getFirst('')
+            )
+            ->setRegistrar((string)$sel
+                ->clean()
+                ->selectKeys($this->getOpts()->registrarKeys)
+                ->getFirst('')
+            )
+            ->setDnssec((string)$sel
+                ->clean()
+                ->selectKeys($this->getOpts()->dnssecKeys)
+                ->removeEmpty()
+                ->sort(SORT_ASC)
+                ->getFirst('')
+            )
+            ->setExtra([
+                'groups' => $rootFilter->getGroups(),
+                'rootFilter' => $rootFilter,
+            ])
+        ;
 
         // var_dump([
         //     'RAW INFO',
@@ -127,27 +143,6 @@ class CommonParser extends ParserInterface
         return $this->infoScoreCalculator->isValuable($info, $this->getOpts()->notRegisteredStatesDict)
             ? $info
             : null
-        ;
-    }
-
-    protected function createDomainInfo(LookupResponse $response, array $data, array $extra = []): LookupInfo
-    {
-        $domainName = $data['domainName'] ?? '';
-        return $this->createInfo()
-            ->setResponse($response)
-            ->setParserType($data['parserType'] ?? '')
-            ->setDomain($domainName)
-            ->setDomainUnicode($domainName ? $this->domainTool->toUnicode($domainName) : '')
-            ->setWhoisHost($data['whoisServer'] ?? '')
-            ->setNameServers($data['nameServers'] ?? [])
-            ->setCreatedTs($data['creationDate'] ?? 0)
-            ->setExpiresTs($data['expirationDate'] ?? 0)
-            ->setUpdatedTs($data['updatedDate'] ?? 0)
-            ->setStatuses($data['states'] ?? [])
-            ->setRegistrant($data['owner'] ?? '')
-            ->setRegistrar($data['registrar'] ?? '')
-            ->setDnssec($data['dnssec'] ?? '')
-            ->setExtra($extra)
         ;
     }
 

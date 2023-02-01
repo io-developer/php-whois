@@ -74,27 +74,53 @@ class BlockParser extends CommonParser
             ->filterHasSubsetOf($this->getOpts()->primarySubsets)
             ->useFirstGroupOr($domainFilter->getFirstGroup());
 
-        $data = [
-            "parserType" => $this->getType(),
-            "domainName" => $this->parseDomain($domainFilter) ?: ($isReserved ? $response->getDomain() : ''),
-            "states" => $this->parseStates($rootFilter, $primaryFilter),
-            "nameServers" => $this->parseNameServers($rootFilter, $primaryFilter),
-            "dnssec" => $this->parseDnssec($rootFilter, $primaryFilter),
-            "owner" => $this->parseOwner($rootFilter, $primaryFilter) ?: ($isReserved ? $reserved : ''),
-            "registrar" => $this->parseRegistrar($rootFilter, $primaryFilter),
-            "creationDate" => $this->parseCreationDate($rootFilter, $primaryFilter),
-            "expirationDate" => $this->parseExpirationDate($rootFilter, $primaryFilter),
-            "updatedDate" => $this->parseUpdatedDate($rootFilter, $primaryFilter),
-            "whoisServer" => $this->parseWhoisServer($rootFilter, $primaryFilter),
-        ];
+        $domain = $this->parseDomain($domainFilter);
+        if (empty($domain)) {
+            $domain = $isReserved ? $response->getDomain() : '';
+        }
 
-        $info = $this->createDomainInfo($response, $data, [
-            'groups' => $groups,
-            'rootFilter' => $rootFilter,
-            'domainFilter' => $domainFilter,
-            'primaryFilter' => $primaryFilter,
-            'reserved' => $reserved,
-        ]);
+        $info = $this->createInfo()
+            ->setResponse($response)
+            ->setParserType($this->getType())
+            ->setDomain($domain)
+            ->setDomainUnicode(
+                $domain ? $this->domainTool->toUnicode($domain) : ''
+            )
+            ->setStatuses(
+                $this->parseStates($rootFilter, $primaryFilter)
+            )
+            ->setNameServers(
+                $this->parseNameServers($rootFilter, $primaryFilter)
+            )
+            ->setDnssec(
+                $this->parseDnssec($rootFilter, $primaryFilter)
+            )
+            ->setRegistrant(
+                $this->parseOwner($rootFilter, $primaryFilter) ?: ($isReserved ? $reserved : '')
+            )
+            ->setRegistrar(
+                $this->parseRegistrar($rootFilter, $primaryFilter)
+            )
+            ->setCreatedTs(
+                $this->parseCreationDate($rootFilter, $primaryFilter)
+            )
+            ->setExpiresTs(
+                $this->parseExpirationDate($rootFilter, $primaryFilter)
+            )
+            ->setUpdatedTs(
+                $this->parseUpdatedDate($rootFilter, $primaryFilter)
+            )
+            ->setWhoisHost(
+                $this->parseWhoisServer($rootFilter, $primaryFilter)
+            )
+            ->setExtra([
+                'groups' => $groups,
+                'rootFilter' => $rootFilter,
+                'domainFilter' => $domainFilter,
+                'primaryFilter' => $primaryFilter,
+                'reserved' => $reserved,
+            ])
+        ;
         return $isReserved || $this->infoScoreCalculator->isValuable($info, $this->getOpts()->notRegisteredStatesDict)
             ? $info
             : null
