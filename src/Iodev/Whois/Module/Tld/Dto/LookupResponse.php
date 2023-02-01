@@ -61,9 +61,4 @@ class LookupResponse
     {
         return $this->output ?? '';
     }
-
-    public function getText(): string
-    {
-        return $this->getOutput();
-    }
 }

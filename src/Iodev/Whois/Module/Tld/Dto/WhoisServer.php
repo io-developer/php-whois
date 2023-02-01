@@ -43,16 +43,17 @@ class WhoisServer
         return $this->tld ?? '';
     }
 
-    public function getZone(): string
-    {
-        return $this->getTld();
-    }
-
+    /**
+     * @return string[]
+     */
     public function getTldParts(): array
     {
         return $this->tldParts ?? [];
     }
 
+    /**
+     * @return string[]
+     */
     public function getTldPartsInversed(): array
     {
         return $this->tldPartsInv ?? [];
