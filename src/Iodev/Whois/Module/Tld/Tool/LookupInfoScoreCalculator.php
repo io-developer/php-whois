@@ -10,38 +10,37 @@ class LookupInfoScoreCalculator
 {
     public function isValuable(LookupInfo $info, array $badFirstStatesDict = []): bool
     {
-        $firstState = count($info->states) > 0
-            ? $info->states[array_key_first($info->states)]
-            : ''
-        ;
+        $states = $info->getStatuses();
+        $firstState = count($states) > 0 ? reset($states) : '';
         $firstState = mb_strtolower(trim($firstState));
+
         if (!empty($badFirstStatesDict[$firstState])) {
             return false;
         }
-        if (empty($info->domainName)) {
+        if (empty($info->getDomainName())) {
             return false;
         }
-        return count($info->states) > 0
-            || count($info->nameServers) > 0
-            || !empty($info->owner)
-            || $info->creationDate > 0
-            || $info->expirationDate > 0
-            || !empty($info->registrar)
+        return count($states) > 0
+            || count($info->getNameServers()) > 0
+            || !empty($info->getRegistrant())
+            || $info->getCreatedTs() > 0
+            || $info->getExpiresTs() > 0
+            || !empty($info->getRegistrar())
         ;
     }
 
     public function calcRank(LookupInfo $info): int
     {
-        return (!empty($info->domainName) ? 100 : 0)
-            + (count($info->nameServers) > 0 ? 20 : 0)
-            + ($info->creationDate > 0 ? 6 : 0)
-            + ($info->expirationDate > 0 ? 6 : 0)
-            + ($info->updatedDate > 0 ? 6 : 0)
-            + (count($info->states) > 0 ? 4 : 0)
-            + (!empty($info->owner) ? 4 : 0)
-            + (!empty($info->registrar) ? 3 : 0)
-            + (!empty($info->whoisServer) ? 2 : 0)
-            + (!empty($info->dnssec) ? 2 : 0)
+        return (!empty($info->getDomainName()) ? 100 : 0)
+            + (count($info->getNameServers()) > 0 ? 20 : 0)
+            + ($info->getCreatedTs() > 0 ? 6 : 0)
+            + ($info->getExpiresTs() > 0 ? 6 : 0)
+            + ($info->getUpdatedTs() > 0 ? 6 : 0)
+            + (count($info->getStatuses()) > 0 ? 4 : 0)
+            + (!empty($info->getRegistrant()) ? 4 : 0)
+            + (!empty($info->getRegistrar()) ? 3 : 0)
+            + (!empty($info->getWhoisHost()) ? 2 : 0)
+            + (!empty($info->getDnssec()) ? 2 : 0)
         ;
     }
 }

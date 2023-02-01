@@ -110,52 +110,52 @@ class ParsingTest extends BaseTestCase
 
         $this->assertEquals(
             $expected["domainName"],
-            $info->domainName,
+            $info->getDomainName(),
             "Domain name mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             $expected["whoisServer"],
-            $info->whoisServer,
+            $info->getWhoisHost(),
             "Whois server mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             self::sort($expected["nameServers"]),
-            self::sort($info->nameServers),
+            self::sort($info->getNameServers()),
             "Name servers mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             self::parseExpectedDate($expected["creationDate"]),
-            $info->creationDate,
+            $info->getCreatedTs(),
             "Creation date mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             self::parseExpectedDate($expected["expirationDate"]),
-            $info->expirationDate,
+            $info->getExpiresTs(),
             "expirationDate mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             self::parseExpectedDate($expected["updatedDate"]),
-            $info->updatedDate,
+            $info->getUpdatedTs(),
             "updatedDate mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             self::sort($expected["states"]),
-            self::sort($info->states),
+            self::sort($info->getStatuses()),
             "States mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             $expected["owner"],
-            $info->owner,
+            $info->getRegistrant(),
             "Owner mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             $expected["registrar"],
-            $info->registrar,
+            $info->getRegistrar(),
             "Registrar mismatch ($srcTextFilename)"
         );
         $this->assertEquals(
             $expected["dnssec"],
-            $info->dnssec,
+            $info->getDnssec(),
             "DNSSEC mismatch ($srcTextFilename)"
         );
     }

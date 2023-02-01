@@ -125,48 +125,47 @@ class WhoisLookupCommand
         $domainAscii = $this->domainTool->toAscii($domain);
         $domainUnicode = $this->domainTool->toUnicode($domainAscii);
 
-        $org = $sel->cloneMe()
-            ->selectKeys(['organisation'])
-            ->removeEmpty()
-            ->getFirst()
+        return $this->createInfo()
+            ->setResponse($resp)
+            ->setParserType('')
+            ->setDomainName($domainAscii)
+            ->setDomainNameUnicode($domainUnicode)
+            ->setWhoisHost($sel->cloneMe()
+                ->selectKeys(['whois'])
+                ->map(fn($item) => mb_strtolower((string) $item))
+                ->removeEmpty()
+                ->getFirst()
+            )
+            ->setRegistrant($sel->cloneMe()
+                ->selectKeys(['organisation'])
+                ->removeEmpty()
+                ->getFirst()
+            )
+            ->setStatuses($sel->cloneMe()
+                ->selectKeys(['status'])
+                ->map(fn($item) => mb_strtolower((string) $item))
+                ->removeEmpty()
+                ->getAll()
+            )
+            ->setCreatedTs($sel->cloneMe()
+                ->selectKeys(['created'])
+                ->mapUnixTime()
+                ->removeEmpty()
+                ->getFirst()
+            )
+            ->setUpdatedTs($sel->cloneMe()
+                ->selectKeys(['changed'])
+                ->mapUnixTime()
+                ->removeEmpty()
+                ->getFirst()
+            )
+            ->setExpiresTs(0)
+            ->setNameServers([])
         ;
-        $status = $sel->cloneMe()
-            ->selectKeys(['status'])
-            ->map(fn($item) => mb_strtolower((string) $item))
-            ->removeEmpty()
-            ->getFirst()
-        ;
-        $whoisHost = $sel->cloneMe()
-            ->selectKeys(['whois'])
-            ->map(fn($item) => mb_strtolower((string) $item))
-            ->removeEmpty()
-            ->getFirst()
-        ;
-        $createdTs = $sel->cloneMe()
-            ->selectKeys(['created'])
-            ->mapUnixTime()
-            ->removeEmpty()
-            ->getFirst()
-        ;
-        $updatedTs = $sel->cloneMe()
-            ->selectKeys(['changed'])
-            ->mapUnixTime()
-            ->removeEmpty()
-            ->getFirst()
-        ;
-        
-        return new LookupInfo(
-            $resp,
-            '',
-            $domainAscii,
-            $domainUnicode,
-            $whoisHost,
-            [],
-            $createdTs,
-            0,
-            $updatedTs,
-            [$status],
-            $org,
-        );
+    }
+
+    protected function createInfo(): LookupInfo
+    {
+        return new LookupInfo();
     }
 }

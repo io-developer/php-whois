@@ -133,22 +133,27 @@ class CommonParser extends ParserInterface
     protected function createDomainInfo(LookupResponse $response, array $data, array $extra = []): LookupInfo
     {
         $domainName = $data['domainName'] ?? '';
-        return new LookupInfo(
-            $response,
-            $data['parserType'] ?? '',
-            $domainName,
-            $domainName ? $this->domainTool->toUnicode($domainName) : '',
-            $data['whoisServer'] ?? '',
-            $data['nameServers'] ?? [],
-            $data['creationDate'] ?? 0,
-            $data['expirationDate'] ?? 0,
-            $data['updatedDate'] ?? 0,
-            $data['states'] ?? '',
-            $data['owner'] ?? '',
-            $data['registrar'] ?? '',
-            $data['dnssec'] ?? '',
-            $extra,
-        );
+        return $this->createInfo()
+            ->setResponse($response)
+            ->setParserType($data['parserType'] ?? '')
+            ->setDomainName($domainName)
+            ->setDomainNameUnicode($domainName ? $this->domainTool->toUnicode($domainName) : '')
+            ->setWhoisHost($data['whoisServer'] ?? '')
+            ->setNameServers($data['nameServers'] ?? [])
+            ->setCreatedTs($data['creationDate'] ?? 0)
+            ->setExpiresTs($data['expirationDate'] ?? 0)
+            ->setUpdatedTs($data['updatedDate'] ?? 0)
+            ->setStatuses($data['states'] ?? [])
+            ->setRegistrant($data['owner'] ?? '')
+            ->setRegistrar($data['registrar'] ?? '')
+            ->setDnssec($data['dnssec'] ?? '')
+            ->setExtra($extra)
+        ;
+    }
+
+    protected function createInfo(): LookupInfo
+    {
+        return new LookupInfo();
     }
 
     protected function createGroupFilter(): GroupFilter
