@@ -110,7 +110,7 @@ class ParsingTest extends BaseTestCase
 
         $this->assertEquals(
             $expected["domainName"],
-            $info->getDomainName(),
+            $info->getDomain(),
             "Domain name mismatch ($srcTextFilename)"
         );
         $this->assertEquals(

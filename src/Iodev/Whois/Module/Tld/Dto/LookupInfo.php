@@ -8,8 +8,8 @@ use \DateTimeImmutable;
 
 class LookupInfo
 {
-    protected readonly string $domainName;
-    protected readonly string $domainNameUnicode;
+    protected readonly string $domain;
+    protected readonly string $domainUnicode;
     protected readonly string $registrant;
     protected readonly string $registrar;
     protected readonly string $whoisHost;
@@ -29,27 +29,27 @@ class LookupInfo
     protected readonly array $extra;
 
 
-    public function setDomainName(string $name): static
+    public function setDomain(string $domain): static
     {
-        $this->domainName = $name;
+        $this->domain = $domain;
         return $this;
     }
 
-    public function getDomainName(): string
+    public function getDomain(): string
     {
-        return $this->domainName ?? '';
+        return $this->domain ?? '';
     }
 
 
-    public function setDomainNameUnicode(string $name): static
+    public function setDomainUnicode(string $name): static
     {
-        $this->domainNameUnicode = $name;
+        $this->domainUnicode = $name;
         return $this;
     }
 
-    public function getDomainNameUnicode(): string
+    public function getDomainUnicode(): string
     {
-        return $this->domainNameUnicode ?? '';
+        return $this->domainUnicode ?? '';
     }
 
 

@@ -17,7 +17,7 @@ class LookupInfoScoreCalculator
         if (!empty($badFirstStatesDict[$firstState])) {
             return false;
         }
-        if (empty($info->getDomainName())) {
+        if (empty($info->getDomain())) {
             return false;
         }
         return count($states) > 0
@@ -31,7 +31,7 @@ class LookupInfoScoreCalculator
 
     public function calcRank(LookupInfo $info): int
     {
-        return (!empty($info->getDomainName()) ? 100 : 0)
+        return (!empty($info->getDomain()) ? 100 : 0)
             + (count($info->getNameServers()) > 0 ? 20 : 0)
             + ($info->getCreatedTs() > 0 ? 6 : 0)
             + ($info->getExpiresTs() > 0 ? 6 : 0)
