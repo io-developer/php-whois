@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Tool;
 
-class TldInfoScoreCalculator
+use Iodev\Whois\Module\Tld\Dto\LookupInfo;
+
+class LookupInfoScoreCalculator
 {
-    public function isValuable(TldInfo $info, array $badFirstStatesDict = []): bool
+    public function isValuable(LookupInfo $info, array $badFirstStatesDict = []): bool
     {
         $firstState = count($info->states) > 0
             ? $info->states[array_key_first($info->states)]
@@ -28,7 +30,7 @@ class TldInfoScoreCalculator
         ;
     }
 
-    public function calcRank(TldInfo $info): int
+    public function calcRank(LookupInfo $info): int
     {
         return (!empty($info->domainName) ? 100 : 0)
             + (count($info->nameServers) > 0 ? 20 : 0)

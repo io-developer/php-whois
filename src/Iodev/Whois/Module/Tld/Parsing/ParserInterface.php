@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Parsing;
 
-abstract class TldParser
+use Iodev\Whois\Module\Tld\Dto\LookupInfo;
+use Iodev\Whois\Module\Tld\Dto\LookupResponse;
+
+abstract class ParserInterface
 {
     public const AUTO = 'auto';
     public const COMMON = 'common';
@@ -35,5 +38,5 @@ abstract class TldParser
 
     abstract public function setConfig(array $cfg): static;
 
-    abstract public function parseResponse(TldResponse $response): ?TldInfo;
+    abstract public function parseResponse(LookupResponse $response): ?LookupInfo;
 }

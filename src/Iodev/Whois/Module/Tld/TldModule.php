@@ -8,19 +8,26 @@ use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\ServerMismatchException;
 use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Loader\LoaderInterface;
+use Iodev\Whois\Module\Tld\Command\LookupCommand;
+use Iodev\Whois\Module\Tld\Dto\LookupInfo;
+use Iodev\Whois\Module\Tld\Dto\LookupResponse;
+use Iodev\Whois\Module\Tld\Dto\LookupResult;
+use Iodev\Whois\Module\Tld\Dto\WhoisServer;
+use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
+use Iodev\Whois\Module\Tld\Whois\ServerProviderInterface;
 use Psr\Container\ContainerInterface;
 
 class TldModule
 {
     public const LOOKUP_DOMAIN_RECURSION_MAX = 1;
 
-    /** @var TldServer[] */
+    /** @var WhoisServer[] */
     protected array $lastUsedServers = [];
 
     public function __construct(
         protected ContainerInterface $container,
         protected LoaderInterface $loader,
-        protected TldServerProviderInterface $serverProvider,
+        protected ServerProviderInterface $serverProvider,
     ) {}
 
     public function getLoader(): LoaderInterface
@@ -28,13 +35,13 @@ class TldModule
         return $this->loader;
     }
 
-    public function getServerProvider(): TldServerProviderInterface
+    public function getServerProvider(): ServerProviderInterface
     {
         return $this->serverProvider;
     }
 
     /**
-     * @return TldServer[]
+     * @return WhoisServer[]
      */
     public function getLastUsedServers(): array
     {
@@ -46,7 +53,7 @@ class TldModule
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadDomainResponse(string $domain, TldServer $server = null): TldResponse
+    public function loadDomainResponse(string $domain, WhoisServer $server = null): LookupResponse
     {
         $result = $this->lookupDomain($domain, $server);
         return $result->response;
@@ -57,7 +64,7 @@ class TldModule
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function loadDomainInfo(string $domain, TldServer $server = null): ?TldInfo
+    public function loadDomainInfo(string $domain, WhoisServer $server = null): ?LookupInfo
     {
         $result = $this->lookupDomain($domain, $server);
         return $result->info;
@@ -70,9 +77,9 @@ class TldModule
     public function lookupDomain(
         string $domain,
         ?string $overrideHost = null,
-        ?TldServer $overrideServer = null,
-        ?TldParser $overrideParser = null,
-    ): TldLookupDomainResult {
+        ?WhoisServer $overrideServer = null,
+        ?ParserInterface $overrideParser = null,
+    ): LookupResult {
         $this->lastUsedServers = [];
 
         $servers = $overrideServer !== null
@@ -86,8 +93,8 @@ class TldModule
         foreach ($servers as $server) {
             $this->lastUsedServers[] = $server;
 
-            /** @var TldLookupDomainCommand */
-            $command = $this->container->get(TldLookupDomainCommand::class);
+            /** @var LookupCommand */
+            $command = $this->container->get(LookupCommand::class);
             $command
                 ->setLoader($this->loader)
                 ->setDomain($domain)

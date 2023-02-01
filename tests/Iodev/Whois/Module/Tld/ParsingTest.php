@@ -12,7 +12,7 @@ use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Whois;
 
-class TldParsingTest extends BaseTestCase
+class ParsingTest extends BaseTestCase
 {
     protected DomainTool $domainTool;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Dto;
 
-class TldResponse
+class LookupResponse
 {
     public function __construct(
         public readonly string $domain = '',

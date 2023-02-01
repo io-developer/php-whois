@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Dto;
 
 /**
  * @property string[] $nameServers
  * @property string[] $states
  */
-class TldInfo
+class LookupInfo
 {
     public function __construct(
-        public readonly TldResponse $response,
+        public readonly LookupResponse $response,
         public readonly string $parserType = '',
         public readonly string $domainName = '',
         public readonly string $domainNameUnicode = '',

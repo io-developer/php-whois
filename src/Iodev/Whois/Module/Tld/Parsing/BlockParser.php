@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld\Parser;
+namespace Iodev\Whois\Module\Tld\Parsing;
 
+use Iodev\Whois\Module\Tld\Dto\LookupInfo;
+use Iodev\Whois\Module\Tld\Dto\LookupResponse;
 use Iodev\Whois\Selection\GroupFilter;
-use Iodev\Whois\Module\Tld\TldInfo;
-use Iodev\Whois\Module\Tld\TldInfoScoreCalculator;
-use Iodev\Whois\Module\Tld\TldResponse;
-use Iodev\Whois\Module\Tld\TldParser;
+use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
@@ -20,7 +19,7 @@ class BlockParser extends CommonParser
 
     public function __construct(
         BlockParserOpts $opts,
-        TldInfoScoreCalculator $infoScoreCalculator,
+        LookupInfoScoreCalculator $infoScoreCalculator,
         ParserTool $parserTool,
         DomainTool $domainTool,
         DateTool $dateTool,
@@ -36,7 +35,7 @@ class BlockParser extends CommonParser
 
     public function getType(): string
     {
-        return TldParser::BLOCK;
+        return ParserInterface::BLOCK;
     }
 
     public function getOpts(): BlockParserOpts
@@ -44,7 +43,7 @@ class BlockParser extends CommonParser
         return $this->opts;
     }
 
-    public function parseResponse(TldResponse $response): ?TldInfo
+    public function parseResponse(LookupResponse $response): ?LookupInfo
     {
         $groups = $this->groupsFromText($response->text);
         $rootFilter = $this->createGroupFilter()

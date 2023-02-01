@@ -2,29 +2,33 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Whois;
 
 use InvalidArgumentException;
 use Iodev\Whois\Config\ConfigProviderInterface;
 use Iodev\Whois\Loader\LoaderInterface;
+use Iodev\Whois\Module\Tld\Command\WhoisLookupCommand;
+use Iodev\Whois\Module\Tld\Dto\WhoisServer;
+use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
+use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
 use Psr\Container\ContainerInterface;
 
-class TldServerProvider implements TldServerProviderInterface
+class ServerProvider implements ServerProviderInterface
 {
     public const CONFIG_ID = 'module.tld.servers';
     public const DEFAULT_QUERY_FORMAT = "%s\r\n";
     public const DEFAULT_PRIORITY = 0;
     public const UPDATED_WHOIS_PRIORITY = 127;
 
-    protected TldServerCollection $collection;
+    protected ServerCollection $collection;
     protected bool $whoisUpdateEnabled = true;
 
     public function __construct(
         protected ContainerInterface $container,
         protected ConfigProviderInterface $configProvider,
         protected LoaderInterface $loader,
-        protected TldParserProviderInterface $parserProvider,
-        protected TldServerMatcher $serverMatcher,
+        protected ParserProviderInterface $parserProvider,
+        protected ServerMatcher $serverMatcher,
     ) {
         $this->collection = $this->createCollection();
     }
@@ -40,14 +44,14 @@ class TldServerProvider implements TldServerProviderInterface
         return $this;
     }
 
-    public function getCollection(): TldServerCollection
+    public function getCollection(): ServerCollection
     {
         return $this->collection;
     }
 
-    protected function createCollection(): TldServerCollection
+    protected function createCollection(): ServerCollection
     {
-        $col = new TldServerCollection();
+        $col = new ServerCollection();
         $configs = $this->configProvider->get(static::CONFIG_ID);
         foreach ($configs as $config) {
             $col->add($this->fromConfig($config));
@@ -78,7 +82,7 @@ class TldServerProvider implements TldServerProviderInterface
         return $servers;
     }
 
-    protected function updateCollectionFor(string $domain, ?TldServer $server): bool
+    protected function updateCollectionFor(string $domain, ?WhoisServer $server): bool
     {
         if (!$this->whoisUpdateEnabled) {
             return false;
@@ -92,8 +96,8 @@ class TldServerProvider implements TldServerProviderInterface
             return false;
         }
 
-        /** @var TldLookupWhoisCommand */
-        $command = $this->container->get(TldLookupWhoisCommand::class);
+        /** @var WhoisLookupCommand */
+        $command = $this->container->get(WhoisLookupCommand::class);
         $command
             ->setLoader($this->loader)
             ->setDomain($queryDomain)
@@ -122,7 +126,7 @@ class TldServerProvider implements TldServerProviderInterface
         return true;
     }
 
-    public function fromConfig(array $config): TldServer
+    public function fromConfig(array $config): WhoisServer
     {
         if (empty($config['zone'])) {
             throw new InvalidArgumentException('Zone must be specified');
@@ -132,7 +136,7 @@ class TldServerProvider implements TldServerProviderInterface
         }
         $parser = $this->getParser($config);
 
-        return new TldServer(
+        return new WhoisServer(
             rtrim('.' . trim(mb_strtolower($config['zone']), '.'), '.'),
             $config['host'],
             $config['centralized'] ?? false,
@@ -142,14 +146,14 @@ class TldServerProvider implements TldServerProviderInterface
         );
     }
 
-    protected function getParser(array $config): TldParser
+    protected function getParser(array $config): ParserInterface
     {
         $options = $config['parserOptions'] ?? [];
 
         $parser = $config['parser'] ?? null;
         $type = $config['parserType'] ?? null;
         $className = $config['parserClass'] ?? null;
-        if ($parser !== null && $parser instanceof TldParser) {
+        if ($parser !== null && $parser instanceof WhoisServer) {
             // do nothing
         } elseif (!empty($className) && class_exists($className)) {
             $parser = $this->parserProvider->getByClassName($className, $type);

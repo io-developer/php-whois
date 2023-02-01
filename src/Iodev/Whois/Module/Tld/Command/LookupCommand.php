@@ -2,33 +2,37 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Command;
 
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Loader\LoaderInterface;
+use Iodev\Whois\Module\Tld\Dto\LookupResponse;
+use Iodev\Whois\Module\Tld\Dto\LookupResult;
+use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
+use Iodev\Whois\Module\Tld\Whois\QueryBuilder;
 use Iodev\Whois\Tool\DomainTool;
 
-class TldLookupDomainCommand
+class LookupCommand
 {
     protected LoaderInterface $loader;
     protected string $host;
     protected string $domain;
     protected string $queryFormat;
-    protected TldParser $parser;
+    protected ParserInterface $parser;
     protected int $recursionLimit = 0;
     protected bool $altQueryEnabled = true;
 
-    protected ?TldLookupDomainCommand $childCommand = null;
-    protected ?TldLookupDomainResult $result = null;
-    protected ?TldLookupDomainResult $lastResult = null;
+    protected ?LookupCommand $childCommand = null;
+    protected ?LookupResult $result = null;
+    protected ?LookupResult $lastResult = null;
 
-    /** @var TldLookupDomainResult[] */
+    /** @var LookupResult[] */
     protected array $lastResults = [];
 
 
     public function __construct(
-        protected TldQueryBuilder $queryBuilder,
+        protected QueryBuilder $queryBuilder,
         protected DomainTool $domainTool,
     ) {}
 
@@ -57,7 +61,7 @@ class TldLookupDomainCommand
         return $this;
     }
 
-    public function setParser(TldParser $parser): static
+    public function setParser(ParserInterface $parser): static
     {
         $this->parser = $parser;
         return $this;
@@ -75,30 +79,30 @@ class TldLookupDomainCommand
         return $this;
     }
 
-    public function getResult(): ?TldLookupDomainResult
+    public function getResult(): ?LookupResult
     {
         return $this->result;
     }
 
-    public function getLastResult(): ?TldLookupDomainResult
+    public function getLastResult(): ?LookupResult
     {
         return $this->lastResult;
     }
 
     /**
-     * @return TldLookupDomainResult[]
+     * @return LookupResult[]
      */
     public function getLastResults(): array
     {
         return $this->lastResults;
     }
 
-    public function getChildCommand(): ?TldLookupDomainCommand
+    public function getChildCommand(): ?LookupCommand
     {
         return $this->childCommand;
     }
 
-    protected function resolveResult(): ?TldLookupDomainResult
+    protected function resolveResult(): ?LookupResult
     {
         if ($this->childCommand !== null) {
             $childResult = $this->childCommand->getResult();
@@ -186,10 +190,10 @@ class TldLookupDomainCommand
         ;
         $text = $this->loader->loadText($this->host, $queryStr);
 
-        $resp = new TldResponse($domain, $this->host, $queryStr, $text);
+        $resp = new LookupResponse($domain, $this->host, $queryStr, $text);
         $info = $this->parser->parseResponse($resp);
 
-        $this->lastResult = new TldLookupDomainResult($resp, $info);
+        $this->lastResult = new LookupResult($resp, $info);
         $this->lastResults[] = $this->lastResult;
     }
 }

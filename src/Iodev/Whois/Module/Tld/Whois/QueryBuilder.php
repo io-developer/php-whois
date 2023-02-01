@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Whois;
 
-class TldQueryBuilder
+class QueryBuilder
 {
     protected string $format = '%s';
     protected string $queryText = '';

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Parsing;
 
 use Iodev\Whois\Config\ConfigProviderInterface;
-use Iodev\Whois\Module\Tld\Parser\AutoParser;
-use Iodev\Whois\Module\Tld\Parser\BlockParser;
-use Iodev\Whois\Module\Tld\Parser\CommonParser;
-use Iodev\Whois\Module\Tld\Parser\IndentParser;
+use Iodev\Whois\Module\Tld\Parsing\AutoParser;
+use Iodev\Whois\Module\Tld\Parsing\BlockParser;
+use Iodev\Whois\Module\Tld\Parsing\CommonParser;
+use Iodev\Whois\Module\Tld\Parsing\IndentParser;
 use Psr\Container\ContainerInterface;
 
-class TldParserProvider implements TldParserProviderInterface
+class ParserProvider implements ParserProviderInterface
 {
     protected ContainerInterface $container;
     protected ConfigProviderInterface $configProvider;
     protected array $classByType;
-    protected ?TldParser $default = null;
+    protected ?ParserInterface $default = null;
     protected array $cache = [];
 
     public function __construct(ContainerInterface $container)
@@ -25,20 +25,20 @@ class TldParserProvider implements TldParserProviderInterface
         $this->configProvider = $container->get(ConfigProviderInterface::class);
 
         $this->classByType = [
-            TldParser::AUTO => AutoParser::class,
-            TldParser::COMMON => CommonParser::class,
-            TldParser::COMMON_FLAT => CommonParser::class,
-            TldParser::BLOCK => BlockParser::class,
-            TldParser::INDENT => IndentParser::class,
-            TldParser::INDENT_AUTOFIX => IndentParser::class,
+            ParserInterface::AUTO => AutoParser::class,
+            ParserInterface::COMMON => CommonParser::class,
+            ParserInterface::COMMON_FLAT => CommonParser::class,
+            ParserInterface::BLOCK => BlockParser::class,
+            ParserInterface::INDENT => IndentParser::class,
+            ParserInterface::INDENT_AUTOFIX => IndentParser::class,
         ];
     }
 
-    public function getDefault(): TldParser
+    public function getDefault(): ParserInterface
     {
         if ($this->default === null) {
-            if ($this->container->has(TldParser::class)) {
-                $this->default = $this->container->get(TldParser::class);
+            if ($this->container->has(ParserInterface::class)) {
+                $this->default = $this->container->get(ParserInterface::class);
             } else {
                 $this->default = $this->getByClassName(AutoParser::class);
             }
@@ -46,7 +46,7 @@ class TldParserProvider implements TldParserProviderInterface
         return $this->default;
     }
 
-    public function getByType(string $type): TldParser
+    public function getByType(string $type): ParserInterface
     {
         $className = $this->classByType[$type] ?? null;
         if (isset($this->classByType[$type])) {
@@ -55,7 +55,7 @@ class TldParserProvider implements TldParserProviderInterface
         return $this->getDefault();
     }
 
-    public function getByClassName(string $className, ?string $type = null): TldParser
+    public function getByClassName(string $className, ?string $type = null): ParserInterface
     {
         $key = sprintf('%s:%s', $className, $type);
         if (empty($this->cache[$key])) {
@@ -64,9 +64,9 @@ class TldParserProvider implements TldParserProviderInterface
         return $this->cache[$key];
     }
 
-    protected function create(string $className, ?string $type): TldParser
+    protected function create(string $className, ?string $type): ParserInterface
     {
-        /** @var TldParser */
+        /** @var ParserInterface */
         $parser = $this->container->get($className);
 
         $type = $type ?: $parser->getType();
@@ -88,11 +88,11 @@ class TldParserProvider implements TldParserProviderInterface
     protected function getParserConfig(string $type): array
     {
         $extra = [];
-        if ($type == TldParser::COMMON_FLAT) {
-            $type = TldParser::COMMON;
+        if ($type == ParserInterface::COMMON_FLAT) {
+            $type = ParserInterface::COMMON;
             $extra = ['isFlat' => true];
-        } elseif ($type == TldParser::INDENT_AUTOFIX) {
-            $type = TldParser::INDENT;
+        } elseif ($type == ParserInterface::INDENT_AUTOFIX) {
+            $type = ParserInterface::INDENT;
             $extra = ['isAutofix' => true];
         }
         $config = $this->configProvider->get("module.tld.parser.$type") ?? [];

@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld\Parser;
+namespace Iodev\Whois\Module\Tld\Parsing;
 
-use Iodev\Whois\Module\Tld\TldInfoScoreCalculator;
+use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
 use Iodev\Whois\Selection\GroupFilter;
-use Iodev\Whois\Module\Tld\TldParser;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
@@ -15,7 +14,7 @@ class IndentParser extends BlockParser
 {
     public function __construct(
         IndentParserOpts $opts,
-        TldInfoScoreCalculator $infoScoreCalculator,
+        LookupInfoScoreCalculator $infoScoreCalculator,
         ParserTool $parserTool,
         DomainTool $domainTool,
         DateTool $dateTool,
@@ -31,7 +30,7 @@ class IndentParser extends BlockParser
 
     public function getType(): string
     {
-        return $this->getOpts()->isAutofix ? TldParser::INDENT_AUTOFIX : TldParser::INDENT;
+        return $this->getOpts()->isAutofix ? ParserInterface::INDENT_AUTOFIX : ParserInterface::INDENT;
     }
 
     public function getOpts(): IndentParserOpts

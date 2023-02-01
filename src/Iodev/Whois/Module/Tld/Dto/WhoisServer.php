@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Dto;
+use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 
-class TldServer
+class WhoisServer
 { 
     /** @var string[] */
     protected $inverseZoneParts;
@@ -13,7 +14,7 @@ class TldServer
         public readonly string $zone,
         public readonly string $host,
         public readonly bool $centralized,
-        public readonly TldParser $parser,
+        public readonly ParserInterface $parser,
         public readonly string $queryFormat,
         public readonly int $priority,
     ) {

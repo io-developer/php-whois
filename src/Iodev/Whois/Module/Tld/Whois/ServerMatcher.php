@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Whois;
 
 use Iodev\Whois\Exception\ServerMismatchException;
+use Iodev\Whois\Module\Tld\Dto\WhoisServer;
 use Iodev\Whois\Tool\DomainTool;
 
-class TldServerMatcher
+class ServerMatcher
 {
     public function __construct(
         protected DomainTool $domainTool,
     ) {}
     
     /**
-     * @param TldServer[] $servers
-     * @return TldServer[]
+     * @param WhoisServer[] $servers
+     * @return WhoisServer[]
      * @throws ServerMismatchException
      */
     public function match(array $servers, string $domain): array
@@ -31,12 +32,12 @@ class TldServerMatcher
         return $matchedServers;
     }
 
-    public function isDomainZone(TldServer $server, string $domain): bool
+    public function isDomainZone(WhoisServer $server, string $domain): bool
     {
         return $this->matchDomainZone($server, $domain) > 0;
     }
 
-    public function matchDomainZone(TldServer $server, string $domain): int
+    public function matchDomainZone(WhoisServer $server, string $domain): int
     {
         $domainParts = explode('.', $domain);
         if ($server->zone === '.' && count($domainParts) === 1) {

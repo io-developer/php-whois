@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Whois;
 
-class TldServerCollection
+use Iodev\Whois\Module\Tld\Dto\WhoisServer;
+
+class ServerCollection
 {
-    /** @var TldServer[] */
+    /** @var WhoisServer[] */
     protected array $servers = [];
 
     protected bool $isSorted = true;
 
     /**
-     * @return TldServer[]
+     * @return WhoisServer[]
      */
     public function getList(): array
     {
@@ -22,7 +24,7 @@ class TldServerCollection
         return $this->servers;
     }
 
-    public function add(TldServer $server): static
+    public function add(WhoisServer $server): static
     {
         $this->isSorted = false;
         $this->servers[] = $server;
@@ -30,7 +32,7 @@ class TldServerCollection
     }
 
     /**
-     * @param TldServer[] $servers
+     * @param WhoisServer[] $servers
      */
     public function addList(array $servers): static
     {
@@ -41,7 +43,7 @@ class TldServerCollection
     }
 
     /**
-     * @param TldServer[] $servers
+     * @param WhoisServer[] $servers
      */
     public function setList(array $servers): static
     {

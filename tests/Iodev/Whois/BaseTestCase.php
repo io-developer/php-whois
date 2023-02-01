@@ -9,18 +9,19 @@ use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loader\FakeSocketLoader;
 use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Loader\ResponseHandler;
-use Iodev\Whois\Module\Tld\Parser\CommonParserOpts;
-use Iodev\Whois\Module\Tld\Parser\TestCommonParser;
-use Iodev\Whois\Module\Tld\TldInfoScoreCalculator;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
-use PHPUnit\Framework\TestCase;
 use Iodev\Whois\Config\ConfigProvider;
 use Iodev\Whois\Config\ConfigProviderInterface;
-use Iodev\Whois\Module\Tld\TldParserProviderInterface;
-use Iodev\Whois\Module\Tld\TldServerMatcher;
-use Iodev\Whois\Module\Tld\TldServerProvider;
+use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
+use Iodev\Whois\Module\Tld\Parsing\CommonParserOpts;
+use Iodev\Whois\Module\Tld\Parsing\TestCommonParser;
+use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
+use Iodev\Whois\Module\Tld\Whois\ServerMatcher;
+use Iodev\Whois\Module\Tld\Whois\ServerProvider;
+use Iodev\Whois\Module\Tld\Whois\ServerProviderInterface;
+use PHPUnit\Framework\TestCase;
 
 abstract class BaseTestCase extends TestCase
 {
@@ -66,24 +67,24 @@ abstract class BaseTestCase extends TestCase
                 TestCommonParser::class => function() use ($container) {
                     return new TestCommonParser(
                         $container->get(CommonParserOpts::class),
-                        $container->get(TldInfoScoreCalculator::class),
+                        $container->get(LookupInfoScoreCalculator::class),
                         $container->get(ParserTool::class),
                         $container->get(DomainTool::class),
                         $container->get(DateTool::class),
                     );
                 },
 
-                TldServerProviderInterface::class => function() {
-                    return $this->container->get(TldServerProvider::class);
+                ServerProviderInterface::class => function() use ($container) {
+                    return $container->get(ServerProvider::class);
                 },
 
-                TldServerProvider::class => function() use ($container) {
-                    $instance = new TldServerProvider(
+                ServerProvider::class => function() use ($container) {
+                    $instance = new ServerProvider(
                         $container,
                         $container->get(ConfigProviderInterface::class),
                         $container->get(LoaderInterface::class),
-                        $container->get(TldParserProviderInterface::class),
-                        $container->get(TldServerMatcher::class),
+                        $container->get(ParserProviderInterface::class),
+                        $container->get(ServerMatcher::class),
                     );
                     $instance->setWhoisUpdateEnabled(false);
                     return $instance;

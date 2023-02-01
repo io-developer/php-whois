@@ -14,23 +14,31 @@ use Iodev\Whois\Module\Asn\AsnModule;
 use Iodev\Whois\Module\Asn\AsnParser;
 use Iodev\Whois\Module\Asn\AsnServerProvider;
 use Iodev\Whois\Module\Asn\AsnServerProviderInterface;
-use Iodev\Whois\Module\Tld\Parser\AutoParser;
-use Iodev\Whois\Module\Tld\Parser\BlockParser;
-use Iodev\Whois\Module\Tld\Parser\BlockParserOpts;
-use Iodev\Whois\Module\Tld\Parser\CommonParser;
-use Iodev\Whois\Module\Tld\Parser\CommonParserOpts;
-use Iodev\Whois\Module\Tld\Parser\IndentParser;
-use Iodev\Whois\Module\Tld\Parser\IndentParserOpts;
-use Iodev\Whois\Module\Tld\TldInfoScoreCalculator;
-use Iodev\Whois\Module\Tld\TldQueryBuilder;
-use Iodev\Whois\Module\Tld\TldLookupDomainCommand;
-use Iodev\Whois\Module\Tld\TldLookupWhoisCommand;
+
 use Iodev\Whois\Module\Tld\TldModule;
-use Iodev\Whois\Module\Tld\TldParserProvider;
-use Iodev\Whois\Module\Tld\TldParserProviderInterface;
-use Iodev\Whois\Module\Tld\TldServerMatcher;
-use Iodev\Whois\Module\Tld\TldServerProvider;
-use Iodev\Whois\Module\Tld\TldServerProviderInterface;
+use Iodev\Whois\Module\Tld\Command\{
+    LookupCommand,
+    WhoisLookupCommand,
+};
+use Iodev\Whois\Module\Tld\Parsing\{
+    AutoParser,
+    BlockParser,
+    BlockParserOpts,
+    CommonParser,
+    CommonParserOpts,
+    IndentParser,
+    IndentParserOpts,
+    ParserProviderInterface,
+    ParserProvider,
+};
+use Iodev\Whois\Module\Tld\Whois\{
+    QueryBuilder,
+    ServerMatcher,
+    ServerProviderInterface,
+    ServerProvider,
+};
+use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
+
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
@@ -101,52 +109,52 @@ class ContainerBuilder
                 return new TldModule(
                     $this->container,
                     $this->container->get(LoaderInterface::class),
-                    $this->container->get(TldServerProviderInterface::class),
+                    $this->container->get(ServerProviderInterface::class),
                 );
             },
 
-            TldServerMatcher::class => function() {
-                return new TldServerMatcher(
+            ServerMatcher::class => function() {
+                return new ServerMatcher(
                     $this->container->get(DomainTool::class),
                 );
             },
 
-            TldServerProviderInterface::class => function() {
-                return $this->container->get(TldServerProvider::class);
+            ServerProviderInterface::class => function() {
+                return $this->container->get(ServerProvider::class);
             },
 
-            TldServerProvider::class => function() {
-                return new TldServerProvider(
+            ServerProviderInterface::class => function() {
+                return new ServerProvider(
                     $this->container,
                     $this->container->get(ConfigProviderInterface::class),
                     $this->container->get(LoaderInterface::class),
-                    $this->container->get(TldParserProviderInterface::class),
-                    $this->container->get(TldServerMatcher::class),
+                    $this->container->get(ParserProviderInterface::class),
+                    $this->container->get(ServerMatcher::class),
                 );
             },
 
-            TldLookupDomainCommand::class => function() {
-                return new TldLookupDomainCommand(
-                    $this->container->get(TldQueryBuilder::class),
+            LookupCommand::class => function() {
+                return new LookupCommand(
+                    $this->container->get(QueryBuilder::class),
                     $this->container->get(DomainTool::class),
                 );
             },
 
-            TldLookupWhoisCommand::class => function() {
-                return new TldLookupWhoisCommand(
-                    $this->container->get(TldQueryBuilder::class),
+            WhoisLookupCommand::class => function() {
+                return new WhoisLookupCommand(
+                    $this->container->get(QueryBuilder::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DateTool::class),
                 );
             },
 
-            TldParserProviderInterface::class => function() {
-                return $this->container->get(TldParserProvider::class);
+            ParserProviderInterface::class => function() {
+                return $this->container->get(ParserProvider::class);
             },
 
-            TldParserProvider::class => function() {
-                return new TldParserProvider(
+            ParserProvider::class => function() {
+                return new ParserProvider(
                     $this->container,
                 );
             },
@@ -154,7 +162,7 @@ class ContainerBuilder
             CommonParser::class => function() {
                 return new CommonParser(
                     $this->container->get(CommonParserOpts::class),
-                    $this->container->get(TldInfoScoreCalculator::class),
+                    $this->container->get(LookupInfoScoreCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
@@ -164,7 +172,7 @@ class ContainerBuilder
             BlockParser::class => function() {
                 return new BlockParser(
                     $this->container->get(BlockParserOpts::class),
-                    $this->container->get(TldInfoScoreCalculator::class),
+                    $this->container->get(LookupInfoScoreCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
@@ -174,7 +182,7 @@ class ContainerBuilder
             IndentParser::class => function() {
                 return new IndentParser(
                     $this->container->get(IndentParserOpts::class),
-                    $this->container->get(TldInfoScoreCalculator::class),
+                    $this->container->get(LookupInfoScoreCalculator::class),
                     $this->container->get(ParserTool::class),
                     $this->container->get(DomainTool::class),
                     $this->container->get(DateTool::class),
@@ -183,7 +191,7 @@ class ContainerBuilder
 
             AutoParser::class => function() {
                 return new AutoParser(
-                    $this->container->get(TldInfoScoreCalculator::class),
+                    $this->container->get(LookupInfoScoreCalculator::class),
                 );
             },
 

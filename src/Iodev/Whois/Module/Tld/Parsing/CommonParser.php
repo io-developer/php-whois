@@ -2,22 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld\Parser;
+namespace Iodev\Whois\Module\Tld\Parsing;
 
+use Iodev\Whois\Module\Tld\Dto\LookupInfo;
+use Iodev\Whois\Module\Tld\Dto\LookupResponse;
+use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
 use Iodev\Whois\Selection\GroupFilter;
-use Iodev\Whois\Module\Tld\TldInfo;
-use Iodev\Whois\Module\Tld\TldInfoScoreCalculator;
-use Iodev\Whois\Module\Tld\TldResponse;
-use Iodev\Whois\Module\Tld\TldParser;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
 
-class CommonParser extends TldParser
+class CommonParser extends ParserInterface
 {
     public function __construct(
         protected CommonParserOpts $opts,
-        protected TldInfoScoreCalculator $infoScoreCalculator,
+        protected LookupInfoScoreCalculator $infoScoreCalculator,
         protected ParserTool $parserTool,
         protected DomainTool $domainTool,
         protected DateTool $dateTool,
@@ -33,7 +32,7 @@ class CommonParser extends TldParser
      */
     public function getType(): string
     {
-        return $this->getOpts()->isFlat ? TldParser::COMMON_FLAT : TldParser::COMMON;
+        return $this->getOpts()->isFlat ? ParserInterface::COMMON_FLAT : ParserInterface::COMMON;
     }
 
     public function setConfig(array $cfg): static
@@ -44,7 +43,7 @@ class CommonParser extends TldParser
         return $this;
     }
 
-    public function parseResponse(TldResponse $response): ?TldInfo
+    public function parseResponse(LookupResponse $response): ?LookupInfo
     {
         $rootFilter = $this->filterFrom($response);
         $sel = $rootFilter->toSelector();
@@ -131,10 +130,10 @@ class CommonParser extends TldParser
         ;
     }
 
-    protected function createDomainInfo(TldResponse $response, array $data, array $extra = []): TldInfo
+    protected function createDomainInfo(LookupResponse $response, array $data, array $extra = []): LookupInfo
     {
         $domainName = $data['domainName'] ?? '';
-        return new TldInfo(
+        return new LookupInfo(
             $response,
             $data['parserType'] ?? '',
             $domainName,
@@ -160,7 +159,7 @@ class CommonParser extends TldParser
         );
     }
 
-    protected function filterFrom(TldResponse $response): GroupFilter
+    protected function filterFrom(LookupResponse $response): GroupFilter
     {
         $text = $response->text;
 

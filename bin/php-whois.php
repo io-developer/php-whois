@@ -7,8 +7,7 @@ use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Loader\LoaderInterface;
 use Iodev\Whois\Loader\ResponseHandler;
 use Iodev\Whois\Module\Tld\TldModule;
-use Iodev\Whois\Module\Tld\TldParserProviderInterface;
-use Iodev\Whois\Module\Tld\TldServer;
+use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
 use Iodev\Whois\Whois;
 
 $scriptDir = '.';
@@ -137,8 +136,8 @@ function info(string $domain, array $options = [])
     $parser = null;
     if (!empty($options['parser'])) {
         try {
-            /** @var TldParserProviderInterface */
-            $tldParserProvider = getContainer()->get(TldParserProviderInterface::class);
+            /** @var ParserProviderInterface */
+            $tldParserProvider = getContainer()->get(ParserProviderInterface::class);
             $parser = $tldParserProvider->getByType($options['parser']);
         } catch (\Throwable $e) {
             echo "\nCannot create TLD parser with type '{$options['parser']}'\n\n";

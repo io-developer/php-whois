@@ -10,9 +10,7 @@ use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Module\Asn\AsnInfo;
 use Iodev\Whois\Module\Asn\AsnModule;
 use Iodev\Whois\Module\Asn\AsnResponse;
-use Iodev\Whois\Module\Tld\TldInfo;
-use Iodev\Whois\Module\Tld\TldLookupDomainResult;
-use Iodev\Whois\Module\Tld\TldResponse;
+use Iodev\Whois\Module\Tld\Dto\LookupResult;
 use Iodev\Whois\Module\Tld\TldModule;
 use Psr\Container\ContainerInterface;
 
@@ -60,13 +58,11 @@ class Whois
     }
 
     /**
-     * @param string $domain
-     * @return TldResponse
      * @throws ServerMismatchException
      * @throws ConnectionException
      * @throws WhoisException
      */
-    public function lookupDomain($domain): TldLookupDomainResult
+    public function lookupDomain(string $domain): LookupResult
     {
         return $this->getTldModule()->lookupDomain($domain);
     }

@@ -5,24 +5,28 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Tld;
 
 use Iodev\Whois\BaseTestCase;
+use Iodev\Whois\Module\Tld\Dto\WhoisServer;
+use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
+use Iodev\Whois\Module\Tld\Whois\ServerCollection;
+use Iodev\Whois\Module\Tld\Whois\ServerProviderInterface;
 
 class TldModuleServerTest extends BaseTestCase
 {
-    protected TldParserProviderInterface $parserProvider;
+    protected ParserProviderInterface $parserProvider;
     protected TldModule $tldModule;
-    protected TldServerCollection $serverCol;
-    protected TldServerProviderInterface $serverProvider;
+    protected ServerCollection $serverCol;
+    protected ServerProviderInterface $serverProvider;
 
     protected function onConstructed()
     {
-        $this->parserProvider = $this->container->get(TldParserProviderInterface::class);
+        $this->parserProvider = $this->container->get(ParserProviderInterface::class);
     }
 
-    protected function createServer(string $zone): TldServer
+    protected function createServer(string $zone): WhoisServer
     {
         $parser = $this->parserProvider->getDefault();
 
-        return new TldServer($zone, "some.host.net", false, $parser, "%s\r\n", 0);
+        return new WhoisServer($zone, "some.host.net", false, $parser, "%s\r\n", 0);
     }
 
     public function setUp(): void

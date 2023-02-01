@@ -2,17 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Command;
 
 use Iodev\Whois\Exception\ConnectionException;
 use Iodev\Whois\Exception\WhoisException;
 use Iodev\Whois\Loader\LoaderInterface;
+use Iodev\Whois\Module\Tld\Dto\LookupInfo;
+use Iodev\Whois\Module\Tld\Dto\LookupResponse;
+use Iodev\Whois\Module\Tld\Dto\LookupResult;
+use Iodev\Whois\Module\Tld\Whois\QueryBuilder;
 use Iodev\Whois\Selection\GroupSelector;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
 
-class TldLookupWhoisCommand
+class WhoisLookupCommand
 {
     public const DEFAULT_HOST = 'whois.iana.org';
     public const DEFAULT_QUERY_FORMAT = "%s\r\n";
@@ -21,10 +25,10 @@ class TldLookupWhoisCommand
     protected string $host = self::DEFAULT_HOST;
     protected string $domain;
     protected string $queryFormat = self::DEFAULT_QUERY_FORMAT;
-    protected ?TldLookupWhoisResult $result = null;
+    protected ?LookupResult $result = null;
 
     public function __construct(
-        protected TldQueryBuilder $queryBuilder,
+        protected QueryBuilder $queryBuilder,
         protected DomainTool $domainTool,
         protected ParserTool $parserTool,
         protected DateTool $dateTool,
@@ -54,7 +58,7 @@ class TldLookupWhoisCommand
         return $this;
     }
 
-    public function getResult(): ?TldLookupWhoisResult
+    public function getResult(): ?LookupResult
     {
         return $this->result;
     }
@@ -88,13 +92,13 @@ class TldLookupWhoisCommand
         ;
         $text = $this->loader->loadText($this->host, $queryStr);
 
-        $resp = new TldResponse($domain, $this->host, $queryStr, $text);
+        $resp = new LookupResponse($domain, $this->host, $queryStr, $text);
         $info = $this->parseResponse($resp);
 
-        $this->result = new TldLookupWhoisResult($resp, $info);
+        $this->result = new LookupResult($resp, $info);
     }
 
-    protected function parseResponse(TldResponse $resp): ?TldInfo
+    protected function parseResponse(LookupResponse $resp): ?LookupInfo
     {
         $lines = $this->parserTool->splitLines($resp->text);
         $data = $this->parserTool->linesToSimpleKV($lines);
@@ -141,7 +145,7 @@ class TldLookupWhoisCommand
             ->getFirst()
         ;
         
-        return new TldInfo(
+        return new LookupInfo(
             $resp,
             '',
             $domainAscii,

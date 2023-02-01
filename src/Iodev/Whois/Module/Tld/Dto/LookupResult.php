@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Dto;
 
-class TldLookupDomainResult
+class LookupResult
 {    public function __construct(
-        public readonly ?TldResponse $response,
-        public readonly ?TldInfo $info,
+        public readonly ?LookupResponse $response,
+        public readonly ?LookupInfo $info,
     ) {}
 
     public function isDomainBusy(): bool
