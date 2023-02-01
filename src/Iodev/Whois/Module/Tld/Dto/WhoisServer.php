@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld\Dto;
+
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 
 class WhoisServer
@@ -26,16 +27,6 @@ class WhoisServer
     protected readonly int $priority;
 
 
-    public function getTld(): string
-    {
-        return $this->tld ?? '';
-    }
-
-    public function getZone(): string
-    {
-        return $this->getTld();
-    }
-
     public function setTld(string $tld): static
     {
         $normalizedTld = trim(mb_strtolower($tld), '.');
@@ -45,6 +36,16 @@ class WhoisServer
         $this->tldPartsInv = array_reverse($this->tldParts);
 
         return $this;
+    }
+
+    public function getTld(): string
+    {
+        return $this->tld ?? '';
+    }
+
+    public function getZone(): string
+    {
+        return $this->getTld();
     }
 
     public function getTldParts(): array
@@ -58,22 +59,17 @@ class WhoisServer
     }
 
 
-    public function getHost(): string
-    {
-        return $this->host ?? '';
-    }
-
     public function setHost(string $host): static
     {
         $this->host = $host;
         return $this;
     }
 
-
-    public function getPriority(): int
+    public function getHost(): string
     {
-        return $this->priority ?? 0;
+        return $this->host ?? '';
     }
+
 
     public function setPriority(int $priority): static
     {
@@ -81,11 +77,11 @@ class WhoisServer
         return $this;
     }
 
-
-    public function getCentralized(): bool
+    public function getPriority(): int
     {
-        return $this->centralized ?? false;
+        return $this->priority ?? 0;
     }
+
 
     public function setCentralized(bool $centralized): static
     {
@@ -93,11 +89,11 @@ class WhoisServer
         return $this;
     }
 
-
-    public function getQueryFormat(): string
+    public function getCentralized(): bool
     {
-        return $this->queryFormat ?? '';
+        return $this->centralized ?? false;
     }
+
 
     public function setQueryFormat(string $fmt): static
     {
@@ -105,15 +101,20 @@ class WhoisServer
         return $this;
     }
 
-
-    public function getParser(): ?ParserInterface
+    public function getQueryFormat(): string
     {
-        return $this->parser ?? null;
+        return $this->queryFormat ?? '';
     }
+
 
     public function setParser(ParserInterface $parser): static
     {
         $this->parser = $parser;
         return $this;
+    }
+
+    public function getParser(): ?ParserInterface
+    {
+        return $this->parser ?? null;
     }
 }

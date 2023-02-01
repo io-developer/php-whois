@@ -161,7 +161,7 @@ class CommonParser extends ParserInterface
 
     protected function filterFrom(LookupResponse $response): GroupFilter
     {
-        $text = $response->text;
+        $text = $response->getOutput();
 
 
         // var_dump([
@@ -187,7 +187,7 @@ class CommonParser extends ParserInterface
         if ($this->getOpts()->isFlat) {
             return $filter->mergeGroups();
         }
-        return $filter->filterIsDomain($response->domain, $this->getOpts()->domainKeys)
+        return $filter->filterIsDomain($response->getDomain(), $this->getOpts()->domainKeys)
             ->useFirstGroup();
     }
 

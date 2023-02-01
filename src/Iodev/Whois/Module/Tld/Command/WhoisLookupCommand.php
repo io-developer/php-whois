@@ -92,15 +92,25 @@ class WhoisLookupCommand
         ;
         $text = $this->loader->loadText($this->host, $queryStr);
 
-        $resp = new LookupResponse($domain, $this->host, $queryStr, $text);
+        $resp = $this->createResponse()
+            ->setDomain($domain)
+            ->setHost($this->host)
+            ->setQuery($queryStr)
+            ->setOutput($text)
+        ;
         $info = $this->parseResponse($resp);
 
         $this->result = new LookupResult($resp, $info);
     }
 
+    protected function createResponse(): LookupResponse
+    {
+        return new LookupResponse();
+    }
+
     protected function parseResponse(LookupResponse $resp): ?LookupInfo
     {
-        $lines = $this->parserTool->splitLines($resp->text);
+        $lines = $this->parserTool->splitLines($resp->getOutput());
         $data = $this->parserTool->linesToSimpleKV($lines);
         
         $sel = new GroupSelector($this->domainTool, $this->dateTool);

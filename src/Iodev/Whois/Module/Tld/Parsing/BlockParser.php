@@ -45,7 +45,7 @@ class BlockParser extends CommonParser
 
     public function parseResponse(LookupResponse $response): ?LookupInfo
     {
-        $groups = $this->groupsFromText($response->text);
+        $groups = $this->groupsFromText($response->getOutput());
         $rootFilter = $this->createGroupFilter()
             ->setGroups($groups)
             ->useIgnoreCase(true)
@@ -53,8 +53,8 @@ class BlockParser extends CommonParser
             ->setHeaderKey($this->getOpts()->headerKey)
             ->setDomainKeys($this->getOpts()->domainKeys)
             ->setSubsetParams([
-                '$domain' => $response->domain,
-                '$domainUnicode' => $this->domainTool->toUnicode($response->domain),
+                '$domain' => $response->getDomain(),
+                '$domainUnicode' => $this->domainTool->toUnicode($response->getDomain()),
             ]);
 
         $reserved = $rootFilter->cloneMe()
@@ -76,7 +76,7 @@ class BlockParser extends CommonParser
 
         $data = [
             "parserType" => $this->getType(),
-            "domainName" => $this->parseDomain($domainFilter) ?: ($isReserved ? $response->domain : ''),
+            "domainName" => $this->parseDomain($domainFilter) ?: ($isReserved ? $response->getDomain() : ''),
             "states" => $this->parseStates($rootFilter, $primaryFilter),
             "nameServers" => $this->parseNameServers($rootFilter, $primaryFilter),
             "dnssec" => $this->parseDnssec($rootFilter, $primaryFilter),

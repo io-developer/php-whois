@@ -190,10 +190,20 @@ class LookupCommand
         ;
         $text = $this->loader->loadText($this->host, $queryStr);
 
-        $resp = new LookupResponse($domain, $this->host, $queryStr, $text);
+        $resp = $this->createResponse()
+            ->setDomain($domain)
+            ->setHost($this->host)
+            ->setQuery($queryStr)
+            ->setOutput($text)
+        ;
         $info = $this->parser->parseResponse($resp);
 
         $this->lastResult = new LookupResult($resp, $info);
         $this->lastResults[] = $this->lastResult;
+    }
+
+    protected function createResponse(): LookupResponse
+    {
+        return new LookupResponse();
     }
 }
