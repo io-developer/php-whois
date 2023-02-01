@@ -2,52 +2,152 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Module\Tld;
+namespace Iodev\Whois\Module\Tld\Whois;
 
 use Iodev\Whois\BaseTestCase;
 use Iodev\Whois\Module\Tld\Dto\WhoisServer;
+use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
-use Iodev\Whois\Module\Tld\Whois\ServerCollection;
-use Iodev\Whois\Module\Tld\Whois\ServerProviderInterface;
+use Iodev\Whois\Module\Tld\Parsing\TestCommonParser;
 
-class TldModuleServerTest extends BaseTestCase
+class ServerProviderTest extends BaseTestCase
 {
+    private TestCommonParser $parser;
     protected ParserProviderInterface $parserProvider;
-    protected TldModule $tldModule;
+    private ServerProvider $serverProvider;
     protected ServerCollection $serverCol;
-    protected ServerProviderInterface $serverProvider;
 
     protected function onConstructed()
     {
+        $this->parser = $this->container->get(TestCommonParser::class);
+        $this->container->bind(ParserInterface::class, function() {
+            return $this->parser;
+        });
+
         $this->parserProvider = $this->container->get(ParserProviderInterface::class);
-    }
-
-    protected function createServer(string $zone): WhoisServer
-    {
-        $parser = $this->parserProvider->getDefault();
-
-        return new WhoisServer($zone, "some.host.net", false, $parser, "%s\r\n", 0);
     }
 
     public function setUp(): void
     {
-        $this->tldModule = $this->container->get(TldModule::class);
-
-        $this->serverProvider = $this->tldModule->getServerProvider();
+        $this->serverProvider = $this->container->get(ServerProvider::class);
 
         $this->serverCol = $this->serverProvider->getCollection();
         $this->serverCol->setList([]);
     }
-
-    public function tearDown(): void
+    
+    private function getParserClass(): string
     {
+        return $this->parser::class;
     }
+
+    protected function createServer(string $zone): WhoisServer
+    {
+        return new WhoisServer($zone, 'some.host.net', false, $this->parser, "%s\r\n", 0);
+    }
+
+    public function testFromDataFullArgs()
+    {
+        $s = $this->serverProvider->fromConfig([
+            'zone' => '.abc',
+            'host' => 'some.host',
+            'centralized' => true,
+            'parserClass' => $this->getParserClass(),
+            'queryFormat' => "prefix %s suffix\r\n",
+        ]);
+
+        self::assertEquals('.abc', $s->zone);
+        self::assertEquals('some.host', $s->host);
+        self::assertTrue($s->centralized);
+        self::assertInstanceOf($this->getParserClass(), $s->parser);
+        self::assertEquals("prefix %s suffix\r\n", $s->queryFormat);
+    }
+
+    public function testFromDataZoneHostOnly()
+    {
+        $s = $this->serverProvider->fromConfig([
+            'zone' => '.abc',
+            'host' => 'some.host',
+            'parser' => $this->parser,
+        ]);
+
+        self::assertEquals(".abc", $s->zone);
+        self::assertEquals("some.host", $s->host);
+        self::assertFalse($s->centralized);
+        self::assertInstanceOf($this->parser::class, $s->parser);
+    }
+
+    public function testFromDataMissingZone()
+    {
+        $this->expectException('\InvalidArgumentException');
+        $this->serverProvider->fromConfig([ 'host' => 'some.host' ]);
+    }
+
+    public function testFromDataMissingHost()
+    {
+        $this->expectException('\InvalidArgumentException');
+        $this->serverProvider->fromConfig([ 'zone' => '.abc' ]);
+    }
+
+    public function testFromDataMissingAll()
+    {
+        $this->expectException('\InvalidArgumentException');
+        $this->serverProvider->fromConfig([]);
+    }
+
+    public function testFromDataListOne()
+    {
+        $s = [
+            $this->serverProvider->fromConfig([
+                'zone' => '.abc',
+                'host' => 'some.host',
+            ]),
+        ];
+        self::assertTrue(is_array($s), 'Array expected');
+        self::assertEquals(1, count($s));
+        self::assertInstanceOf(WhoisServer::class, $s[0]);
+        self::assertEquals('.abc', $s[0]->zone);
+        self::assertEquals('some.host', $s[0]->host);
+        self::assertInstanceOf($this->getParserClass(), $s[0]->parser);
+    }
+
+    public function testFromDataListTwo()
+    {
+        $s = [
+            $this->serverProvider->fromConfig([
+                'zone' => '.abc',
+                'host' => 'some.host',
+            ]),
+            $this->serverProvider->fromConfig([
+                'zone' => '.cde',
+                'host' => 'other.host',
+                'centralized' => true,
+                'queryFormat' => "prefix %s suffix\r\n",
+            ]),
+        ];
+        self::assertTrue(is_array($s), "Array expected");
+        self::assertEquals(2, count($s));
+
+        self::assertInstanceOf(WhoisServer::class, $s[0]);
+        self::assertEquals('.abc', $s[0]->zone);
+        self::assertEquals('some.host', $s[0]->host);
+        self::assertFalse($s[0]->centralized);
+        self::assertInstanceOf($this->getParserClass(), $s[0]->parser);
+
+        self::assertInstanceOf(WhoisServer::class, $s[1]);
+        self::assertEquals('.cde', $s[1]->zone);
+        self::assertEquals('other.host', $s[1]->host);
+        self::assertTrue($s[1]->centralized);
+        self::assertInstanceOf($this->getParserClass(), $s[1]->parser);
+        self::assertEquals("prefix %s suffix\r\n", $s[1]->queryFormat);
+    }
+
+
 
 
     public function testAddServersReturnsSelf()
     {
         $res = $this->serverCol->addList([$this->createServer(".abc")]);
-        self::assertSame($this->tldModule->getServerProvider()->getCollection(), $res, "Result must be self reference");
+        self::assertSame( $this->serverCol, $res, "Result must be self reference");
     }
 
     public function testMatchServersQuietEmpty()
