@@ -14,7 +14,7 @@ use Iodev\Whois\Module\Tld\Dto\LookupResult;
 use Iodev\Whois\Module\Tld\Dto\WhoisServer;
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 use Iodev\Whois\Module\Tld\Whois\ServerProviderInterface;
-use Iodev\Whois\Transport\Loader\LoaderInterface;
+use Iodev\Whois\Transport\Transport;
 use Psr\Container\ContainerInterface;
 
 class TldModule
@@ -26,13 +26,13 @@ class TldModule
 
     public function __construct(
         protected ContainerInterface $container,
-        protected LoaderInterface $loader,
+        protected Transport $transport,
         protected ServerProviderInterface $serverProvider,
     ) {}
 
-    public function getLoader(): LoaderInterface
+    public function getTransport(): Transport
     {
-        return $this->loader;
+        return $this->transport;
     }
 
     public function getServerProvider(): ServerProviderInterface
@@ -97,7 +97,7 @@ class TldModule
             /** @var LookupCommand */
             $command = $this->container->get(LookupCommand::class);
             $command
-                ->setLoader($this->loader)
+                ->setTransport($this->transport)
                 ->setDomain($domain)
                 ->setHost($overrideHost ?: $server->getHost())
                 ->setQueryFormat($server->getQueryFormat())

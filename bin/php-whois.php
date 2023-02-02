@@ -5,10 +5,12 @@ declare(strict_types=1);
 use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Transport\Loader\LoaderInterface;
-use Iodev\Whois\Transport\Loader\ResponseHandler;
+use Iodev\Whois\Transport\Loader\FakeSocketLoader;
 use Iodev\Whois\Module\Tld\TldModule;
 use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
 use Iodev\Whois\Whois;
+use \Throwable;
+
 
 $scriptDir = '.';
 if (preg_match('~^(.+?)/[^/]+$~ui', $_SERVER['SCRIPT_FILENAME'], $m)) {
@@ -118,14 +120,10 @@ function info(string $domain, array $options = [])
         '',
     ]);
 
-    $loader = null;
     if ($options['file']) {
-        $loader = new \Iodev\Whois\Transport\Loader\FakeSocketLoader(
-            getContainer()->get(ResponseHandler::class),
-        );
-        $loader->text = file_get_contents($options['file']);
-
-        getContainer()->bind(LoaderInterface::class, function() use ($loader) {
+        getContainer()->bind(LoaderInterface::class, function() use ($options) {
+            $loader = new FakeSocketLoader();
+            $loader->text = file_get_contents($options['file']);
             return $loader;
         });
     }
@@ -139,7 +137,7 @@ function info(string $domain, array $options = [])
             /** @var ParserProviderInterface */
             $tldParserProvider = getContainer()->get(ParserProviderInterface::class);
             $parser = $tldParserProvider->getByType($options['parser']);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             echo "\nCannot create TLD parser with type '{$options['parser']}'\n\n";
             throw $e;
         }

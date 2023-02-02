@@ -12,7 +12,6 @@ class CurlLoader implements LoaderInterface
     protected array $options = [];
 
     public function __construct(
-        protected ResponseHandler $responseHandler,
         protected int $timeout = 60,
     ) {
         $this->setTimeout($timeout);
@@ -37,12 +36,6 @@ class CurlLoader implements LoaderInterface
     public function setOptions(array $opts): static
     {
         $this->options = $opts;
-        return $this;
-    }
-
-    public function replaceOptions(array $opts): static
-    {
-        $this->options = array_replace($this->options, $opts);
         return $this;
     }
 
@@ -84,6 +77,6 @@ class CurlLoader implements LoaderInterface
             throw new ConnectionException($errstr, $errno);
         }
 
-        return $this->responseHandler->handleText($result);
+        return $result;
     }
 }

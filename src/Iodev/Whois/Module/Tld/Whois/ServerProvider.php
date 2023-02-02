@@ -10,7 +10,7 @@ use Iodev\Whois\Module\Tld\Command\WhoisLookupCommand;
 use Iodev\Whois\Module\Tld\Dto\WhoisServer;
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
-use Iodev\Whois\Transport\Loader\LoaderInterface;
+use Iodev\Whois\Transport\Transport;
 use Psr\Container\ContainerInterface;
 
 class ServerProvider implements ServerProviderInterface
@@ -26,9 +26,9 @@ class ServerProvider implements ServerProviderInterface
     public function __construct(
         protected ContainerInterface $container,
         protected ConfigProviderInterface $configProvider,
-        protected LoaderInterface $loader,
         protected ParserProviderInterface $parserProvider,
         protected ServerMatcher $serverMatcher,
+        protected Transport $transport,
     ) {
         $this->collection = $this->createCollection();
     }
@@ -102,14 +102,14 @@ class ServerProvider implements ServerProviderInterface
         /** @var WhoisLookupCommand */
         $command = $this->container->get(WhoisLookupCommand::class);
         $command
-            ->setLoader($this->loader)
+            ->setTransport($this->transport)
             ->setDomain($queryDomain)
             ->execute()
         ;
         $result = $command->getResult();
 
-        $resultZone = $result->info?->domainName ?? null;
-        $resultWhoisHost = $result->info?->whoisServer ?? null;
+        $resultZone = $result->info?->getDomain() ?? null;
+        $resultWhoisHost = $result->info?->getWhoisHost() ?? null;
 
         if (empty($resultZone) || empty($resultWhoisHost)) {
             return false;

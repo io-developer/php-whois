@@ -14,14 +14,15 @@ use Iodev\Whois\Selection\GroupSelector;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
-use Iodev\Whois\Transport\Loader\LoaderInterface;
+use Iodev\Whois\Transport\Request;
+use Iodev\Whois\Transport\Transport;
 
 class WhoisLookupCommand
 {
     public const DEFAULT_HOST = 'whois.iana.org';
     public const DEFAULT_QUERY_FORMAT = "%s\r\n";
 
-    protected LoaderInterface $loader;
+    protected Transport $transport;
     protected string $host = self::DEFAULT_HOST;
     protected string $domain;
     protected string $queryFormat = self::DEFAULT_QUERY_FORMAT;
@@ -34,9 +35,9 @@ class WhoisLookupCommand
         protected DateTool $dateTool,
     ) {}
 
-    public function setLoader(LoaderInterface $loader): static
+    public function setTransport(Transport $transport): static
     {
-        $this->loader = $loader;
+        $this->transport = $transport;
         return $this;
     }
 
@@ -90,20 +91,29 @@ class WhoisLookupCommand
             ->setOptionStrict(false)
             ->toString()
         ;
-        $text = $this->loader->loadText($this->host, $queryStr);
-
-        $resp = $this->createResponse()
-            ->setDomain($domain)
+        $req = (new Request())
             ->setHost($this->host)
             ->setQuery($queryStr)
-            ->setOutput($text)
         ;
-        $info = $this->parseResponse($resp);
+        $resp = $this->transport
+            ->sendRequest($req)
+            ->getResponse()
+        ;
+        if (!$resp->isValid()) {
+            throw new WhoisException($resp->getSummaryErrorMessage());
+        }
+        $lookupResp = $this->createLookupResponse()
+            ->setDomain($domain)
+            ->setHost($req->getHost())
+            ->setQuery($req->getQuery())
+            ->setOutput($resp->getOutput())
+        ;
+        $info = $this->parseResponse($lookupResp);
 
-        $this->result = new LookupResult($resp, $info);
+        $this->result = new LookupResult($lookupResp, $info);
     }
 
-    protected function createResponse(): LookupResponse
+    protected function createLookupResponse(): LookupResponse
     {
         return new LookupResponse();
     }

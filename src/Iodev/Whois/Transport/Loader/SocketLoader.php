@@ -12,7 +12,6 @@ class SocketLoader implements LoaderInterface
     protected bool $origEnv = false;
 
     public function __construct(
-        protected ResponseHandler $responseHandler,
         protected int $timeout = 60,
     ) {
         $this->setTimeout($timeout);
@@ -63,7 +62,7 @@ class SocketLoader implements LoaderInterface
         }
         fclose($handle);
 
-        return $this->responseHandler->handleText($text);
+        return $text;
     }
 
     protected function setupEnv(): void

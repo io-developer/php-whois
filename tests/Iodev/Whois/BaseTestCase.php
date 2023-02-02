@@ -8,7 +8,6 @@ use Iodev\Whois\Container\Default\Container;
 use Iodev\Whois\Container\Default\ContainerBuilder;
 use Iodev\Whois\Transport\Loader\FakeSocketLoader;
 use Iodev\Whois\Transport\Loader\LoaderInterface;
-use Iodev\Whois\Transport\Loader\ResponseHandler;
 use Iodev\Whois\Tool\DateTool;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
@@ -21,6 +20,7 @@ use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
 use Iodev\Whois\Module\Tld\Whois\ServerMatcher;
 use Iodev\Whois\Module\Tld\Whois\ServerProvider;
 use Iodev\Whois\Module\Tld\Whois\ServerProviderInterface;
+use Iodev\Whois\Transport\Transport;
 use PHPUnit\Framework\TestCase;
 
 abstract class BaseTestCase extends TestCase
@@ -82,9 +82,9 @@ abstract class BaseTestCase extends TestCase
                     $instance = new ServerProvider(
                         $container,
                         $container->get(ConfigProviderInterface::class),
-                        $container->get(LoaderInterface::class),
                         $container->get(ParserProviderInterface::class),
                         $container->get(ServerMatcher::class),
+                        $container->get(Transport::class),
                     );
                     $instance->setWhoisUpdateEnabled(false);
                     return $instance;
@@ -109,9 +109,7 @@ abstract class BaseTestCase extends TestCase
         static $loader = null;
 
         if ($loader === null) {
-            $loader = new FakeSocketLoader(
-                static::getContainer()->get(ResponseHandler::class),
-            );
+            $loader = new FakeSocketLoader();
         }
         return $loader;
     }

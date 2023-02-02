@@ -10,11 +10,16 @@ use Iodev\Whois\Whois;
 use Iodev\Whois\Config\ConfigProviderInterface;
 use Iodev\Whois\Config\ConfigProvider;
 
+use Iodev\Whois\Transport\Transport;
+use Iodev\Whois\Transport\Processor\{
+    EncodingProcessor,
+};
+use Iodev\Whois\Transport\Validator\{
+    RateLimitValidator,
+};
 use Iodev\Whois\Transport\Loader\{
     LoaderInterface,
     SocketLoader,
-    CurlLoader,
-    ResponseHandler,
 };
 
 use Iodev\Whois\Module\Asn\{
@@ -85,24 +90,25 @@ class ContainerBuilder
                 return $this->container->get(PunycodeTool::class);
             },
 
+            Transport::class => function() {
+                return (new Transport(
+                        $this->container->get(LoaderInterface::class),
+                    ))
+                    ->setProcessors([
+                        $this->container->get(EncodingProcessor::class),
+                    ])
+                    ->setValidators([
+                        $this->container->get(RateLimitValidator::class),
+                    ])
+                ;
+            },
+
             LoaderInterface::class => function() {
                 return $this->container->get(SocketLoader::class);
             },
-
-            SocketLoader::class => function() {
-                return new SocketLoader(
-                    $this->container->get(ResponseHandler::class),
-                );
-            },
-
-            CurlLoader::class => function() {
-                return new CurlLoader(
-                    $this->container->get(ResponseHandler::class),
-                );
-            },
             
-            ResponseHandler::class => function() {
-                return new ResponseHandler(
+            EncodingProcessor::class => function() {
+                return new EncodingProcessor(
                     $this->container->get(TextTool::class),
                 );
             },
@@ -119,7 +125,7 @@ class ContainerBuilder
             TldModule::class => function() {
                 return new TldModule(
                     $this->container,
-                    $this->container->get(LoaderInterface::class),
+                    $this->container->get(Transport::class),
                     $this->container->get(ServerProviderInterface::class),
                 );
             },
@@ -134,13 +140,13 @@ class ContainerBuilder
                 return $this->container->get(ServerProvider::class);
             },
 
-            ServerProviderInterface::class => function() {
+            ServerProvider::class => function() {
                 return new ServerProvider(
                     $this->container,
                     $this->container->get(ConfigProviderInterface::class),
-                    $this->container->get(LoaderInterface::class),
                     $this->container->get(ParserProviderInterface::class),
                     $this->container->get(ServerMatcher::class),
+                    $this->container->get(Transport::class),
                 );
             },
 

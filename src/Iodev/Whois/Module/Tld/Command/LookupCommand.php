@@ -11,11 +11,12 @@ use Iodev\Whois\Module\Tld\Dto\LookupResult;
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 use Iodev\Whois\Module\Tld\Whois\QueryBuilder;
 use Iodev\Whois\Tool\DomainTool;
-use Iodev\Whois\Transport\Loader\LoaderInterface;
+use Iodev\Whois\Transport\Request;
+use Iodev\Whois\Transport\Transport;
 
 class LookupCommand
 {
-    protected LoaderInterface $loader;
+    protected Transport $transport;
     protected string $host;
     protected string $domain;
     protected string $queryFormat;
@@ -37,9 +38,9 @@ class LookupCommand
     ) {}
 
 
-    public function setLoader(LoaderInterface $loader): static
+    public function setTransport(Transport $transport): static
     {
-        $this->loader = $loader;
+        $this->transport = $transport;
         return $this;
     }
 
@@ -188,21 +189,30 @@ class LookupCommand
             ->setQueryText($domain)
             ->toString()
         ;
-        $text = $this->loader->loadText($this->host, $queryStr);
-
-        $resp = $this->createResponse()
-            ->setDomain($domain)
+        $req = (new Request())
             ->setHost($this->host)
             ->setQuery($queryStr)
-            ->setOutput($text)
         ;
-        $info = $this->parser->parseResponse($resp);
+        $resp = $this->transport
+            ->sendRequest($req)
+            ->getResponse()
+        ;
+        if (!$resp->isValid()) {
+            throw new WhoisException($resp->getSummaryErrorMessage());
+        }
+        $lookupResp = $this->createLookupResponse()
+            ->setDomain($domain)
+            ->setHost($req->getHost())
+            ->setQuery($req->getQuery())
+            ->setOutput($resp->getOutput())
+        ;
+        $info = $this->parser->parseResponse($lookupResp);
 
-        $this->lastResult = new LookupResult($resp, $info);
+        $this->lastResult = new LookupResult($lookupResp, $info);
         $this->lastResults[] = $this->lastResult;
     }
 
-    protected function createResponse(): LookupResponse
+    protected function createLookupResponse(): LookupResponse
     {
         return new LookupResponse();
     }
