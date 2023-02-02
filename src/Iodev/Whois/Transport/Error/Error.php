@@ -2,16 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Transport;
+namespace Iodev\Whois\Transport\Error;
 
 use \Throwable;
 
 class Error
 {
-    public const TYPE_LOADING = 'loading';
-    public const TYPE_PROCESSING = 'processing';
-    public const TYPE_VALIDATION = 'validation';
-
     public function __construct(
         public readonly string $type,
         public readonly string $source,

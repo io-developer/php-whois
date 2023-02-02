@@ -8,10 +8,11 @@ class Request
 {
     public const DEFAULT_PORT = 43;
 
-    protected readonly string $host;
-    protected readonly int $port;
-    protected readonly string $query;
-    protected readonly int $timeout;
+    protected string $host = '';
+    protected int $port = self::DEFAULT_PORT;
+    protected string $query = '';
+    protected int $timeout = 0;
+    protected bool $cancelled = false;
 
 
     public function setHost(string $host): static
@@ -22,7 +23,7 @@ class Request
 
     public function getHost(): string
     {
-        return $this->host ?? '';
+        return $this->host;
     }
 
     public function setPort(int $port): static
@@ -33,7 +34,7 @@ class Request
 
     public function getPort(): int
     {
-        return $this->port ?? static::DEFAULT_PORT;
+        return $this->port;
     }
 
     public function setQuery(string $query): static
@@ -44,7 +45,7 @@ class Request
 
     public function getQuery(): string
     {
-        return $this->query ?? '';
+        return $this->query;
     }
 
 
@@ -56,6 +57,18 @@ class Request
 
     public function getTimeout(): int
     {
-        return $this->timeout ?? 0;
+        return $this->timeout;
+    }
+
+
+    public function setCancelled(bool $yes): static
+    {
+        $this->cancelled = $yes;
+        return $this;
+    }
+
+    public function getCancelled(): bool
+    {
+        return $this->cancelled;
     }
 }

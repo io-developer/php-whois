@@ -28,6 +28,7 @@ abstract class BaseTestCase extends TestCase
     protected Container $container;
     protected ConfigProvider $configProvider;
     protected FakeSocketLoader $loader;
+    protected Transport $transport;
     protected Whois $whois;
 
 
@@ -38,6 +39,7 @@ abstract class BaseTestCase extends TestCase
         $this->container = static::getContainer();
         $this->configProvider = static::getConfigProvider();
         $this->loader = static::getLoader();
+        $this->transport = static::getTransport();
         $this->whois = static::getWhois();
 
         $this->onConstructed();
@@ -62,6 +64,10 @@ abstract class BaseTestCase extends TestCase
             $container->bindMany([
                 LoaderInterface::class => function() {
                     return static::getLoader();
+                },
+
+                Transport::class => function() {
+                    return static::getTransport();
                 },
 
                 TestCommonParser::class => function() use ($container) {
@@ -112,6 +118,19 @@ abstract class BaseTestCase extends TestCase
             $loader = new FakeSocketLoader();
         }
         return $loader;
+    }
+
+    protected static function getTransport(): Transport
+    {
+        /** @var Transport */
+        static $transport = null;
+
+        if ($transport === null) {
+            /** @var Transport */
+            $transport = new Transport(static::getLoader());
+            $transport->setMiddlewares([]);
+        }
+        return $transport;
     }
 
     protected static function getWhois(): Whois

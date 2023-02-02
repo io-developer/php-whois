@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Transport;
 
+use Iodev\Whois\Transport\Error\Error;
+
 class Response
 {
-    protected readonly Request $request;
-    protected readonly string $output;
-    protected readonly array $errors;
-    protected readonly string $loaderClass;
-    protected readonly array $processorClasses;
-    protected readonly array $validatorClasses;
+    protected ?Request $request = null;
+    protected ?string $output = null;
+    protected array $errors = [];
+    protected string $transportClass = '';
+    protected string $loaderClass = '';
+    protected array $middlewareClasses = [];
+    protected array $processorClasses = [];
+    protected array $validatorClasses = [];
 
 
     public function setRequest(Request $req): static
@@ -22,19 +26,25 @@ class Response
 
     public function getRequest(): ?Request
     {
-        return $this->request ?? null;
+        return $this->request;
     }
 
 
-    public function setOutput(string $output): static
+    public function setOutput(?string $output): static
     {
         $this->output = $output;
         return $this;
     }
 
-    public function getOutput(): string
+    public function getOutput(): ?string
     {
-        return $this->output ?? '';
+        return $this->output;
+    }
+
+
+    public function isValid(): bool
+    {
+        return $this->output !== null && !$this->hasErrors();
     }
 
 
@@ -43,26 +53,38 @@ class Response
      */
     public function setErrors(array $errors): static
     {
-        $this->errors = array_map(fn(Error $err) => $err, $errors);
+        $this->errors = [];
+        foreach ($errors as $error) {
+            $this->addError($error);
+        }
+        return $this;
+    }
+
+    public function addError(Error $err): static
+    {
+        $this->errors[] = $err;
         return $this;
     }
 
     /**
      * @return Error[]
      */
-    public function getErrors(): array
+    public function getErrors(?string $type = null): array
     {
-        return $this->errors ?? [];
+        if ($type === null) {
+            return $this->errors;
+        }
+        return array_values(array_filter(
+            $this->getErrors(),
+            function (Error $err) use ($type) {
+                return $err->type === $type;
+            }
+        ));
     }
 
     public function hasErrors(): bool
     {
         return count($this->getErrors()) > 0;
-    }
-
-    public function isValid(): bool
-    {
-        return !$this->hasErrors();
     }
 
     public function getSummaryErrorMessage(): string
@@ -80,38 +102,55 @@ class Response
         return implode("\n", $lines);
     }
 
-    /**
-     * @return Error[]
-     */
-    public function getErrorsByType(string $type): array
+
+    public function setTransportClass(string $className): static
     {
-        return array_values(array_filter(
-            $this->getErrors(),
-            function (Error $err) use ($type) {
-                return $err->type === $type;
-            }
-        ));
+        $this->transportClass = $className;
+        return $this;
+    }
+
+    public function getTransportClass(): string
+    {
+        return $this->transportClass;
     }
 
 
-    public function setLoaderClass(string $loader): static
+    public function setLoaderClass(string $className): static
     {
-        $this->loaderClass = $loader;
+        $this->loaderClass = $className;
         return $this;
     }
 
     public function getLoaderClass(): string
     {
-        return $this->loaderClass ?? '';
+        return $this->loaderClass;
+    }
+
+    
+    /**
+     * @param string[] $classNames
+     */
+    public function setMiddlewareClasses(array $classNames): static
+    {
+        $this->middlewareClasses = array_map(fn($item) => (string)$item, $classNames);
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getMiddlewareClasses(): array
+    {
+        return $this->middlewareClasses;
     }
 
 
     /**
-     * @param string[] $processors
+     * @param string[] $classNames
      */
-    public function setProcessorClasses(array $processors): static
+    public function setProcessorClasses(array $classNames): static
     {
-        $this->processorClasses = array_map(fn($item) => (string)$item, $processors);
+        $this->processorClasses = array_map(fn($item) => (string)$item, $classNames);
         return $this;
     }
 
@@ -120,16 +159,16 @@ class Response
      */
     public function getProcessorClasses(): array
     {
-        return $this->processorClasses ?? [];
+        return $this->processorClasses;
     }
 
 
     /**
-     * @param string[] $validators
+     * @param string[] $classNames
      */
-    public function setValidatorClasses(array $validators): static
+    public function setValidatorClasses(array $classNames): static
     {
-        $this->validatorClasses = array_map(fn($item) => (string)$item, $validators);
+        $this->validatorClasses = array_map(fn($item) => (string)$item, $classNames);
         return $this;
     }
 
@@ -138,6 +177,6 @@ class Response
      */
     public function getValidatorClasses(): array
     {
-        return $this->validatorClasses ?? [];
+        return $this->validatorClasses;
     }
 }

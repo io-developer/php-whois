@@ -11,6 +11,9 @@ use Iodev\Whois\Config\ConfigProviderInterface;
 use Iodev\Whois\Config\ConfigProvider;
 
 use Iodev\Whois\Transport\Transport;
+use Iodev\Whois\Transport\Middleware\{
+    PrintLogMiddleware,
+};
 use Iodev\Whois\Transport\Processor\{
     EncodingProcessor,
 };
@@ -94,6 +97,9 @@ class ContainerBuilder
                 return (new Transport(
                         $this->container->get(LoaderInterface::class),
                     ))
+                    ->setMiddlewares([
+                        $this->container->get(PrintLogMiddleware::class),
+                    ])
                     ->setProcessors([
                         $this->container->get(EncodingProcessor::class),
                     ])
