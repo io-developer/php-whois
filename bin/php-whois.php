@@ -9,7 +9,6 @@ use Iodev\Whois\Transport\Loader\FakeSocketLoader;
 use Iodev\Whois\Module\Tld\TldModule;
 use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
 use Iodev\Whois\Whois;
-use \Throwable;
 
 
 $scriptDir = '.';
@@ -137,7 +136,7 @@ function info(string $domain, array $options = [])
             /** @var ParserProviderInterface */
             $tldParserProvider = getContainer()->get(ParserProviderInterface::class);
             $parser = $tldParserProvider->getByType($options['parser']);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             echo "\nCannot create TLD parser with type '{$options['parser']}'\n\n";
             throw $e;
         }

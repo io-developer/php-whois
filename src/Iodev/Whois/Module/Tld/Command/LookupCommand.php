@@ -122,7 +122,6 @@ class LookupCommand
         return $this->result;
     }
 
-
     public function clearResult(): static
     {
         $this->result = null;

@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Iodev\Whois\Transport;
 
 use Iodev\Whois\Transport\Error\Error;
+use Iodev\Whois\Transport\Error\TransportError;
+use Throwable;
 
 class Response
 {
     protected ?Request $request = null;
     protected ?string $output = null;
+    protected array $tags = [];
     protected array $errors = [];
     protected string $transportClass = '';
     protected string $loaderClass = '';
     protected array $middlewareClasses = [];
-    protected array $processorClasses = [];
-    protected array $validatorClasses = [];
-
 
     public function setRequest(Request $req): static
     {
@@ -29,7 +29,6 @@ class Response
         return $this->request;
     }
 
-
     public function setOutput(?string $output): static
     {
         $this->output = $output;
@@ -41,15 +40,46 @@ class Response
         return $this->output;
     }
 
-
     public function isValid(): bool
     {
-        return $this->output !== null && !$this->hasErrors();
+        return $this->output !== null && !$this->hasError();
     }
 
+    public function tagWith(string $tag, mixed $val = null): static
+    {
+        $this->tags[$tag] = $this->tags[$tag] ?? [];
+        $this->tags[$tag][] = $val;
+        return $this;
+    }
+
+    public function tagErrorWith(string $tag, string $mesaage, array $details, ?Throwable $throwable = null): static
+    {
+        $err = new TransportError(
+            $tag,
+            $mesaage,
+            $details,
+            $throwable,
+        );
+        $this->errors[] = $err;
+        $this->tagWith($tag, $mesaage);
+        return $this;
+    }
+
+    public function getTags(?string $tag = null): array
+    {
+        if ($tag === null) {
+            return $this->tags;
+        }
+        return $this->tags[$tag] ?? [];
+    }
+
+    public function hasTag(string $tag): bool
+    {
+        return !empty($this->tags[$tag]);
+    }
 
     /**
-     * @param Error[] $errors
+     * @param TransportError[] $errors
      */
     public function setErrors(array $errors): static
     {
@@ -60,31 +90,33 @@ class Response
         return $this;
     }
 
-    public function addError(Error $err): static
+    public function addError(TransportError $err): static
     {
         $this->errors[] = $err;
         return $this;
     }
 
     /**
-     * @return Error[]
+     * @return TransportError[]
      */
-    public function getErrors(?string $type = null): array
+    public function getErrors(?string $tag = null): array
     {
-        if ($type === null) {
+        if ($tag === null) {
             return $this->errors;
         }
-        return array_values(array_filter(
-            $this->getErrors(),
-            function (Error $err) use ($type) {
-                return $err->type === $type;
-            }
-        ));
+        return array_values(
+            array_filter(
+                $this->getErrors(),
+                function (TransportError $err) use ($tag) {
+                    return $err->tag === $tag;
+                },
+            ),
+        );
     }
 
-    public function hasErrors(): bool
+    public function hasError(?string $tag = null): bool
     {
-        return count($this->getErrors()) > 0;
+        return count($this->getErrors($tag)) > 0;
     }
 
     public function getSummaryErrorMessage(): string
@@ -92,16 +124,15 @@ class Response
         if ($this->isValid()) {
             return '';
         }
-        if (!$this->hasErrors()) {
+        if (!$this->hasError()) {
             return 'Invalid WHOIS response';
         }
-        $lines = array_map(
-            fn(Error $err) => $err->getSummaryMessage(),
+        $texts = array_map(
+            fn(TransportError $err) => $err->toString(),
             $this->getErrors(),
         );
-        return implode("\n", $lines);
+        return implode("\n", $texts);
     }
-
 
     public function setTransportClass(string $className): static
     {
@@ -114,7 +145,6 @@ class Response
         return $this->transportClass;
     }
 
-
     public function setLoaderClass(string $className): static
     {
         $this->loaderClass = $className;
@@ -125,7 +155,6 @@ class Response
     {
         return $this->loaderClass;
     }
-
     
     /**
      * @param string[] $classNames
@@ -142,41 +171,5 @@ class Response
     public function getMiddlewareClasses(): array
     {
         return $this->middlewareClasses;
-    }
-
-
-    /**
-     * @param string[] $classNames
-     */
-    public function setProcessorClasses(array $classNames): static
-    {
-        $this->processorClasses = array_map(fn($item) => (string)$item, $classNames);
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getProcessorClasses(): array
-    {
-        return $this->processorClasses;
-    }
-
-
-    /**
-     * @param string[] $classNames
-     */
-    public function setValidatorClasses(array $classNames): static
-    {
-        $this->validatorClasses = array_map(fn($item) => (string)$item, $classNames);
-        return $this;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getValidatorClasses(): array
-    {
-        return $this->validatorClasses;
     }
 }

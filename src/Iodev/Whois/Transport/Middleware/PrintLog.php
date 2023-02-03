@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Transport\Middleware;
 
+use Iodev\Whois\Transport\Middleware\Request\RequestMiddlewareInterface;
+use Iodev\Whois\Transport\Middleware\Response\ResponseMiddlewareInterface;
 use Iodev\Whois\Transport\Request;
 use Iodev\Whois\Transport\Response;
 
-class PrintLogMiddleware implements MiddlewareInterface
+class PrintLog implements RequestMiddlewareInterface, ResponseMiddlewareInterface
 {
     public function processRequest(Request $request): void
     {
@@ -37,15 +39,15 @@ class PrintLogMiddleware implements MiddlewareInterface
                 'port' => $request->getPort(),
                 'timeout' => $request->getTimeout(),
                 'query' => $request->getQuery(),
+                'middlewareClasses' => $request->getMiddlewareClasses(),
             ],
             'response' => [
                 'isValid' => (int)$response->isValid(),
                 'summaryErrorMsg' => $response->getSummaryErrorMessage(),
+                'tags' => $response->getTags(),
                 'transportClass' => $response->getTransportClass(),
                 'loaderClass' => $response->getLoaderClass(),
                 'middlewareClasses' => $response->getMiddlewareClasses(),
-                'processorClasses' => $response->getProcessorClasses(),
-                'validatorClasses' => $response->getValidatorClasses(),
                 'output' => $response->getOutput(),
             ],
         ]);

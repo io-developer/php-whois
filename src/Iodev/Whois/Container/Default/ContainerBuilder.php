@@ -12,13 +12,11 @@ use Iodev\Whois\Config\ConfigProvider;
 
 use Iodev\Whois\Transport\Transport;
 use Iodev\Whois\Transport\Middleware\{
-    PrintLogMiddleware,
+    PrintLog,
 };
-use Iodev\Whois\Transport\Processor\{
+use Iodev\Whois\Transport\Middleware\Response\{
     EncodingProcessor,
-};
-use Iodev\Whois\Transport\Validator\{
-    RateLimitValidator,
+    RateLimitChecker,
 };
 use Iodev\Whois\Transport\Loader\{
     LoaderInterface,
@@ -64,7 +62,7 @@ use Iodev\Whois\Tool\{
     PunycodeTool,
     TextTool,
 };
-                  
+use Iodev\Whois\Transport\Processor\EncodingProcessor as ProcessorEncodingProcessor;
 
 class ContainerBuilder
 {
@@ -97,14 +95,13 @@ class ContainerBuilder
                 return (new Transport(
                         $this->container->get(LoaderInterface::class),
                     ))
-                    ->setMiddlewares([
-                        $this->container->get(PrintLogMiddleware::class),
+                    ->setRequestMiddlewares([
+                        $this->container->get(PrintLog::class),
                     ])
-                    ->setProcessors([
+                    ->setResponseMiddlewares([
                         $this->container->get(EncodingProcessor::class),
-                    ])
-                    ->setValidators([
-                        $this->container->get(RateLimitValidator::class),
+                        $this->container->get(RateLimitChecker::class),
+                        $this->container->get(PrintLog::class),
                     ])
                 ;
             },

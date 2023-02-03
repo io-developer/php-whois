@@ -6,24 +6,21 @@ namespace Iodev\Whois\Transport\Error;
 
 use \Throwable;
 
-class Error
+class TransportError
 {
     public function __construct(
-        public readonly string $type,
-        public readonly string $source,
+        public readonly string $tag,
         public readonly string $message,
         public readonly array $details = [],
         public readonly ?Throwable $throwable = null,
     ) {}
 
-    public function getSummaryMessage(): string
+    public function toString(): string
     {
         $data = [
-            'type' => $this->type,
-            'source' => $this->source,
+            'tag' => $this->tag,
             'message' => $this->message,
-            'details' => $this->details,
-            'throwableMessage' => $this->throwable?->getMessage() ?? '',
+            'throwable' => $this->throwable?->getMessage() ?? '-',
         ];
         $flags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_LINE_TERMINATORS;
 

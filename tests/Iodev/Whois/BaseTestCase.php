@@ -20,6 +20,8 @@ use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
 use Iodev\Whois\Module\Tld\Whois\ServerMatcher;
 use Iodev\Whois\Module\Tld\Whois\ServerProvider;
 use Iodev\Whois\Module\Tld\Whois\ServerProviderInterface;
+use Iodev\Whois\Transport\Middleware\Response\EncodingProcessor;
+use Iodev\Whois\Transport\Middleware\Response\RateLimitChecker;
 use Iodev\Whois\Transport\Transport;
 use PHPUnit\Framework\TestCase;
 
@@ -128,7 +130,11 @@ abstract class BaseTestCase extends TestCase
         if ($transport === null) {
             /** @var Transport */
             $transport = new Transport(static::getLoader());
-            $transport->setMiddlewares([]);
+            $transport->setRequestMiddlewares([]);
+            $transport->setResponseMiddlewares([
+                static::getContainer()->get(EncodingProcessor::class),
+                static::getContainer()->get(RateLimitChecker::class),
+            ]);
         }
         return $transport;
     }
