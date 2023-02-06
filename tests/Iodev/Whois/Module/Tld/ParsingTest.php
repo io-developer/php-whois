@@ -6,9 +6,9 @@ namespace Iodev\Whois\Module\Tld;
 
 use InvalidArgumentException;
 use Iodev\Whois\BaseTestCase;
-use Iodev\Whois\Exception\ConnectionException;
-use Iodev\Whois\Exception\ServerMismatchException;
-use Iodev\Whois\Exception\WhoisException;
+use Iodev\Whois\Error\ConnectionException;
+use Iodev\Whois\Error\ServerMismatchException;
+use Iodev\Whois\Error\WhoisException;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Whois;
 

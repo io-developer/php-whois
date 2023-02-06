@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Asn;
 
-use Iodev\Whois\Exception\ConnectionException;
-use Iodev\Whois\Exception\WhoisException;
+use Iodev\Whois\Error\ConnectionException;
+use Iodev\Whois\Error\WhoisException;
 use Iodev\Whois\Transport\Loader\LoaderInterface;
 
 class AsnModule

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Exception;
+namespace Iodev\Whois\Error;
 
-use Exception;
-use Throwable;
+use \Exception;
+use \Throwable;
 
 class ConnectionException extends Exception
 {

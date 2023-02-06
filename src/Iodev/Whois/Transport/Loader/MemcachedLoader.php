@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Iodev\Whois\Transport\Loader;
 
 use \Memcached;
-use Iodev\Whois\Exception\ConnectionException;
-use Iodev\Whois\Exception\WhoisException;
+use Iodev\Whois\Error\ConnectionException;
+use Iodev\Whois\Error\WhoisException;
 
 class MemcachedLoader implements LoaderInterface
 {

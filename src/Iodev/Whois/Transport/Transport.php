@@ -105,14 +105,14 @@ class Transport
         $this->request = $request;
         $this->prepareRequest();
 
-        $this->response = $this->newResponse();
-        $this->prepareResponse();
-
-        if ($request->getState() !== RequestState::NEW) {
-            $this->tagError(ResponseTag::REQUEST_HAS_INVALID_STATE, 'Request state is not NEW');
+        if ($request->hasTag(RequestTag::COMPLETED)) {
+            $this->tagError(ResponseTag::REQUEST_ALREADY_COMPLETED, 'Request was completed before');
             $this->stage = TransportStage::COMPLETE;
             return $this;
         }
+
+        $this->response = $this->newResponse();
+        $this->prepareResponse();
 
         $this->stage = TransportStage::REQUEST_MIDDLEWARING;
         $this->middlewareRequest();
@@ -134,8 +134,7 @@ class Transport
 
     protected function prepareRequest(): void
     {
-        $this->request->setState(RequestState::NEW, true);
-        $this->request->setMiddlewareClasses(
+        $this->request->setUsedMiddlewareClasses(
             array_map(
                 fn(RequestMiddlewareInterface $item) => $item::class,
                 $this->requestMiddlewares,
@@ -152,9 +151,9 @@ class Transport
     {
         $this->response
             ->setRequest($this->request)
-            ->setTransportClass(static::class)
-            ->setLoaderClass($this->loader::class)
-            ->setMiddlewareClasses(
+            ->setUsedTransportClass(static::class)
+            ->setUsedLoaderClass($this->loader::class)
+            ->setUsedMiddlewareClasses(
                 array_map(
                     fn(ResponseMiddlewareInterface $item) => $item::class,
                     $this->responseMiddlewares,
@@ -171,8 +170,9 @@ class Transport
                 $this->request->getQuery(),
             );
             $this->response->setOutput($output);
+            $this->request->tagWith(RequestTag::COMPLETED);
         } catch (Throwable $err) {
-            $this->tagError(ResponseTag::REQUEST_NOT_SENT, 'Unhandled loading error', $err);
+            $this->tagError(ResponseTag::LOADER_ERROR, 'Unhandled loading error', $err);
         }
     }
 
@@ -182,7 +182,7 @@ class Transport
             try {
                 $middleware->processRequest($this->request);
             } catch (Throwable $err) {
-                $this->request->setState(RequestState::MIDDLEWARE_ERROR);
+                $this->request->tagWith(RequestTag::MIDDLEWARE_ERROR);
                 $this->tagError(ResponseTag::REQUEST_MIDDLEWARE_ERROR, 'Unhandled request middleware error', $err);
             }
         }
@@ -206,7 +206,8 @@ class Transport
             'tag' => $tag,
             'message' => $msg,
             'transport_stage' => $this->stage,
-            'request_state' => $this->request->getState(),
+            'request_tags' => $this->request->getTags(),
+            'response_tags' => $this->response->getTags(),
         ];
         if ($err !== null) {
             $extendedDetails = [

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld\Whois;
 
-use Iodev\Whois\Exception\ServerMismatchException;
+use Iodev\Whois\Error\ServerMismatchException;
 use Iodev\Whois\Module\Tld\Dto\WhoisServer;
 use Iodev\Whois\Tool\DomainTool;
 

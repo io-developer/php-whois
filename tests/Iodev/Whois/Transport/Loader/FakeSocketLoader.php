@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Transport\Loader;
 
-use Iodev\Whois\Exception\ConnectionException;
+use Iodev\Whois\Error\ConnectionException;
 
 class FakeSocketLoader extends SocketLoader
 {

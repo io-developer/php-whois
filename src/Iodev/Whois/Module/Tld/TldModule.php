@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld;
 
-use Iodev\Whois\Exception\ConnectionException;
-use Iodev\Whois\Exception\ServerMismatchException;
-use Iodev\Whois\Exception\WhoisException;
+use Iodev\Whois\Error\ConnectionException;
+use Iodev\Whois\Error\ServerMismatchException;
+use Iodev\Whois\Error\WhoisException;
 use Iodev\Whois\Module\Tld\Command\LookupCommand;
 use Iodev\Whois\Module\Tld\Dto\LookupInfo;
 use Iodev\Whois\Module\Tld\Dto\LookupResponse;

@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Transport;
 
+use Iodev\Whois\Traits\TagContainerTrait;
+
 class Request
 {
+    use TagContainerTrait;
+
     public const DEFAULT_PORT = 43;
 
-    protected string $state = RequestState::NEW;
     protected string $host = '';
     protected int $port = self::DEFAULT_PORT;
     protected string $query = '';
     protected int $timeout = 0;
-    protected array $middlewareClasses = [];
+    protected array $usedMiddlewareClasses = [];
 
     public function setHost(string $host): static
     {
@@ -59,52 +62,39 @@ class Request
         return $this->timeout;
     }
 
-    public function setState(string $state, bool $force = false): bool
-    {
-        if ((!empty($state) && $this->state === RequestState::NEW) || $force) {
-            $this->state = $state;
-            return true;
-        }
-        return false;
-    }
-
-    public function getState(): string
-    {
-        return $this->state;
-    }
-
     public function canSend(): bool
     {
-        return $this->state !== RequestState::CANCELLED
-            && $this->state !== RequestState::ERROR
-            && $this->state !== RequestState::MIDDLEWARE_ERROR
-        ;
+        return !$this->hasAnyTag([
+            RequestTag::CANCELLED,
+            RequestTag::ERROR,
+            RequestTag::MIDDLEWARE_ERROR,
+        ]);
     }
 
-    public function cancel(bool $force = false): bool
+    public function cancel(): static
     {
-        return $this->setState(RequestState::CANCELLED, $force);
+        return $this->tagWith(RequestTag::CANCELLED);
     }
 
-    public function complete(bool $force = false): bool
+    public function complete(): static
     {
-        return $this->setState(RequestState::COMPLETED, $force);
+        return $this->tagWith(RequestTag::COMPLETED);
     }
 
     /**
      * @param string[] $classNames
      */
-    public function setMiddlewareClasses(array $classNames): static
+    public function setUsedMiddlewareClasses(array $classNames): static
     {
-        $this->middlewareClasses = array_map(fn($item) => (string)$item, $classNames);
+        $this->usedMiddlewareClasses = array_map(fn($item) => (string)$item, $classNames);
         return $this;
     }
 
     /**
      * @return string[]
      */
-    public function getMiddlewareClasses(): array
+    public function getUsedMiddlewareClasses(): array
     {
-        return $this->middlewareClasses;
+        return $this->usedMiddlewareClasses;
     }
 }

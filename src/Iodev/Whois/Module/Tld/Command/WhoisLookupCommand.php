@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld\Command;
 
-use Iodev\Whois\Exception\ConnectionException;
-use Iodev\Whois\Exception\WhoisException;
+use Iodev\Whois\Error\ConnectionException;
+use Iodev\Whois\Error\WhoisException;
 use Iodev\Whois\Module\Tld\Dto\LookupInfo;
 use Iodev\Whois\Module\Tld\Dto\LookupResponse;
 use Iodev\Whois\Module\Tld\Dto\LookupResult;

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Transport;
 
-class RequestState
+class RequestTag
 {
-    public const NEW = 'new';
+    public const CANCELLED = 'cancelled';
     public const COMPLETED = 'completed';
-    public const CANCELLED = 'calcelled';
-    public const MIDDLEWARE_ERROR = 'middleware_error';
     public const ERROR = 'error';
+    public const MIDDLEWARE_ERROR = 'middleware_error';
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Iodev\Whois;
 
-use Iodev\Whois\Exception\ConnectionException;
-use Iodev\Whois\Exception\ServerMismatchException;
-use Iodev\Whois\Exception\WhoisException;
+use Iodev\Whois\Error\ConnectionException;
+use Iodev\Whois\Error\ServerMismatchException;
+use Iodev\Whois\Error\WhoisException;
 use Iodev\Whois\Module\Asn\AsnInfo;
 use Iodev\Whois\Module\Asn\AsnModule;
 use Iodev\Whois\Module\Asn\AsnResponse;
