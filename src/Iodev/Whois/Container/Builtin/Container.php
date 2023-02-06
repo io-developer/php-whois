@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Container\Default;
+namespace Iodev\Whois\Container\Builtin;
 
 use Psr\Container\ContainerInterface;
 

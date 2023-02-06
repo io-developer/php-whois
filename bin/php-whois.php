@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Iodev\Whois\Container\Default\Container;
-use Iodev\Whois\Container\Default\ContainerBuilder;
+use Iodev\Whois\Container\Builtin\Container;
+use Iodev\Whois\Container\Builtin\ContainerBuilder;
 use Iodev\Whois\Transport\Loader\LoaderInterface;
 use Iodev\Whois\Transport\Loader\FakeSocketLoader;
 use Iodev\Whois\Module\Tld\TldModule;
