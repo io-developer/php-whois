@@ -160,6 +160,11 @@ class ParsingTest extends BaseTestCase
         );
     }
 
+    public function getTestDataEmpty()
+    {
+        return [];
+    }
+
     public function getTestData()
     {
         $resolveKeys = function($list) {

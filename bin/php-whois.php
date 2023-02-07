@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Iodev\Whois\Container\Builtin\Container;
-use Iodev\Whois\Container\Builtin\ContainerBuilder;
+use Iodev\Whois\Container\Builtin\ContainerProvider;
 use Iodev\Whois\Transport\Loader\LoaderInterface;
 use Iodev\Whois\Transport\Loader\FakeSocketLoader;
 use Iodev\Whois\Module\Tld\TldModule;
@@ -60,11 +60,7 @@ function parseOpts(string $str): array
 
 function getContainer(): Container
 {
-    static $container = null;
-    if ($container === null) {
-        $container = (new ContainerBuilder())->configure()->getContainer();
-    }
-    return $container;
+    return ContainerProvider::get()->getContainer();
 }
 
 function help()

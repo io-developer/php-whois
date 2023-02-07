@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Iodev\Whois;
 
 use Iodev\Whois\Container\Builtin\Container;
-use Iodev\Whois\Container\Builtin\ContainerBuilder;
 use Iodev\Whois\Transport\Loader\FakeSocketLoader;
 use Iodev\Whois\Transport\Loader\LoaderInterface;
 use Iodev\Whois\Tool\DateTool;
@@ -13,6 +12,7 @@ use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Tool\ParserTool;
 use Iodev\Whois\Config\ConfigProvider;
 use Iodev\Whois\Config\ConfigProviderInterface;
+use Iodev\Whois\Container\Builtin\ContainerProvider;
 use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
 use Iodev\Whois\Module\Tld\Parsing\CommonParserOpts;
 use Iodev\Whois\Module\Tld\Parsing\TestCommonParser;
@@ -59,10 +59,7 @@ abstract class BaseTestCase extends TestCase
         static $container = null;
 
         if ($container === null) {
-            $container = (new ContainerBuilder())
-                ->configure()
-                ->getContainer()
-            ;
+            $container = (new ContainerProvider())->createContainer();
             $container->bindMany([
                 LoaderInterface::class => function() {
                     return static::getLoader();

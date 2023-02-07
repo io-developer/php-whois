@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Container\Builtin;
 
-use Psr\Container\ContainerInterface;
-
+use \Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
 {
@@ -29,12 +28,10 @@ class Container implements ContainerInterface
         try {
             if ($commonClassNeeded) {
                 $fn = $this->items[static::ID_COMMON_CLASS_INSTANTIATOR];
-                $result = $fn($id);
             } else {
                 $fn = $this->items[$id];
-                $result = $fn();
             }
-            return $result;
+            return $fn($this, $id);
         } catch (\Throwable $e) {
             throw new ContainerException($e->getMessage(), $e->getCode(), $e);
         }
