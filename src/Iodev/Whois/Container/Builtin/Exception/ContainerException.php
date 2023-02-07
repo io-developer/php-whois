@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iodev\Whois\Container\Builtin;
+namespace Iodev\Whois\Container\Builtin\Exception;
 
 use \Psr\Container\ContainerExceptionInterface;
 use \RuntimeException;

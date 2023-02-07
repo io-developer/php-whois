@@ -15,17 +15,17 @@ use \Iodev\Whois\Container\Builtin\Configurator\{
 
 class ContainerProvider
 {
+    protected static $defaultInstance = null;
+
     protected ?Container $container = null;
     protected ?ContainerBuilder $containerBuilder = null;
 
     public static function get(): static
     {
-        static $instance = null;
-
-        if ($instance === null) {
-            $instance = new static();
+        if (static::$defaultInstance === null) {
+            static::$defaultInstance = new static();
         }
-        return $instance;
+        return static::$defaultInstance;
     }
 
     public function getContainer(): Container
@@ -36,7 +36,11 @@ class ContainerProvider
         return $this->container;
     }
 
-    public function createContainer(): Container
+
+    public static function getDefaultContainer(): Container
+    {
+        return static::get()->getContainer();
+    }    public function createContainer(): Container
     {
         return $this->getContainerBuilder()->build();
     }
