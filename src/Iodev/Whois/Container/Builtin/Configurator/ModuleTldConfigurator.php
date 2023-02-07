@@ -45,7 +45,7 @@ class ModuleTldConfigurator implements ConfiguratorInterface
     public function configureContainer(Container $container): void
     {
         $container->bindMany([
-            TldModule::class => function (Container $container, string $id) {
+            TldModule::class => function (Container $container) {
                 return new TldModule(
                     $container,
                     $container->get(Transport::class),
@@ -53,17 +53,17 @@ class ModuleTldConfigurator implements ConfiguratorInterface
                 );
             },
 
-            ServerMatcher::class => function (Container $container, string $id) {
+            ServerMatcher::class => function (Container $container) {
                 return new ServerMatcher(
                     $container->get(DomainTool::class),
                 );
             },
 
-            ServerProviderInterface::class => function (Container $container, string $id) {
+            ServerProviderInterface::class => function (Container $container) {
                 return $container->get(ServerProvider::class);
             },
 
-            ServerProvider::class => function (Container $container, string $id) {
+            ServerProvider::class => function (Container $container) {
                 return new ServerProvider(
                     $container,
                     $container->get(ConfigProviderInterface::class),
@@ -73,14 +73,14 @@ class ModuleTldConfigurator implements ConfiguratorInterface
                 );
             },
 
-            LookupCommand::class => function (Container $container, string $id) {
+            LookupCommand::class => function (Container $container) {
                 return new LookupCommand(
                     $container->get(QueryBuilder::class),
                     $container->get(DomainTool::class),
                 );
             },
 
-            WhoisLookupCommand::class => function (Container $container, string $id) {
+            WhoisLookupCommand::class => function (Container $container) {
                 return new WhoisLookupCommand(
                     $container->get(QueryBuilder::class),
                     $container->get(DomainTool::class),
@@ -89,17 +89,17 @@ class ModuleTldConfigurator implements ConfiguratorInterface
                 );
             },
 
-            ParserProviderInterface::class => function (Container $container, string $id) {
+            ParserProviderInterface::class => function (Container $container) {
                 return $container->get(ParserProvider::class);
             },
 
-            ParserProvider::class => function (Container $container, string $id) {
+            ParserProvider::class => function (Container $container) {
                 return new ParserProvider(
                     $container,
                 );
             },
 
-            CommonParser::class => function(Container $container, string $id) {
+            CommonParser::class => function(Container $container) {
                 return new CommonParser(
                     $container->get(CommonParserOpts::class),
                     $container->get(LookupInfoScoreCalculator::class),
@@ -109,7 +109,7 @@ class ModuleTldConfigurator implements ConfiguratorInterface
                 );
             },
 
-            BlockParser::class => function(Container $container, string $id) {
+            BlockParser::class => function(Container $container) {
                 return new BlockParser(
                     $container->get(BlockParserOpts::class),
                     $container->get(LookupInfoScoreCalculator::class),
@@ -119,7 +119,7 @@ class ModuleTldConfigurator implements ConfiguratorInterface
                 );
             },
 
-            IndentParser::class => function(Container $container, string $id) {
+            IndentParser::class => function(Container $container) {
                 return new IndentParser(
                     $container->get(IndentParserOpts::class),
                     $container->get(LookupInfoScoreCalculator::class),
@@ -129,7 +129,7 @@ class ModuleTldConfigurator implements ConfiguratorInterface
                 );
             },
 
-            AutoParser::class => function(Container $container, string $id) {
+            AutoParser::class => function(Container $container) {
                 return new AutoParser(
                     $container->get(LookupInfoScoreCalculator::class),
                 );

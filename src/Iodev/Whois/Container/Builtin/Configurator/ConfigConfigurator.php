@@ -15,7 +15,7 @@ class ConfigConfigurator implements ConfiguratorInterface
     public function configureContainer(Container $container): void
     {
         $container->bindMany([
-            ConfigProviderInterface::class => function(Container $container, string $id) {
+            ConfigProviderInterface::class => function(Container $container) {
                 return $container->get(ConfigProvider::class);
             },
         ]);

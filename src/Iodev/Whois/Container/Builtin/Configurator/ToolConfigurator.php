@@ -16,11 +16,11 @@ class ToolConfigurator implements ConfiguratorInterface
     public function configureContainer(Container $container): void
     {
         $container->bindMany([
-            PunycodeToolInterface::class => function(Container $container, string $id) {
+            PunycodeToolInterface::class => function(Container $container) {
                 return $container->get(PunycodeTool::class);
             },
 
-            DomainTool::class => function(Container $container, string $id) {
+            DomainTool::class => function(Container $container) {
                 return new DomainTool(
                     $container->get(PunycodeToolInterface::class),
                 );

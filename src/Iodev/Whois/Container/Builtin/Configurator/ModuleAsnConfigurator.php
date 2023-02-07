@@ -23,7 +23,7 @@ class ModuleAsnConfigurator implements ConfiguratorInterface
     public function configureContainer(Container $container): void
     {
         $container->bindMany([
-            AsnModule::class => function(Container $container, string $id) {
+            AsnModule::class => function(Container $container) {
                 /** @var AsnServerProviderInterface */
                 $provider = $container->get(AsnServerProviderInterface::class);
                 $servers = $provider->getList();
@@ -35,17 +35,17 @@ class ModuleAsnConfigurator implements ConfiguratorInterface
                 return $instance;
             },
 
-            AsnServerProviderInterface::class => function(Container $container, string $id) {
+            AsnServerProviderInterface::class => function(Container $container) {
                 return $container->get(AsnServerProvider::class);
             },
 
-            AsnServerProvider::class => function(Container $container, string $id) {
+            AsnServerProvider::class => function(Container $container) {
                 return new AsnServerProvider(
                     $container,
                 );
             },
 
-            AsnParser::class => function(Container $container, string $id) {
+            AsnParser::class => function(Container $container) {
                 return new AsnParser(
                     $container->get(ParserTool::class),
                 );

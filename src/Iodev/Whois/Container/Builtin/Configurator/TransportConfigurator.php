@@ -22,7 +22,7 @@ class TransportConfigurator implements ConfiguratorInterface
     public function configureContainer(Container $container): void
     {
         $container->bindMany([
-            Transport::class => function(Container $container, string $id) {
+            Transport::class => function(Container $container) {
                 return (new Transport(
                         $container->get(LoaderInterface::class),
                     ))
@@ -37,11 +37,11 @@ class TransportConfigurator implements ConfiguratorInterface
                 ;
             },
     
-            LoaderInterface::class => function(Container $container, string $id) {
+            LoaderInterface::class => function(Container $container) {
                 return $container->get(SocketLoader::class);
             },
             
-            EncodingProcessor::class => function(Container $container, string $id) {
+            EncodingProcessor::class => function(Container $container) {
                 return new EncodingProcessor(
                     $container->get(TextTool::class),
                 );

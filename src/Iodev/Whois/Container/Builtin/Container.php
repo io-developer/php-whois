@@ -8,30 +8,26 @@ use \Psr\Container\ContainerInterface;
 
 class Container implements ContainerInterface
 {
-    public const ID_COMMON_CLASS_INSTANTIATOR = '@CommonClassInstantiator';
+    public const ID_DEFAULT = '@default';
 
     protected array $items = [];
 
-    public function __construct()
-    {
-    }
-
     public function get(string $id): mixed
     {
-        $has = $this->has($id);
-        $commonClassNeeded = !$has && $this->has(static::ID_COMMON_CLASS_INSTANTIATOR) && class_exists($id);
-        
-        if (!$has && !$commonClassNeeded) {
-            throw new NotFoundException("Not found '$id'");
+        $item = null;
+        if ($this->has($id)) {
+            $item = $this->items[$id];
+        } elseif ($this->has(static::ID_DEFAULT)) {
+            $item = $this->items[static::ID_DEFAULT];
+        } else {
+            throw new NotFoundException("Not found '$id' or @default hander");
         }
 
         try {
-            if ($commonClassNeeded) {
-                $fn = $this->items[static::ID_COMMON_CLASS_INSTANTIATOR];
-            } else {
-                $fn = $this->items[$id];
+            if (is_callable($item)) {
+                return $item($this, $id);
             }
-            return $fn($this, $id);
+            return $item;
         } catch (\Throwable $e) {
             throw new ContainerException($e->getMessage(), $e->getCode(), $e);
         }
@@ -42,9 +38,9 @@ class Container implements ContainerInterface
         return array_key_exists($id, $this->items);
     }
 
-    public function bind(string $id, callable $fn): static
+    public function bind(string $id, mixed $item): static
     {
-        $this->items[$id] = $fn;
+        $this->items[$id] = $item;
         return $this;
     }
 

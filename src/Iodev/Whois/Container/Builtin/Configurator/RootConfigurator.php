@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Container\Builtin\Configurator;
 
+use \InvalidArgumentException;
 use \Iodev\Whois\Container\Builtin\Container;
 use \Iodev\Whois\Module\Asn\AsnModule;
 use \Iodev\Whois\Module\Tld\TldModule;
@@ -14,11 +15,14 @@ class RootConfigurator implements ConfiguratorInterface
     public function configureContainer(Container $container): void
     {
         $container->bindMany([
-            Container::ID_COMMON_CLASS_INSTANTIATOR => function (Container $container, string $id) {
-                return new $id();
+            '@default' => function (Container $container, string $id) {
+                if (class_exists($id)) {
+                    return new $id();
+                }
+                throw new InvalidArgumentException("Class '$id' not found");
             },
 
-            Whois::class => function(Container $container, string $id) {
+            Whois::class => function(Container $container) {
                 return new Whois(
                     $container,
                     $container->get(TldModule::class),
