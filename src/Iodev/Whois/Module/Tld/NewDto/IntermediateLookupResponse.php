@@ -133,26 +133,4 @@ class IntermediateLookupResponse
     {
         return $this->nextResponse;
     }
-
-    public function resolveMostValuable(): IntermediateLookupResponse
-    {
-        $variants = [$this];
-        foreach ($this->altResponses as $alt) {
-            $variants[] = $alt->resolveMostValuable();
-        }
-        if ($this->childResponse !== null) {
-            $variants[] = $this->childResponse->resolveMostValuable();
-        }
-        if ($this->nextResponse !== null) {
-            $variants[] = $this->nextResponse->resolveMostValuable();
-        }
-
-        usort($variants, function(IntermediateLookupResponse $a, IntermediateLookupResponse $b) {
-            $aScore = $a->isValuable() ? $a->getLookupInfoScore() : -1;
-            $bScore = $b->isValuable() ? $b->getLookupInfoScore() : -1;
-            return $aScore <=> $bScore;
-        });
-
-        return $variants[0];
-    }
 }

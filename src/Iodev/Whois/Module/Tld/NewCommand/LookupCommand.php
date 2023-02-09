@@ -4,32 +4,33 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld\NewCommand;
 
-use Iodev\Whois\Error\ConnectionException;
 use Iodev\Whois\Module\Tld\Dto\WhoisServer;
 use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupRequest;
 use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupResponse;
 use Iodev\Whois\Module\Tld\NewDto\LookupRequest;
 use Iodev\Whois\Module\Tld\NewDto\LookupResponse;
 use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
+use Iodev\Whois\Module\Tld\Tool\MostValuableLookupResolver;
 use Iodev\Whois\Module\Tld\Whois\QueryBuilder;
-use Iodev\Whois\Module\Tld\Whois\ServerProviderInterface;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Transport\Transport;
 use Psr\Container\ContainerInterface;
 
 class LookupCommand
 {
-    protected LookupRequest $request;
+    public const DEFAULT_RECURSION_MAX = 1;
+
+    protected ?LookupRequest $request = null;
     protected ?LookupResponse $response = null;
-    protected Transport $transport;
-    protected ServerProviderInterface $serverProvider;
-    protected ParserProviderInterface $parserProvider;
-    protected int $recursionMax = 1;
+    protected ?Transport $transport = null;
+    protected ?ParserProviderInterface $parserProvider = null;
+    protected int $recursionMax = self::DEFAULT_RECURSION_MAX;
 
     public function __construct(
         protected ContainerInterface $container,
         protected QueryBuilder $queryBuilder,
         protected DomainTool $domainTool,
+        protected MostValuableLookupResolver $mostValuableLookupResolver,
     ) {}
 
     public function setLookupRequest(LookupRequest $req): static
@@ -44,12 +45,6 @@ class LookupCommand
         return $this;
     }
 
-    public function setServerProvider(ServerProviderInterface $serverProvider): static
-    {
-        $this->serverProvider = $serverProvider;
-        return $this;
-    }
-
     public function setParserProvider(ParserProviderInterface $parserProvider): static
     {
         $this->parserProvider = $parserProvider;
@@ -61,20 +56,76 @@ class LookupCommand
         return $this->response;
     }
 
+    public function flush(bool $allParams = false): static
+    {
+        $this->request = null;
+        $this->response = null;
+
+        if ($allParams) {
+            $this->transport = null;
+            $this->parserProvider = null;
+            $this->recursionMax = static::DEFAULT_RECURSION_MAX;
+        }
+
+        return $this;
+    }
+
+    public function execute(): static
+    {
+        $this->response = $this->makeResponse()->setRequest($this->request);
+
+        /** @var IntermediateLookupResponse */
+        $root = null;
+
+        /** @var IntermediateLookupResponse */
+        $best = null;
+
+        /** @var IntermediateLookupResponse */
+        $prevRoot = null;
+
+        /** @var IntermediateLookupResponse */
+        $nextRoot = null;
+
+        /** @var IntermediateLookupResponse */
+        $nextBest = null;
+
+        foreach ($this->request->getWhoisServers() as $server) {
+            $prevRoot = $nextRoot;
+            [$nextRoot, $nextBest] = $this->executeResolvedIntermediate($server);
+
+            if ($root === null) {
+                $root = $nextRoot;
+                $best = $nextBest;
+            } else {
+                $prevRoot->setNextResponse($nextRoot);
+                $best = $this->mostValuableLookupResolver->resolveIntermediateVariants([
+                    $best,
+                    $nextBest,
+                ]);
+            }
+
+            if ($best->isValuable()) {
+                break;
+            }
+        }
+
+        $this->response
+            ->setRootIntermediateResponse($root)
+            ->setResultIntermediateResponse($best)
+        ;
+        return $this;
+    }
+
     protected function executeResolvedIntermediate(
         WhoisServer $server,
         ?string $customWhoisHost = null,
         int $recursionDepth = 0,
-    ): IntermediateLookupResponse {
-
-        $this->response = null;
+    ): array {
 
         $req = $this->buildItermediateRequest($server, $customWhoisHost);
-        $startWhoisHost = $req->getWhoisHost();
-
         $resp = $this->executeIntermediate($req);
 
-        if (!$resp->isValuable() && $this->request->getAltQueryingEnabled()) {
+        if ($this->resolveAltQuerying($resp)) {
             $req = $this->buildItermediateRequest($server, $customWhoisHost)
                 ->setUseAltQuery(true)
             ;
@@ -82,20 +133,50 @@ class LookupCommand
             $resp->addAltResponse($altResp);
         }
 
-        $bestResp = $resp->resolveMostValuable();
-        $bestWhoisHost = $bestResp->getLookupInfo()?->getWhoisHost() ?? null;
-        if (
-            $recursionDepth < $this->recursionMax
-            && $bestResp->isValuable()
-            && !empty($bestWhoisHost)
-            && $bestWhoisHost != $startWhoisHost
-            && !$server->getCentralized()
-        ) {
-            $childResp = $this->executeResolvedIntermediate($server, $bestWhoisHost, $recursionDepth + 1);
+        $bestResp = $this->mostValuableLookupResolver->resolveIntermediateTree($resp);
+
+        $nextWhoisHost = $this->resolveNextWhoisHost($bestResp, $recursionDepth);
+        if ($nextWhoisHost !== null) {
+            [$childResp, $childBestResp] = $this->executeResolvedIntermediate($server, $nextWhoisHost, $recursionDepth + 1);
+            
             $resp->setChildResponse($childResp);
+
+            $bestResp = $this->mostValuableLookupResolver->resolveIntermediateVariants([
+                $bestResp,
+                $childBestResp,
+            ]);
         }
 
-        return $resp;
+        return [$resp, $bestResp];
+    }
+
+    protected function resolveAltQuerying(IntermediateLookupResponse $main): bool
+    {
+        return !$main->isValuable() && $this->request->getAltQueryingEnabled();
+    }
+
+    protected function resolveNextWhoisHost(IntermediateLookupResponse $resp, int $recursionDepth): ?string
+    {
+        if ($recursionDepth >= $this->recursionMax) {
+            return null;
+        }
+        if (!$resp->isValuable()) {
+            return null;
+        }
+        $info = $resp->getLookupInfo();
+        if ($info === null) {
+            return null;
+        }
+        $req = $resp->getRequest();
+        $server = $req->getWhoisServer();
+        if ($server->getCentralized()) {
+            return null;
+        }
+        $infoWhoisHost = $info->getWhoisHost();
+        if (empty($infoWhoisHost) || $infoWhoisHost == $server->getHost()) {
+            return null;
+        }
+        return $infoWhoisHost;
     }
 
     protected function executeIntermediate(IntermediateLookupRequest $req): IntermediateLookupResponse
@@ -107,24 +188,21 @@ class LookupCommand
             ->execute()
         ;
         $resp = $cmd->getResponse();
-        $cmd->flush();
+        $cmd->flush(true);
         return $resp;
     }
 
     protected function buildItermediateRequest(WhoisServer $server, ?string $customWhoisHost = null): IntermediateLookupRequest
     {
+        $customWhoisHost = $customWhoisHost ?? $this->request->getCustomWhoisHost();
+        if (!empty($customWhoisHost)) {
+            $server = clone $server;
+            $server->setHost($customWhoisHost);
+        }
         return $this->makeIntermediateRequest()
             ->setDomain($this->request->getDomain())
+            ->setTransportTimeout($this->request->getTransportTimeout())
             ->setWhoisServer($server)
-            ->setCustomWhoisHost($customWhoisHost ?? $this->request->getCustomHost())
-        ;
-    }
-
-    protected function buildItermediateCommand(IntermediateLookupRequest $req): IntermediateLookupCommand
-    {
-        return $this->makeIntermediateCommand()
-            ->setRequest($req)
-            ->setTransport($this->transport)
         ;
     }
 

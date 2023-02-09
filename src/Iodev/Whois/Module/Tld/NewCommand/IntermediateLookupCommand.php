@@ -13,15 +13,17 @@ use Iodev\Whois\Module\Tld\Whois\QueryBuilder;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Transport\Request;
 use Iodev\Whois\Transport\Transport;
+use Psr\Container\ContainerInterface;
 
 class IntermediateLookupCommand
 {
-    protected ?Transport $transport = null;
-    protected ?ParserInterface $parser = null;
     protected ?IntermediateLookupRequest $request = null;
     protected ?IntermediateLookupResponse $response = null;
+    protected ?Transport $transport = null;
+    protected ?ParserInterface $parser = null;
     
     public function __construct(
+        protected ContainerInterface $container,
         protected DomainTool $domainTool,
         protected LookupInfoScoreCalculator $scoreCalculator,
     ) {}
@@ -49,12 +51,16 @@ class IntermediateLookupCommand
         return $this->response;
     }
 
-    public function flush(): static
+    public function flush(bool $allParams = false): static
     {
-        $this->transport = null;
-        $this->parser = null;
         $this->request = null;
         $this->response = null;
+
+        if ($allParams) {
+            $this->transport = null;
+            $this->parser = null;
+        }
+
         return $this;
     }
 
@@ -75,7 +81,7 @@ class IntermediateLookupCommand
         $query = $qb->toString();
 
         $transportReq = (new Request())
-            ->setHost($req->getWhoisHost())
+            ->setHost($req->getWhoisServer()->getHost())
             ->setPort($req->getWhoisServer()->getPort())
             ->setTimeout($req->getTransportTimeout())
             ->setQuery($query)
@@ -111,11 +117,11 @@ class IntermediateLookupCommand
 
     protected function makeQueryBuilder(): QueryBuilder
     {
-        return new QueryBuilder();
+        return $this->container->get(QueryBuilder::class);
     }
 
     protected function makeResponse(): IntermediateLookupResponse
     {
-        return new IntermediateLookupResponse();
+        return $this->container->get(IntermediateLookupResponse::class);
     }
 }

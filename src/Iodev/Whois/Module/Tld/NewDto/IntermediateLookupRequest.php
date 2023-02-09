@@ -10,7 +10,6 @@ class IntermediateLookupRequest
 {
     protected string $domain = '';
     protected ?WhoisServer $whoisServer = null;
-    protected ?string $customWhoisHost = null;
     protected int $transportTimeout = 0;
     protected bool $useAltQuery = false;
     protected int $recursionDepth = 0;
@@ -37,22 +36,6 @@ class IntermediateLookupRequest
         return $this->whoisServer;
     }
 
-    public function setCustomWhoisHost(?string $host): static
-    {
-        $this->customWhoisHost = $host;
-        return $this;
-    }
-
-    public function getCustomWhoisHost(): ?string
-    {
-        return $this->customWhoisHost;
-    }
-
-    public function getWhoisHost(): ?string
-    {
-        return $this->customWhoisHost ?? $this->whoisServer?->getHost() ?? null;
-    }
-
     public function setTransportTimeout(int $seconds): static
     {
         $this->transportTimeout = $seconds;
@@ -63,7 +46,6 @@ class IntermediateLookupRequest
     {
         return $this->transportTimeout;
     }
-    
 
     public function setUseAltQuery(bool $yes): static
     {

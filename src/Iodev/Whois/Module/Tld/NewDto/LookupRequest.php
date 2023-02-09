@@ -12,10 +12,11 @@ class LookupRequest
     use TagContainerTrait;
 
     protected ?string $domain = null;
-    protected ?string $customHost = null;
+    protected ?string $customWhoisHost = null;
     protected ?string $customParserType = null;
     protected bool $altQueryingEnabled = true;
     protected bool $queryRecursionLimit = 1;
+    protected int $transportTimeout = 0;
 
     /** @var WhoisServer[] */
     protected array $whoisServers = [];
@@ -31,15 +32,15 @@ class LookupRequest
         return $this->domain;
     }
 
-    public function setCustomHost(string $host): static
+    public function setCustomWhoisHost(string $host): static
     {
-        $this->customHost = $host;
+        $this->customWhoisHost = $host;
         return $this;
     }
 
-    public function getCustomHost(): ?string
+    public function getCustomWhoisHost(): ?string
     {
-        return $this->customHost;
+        return $this->customWhoisHost;
     }
 
     public function setCustomParserType(string $type): static
@@ -62,6 +63,17 @@ class LookupRequest
     public function getAltQueryingEnabled(): bool
     {
         return $this->altQueryingEnabled;
+    }
+
+    public function setTransportTimeout(int $seconds): static
+    {
+        $this->transportTimeout = $seconds;
+        return $this;
+    }
+
+    public function getTransportTimeout(): int
+    {
+        return $this->transportTimeout;
     }
 
     /**
