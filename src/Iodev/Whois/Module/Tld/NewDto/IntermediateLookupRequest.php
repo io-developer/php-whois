@@ -8,9 +8,11 @@ use \Iodev\Whois\Module\Tld\Dto\WhoisServer;
 
 class IntermediateLookupRequest
 {
-    protected ?string $domain = null;
+    protected string $domain = '';
     protected ?WhoisServer $whoisServer = null;
-    protected bool $_isAlt = false;
+    protected ?string $customWhoisHost = null;
+    protected int $transportTimeout = 0;
+    protected bool $useAltQuery = false;
     protected int $recursionDepth = 0;
 
     public function setDomain(string $domain): static
@@ -19,7 +21,7 @@ class IntermediateLookupRequest
         return $this;
     }
 
-    public function getDomain(): ?string
+    public function getDomain(): string
     {
         return $this->domain;
     }
@@ -35,15 +37,43 @@ class IntermediateLookupRequest
         return $this->whoisServer;
     }
 
-    public function setIsAlt(bool $alt): static
+    public function setCustomWhoisHost(?string $host): static
     {
-        $this->_isAlt = $alt;
+        $this->customWhoisHost = $host;
         return $this;
     }
 
-    public function isAlt(): bool
+    public function getCustomWhoisHost(): ?string
     {
-        return $this->_isAlt;
+        return $this->customWhoisHost;
+    }
+
+    public function getWhoisHost(): ?string
+    {
+        return $this->customWhoisHost ?? $this->whoisServer?->getHost() ?? null;
+    }
+
+    public function setTransportTimeout(int $seconds): static
+    {
+        $this->transportTimeout = $seconds;
+        return $this;
+    }
+
+    public function getTransportTimeout(): int
+    {
+        return $this->transportTimeout;
+    }
+    
+
+    public function setUseAltQuery(bool $yes): static
+    {
+        $this->useAltQuery = $yes;
+        return $this;
+    }
+
+    public function getUseAltQuery(): bool
+    {
+        return $this->useAltQuery;
     }
 
     public function setRecursionDepth(int $depth): static

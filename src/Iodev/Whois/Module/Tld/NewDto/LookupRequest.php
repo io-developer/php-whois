@@ -53,6 +53,17 @@ class LookupRequest
         return $this->customParserType;
     }
 
+    public function setAltQueryingEnabled(bool $enabled): static
+    {
+        $this->altQueryingEnabled = $enabled;
+        return $this;
+    }
+
+    public function getAltQueryingEnabled(): bool
+    {
+        return $this->altQueryingEnabled;
+    }
+
     /**
      * @param WhoisServer[] $servers
      */

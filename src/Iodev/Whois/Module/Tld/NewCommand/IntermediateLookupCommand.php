@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld\NewCommand;
 
-use Iodev\Whois\Error\ConnectionException;
 use Iodev\Whois\Error\WhoisException;
 use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupResponse;
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupRequest;
+use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
 use Iodev\Whois\Module\Tld\Whois\QueryBuilder;
 use Iodev\Whois\Tool\DomainTool;
 use Iodev\Whois\Transport\Request;
@@ -16,23 +16,15 @@ use Iodev\Whois\Transport\Transport;
 
 class IntermediateLookupCommand
 {
-    protected Transport $transport;
-    protected IntermediateLookupRequest $request;
-    protected IntermediateLookupResponse $response;
-
-    protected ?LookupCommand $childCommand = null;
-    protected ?LookupResult $result = null;
-    protected ?LookupResult $lastResult = null;
-
-    /** @var LookupResult[] */
-    protected array $lastResults = [];
-
-
+    protected ?Transport $transport = null;
+    protected ?ParserInterface $parser = null;
+    protected ?IntermediateLookupRequest $request = null;
+    protected ?IntermediateLookupResponse $response = null;
+    
     public function __construct(
-        protected QueryBuilder $queryBuilder,
         protected DomainTool $domainTool,
+        protected LookupInfoScoreCalculator $scoreCalculator,
     ) {}
-
 
     public function setRequest(IntermediateLookupRequest $req): static
     {
@@ -46,122 +38,84 @@ class IntermediateLookupCommand
         return $this;
     }
 
+    public function setParser(ParserInterface $parser): static
+    {
+        $this->parser = $parser;
+        return $this;
+    }
+
     public function getResponse(): ?IntermediateLookupResponse
     {
         return $this->response;
     }
 
-
-    protected function resolveResult(): ?LookupResult
+    public function flush(): static
     {
-        if ($this->childCommand !== null) {
-            $childResult = $this->childCommand->getResult();
-            if ($childResult !== null && $childResult->info !== null) {
-                $this->result = $childResult;
-                return $this->result;
-            }
-        }
-        $this->result = $this->lastResult;
-        foreach ($this->lastResults as $result) {
-            if ($result->response === null && $result->info === null) {
-                continue;
-            }
-            $this->result = $result;
-        }
-        return $this->result;
-    }
-
-    public function clearResult(): static
-    {
-        $this->result = null;
-        $this->lastResult = null;
-        $this->lastResults = [];
-
-        $this->childCommand = null;
-
+        $this->transport = null;
+        $this->parser = null;
+        $this->request = null;
+        $this->response = null;
         return $this;
     }
 
     public function execute(): static
     {
-        $this->clearResult();
+        $req = $this->request;
 
-        $lastError = null;
-        try {
-            $this->queryBuilder->setOptionStrict(false);
-            $this->request();
-        } catch (ConnectionException $err) {
-            $lastError = $err;
+        $this->response = $this->makeResponse();
+        $this->response->setRequest($req);
+
+        $domain = $this->domainTool->toAscii($req->getDomain());
+
+        $qb = $this->makeQueryBuilder()
+            ->setFormat($req->getWhoisServer()->getQueryFormat())
+            ->setQueryText($domain)
+            ->setOptionStrict($req->getUseAltQuery())
+        ;
+        $query = $qb->toString();
+
+        $transportReq = (new Request())
+            ->setHost($req->getWhoisHost())
+            ->setPort($req->getWhoisServer()->getPort())
+            ->setTimeout($req->getTransportTimeout())
+            ->setQuery($query)
+        ;
+        $transportResp = $this->transport
+            ->sendRequest($transportReq)
+            ->getResponse()
+        ;
+        $this->response->setTransportResponse($transportResp);
+
+        if (!$transportResp->isValid()) {
+            throw new WhoisException($transportResp->getSummaryErrorMessage());
         }
 
-        if ($this->lastResult->info === null && $this->altQueryEnabled) {
-            $this->queryBuilder->setOptionStrict(true);
-            $this->request();
-        }
+        $info = $this->parser->parseResponse($this->createOldLookupResponse());
+        $this->response->setLookupInfo($info);
 
-        $info = $this->resolveResult()->info;
-
-        if ($info === null && $lastError !== null) {
-            throw $lastError;
-        }
-
-        if (
-            $this->recursionLimit > 0
-            && $info !== null
-            && !empty($info->getWhoisHost())
-            && $info->getWhoisHost() != $this->host
-        ) {
-            $this->childCommand = (clone $this);
-            $this->childCommand
-                ->clearResult()
-                ->setRecursionLimit($this->recursionLimit - 1)
-                ->setHost($info->getWhoisHost())
-                ->execute()
-            ;
-            $this->resolveResult();
-        }
+        $score = $this->scoreCalculator->calcRank($info);
+        $this->response->setLookupInfoScore($score);
 
         return $this;
     }
 
-    /**
-     * @throws ConnectionException
-     * @throws WhoisException
-     */
-    protected function request()
+    protected function createOldLookupResponse(): \Iodev\Whois\Module\Tld\Dto\LookupResponse
     {
-        $domain = $this->domainTool->toAscii($this->domain);
-
-        $queryStr = $this->queryBuilder
-            ->setFormat($this->queryFormat)
-            ->setQueryText($domain)
-            ->toString()
+        return (new \Iodev\Whois\Module\Tld\Dto\LookupResponse())
+            ->setDomain($this->request->getDomain())
+            ->setHost($this->response->getTransportResponse()->getRequest()->getHost())
+            ->setQuery($this->response->getTransportResponse()->getRequest()->getQuery())
+            ->setOutput($this->response->getTransportResponse()->getOutput())
         ;
-        $req = (new Request())
-            ->setHost($this->host)
-            ->setQuery($queryStr)
-        ;
-        $resp = $this->transport
-            ->sendRequest($req)
-            ->getResponse()
-        ;
-        if (!$resp->isValid()) {
-            throw new WhoisException($resp->getSummaryErrorMessage());
-        }
-        $lookupResp = $this->createLookupResponse()
-            ->setDomain($domain)
-            ->setHost($req->getHost())
-            ->setQuery($req->getQuery())
-            ->setOutput($resp->getOutput())
-        ;
-        $info = $this->parser->parseResponse($lookupResp);
-
-        $this->lastResult = new LookupResult($lookupResp, $info);
-        $this->lastResults[] = $this->lastResult;
     }
 
-    protected function createLookupResponse(): LookupResponse
+    protected function makeQueryBuilder(): QueryBuilder
     {
-        return new LookupResponse();
+        return new QueryBuilder();
+    }
+
+    protected function makeResponse(): IntermediateLookupResponse
+    {
+        return new IntermediateLookupResponse();
     }
 }

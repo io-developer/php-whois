@@ -8,24 +8,20 @@ use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
 
 class WhoisServer
 {
-    protected readonly string $tld;
+    protected string $tld = '';
     
     /** @var string[] */
-    protected readonly array $tldParts;
+    protected array $tldParts = [];
 
     /** @var string[] */
-    protected readonly array $tldPartsInv;
+    protected array $tldPartsInv = [];
 
-    protected readonly string $host;
-
-    protected readonly bool $centralized;
-
-    protected readonly ParserInterface $parser;
-
-    protected readonly string $queryFormat;
-
-    protected readonly int $priority;
-
+    protected string $host = '';
+    protected int $port = 43;
+    protected bool $centralized = false;
+    protected ?ParserInterface $parser = null;
+    protected string $queryFormat = '';
+    protected int $priority = 0;
 
     public function setTld(string $tld): static
     {
@@ -40,7 +36,7 @@ class WhoisServer
 
     public function getTld(): string
     {
-        return $this->tld ?? '';
+        return $this->tld;
     }
 
     /**
@@ -48,7 +44,7 @@ class WhoisServer
      */
     public function getTldParts(): array
     {
-        return $this->tldParts ?? [];
+        return $this->tldParts;
     }
 
     /**
@@ -56,9 +52,8 @@ class WhoisServer
      */
     public function getTldPartsInversed(): array
     {
-        return $this->tldPartsInv ?? [];
+        return $this->tldPartsInv;
     }
-
 
     public function setHost(string $host): static
     {
@@ -68,9 +63,19 @@ class WhoisServer
 
     public function getHost(): string
     {
-        return $this->host ?? '';
+        return $this->host;
     }
 
+    public function setPort(int $port): static
+    {
+        $this->port = $port;
+        return $this;
+    }
+
+    public function getPort(): int
+    {
+        return $this->port;
+    }
 
     public function setPriority(int $priority): static
     {
@@ -80,9 +85,8 @@ class WhoisServer
 
     public function getPriority(): int
     {
-        return $this->priority ?? 0;
+        return $this->priority;
     }
-
 
     public function setCentralized(bool $centralized): static
     {
@@ -92,9 +96,8 @@ class WhoisServer
 
     public function getCentralized(): bool
     {
-        return $this->centralized ?? false;
+        return $this->centralized;
     }
-
 
     public function setQueryFormat(string $fmt): static
     {
@@ -104,9 +107,8 @@ class WhoisServer
 
     public function getQueryFormat(): string
     {
-        return $this->queryFormat ?? '';
+        return $this->queryFormat;
     }
-
 
     public function setParser(ParserInterface $parser): static
     {
@@ -116,6 +118,6 @@ class WhoisServer
 
     public function getParser(): ?ParserInterface
     {
-        return $this->parser ?? null;
+        return $this->parser;
     }
 }

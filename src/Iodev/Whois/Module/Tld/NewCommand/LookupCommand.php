@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Tld\NewCommand;
 
 use Iodev\Whois\Error\ConnectionException;
-use Iodev\Whois\Error\WhoisException;
 use Iodev\Whois\Module\Tld\Dto\WhoisServer;
 use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupRequest;
+use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupResponse;
 use Iodev\Whois\Module\Tld\NewDto\LookupRequest;
 use Iodev\Whois\Module\Tld\NewDto\LookupResponse;
 use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
 use Iodev\Whois\Module\Tld\Whois\QueryBuilder;
 use Iodev\Whois\Module\Tld\Whois\ServerProviderInterface;
 use Iodev\Whois\Tool\DomainTool;
-use Iodev\Whois\Transport\Request;
 use Iodev\Whois\Transport\Transport;
 use Psr\Container\ContainerInterface;
 
@@ -25,6 +24,7 @@ class LookupCommand
     protected Transport $transport;
     protected ServerProviderInterface $serverProvider;
     protected ParserProviderInterface $parserProvider;
+    protected int $recursionMax = 1;
 
     public function __construct(
         protected ContainerInterface $container,
@@ -61,83 +61,84 @@ class LookupCommand
         return $this->response;
     }
 
-    public function executeOne(WhoisServer $server): static
-    {
+    protected function executeResolvedIntermediate(
+        WhoisServer $server,
+        ?string $customWhoisHost = null,
+        int $recursionDepth = 0,
+    ): IntermediateLookupResponse {
+
         $this->response = null;
 
-        $req = $this->buildItermediateRequest($server);
-        $cmd = $this->buildItermediateCommand($req);
-        $cmd->execute();
-        $resp = $cmd->getResponse();
+        $req = $this->buildItermediateRequest($server, $customWhoisHost);
+        $startWhoisHost = $req->getWhoisHost();
 
-        $resp->getTransportResponse()->hasError();
-        $resp->getLookupInfo();
+        $resp = $this->executeIntermediate($req);
 
-        $lastError = null;
-        try {
-            $this->queryBuilder->setOptionStrict(false);
-            $this->request();
-        } catch (ConnectionException $err) {
-            $lastError = $err;
-        }
-
-        if ($this->lastResult->info === null && $this->altQueryEnabled) {
-            $this->queryBuilder->setOptionStrict(true);
-            $this->request();
-        }
-
-        $info = $this->resolveResult()->info;
-
-        if ($info === null && $lastError !== null) {
-            throw $lastError;
-        }
-
-        if (
-            $this->recursionLimit > 0
-            && $info !== null
-            && !empty($info->getWhoisHost())
-            && $info->getWhoisHost() != $this->host
-        ) {
-            $this->childCommand = (clone $this);
-            $this->childCommand
-                ->clearResult()
-                ->setRecursionLimit($this->recursionLimit - 1)
-                ->setHost($info->getWhoisHost())
-                ->execute()
+        if (!$resp->isValuable() && $this->request->getAltQueryingEnabled()) {
+            $req = $this->buildItermediateRequest($server, $customWhoisHost)
+                ->setUseAltQuery(true)
             ;
-            $this->resolveResult();
+            $altResp = $this->executeIntermediate($req);
+            $resp->addAltResponse($altResp);
         }
 
-        return $this;
+        $bestResp = $resp->resolveMostValuable();
+        $bestWhoisHost = $bestResp->getLookupInfo()?->getWhoisHost() ?? null;
+        if (
+            $recursionDepth < $this->recursionMax
+            && $bestResp->isValuable()
+            && !empty($bestWhoisHost)
+            && $bestWhoisHost != $startWhoisHost
+            && !$server->getCentralized()
+        ) {
+            $childResp = $this->executeResolvedIntermediate($server, $bestWhoisHost, $recursionDepth + 1);
+            $resp->setChildResponse($childResp);
+        }
+
+        return $resp;
     }
 
-    protected function buildItermediateRequest(WhoisServer $server): IntermediateLookupRequest
+    protected function executeIntermediate(IntermediateLookupRequest $req): IntermediateLookupResponse
     {
-        return $this->createIntermediateRequest()
+        $cmd = $this->makeIntermediateCommand()
+            ->setTransport($this->transport)
+            ->setParser($req->getWhoisServer()->getParser())
+            ->setRequest($req)
+            ->execute()
+        ;
+        $resp = $cmd->getResponse();
+        $cmd->flush();
+        return $resp;
+    }
+
+    protected function buildItermediateRequest(WhoisServer $server, ?string $customWhoisHost = null): IntermediateLookupRequest
+    {
+        return $this->makeIntermediateRequest()
             ->setDomain($this->request->getDomain())
             ->setWhoisServer($server)
+            ->setCustomWhoisHost($customWhoisHost ?? $this->request->getCustomHost())
         ;
     }
 
     protected function buildItermediateCommand(IntermediateLookupRequest $req): IntermediateLookupCommand
     {
-        return $this->createIntermediateCommand()
+        return $this->makeIntermediateCommand()
             ->setRequest($req)
             ->setTransport($this->transport)
         ;
     }
 
-    protected function createIntermediateRequest(): IntermediateLookupRequest
+    protected function makeIntermediateRequest(): IntermediateLookupRequest
     {
         return $this->container->get(IntermediateLookupRequest::class);
     }
 
-    protected function createIntermediateCommand(): IntermediateLookupCommand
+    protected function makeIntermediateCommand(): IntermediateLookupCommand
     {
         return $this->container->get(IntermediateLookupCommand::class);
     }
 
-    protected function createResponse(): LookupResponse
+    protected function makeResponse(): LookupResponse
     {
         return $this->container->get(LookupResponse::class);
     }

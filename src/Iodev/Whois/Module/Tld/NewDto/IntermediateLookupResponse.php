@@ -12,6 +12,7 @@ class IntermediateLookupResponse
     protected ?IntermediateLookupRequest $request = null;
     protected ?TransportResponse $transportResponse = null;
     protected ?LookupInfo $lookupInfo = null;
+    protected bool $lookupInfoValuable = false;
     protected int $lookupInfoScore = 0;
 
     /** @var IntermediateLookupResponse[] */
@@ -53,6 +54,17 @@ class IntermediateLookupResponse
         return $this->lookupInfo;
     }
 
+    public function setLookupInfoValuable(bool $val): static
+    {
+        $this->lookupInfoValuable = $val;
+        return $this;
+    }
+
+    public function getLookupInfoValuable(): bool
+    {
+        return $this->lookupInfoValuable;
+    }
+
     public function setLookupInfoScore(int $score): static
     {
         $this->lookupInfoScore = $score;
@@ -62,6 +74,16 @@ class IntermediateLookupResponse
     public function getLookupInfoScore(): int
     {
         return $this->lookupInfoScore;
+    }
+
+    public function hasError(): bool
+    {
+        return $this->transportResponse?->hasError() ?? false;
+    }
+
+    public function isValuable(): bool
+    {
+        return ($this->transportResponse?->isValid() ?? false) && $this->lookupInfoValuable;
     }
 
     /**
@@ -110,5 +132,27 @@ class IntermediateLookupResponse
     public function getNextResponse(): ?IntermediateLookupResponse
     {
         return $this->nextResponse;
+    }
+
+    public function resolveMostValuable(): IntermediateLookupResponse
+    {
+        $variants = [$this];
+        foreach ($this->altResponses as $alt) {
+            $variants[] = $alt->resolveMostValuable();
+        }
+        if ($this->childResponse !== null) {
+            $variants[] = $this->childResponse->resolveMostValuable();
+        }
+        if ($this->nextResponse !== null) {
+            $variants[] = $this->nextResponse->resolveMostValuable();
+        }
+
+        usort($variants, function(IntermediateLookupResponse $a, IntermediateLookupResponse $b) {
+            $aScore = $a->isValuable() ? $a->getLookupInfoScore() : -1;
+            $bScore = $b->isValuable() ? $b->getLookupInfoScore() : -1;
+            return $aScore <=> $bScore;
+        });
+
+        return $variants[0];
     }
 }
