@@ -12,8 +12,8 @@ class LookupResponse
     use TagErrorContainerTrait;
 
     protected ?LookupRequest $request = null;
-    protected ?IntermediateLookupResponse $resultIntermediateResponse = null;
-    protected ?IntermediateLookupResponse $rootIntermediateResponse = null;
+    protected ?SingleLookupResponse $resultIntermediateResponse = null;
+    protected ?SingleLookupResponse $rootIntermediateResponse = null;
 
     public function setRequest(LookupRequest $request): static
     {
@@ -25,24 +25,24 @@ class LookupResponse
     {
         return $this->request;
     }
-    public function setResultIntermediateResponse(IntermediateLookupResponse $response): static
+    public function setResultIntermediateResponse(SingleLookupResponse $response): static
     {
         $this->resultIntermediateResponse = $response;
         return $this;
     }
 
-    public function getResultIntermediateResponse(): ?IntermediateLookupResponse
+    public function getResultIntermediateResponse(): ?SingleLookupResponse
     {
         return $this->resultIntermediateResponse;
     }
 
-    public function setRootIntermediateResponse(IntermediateLookupResponse $response): static
+    public function setRootIntermediateResponse(SingleLookupResponse $response): static
     {
         $this->rootIntermediateResponse = $response;
         return $this;
     }
 
-    public function getRootIntermediateResponse(): ?IntermediateLookupResponse
+    public function getRootIntermediateResponse(): ?SingleLookupResponse
     {
         return $this->rootIntermediateResponse;
     }

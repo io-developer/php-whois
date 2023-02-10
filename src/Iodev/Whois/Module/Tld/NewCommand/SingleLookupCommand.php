@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Tld\NewCommand;
 
 use Iodev\Whois\Error\WhoisException;
-use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupResponse;
+use Iodev\Whois\Module\Tld\NewDto\SingleLookupResponse;
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
-use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupRequest;
+use Iodev\Whois\Module\Tld\NewDto\SingleLookupRequest;
 use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
 use Iodev\Whois\Module\Tld\Whois\QueryBuilder;
 use Iodev\Whois\Tool\DomainTool;
@@ -15,10 +15,10 @@ use Iodev\Whois\Transport\Request;
 use Iodev\Whois\Transport\Transport;
 use Psr\Container\ContainerInterface;
 
-class IntermediateLookupCommand
+class SingleLookupCommand
 {
-    protected ?IntermediateLookupRequest $request = null;
-    protected ?IntermediateLookupResponse $response = null;
+    protected ?SingleLookupRequest $request = null;
+    protected ?SingleLookupResponse $response = null;
     protected ?Transport $transport = null;
     protected ?ParserInterface $parser = null;
     
@@ -28,7 +28,7 @@ class IntermediateLookupCommand
         protected LookupInfoScoreCalculator $scoreCalculator,
     ) {}
 
-    public function setRequest(IntermediateLookupRequest $req): static
+    public function setRequest(SingleLookupRequest $req): static
     {
         $this->request = $req;
         return $this;
@@ -46,7 +46,7 @@ class IntermediateLookupCommand
         return $this;
     }
 
-    public function getResponse(): ?IntermediateLookupResponse
+    public function getResponse(): ?SingleLookupResponse
     {
         return $this->response;
     }
@@ -120,8 +120,8 @@ class IntermediateLookupCommand
         return $this->container->get(QueryBuilder::class);
     }
 
-    protected function makeResponse(): IntermediateLookupResponse
+    protected function makeResponse(): SingleLookupResponse
     {
-        return $this->container->get(IntermediateLookupResponse::class);
+        return $this->container->get(SingleLookupResponse::class);
     }
 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Tld\NewCommand;
 
 use Iodev\Whois\Module\Tld\Dto\WhoisServer;
-use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupRequest;
-use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupResponse;
+use Iodev\Whois\Module\Tld\NewDto\SingleLookupRequest;
+use Iodev\Whois\Module\Tld\NewDto\SingleLookupResponse;
 use Iodev\Whois\Module\Tld\NewDto\LookupRequest;
 use Iodev\Whois\Module\Tld\NewDto\LookupResponse;
 use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
@@ -74,19 +74,19 @@ class LookupCommand
     {
         $this->response = $this->makeResponse()->setRequest($this->request);
 
-        /** @var IntermediateLookupResponse */
+        /** @var SingleLookupResponse */
         $root = null;
 
-        /** @var IntermediateLookupResponse */
+        /** @var SingleLookupResponse */
         $best = null;
 
-        /** @var IntermediateLookupResponse */
+        /** @var SingleLookupResponse */
         $prevRoot = null;
 
-        /** @var IntermediateLookupResponse */
+        /** @var SingleLookupResponse */
         $nextRoot = null;
 
-        /** @var IntermediateLookupResponse */
+        /** @var SingleLookupResponse */
         $nextBest = null;
 
         foreach ($this->request->getWhoisServers() as $server) {
@@ -150,12 +150,12 @@ class LookupCommand
         return [$resp, $bestResp];
     }
 
-    protected function resolveNextWhoisNeeded(IntermediateLookupResponse $best): bool
+    protected function resolveNextWhoisNeeded(SingleLookupResponse $best): bool
     {
         return !$best->isValuable();
     }
 
-    protected function resolveSingleRequest(WhoisServer $server, ?string $customWhoisHost = null): IntermediateLookupRequest
+    protected function resolveSingleRequest(WhoisServer $server, ?string $customWhoisHost = null): SingleLookupRequest
     {
         $customWhoisHost = $customWhoisHost ?? $this->request->getCustomWhoisHost();
         if (!empty($customWhoisHost)) {
@@ -169,7 +169,7 @@ class LookupCommand
         ;
     }
 
-    protected function resolveAltSingleRequest(IntermediateLookupResponse $main): ?IntermediateLookupRequest
+    protected function resolveAltSingleRequest(SingleLookupResponse $main): ?SingleLookupRequest
     {
         if (!$this->request->getAltQueryingEnabled()) {
             return null;
@@ -186,7 +186,7 @@ class LookupCommand
         return $req->setUseAltQuery(true);
     }
 
-    protected function resolveChildWhoisHost(IntermediateLookupResponse $resp, int $recursionDepth): ?string
+    protected function resolveChildWhoisHost(SingleLookupResponse $resp, int $recursionDepth): ?string
     {
         if ($recursionDepth >= $this->recursionMax) {
             return null;
@@ -210,7 +210,7 @@ class LookupCommand
         return $infoWhoisHost;
     }
 
-    protected function executeIntermediate(IntermediateLookupRequest $req): IntermediateLookupResponse
+    protected function executeIntermediate(SingleLookupRequest $req): SingleLookupResponse
     {
         $cmd = $this->makeIntermediateCommand()
             ->setTransport($this->transport)
@@ -223,14 +223,14 @@ class LookupCommand
         return $resp;
     }
 
-    protected function makeIntermediateRequest(): IntermediateLookupRequest
+    protected function makeIntermediateRequest(): SingleLookupRequest
     {
-        return $this->container->get(IntermediateLookupRequest::class);
+        return $this->container->get(SingleLookupRequest::class);
     }
 
-    protected function makeIntermediateCommand(): IntermediateLookupCommand
+    protected function makeIntermediateCommand(): SingleLookupCommand
     {
-        return $this->container->get(IntermediateLookupCommand::class);
+        return $this->container->get(SingleLookupCommand::class);
     }
 
     protected function makeResponse(): LookupResponse
