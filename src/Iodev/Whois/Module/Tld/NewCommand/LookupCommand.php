@@ -104,7 +104,7 @@ class LookupCommand
                 ]);
             }
 
-            if ($best->isValuable()) {
+            if (!$this->resolveNextWhoisNeeded($best)) {
                 break;
             }
         }
@@ -122,23 +122,23 @@ class LookupCommand
         int $recursionDepth = 0,
     ): array {
 
-        $req = $this->buildItermediateRequest($server, $customWhoisHost);
+        $req = $this->resolveSingleRequest($server, $customWhoisHost);
         $resp = $this->executeIntermediate($req);
 
-        if ($this->resolveAltQuerying($resp)) {
-            $req = $this->buildItermediateRequest($server, $customWhoisHost)
-                ->setUseAltQuery(true)
-            ;
-            $altResp = $this->executeIntermediate($req);
-            $resp->addAltResponse($altResp);
+        $altReq = $this->resolveAltSingleRequest($resp);
+        if ($altReq !== null) {
+            $resp->addAltResponse($this->executeIntermediate($altReq));
         }
 
         $bestResp = $this->mostValuableLookupResolver->resolveIntermediateTree($resp);
 
-        $nextWhoisHost = $this->resolveNextWhoisHost($bestResp, $recursionDepth);
-        if ($nextWhoisHost !== null) {
-            [$childResp, $childBestResp] = $this->executeResolvedIntermediate($server, $nextWhoisHost, $recursionDepth + 1);
-            
+        $childWhoisHost = $this->resolveChildWhoisHost($bestResp, $recursionDepth);
+        if ($childWhoisHost !== null) {
+            [$childResp, $childBestResp] = $this->executeResolvedIntermediate(
+                $server,
+                $childWhoisHost,
+                $recursionDepth + 1,
+            );
             $resp->setChildResponse($childResp);
 
             $bestResp = $this->mostValuableLookupResolver->resolveIntermediateVariants([
@@ -150,12 +150,43 @@ class LookupCommand
         return [$resp, $bestResp];
     }
 
-    protected function resolveAltQuerying(IntermediateLookupResponse $main): bool
+    protected function resolveNextWhoisNeeded(IntermediateLookupResponse $best): bool
     {
-        return !$main->isValuable() && $this->request->getAltQueryingEnabled();
+        return !$best->isValuable();
     }
 
-    protected function resolveNextWhoisHost(IntermediateLookupResponse $resp, int $recursionDepth): ?string
+    protected function resolveSingleRequest(WhoisServer $server, ?string $customWhoisHost = null): IntermediateLookupRequest
+    {
+        $customWhoisHost = $customWhoisHost ?? $this->request->getCustomWhoisHost();
+        if (!empty($customWhoisHost)) {
+            $server = clone $server;
+            $server->setHost($customWhoisHost);
+        }
+        return $this->makeIntermediateRequest()
+            ->setDomain($this->request->getDomain())
+            ->setTransportTimeout($this->request->getTransportTimeout())
+            ->setWhoisServer($server)
+        ;
+    }
+
+    protected function resolveAltSingleRequest(IntermediateLookupResponse $main): ?IntermediateLookupRequest
+    {
+        if (!$this->request->getAltQueryingEnabled()) {
+            return null;
+        }
+        if ($main->isValuable()) {
+            return null;
+        }
+        $req = $main->getRequest();
+        if ($req->getUseAltQuery()) {
+            return null;
+        }
+
+        $req = clone $req;
+        return $req->setUseAltQuery(true);
+    }
+
+    protected function resolveChildWhoisHost(IntermediateLookupResponse $resp, int $recursionDepth): ?string
     {
         if ($recursionDepth >= $this->recursionMax) {
             return null;
@@ -190,20 +221,6 @@ class LookupCommand
         $resp = $cmd->getResponse();
         $cmd->flush(true);
         return $resp;
-    }
-
-    protected function buildItermediateRequest(WhoisServer $server, ?string $customWhoisHost = null): IntermediateLookupRequest
-    {
-        $customWhoisHost = $customWhoisHost ?? $this->request->getCustomWhoisHost();
-        if (!empty($customWhoisHost)) {
-            $server = clone $server;
-            $server->setHost($customWhoisHost);
-        }
-        return $this->makeIntermediateRequest()
-            ->setDomain($this->request->getDomain())
-            ->setTransportTimeout($this->request->getTransportTimeout())
-            ->setWhoisServer($server)
-        ;
     }
 
     protected function makeIntermediateRequest(): IntermediateLookupRequest
