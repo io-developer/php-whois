@@ -9,7 +9,7 @@ use \Iodev\Whois\Transport\Response as TransportResponse;
 
 class SingleLookupResponse
 {
-    protected ?SingleLookupRequest $request = null;
+    protected ?SingleLookupRequestData $requestData = null;
     protected ?TransportResponse $transportResponse = null;
     protected ?LookupInfo $lookupInfo = null;
     protected bool $lookupInfoValuable = false;
@@ -21,15 +21,15 @@ class SingleLookupResponse
     protected ?SingleLookupResponse $childResponse = null;
     protected ?SingleLookupResponse $nextResponse = null;
 
-    public function setRequest(SingleLookupRequest $req): static
+    public function setRequestData(SingleLookupRequestData $requestData): static
     {
-        $this->request = $req;
+        $this->requestData = $requestData;
         return $this;
     }
 
-    public function getRequest(): ?SingleLookupRequest
+    public function getRequestData(): ?SingleLookupRequestData
     {
-        return $this->request;
+        return $this->requestData;
     }
 
     public function setTransportResponse(TransportResponse $response): static

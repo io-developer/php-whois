@@ -7,7 +7,7 @@ namespace Iodev\Whois\Module\Tld\NewCommand;
 use Iodev\Whois\Error\WhoisException;
 use Iodev\Whois\Module\Tld\NewDto\SingleLookupResponse;
 use Iodev\Whois\Module\Tld\Parsing\ParserInterface;
-use Iodev\Whois\Module\Tld\NewDto\SingleLookupRequest;
+use Iodev\Whois\Module\Tld\NewDto\SingleLookupRequestData;
 use Iodev\Whois\Module\Tld\Tool\LookupInfoScoreCalculator;
 use Iodev\Whois\Module\Tld\Whois\QueryBuilder;
 use Iodev\Whois\Tool\DomainTool;
@@ -17,7 +17,7 @@ use Psr\Container\ContainerInterface;
 
 class SingleLookupCommand
 {
-    protected ?SingleLookupRequest $request = null;
+    protected ?SingleLookupRequestData $requestData = null;
     protected ?SingleLookupResponse $response = null;
     protected ?Transport $transport = null;
     protected ?ParserInterface $parser = null;
@@ -28,9 +28,9 @@ class SingleLookupCommand
         protected LookupInfoScoreCalculator $scoreCalculator,
     ) {}
 
-    public function setRequest(SingleLookupRequest $req): static
+    public function setRequestData(SingleLookupRequestData $requestData): static
     {
-        $this->request = $req;
+        $this->requestData = $requestData;
         return $this;
     }
 
@@ -53,7 +53,7 @@ class SingleLookupCommand
 
     public function flush(bool $allParams = false): static
     {
-        $this->request = null;
+        $this->requestData = null;
         $this->response = null;
 
         if ($allParams) {
@@ -66,24 +66,24 @@ class SingleLookupCommand
 
     public function execute(): static
     {
-        $req = $this->request;
+        $reqData = $this->requestData;
 
         $this->response = $this->makeResponse();
-        $this->response->setRequest($req);
+        $this->response->setRequestData($reqData);
 
-        $domain = $this->domainTool->toAscii($req->getDomain());
+        $domain = $this->domainTool->toAscii($reqData->getDomain());
 
         $qb = $this->makeQueryBuilder()
-            ->setFormat($req->getWhoisServer()->getQueryFormat())
+            ->setFormat($reqData->getWhoisServer()->getQueryFormat())
             ->setQueryText($domain)
-            ->setOptionStrict($req->getUseAltQuery())
+            ->setOptionStrict($reqData->getUseAltQuery())
         ;
         $query = $qb->toString();
 
         $transportReq = (new Request())
-            ->setHost($req->getWhoisServer()->getHost())
-            ->setPort($req->getWhoisServer()->getPort())
-            ->setTimeout($req->getTransportTimeout())
+            ->setHost($reqData->getWhoisServer()->getHost())
+            ->setPort($reqData->getWhoisServer()->getPort())
+            ->setTimeout($reqData->getTransportTimeout())
             ->setQuery($query)
         ;
         $transportResp = $this->transport
@@ -108,7 +108,7 @@ class SingleLookupCommand
     protected function createOldLookupResponse(): \Iodev\Whois\Module\Tld\Dto\LookupResponse
     {
         return (new \Iodev\Whois\Module\Tld\Dto\LookupResponse())
-            ->setDomain($this->request->getDomain())
+            ->setDomain($this->requestData->getDomain())
             ->setHost($this->response->getTransportResponse()->getRequest()->getHost())
             ->setQuery($this->response->getTransportResponse()->getRequest()->getQuery())
             ->setOutput($this->response->getTransportResponse()->getOutput())

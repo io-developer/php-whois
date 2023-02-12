@@ -6,7 +6,7 @@ namespace Iodev\Whois\Module\Tld\NewDto;
 
 use \Iodev\Whois\Module\Tld\Dto\WhoisServer;
 
-class SingleLookupRequest
+class SingleLookupRequestData
 {
     protected string $domain = '';
     protected ?WhoisServer $whoisServer = null;

@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Tld\NewDto;
 
 use \Iodev\Whois\Module\Tld\Dto\WhoisServer;
-use Iodev\Whois\Traits\TagContainerTrait;
 
-class LookupRequest
+class LookupRequestData
 {
-    use TagContainerTrait;
-
     protected ?string $domain = null;
     protected ?string $customWhoisHost = null;
     protected ?string $customParserType = null;

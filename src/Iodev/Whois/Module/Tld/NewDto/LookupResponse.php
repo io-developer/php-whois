@@ -11,45 +11,45 @@ class LookupResponse
 {
     use TagErrorContainerTrait;
 
-    protected ?LookupRequest $request = null;
-    protected ?SingleLookupResponse $resultIntermediateResponse = null;
-    protected ?SingleLookupResponse $rootIntermediateResponse = null;
+    protected ?LookupRequestData $requestData = null;
+    protected ?SingleLookupResponse $resultSingleResponse = null;
+    protected ?SingleLookupResponse $rootSingleResponse = null;
 
-    public function setRequest(LookupRequest $request): static
+    public function setRequestData(LookupRequestData $requestData): static
     {
-        $this->request = $request;
+        $this->requestData = $requestData;
         return $this;
     }
 
-    public function getRequest(): ?LookupRequest
+    public function getRequestData(): ?LookupRequestData
     {
-        return $this->request;
+        return $this->requestData;
     }
-    public function setResultIntermediateResponse(SingleLookupResponse $response): static
+    public function setResultSingleResponse(SingleLookupResponse $response): static
     {
-        $this->resultIntermediateResponse = $response;
+        $this->resultSingleResponse = $response;
         return $this;
     }
 
-    public function getResultIntermediateResponse(): ?SingleLookupResponse
+    public function getResultSingleResponse(): ?SingleLookupResponse
     {
-        return $this->resultIntermediateResponse;
+        return $this->resultSingleResponse;
     }
 
-    public function setRootIntermediateResponse(SingleLookupResponse $response): static
+    public function setRootSingleResponse(SingleLookupResponse $response): static
     {
-        $this->rootIntermediateResponse = $response;
+        $this->rootSingleResponse = $response;
         return $this;
     }
 
-    public function getRootIntermediateResponse(): ?SingleLookupResponse
+    public function getRootSingleResponse(): ?SingleLookupResponse
     {
-        return $this->rootIntermediateResponse;
+        return $this->rootSingleResponse;
     }
 
     public function getLookupInfo(): ?LookupInfo
     {
-        return $this->resultIntermediateResponse?->getLookupInfo() ?? null;
+        return $this->resultSingleResponse?->getLookupInfo() ?? null;
     }
 
     public function isDomainBusy(): bool

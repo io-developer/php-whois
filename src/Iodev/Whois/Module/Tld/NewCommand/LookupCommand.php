@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Iodev\Whois\Module\Tld\NewCommand;
 
 use Iodev\Whois\Module\Tld\Dto\WhoisServer;
-use Iodev\Whois\Module\Tld\NewDto\SingleLookupRequest;
+use Iodev\Whois\Module\Tld\NewDto\SingleLookupRequestData;
 use Iodev\Whois\Module\Tld\NewDto\SingleLookupResponse;
-use Iodev\Whois\Module\Tld\NewDto\LookupRequest;
+use Iodev\Whois\Module\Tld\NewDto\LookupRequestData;
 use Iodev\Whois\Module\Tld\NewDto\LookupResponse;
 use Iodev\Whois\Module\Tld\Parsing\ParserProviderInterface;
 use Iodev\Whois\Module\Tld\Tool\MostValuableLookupResolver;
@@ -20,7 +20,7 @@ class LookupCommand
 {
     public const DEFAULT_RECURSION_MAX = 1;
 
-    protected ?LookupRequest $request = null;
+    protected ?LookupRequestData $requestData = null;
     protected ?LookupResponse $response = null;
     protected ?Transport $transport = null;
     protected ?ParserProviderInterface $parserProvider = null;
@@ -33,9 +33,9 @@ class LookupCommand
         protected MostValuableLookupResolver $mostValuableLookupResolver,
     ) {}
 
-    public function setLookupRequest(LookupRequest $req): static
+    public function setRequestData(LookupRequestData $requestData): static
     {
-        $this->request = $req;
+        $this->requestData = $requestData;
         return $this;
     }
 
@@ -58,7 +58,7 @@ class LookupCommand
 
     public function flush(bool $allParams = false): static
     {
-        $this->request = null;
+        $this->requestData = null;
         $this->response = null;
 
         if ($allParams) {
@@ -72,7 +72,7 @@ class LookupCommand
 
     public function execute(): static
     {
-        $this->response = $this->makeResponse()->setRequest($this->request);
+        $this->response = $this->makeResponse()->setRequestData($this->requestData);
 
         /** @var SingleLookupResponse */
         $root = null;
@@ -89,16 +89,16 @@ class LookupCommand
         /** @var SingleLookupResponse */
         $nextBest = null;
 
-        foreach ($this->request->getWhoisServers() as $server) {
+        foreach ($this->requestData->getWhoisServers() as $server) {
             $prevRoot = $nextRoot;
-            [$nextRoot, $nextBest] = $this->executeResolvedIntermediate($server);
+            [$nextRoot, $nextBest] = $this->executeResolvedSingle($server);
 
             if ($root === null) {
                 $root = $nextRoot;
                 $best = $nextBest;
             } else {
                 $prevRoot->setNextResponse($nextRoot);
-                $best = $this->mostValuableLookupResolver->resolveIntermediateVariants([
+                $best = $this->mostValuableLookupResolver->resolveSingleVariants([
                     $best,
                     $nextBest,
                 ]);
@@ -110,38 +110,38 @@ class LookupCommand
         }
 
         $this->response
-            ->setRootIntermediateResponse($root)
-            ->setResultIntermediateResponse($best)
+            ->setRootSingleResponse($root)
+            ->setResultSingleResponse($best)
         ;
         return $this;
     }
 
-    protected function executeResolvedIntermediate(
+    protected function executeResolvedSingle(
         WhoisServer $server,
         ?string $customWhoisHost = null,
         int $recursionDepth = 0,
     ): array {
 
-        $req = $this->resolveSingleRequest($server, $customWhoisHost);
-        $resp = $this->executeIntermediate($req);
+        $reqData = $this->resolveSingleRequestData($server, $customWhoisHost);
+        $resp = $this->executeSingle($reqData);
 
-        $altReq = $this->resolveAltSingleRequest($resp);
-        if ($altReq !== null) {
-            $resp->addAltResponse($this->executeIntermediate($altReq));
+        $altReqData = $this->resolveAltSingleRequestData($resp);
+        if ($altReqData !== null) {
+            $resp->addAltResponse($this->executeSingle($altReqData));
         }
 
-        $bestResp = $this->mostValuableLookupResolver->resolveIntermediateTree($resp);
+        $bestResp = $this->mostValuableLookupResolver->resolveSingleTree($resp);
 
         $childWhoisHost = $this->resolveChildWhoisHost($bestResp, $recursionDepth);
         if ($childWhoisHost !== null) {
-            [$childResp, $childBestResp] = $this->executeResolvedIntermediate(
+            [$childResp, $childBestResp] = $this->executeResolvedSingle(
                 $server,
                 $childWhoisHost,
                 $recursionDepth + 1,
             );
             $resp->setChildResponse($childResp);
 
-            $bestResp = $this->mostValuableLookupResolver->resolveIntermediateVariants([
+            $bestResp = $this->mostValuableLookupResolver->resolveSingleVariants([
                 $bestResp,
                 $childBestResp,
             ]);
@@ -155,35 +155,35 @@ class LookupCommand
         return !$best->isValuable();
     }
 
-    protected function resolveSingleRequest(WhoisServer $server, ?string $customWhoisHost = null): SingleLookupRequest
+    protected function resolveSingleRequestData(WhoisServer $server, ?string $customWhoisHost = null): SingleLookupRequestData
     {
-        $customWhoisHost = $customWhoisHost ?? $this->request->getCustomWhoisHost();
+        $customWhoisHost = $customWhoisHost ?? $this->requestData->getCustomWhoisHost();
         if (!empty($customWhoisHost)) {
             $server = clone $server;
             $server->setHost($customWhoisHost);
         }
-        return $this->makeIntermediateRequest()
-            ->setDomain($this->request->getDomain())
-            ->setTransportTimeout($this->request->getTransportTimeout())
+        return $this->makeSingleRequestData()
+            ->setDomain($this->requestData->getDomain())
+            ->setTransportTimeout($this->requestData->getTransportTimeout())
             ->setWhoisServer($server)
         ;
     }
 
-    protected function resolveAltSingleRequest(SingleLookupResponse $main): ?SingleLookupRequest
+    protected function resolveAltSingleRequestData(SingleLookupResponse $main): ?SingleLookupRequestData
     {
-        if (!$this->request->getAltQueryingEnabled()) {
+        if (!$this->requestData->getAltQueryingEnabled()) {
             return null;
         }
         if ($main->isValuable()) {
             return null;
         }
-        $req = $main->getRequest();
-        if ($req->getUseAltQuery()) {
+        $reqData = $main->getRequestData();
+        if ($reqData->getUseAltQuery()) {
             return null;
         }
 
-        $req = clone $req;
-        return $req->setUseAltQuery(true);
+        $reqData = clone $reqData;
+        return $reqData->setUseAltQuery(true);
     }
 
     protected function resolveChildWhoisHost(SingleLookupResponse $resp, int $recursionDepth): ?string
@@ -198,8 +198,8 @@ class LookupCommand
         if ($info === null) {
             return null;
         }
-        $req = $resp->getRequest();
-        $server = $req->getWhoisServer();
+        $reqData = $resp->getRequestData();
+        $server = $reqData->getWhoisServer();
         if ($server->getCentralized()) {
             return null;
         }
@@ -210,12 +210,12 @@ class LookupCommand
         return $infoWhoisHost;
     }
 
-    protected function executeIntermediate(SingleLookupRequest $req): SingleLookupResponse
+    protected function executeSingle(SingleLookupRequestData $reqData): SingleLookupResponse
     {
-        $cmd = $this->makeIntermediateCommand()
+        $cmd = $this->makeSingleCommand()
             ->setTransport($this->transport)
-            ->setParser($req->getWhoisServer()->getParser())
-            ->setRequest($req)
+            ->setParser($reqData->getWhoisServer()->getParser())
+            ->setRequestData($reqData)
             ->execute()
         ;
         $resp = $cmd->getResponse();
@@ -223,12 +223,12 @@ class LookupCommand
         return $resp;
     }
 
-    protected function makeIntermediateRequest(): SingleLookupRequest
+    protected function makeSingleRequestData(): SingleLookupRequestData
     {
         return $this->container->get(SingleLookupRequest::class);
     }
 
-    protected function makeIntermediateCommand(): SingleLookupCommand
+    protected function makeSingleCommand(): SingleLookupCommand
     {
         return $this->container->get(SingleLookupCommand::class);
     }

@@ -4,37 +4,37 @@ declare(strict_types=1);
 
 namespace Iodev\Whois\Module\Tld\Tool;
 
-use Iodev\Whois\Module\Tld\NewDto\IntermediateLookupResponse;
+use Iodev\Whois\Module\Tld\NewDto\SingleLookupResponse;
 
 class MostValuableLookupResolver
 {
-    public function resolveIntermediateTree(IntermediateLookupResponse $root): IntermediateLookupResponse
+    public function resolveSingleTree(SingleLookupResponse $root): SingleLookupResponse
     {
         $variants = [$root];
         foreach ($root->getAltResponses() as $alt) {
-            $variants[] = $this->resolveIntermediateTree($alt);
+            $variants[] = $this->resolveSingleTree($alt);
         }
         $child = $root->getChildResponse();
         if ($child !== null) {
-            $variants[] = $this->resolveIntermediateTree($child);
+            $variants[] = $this->resolveSingleTree($child);
         }
         $next = $root->getNextResponse();
         if ($next !== null) {
-            $variants[] = $this->resolveIntermediateTree($next);
+            $variants[] = $this->resolveSingleTree($next);
         }
-        
-        return $this->resolveIntermediateVariants($variants);
+
+        return $this->resolveSingleVariants($variants);
     }
 
     /**
-     * @param IntermediateLookupResponse[] $variants
+     * @param SingleLookupResponse[] $variants
      */
-    public function resolveIntermediateVariants(array $variants): ?IntermediateLookupResponse
+    public function resolveSingleVariants(array $variants): ?SingleLookupResponse
     {
         if (count($variants) === 0) {
             return null;
         }
-        usort($variants, function(IntermediateLookupResponse $a, IntermediateLookupResponse $b) {
+        usort($variants, function(SingleLookupResponse $a, SingleLookupResponse $b) {
             $aScore = $a->isValuable() ? $a->getLookupInfoScore() : -1;
             $bScore = $b->isValuable() ? $b->getLookupInfoScore() : -1;
             return $aScore <=> $bScore;
