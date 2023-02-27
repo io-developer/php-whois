@@ -85,6 +85,7 @@
   {"zone": ".aw", "host": "whois.nic.aw"},
   {"zone": ".aws", "host": "whois.nic.aws"},
   {"zone": ".ax", "host": "whois.ax"},
+  {"zone": ".az", "host": "whois.az"},
   {"zone": ".baby", "host": "whois.nic.baby"},
   {"zone": ".baidu", "host": "whois.gtld.knet.cn"},
   {"zone": ".band", "host": "whois.nic.band"},
