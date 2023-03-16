@@ -831,6 +831,10 @@ class TldParsingTest extends TestCase
             [ "öppettider.se", ".se/xn--ppettider-z7a.se.txt", ".se/xn--ppettider-z7a.se.json" ],
             [ "xn--ppettider-z7a.se", ".se/xn--ppettider-z7a.se.txt", ".se/xn--ppettider-z7a.se.json" ],
 
+            // .COM.SE
+            [ "free.com.se", ".com.se/free.txt", null ],
+            [ "www.com.se", ".com.se/www.com.se.txt", ".com.se/www.com.se.json" ],
+
             // .SG
             [ "free.sg", ".sg/free.txt", null ],
             // [ "google.com.sg", ".sg/google.com.sg.txt", ".sg/google.com.sg.json" ],
