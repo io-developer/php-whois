@@ -1,0 +1,12 @@
+OPT Whois v2.1.2
+
+Domain                   : domaine.nc
+Created on               : 2006-05-14T00:00:00.000Z
+Expires on               : 2027-05-14
+Last updated on          : 2021-04-14T10:13:34.000Z
+
+Domain server 1          : nsopt1.opt.nc
+Domain server 2          : nsopt2.opt.nc
+Domain server 3          : nsopt3.opt.nc
+
+Registrar                : NONE

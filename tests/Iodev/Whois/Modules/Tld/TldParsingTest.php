@@ -698,6 +698,9 @@ class TldParsingTest extends TestCase
             [ "free.navy", ".navy/free.txt", null ],
             [ "nic.navy", ".navy/nic.navy.txt", ".navy/nic.navy.json" ],
 
+            // .NA
+            [ "domaine.nc", ".nc/domaine.nc.txt", ".nc/domaine.nc.json" ],
+
             // .NET
             [ "free.net", ".net/free.txt", null ],
             [ "speedtest.net", ".net/speedtest.net.txt", ".net/speedtest.net.json" ],
