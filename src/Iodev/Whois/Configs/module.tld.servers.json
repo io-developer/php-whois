@@ -974,6 +974,7 @@
   {"zone": ".scjohnson", "host": "whois.nic.scjohnson"},
   {"zone": ".scot", "host": "whois.nic.scot"},
   {"zone": ".se", "host": "whois.iis.se"},
+  {"zone": ".com.se", "host": "whois.centralnic.com"},
   {"zone": ".search", "host": "whois.nic.google"},
   {"zone": ".seat", "host": "whois.nic.seat"},
   {"zone": ".secure", "host": "whois.nic.secure"},

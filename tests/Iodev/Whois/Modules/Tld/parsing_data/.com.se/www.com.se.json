@@ -1,0 +1,16 @@
+{
+  "domainName": "www.com.se",
+  "nameServers": [
+    "gene.ns.cloudflare.com",
+    "tim.ns.cloudflare.com"
+  ],
+  "dnssec": "unsigned delegation",
+  "creationDate": "2014-05-01",
+  "expirationDate": "2023-05-01Z",
+  "updatedDate": "2022-12-08",
+  "states": [
+    "ok"
+  ],
+  "owner": "C11480",
+  "registrar": "CentralNic Ltd"
+}
