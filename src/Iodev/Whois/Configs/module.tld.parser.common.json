@@ -16,10 +16,10 @@
   ],
   "nameServersKeysGroups": [
     [
-      "~^(ns\\s+1|primary\\s+server(\\s+hostname)?|ns_name_01)$~ui",
-      "~^(ns\\s+2|secondary\\s+server(\\s+hostname)?|ns_name_02)$~ui",
-      "~^(ns\\s+3|third\\s+server(\\s+hostname)?|ns_name_03)$~ui",
-      "~^(ns\\s+4|fourth\\s+server(\\s+hostname)?|ns_name_04)$~ui"
+      "~^(ns\\s+1|primary\\s+server(\\s+hostname)?|ns_name_01|domain\\s+server\\s+1)$~ui",
+      "~^(ns\\s+2|secondary\\s+server(\\s+hostname)?|ns_name_02|domain\\s+server\\s+2)$~ui",
+      "~^(ns\\s+3|third\\s+server(\\s+hostname)?|ns_name_03|domain\\s+server\\s+3)$~ui",
+      "~^(ns\\s+4|fourth\\s+server(\\s+hostname)?|ns_name_04|domain\\s+server\\s+4)$~ui"
     ]
   ],
   "dnssecKeys": [

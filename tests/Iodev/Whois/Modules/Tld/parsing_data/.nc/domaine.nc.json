@@ -1,0 +1,12 @@
+{
+  "domainName": "domaine.nc",
+  "creationDate": "2006-05-14T00:00:00.000Z",
+  "expirationDate": "2027-05-14",
+  "updatedDate": "2021-04-14T10:13:34.000Z",
+  "nameServers": [
+    "nsopt1.opt.nc",
+    "nsopt2.opt.nc",
+    "nsopt3.opt.nc"
+  ],
+  "registrar": "NONE"
+}
