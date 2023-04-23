@@ -3,7 +3,8 @@ on: [push, pull_request]
 jobs:
 
   php-intl:
-    runs-on: ubuntu-18.04
+    name: PHP-${{ matrix.php-version }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
