@@ -10,12 +10,19 @@ jobs:
         php-version: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
 
-      - run: php${{ matrix.php-version }} -v
-      - run: php${{ matrix.php-version }} -m
-      - run: composer -V
-      - run: composer install
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          composer-options: "--no-progress --prefer-dist --optimize-autoloader"
+
       - run: php${{ matrix.php-version }} vendor/bin/phpunit --bootstrap tests/bootstrap.php tests
