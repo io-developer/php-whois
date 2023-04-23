@@ -1,31 +1,23 @@
-google.cl:
+%%
+%% This is the NIC Chile Whois server (whois.nic.cl).
+%%
+%% Rights restricted by copyright.
+%% See https://www.nic.cl/normativa/politica-publicacion-de-datos-cl.pdf
+%%
 
-ACE: google.cl (RFC-3490, RFC-3491, RFC-3492)
+Domain name: google.cl
+Registrant name: Google LLC
+Registrant organisation: Google LLC
+Registrar name: MarkMonitor Inc.
+Registrar URL: https://markmonitor.com/
+Creation date: 2002-10-22 17:48:23 CLST
+Expiration date: 2023-11-20 14:48:02 CLST
+Name server: ns1.google.com
+Name server: ns2.google.com
+Name server: ns3.google.com
+Name server: ns4.google.com
 
-Google Inc.
-
-Contacto Administrativo (Administrative Contact):
-    Nombre      : MarkMonitor Inc.
-    Organización: 
-
-Contacto Técnico (Technical Contact):
-    Nombre      : MarkMonitor Inc.
-    Organización: 
-
-Servidores de nombre (Domain servers):
-    ns3.google.net
-    ns4.google.net
-    ns1.google.net
-    ns2.google.net
-    
-
-Fecha de expiración (Expiration date): 2018-11-20 14:48:02 CLT
-
-Agente Registrador (Registrar):
-    MarkMonitor Inc.
-
-Más información (More information):
-    http://www.nic.cl/registry/Whois.do?d=google.cl
-
-Este mensajes está impreso en ISO-8859-1
-(This message is printed in ISO-8859-1)
+%%
+%% For communication with domain contacts please use website.
+%% See https://www.nic.cl/registry/Whois.do?d=google.cl
+%%
