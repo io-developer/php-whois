@@ -227,7 +227,7 @@ $whois = Factory::get()->createWhois($loader);
 ```
 
 
-## Develompment
+## Development
 Supported php versions are configured in `docker-compose.yml`
 
 Common use cases:
