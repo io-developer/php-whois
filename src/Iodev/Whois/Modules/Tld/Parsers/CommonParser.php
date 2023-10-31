@@ -10,6 +10,7 @@ use Iodev\Whois\Modules\Tld\TldInfo;
 use Iodev\Whois\Modules\Tld\TldResponse;
 use Iodev\Whois\Modules\Tld\TldParser;
 
+#[\AllowDynamicProperties]
 class CommonParser extends TldParser
 {
     /** @var string */
