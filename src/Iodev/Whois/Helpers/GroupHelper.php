@@ -80,11 +80,11 @@ class GroupHelper
             if (is_array($key)) {
                 self::matchSubKeys($group, $key, $matches);
             } elseif (isset($group[$key])) {
-                $matches[] = $group[$key];
+                is_array($group[$key]) ? $matches = array_merge($matches, $group[$key]) : $matches[] = $group[$key];
             } else {
                 foreach ($group as $groupKey => $groupVal) {
                     if ($matcher($key, $groupKey)) {
-                        $matches[] = $groupVal;
+                        is_array($groupVal) ? $matches = array_merge($matches, $groupVal) : $matches[] = $groupVal;
                         if ($firstOnly) {
                             break;
                         }
